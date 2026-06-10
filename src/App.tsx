@@ -16,55 +16,8 @@ const globalStyles = {
 // ==================================================
 // 2. API SERVICE (ZUKUNFTSSICHER)
 // ==================================================
-class GameService {
-  constructor() {
-    this.dataSource = 'local'; // 'local', 'rest', 'firebase', 'supabase'
-    this.apiKey = '4da2c00cf3b2459d988e0ed0ac16988d';
-  }
 
-  async getGames(filters = {}) {
-    // Später: switch(this.dataSource) mit REST/Firebase/Supabase
-    return this.getLocalGames(filters);
-  }
-
-  getLocalGames(filters = {}) {
-    let games = [...LOCAL_GAMES];
-    if (filters.search) {
-      const q = filters.search.toLowerCase();
-      games = games.filter(g => g.name.toLowerCase().includes(q));
-    }
-    if (filters.genres?.length) {
-      games = games.filter(g => g.genre.some(genre => filters.genres.includes(genre)));
-    }
-    if (filters.minRating) {
-      games = games.filter(g => g.rating >= filters.minRating);
-    }
-    return games;
-  }
-
-  async getTrending() {
-    return [...LOCAL_GAMES].sort((a, b) => b.popularity - a.popularity).slice(0, 20);
-  }
-
-  async getPersonalized(userId, library) {
-    // Basierend auf Library Inhalten
-    const userGenres = [];
-    library.forEach(game => {
-      game.genre?.forEach(g => {
-        if (!userGenres.includes(g)) userGenres.push(g);
-      });
-    });
-    let recommendations = [...LOCAL_GAMES];
-    if (userGenres.length > 0) {
-      recommendations = recommendations.filter(g => 
-        g.genre.some(genre => userGenres.includes(genre))
-      );
-    }
-    return recommendations.slice(0, 20);
-  }
-}
-
-const gameService = new GameService();
+const LOCAL_GAMES = new GameService();
 
 // ==================================================
 // 3. USER CONTEXT (FÜR ACCOUNTS)
