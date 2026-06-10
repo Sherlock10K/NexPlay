@@ -1,13 +1,5 @@
 import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 
-// ==================================================
-// API KEY
-// ==================================================
-const RAWG_API_KEY = '4da2c00cf3b2459d988e0ed0ac16988d';
-
-// ==================================================
-// GAME DATABASE
-// ==================================================
 const GAMES = [
   { id:1, name:"The Walking Dead: Season One", rating:9.2, trailer:"https://www.youtube.com/embed/N40uY51s5Z0", mood:["Emotional","Story Rich"], genre:["Adventure","Story Rich"], playtime:"10-15h", description:"Begleite Lee Everett und Clementine in einer der emotionalsten Geschichten der Gaming-Geschichte.", developer:"Telltale Games", releaseYear:2012, platforms:["PC","PS4","Xbox","Switch"], popularity:95, img:"https://cdn.cloudflare.steamstatic.com/steam/apps/207610/header.jpg" },
   { id:2, name:"The Walking Dead: Season Two", rating:8.9, trailer:"https://www.youtube.com/embed/q_0f0D4Jqtw", mood:["Emotional","Dark"], genre:["Adventure","Story Rich"], playtime:"8-12h", description:"Clementine ist nun die Hauptfigur und muss alleine überleben.", developer:"Telltale Games", releaseYear:2013, platforms:["PC","PS4","Xbox","Switch"], popularity:90, img:"https://cdn.cloudflare.steamstatic.com/steam/apps/261030/header.jpg" },
@@ -17,8 +9,6 @@ const GAMES = [
   { id:6, name:"The Witcher 3", rating:9.6, trailer:"https://www.youtube.com/embed/c0i88t0Kacs", mood:["Epic","Fantasy"], genre:["RPG","Open World"], playtime:"100h+", description:"Geralt von Rivia sucht nach seiner Adoptivtochter Ciri.", developer:"CD Projekt Red", releaseYear:2015, platforms:["PC","PS4","Xbox","Switch"], popularity:99, img:"https://cdn.cloudflare.steamstatic.com/steam/apps/292030/header.jpg" },
   { id:7, name:"Elden Ring", rating:9.5, trailer:"https://www.youtube.com/embed/E3Huy2cdih0", mood:["Dark","Exploration"], genre:["Action","RPG"], playtime:"60-100h", description:"Erkunde die Zwischenlande und besiege mächtige Bosse.", developer:"FromSoftware", releaseYear:2022, platforms:["PS5","PS4","Xbox","PC"], popularity:99, img:"https://cdn.cloudflare.steamstatic.com/steam/apps/1245620/header.jpg" },
   { id:8, name:"Baldur's Gate 3", rating:9.8, trailer:"https://www.youtube.com/embed/IMd7YMFtaN8", mood:["Epic","Fantasy"], genre:["RPG","Turn Based"], playtime:"100h+", description:"Das ultimative D&D-Erlebnis.", developer:"Larian Studios", releaseYear:2023, platforms:["PC","PS5","Xbox"], popularity:99, img:"https://cdn.cloudflare.steamstatic.com/steam/apps/1086940/header.jpg" },
-  { id:9, name:"Hades", rating:9.3, trailer:"https://www.youtube.com/embed/InjlPq2QBjI", mood:["Action","Story Rich"], genre:["Roguelite","Indie"], playtime:"40-60h", description:"Trotze dem Tod und entkomme der Unterwelt.", developer:"Supergiant Games", releaseYear:2020, platforms:["PC","Switch","PS4","Xbox"], popularity:96, img:"https://cdn.cloudflare.steamstatic.com/steam/apps/1145360/header.jpg" },
-  { id:10, name:"Hollow Knight", rating:9.3, trailer:"https://www.youtube.com/embed/UAO2urG23S4", mood:["Atmospheric","Dark"], genre:["Metroidvania","Indie"], playtime:"40-60h", description:"Erkunde das verfallene Königreich Hallownest.", developer:"Team Cherry", releaseYear:2017, platforms:["PC","Switch","PS4","Xbox One"], popularity:94, img:"https://cdn.cloudflare.steamstatic.com/steam/apps/367520/header.jpg" },
 ];
 
 const MOODS = ["Emotional","Sad","Happy","Relaxing","Cozy","Action","Story Rich","Dark","Mystery","Epic","Atmospheric","Fantasy"];
@@ -42,12 +32,8 @@ function scoreGame(game, moods, genres, playtime) {
 
 export default function NexPlay() {
   const [page, setPage] = useState("home");
-  const [library, setLibrary] = useState(() => {
-    try { return JSON.parse(localStorage.getItem("library") || "[]"); } catch { return []; }
-  });
-  const [favorites, setFavorites] = useState(() => {
-    try { return JSON.parse(localStorage.getItem("favorites") || "[]"); } catch { return []; }
-  });
+  const [library, setLibrary] = useState([]);
+  const [favorites, setFavorites] = useState([]);
   const [step, setStep] = useState(1);
   const [selectedMoods, setSelectedMoods] = useState([]);
   const [selectedGenres, setSelectedGenres] = useState([]);
@@ -61,6 +47,13 @@ export default function NexPlay() {
   const [randomGame, setRandomGame] = useState(null);
   const [activeTab, setActiveTab] = useState("discover");
   const [libraryFilter, setLibraryFilter] = useState("all");
+
+  useEffect(() => {
+    const savedLib = localStorage.getItem("library");
+    const savedFav = localStorage.getItem("favorites");
+    if (savedLib) setLibrary(JSON.parse(savedLib));
+    if (savedFav) setFavorites(JSON.parse(savedFav));
+  }, []);
 
   useEffect(() => {
     localStorage.setItem("library", JSON.stringify(library));
@@ -119,6 +112,7 @@ export default function NexPlay() {
       setHoverPos({ x: rect.right, y: rect.top, winW: window.innerWidth });
     }, 500);
   };
+
   const leaveHover = () => {
     clearTimeout(hoverTimer.current);
     setTimeout(() => setHoveredGame(null), 200);
@@ -153,7 +147,7 @@ export default function NexPlay() {
     gameName: { fontSize: 13, fontWeight: 600, marginBottom: 4, whiteSpace: "nowrap", overflow: "hidden" },
     addBtn: { background: ACC, border: "none", borderRadius: 8, padding: "6px 10px", fontSize: 11, fontWeight: 600, cursor: "pointer", width: "100%", marginTop: 8, color: BG },
     topPicksRow: { display: "flex", gap: 16, overflowX: "auto", marginBottom: 30, paddingBottom: 10 },
-    topPickCard: { minWidth: 260, background: CARD, borderRadius: 12, padding: "12px", cursor: "pointer" },
+    topPickCard: { minWidth: 260, background: CARD, borderRadius: 12, padding: "12px", cursor: "pointer", position: "relative" },
     sectionLabel: { fontSize: 12, fontWeight: 700, color: ACC, marginBottom: 16, textTransform: "uppercase" },
     libraryGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 16 },
     libraryCard: { background: CARD, borderRadius: 12, overflow: "hidden", border: "1px solid rgba(255,255,255,0.05)" },
@@ -307,7 +301,7 @@ export default function NexPlay() {
                         <div style={styles.topPicksRow}>
                           {topPicks.map((g, i) => (
                             <div key={g.id} style={styles.topPickCard} onMouseEnter={e => handleHover(g, e)} onMouseLeave={leaveHover}>
-                              <div style={{ position: "absolute", fontSize: 20 }}>{["🥇","🥈","🥉","4","5"][i]}</div>
+                              <div style={{ position: "absolute", top: 5, left: 5, fontSize: 20 }}>{["🥇","🥈","🥉","4","5"][i]}</div>
                               <img src={g.img} style={{ width: "100%", height: 100, objectFit: "cover", borderRadius: 8 }} />
                               <div style={{ fontWeight: 700, marginTop: 8 }}>{g.name}</div>
                               <div style={{ fontSize: 11, color: ACC }}>★ {g.rating}</div>

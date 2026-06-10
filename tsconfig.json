@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "allowJs": true,
+    "skipLibCheck": true,
+    "noImplicitAny": false,
+    "noEmit": true
+  },
+  "include": ["src"]
+}
