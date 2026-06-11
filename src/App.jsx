@@ -47,68 +47,92 @@ const translateGenre = (genreName) => {
 
 let steamGamesCache = {};
 
-// ========== UNIVERSELLE RATING-KORREKTUR FÜR ALLE SPIELE ==========
+// ========== NEUES RATING-SYSTEM (OHNE GENRE-STRAFEN) ==========
 const getRealisticRating = (rawgRating, gameName, gameGenre) => {
   let rating = rawgRating;
   const name = gameName?.toLowerCase() || "";
-  const genre = gameGenre?.toLowerCase() || "";
   
-  // Weiße Liste (dürfen über 8.5 sein)
-  const topGamesWhiteList = [
-    "elden ring", "witcher 3", "baldur's gate 3", "red dead redemption 2",
-    "god of war", "the last of us", "half-life 2", "portal 2", "disco elysium",
-    "outer wilds", "hades", "hollow knight", "bloodborne", "dark souls 3",
-    "sekiro", "persona 5", "chrono trigger", "mass effect 2", "bioShock",
-    "the legend of zelda", "breath of the wild", "tears of the kingdom"
-  ];
+  // ========== 1. SPEZIFISCHE KORREKTUREN (NUR WIRKLICH ÜBERSCHÄTZTE SPIELE) ==========
+  const overratedGames = {
+    "soulcalibur": 8.0,
+    "tekken": 8.3,
+    "street fighter": 8.5,
+    "mortal kombat": 8.3,
+    "fifa": 7.8,
+    "pes": 7.0,
+    "efootball": 7.0,
+    "call of duty": 7.8,
+    "assassin creed": 8.0,
+    "pokemon": 8.0,
+    "battlefield": 7.8,
+    "far cry": 7.8,
+    "watch dogs": 7.5,
+    "saints row": 7.0,
+    "just cause": 7.2,
+  };
   
-  const isTopGame = topGamesWhiteList.some(tg => name.includes(tg));
-  
-  // Absolutes Maximum
-  let absoluteMax = isTopGame ? 9.0 : 8.5;
-  
-  // Genre-basierte Maximalratings (strenger)
-  if (genre.includes("fighting")) absoluteMax = 7.8;
-  else if (genre.includes("sports")) absoluteMax = 7.5;
-  else if (genre.includes("indie")) absoluteMax = 8.8;
-  else if (genre.includes("horror")) absoluteMax = 8.5;
-  else if (genre.includes("puzzle")) absoluteMax = 8.0;
-  else if (genre.includes("racing")) absoluteMax = 8.0;
-  else if (genre.includes("simulation")) absoluteMax = 8.0;
-  else if (genre.includes("strategy")) absoluteMax = 8.5;
-  
-  // Rating korrigieren
-  if (rating > absoluteMax) {
-    rating = absoluteMax;
+  for (const [key, value] of Object.entries(overratedGames)) {
+    if (name.includes(key)) {
+      rating = value;
+      break;
+    }
   }
   
-  // Zusätzliche Genre-Abzüge
-  if (genre.includes("fighting")) rating = rating - 0.3;
-  else if (genre.includes("sports")) rating = rating - 0.5;
-  else if (genre.includes("racing")) rating = rating - 0.2;
-  else if (genre.includes("simulation")) rating = rating - 0.2;
+  // ========== 2. WHITELIST-BONUS FÜR WIRKLICH TOP-SPIELE ==========
+  const topGamesBonus = [
+    // Action/Adventure
+    "red dead redemption", "rdr2", "god of war", "the last of us", "elden ring",
+    "dark souls", "bloodborne", "sekiro", "witcher 3", "baldur's gate 3",
+    "half-life", "portal 2", "bioshock", "mass effect 2", "disco elysium",
+    "outer wilds", "hades", "hollow knight", "persona 5", "chrono trigger",
+    "metal gear solid", "final fantasy vii", "resident evil 2", "resident evil 4",
+    "silent hill 2", "uncharted 4", "horizon zero dawn",
+    
+    // Zelda
+    "zelda breath", "zelda tears", "zelda ocarina", "zelda majora",
+    
+    // Mario
+    "mario odyssey", "mario galaxy", "mario 64", "super mario world",
+    
+    // Walking Dead
+    "walking dead", "telltale",
+    
+    // Indies
+    "celeste", "undertale", "stardew valley", "inside", "limbo", "journey",
+    "cuphead", "ori", "dead cells",
+    
+    // Weitere
+    "skyrim", "fallout new vegas", "cyberpunk 2077", "control", "alan wake 2",
+    "doom eternal", "titanfall 2", "metro exodus", "dying light", "ghost of tsushima",
+    "spider-man", "batman arkham"
+  ];
   
-  // Spezifische Korrekturen
-  if (name.includes("zelda") && name.includes("ocarina")) rating = 8.5;
-  if (name.includes("zelda") && name.includes("breath")) rating = 8.8;
-  if (name.includes("zelda") && name.includes("tears")) rating = 8.8;
-  if (name.includes("mario") && name.includes("odyssey")) rating = 8.7;
-  if (name.includes("mario") && name.includes("galaxy")) rating = 8.8;
-  if (name.includes("soulcalibur")) rating = 7.8;
-  if (name.includes("tekken")) rating = 8.0;
-  if (name.includes("street fighter")) rating = 8.2;
-  if (name.includes("mortal kombat")) rating = 8.0;
-  if (name.includes("fifa")) rating = 7.2;
-  if (name.includes("pes") || name.includes("efootball")) rating = 6.8;
-  if (name.includes("call of duty")) rating = 7.3;
-  if (name.includes("assassin") && name.includes("creed")) rating = 7.5;
-  if (name.includes("pokemon")) rating = 7.8;
-  if (name.includes("battlefield")) rating = 7.5;
-  if (name.includes("far cry")) rating = 7.5;
-  if (name.includes("watch dogs")) rating = 7.2;
-  if (name.includes("cyberpunk")) rating = 8.2;
+  const isTopGame = topGamesBonus.some(tg => name.includes(tg));
   
-  // Mindestrating
+  if (isTopGame && rating < 9.0) {
+    rating = Math.min(9.5, rating + 0.5);
+  }
+  
+  // ========== 3. SPEZIFISCHE TOP-TIER BOOSTS ==========
+  if (name.includes("red dead redemption") && rating < 9.3) rating = 9.3;
+  if (name.includes("god of war") && rating < 9.2) rating = 9.2;
+  if (name.includes("the last of us") && rating < 9.3) rating = 9.3;
+  if (name.includes("witcher 3") && rating < 9.4) rating = 9.4;
+  if (name.includes("baldur's gate 3") && rating < 9.5) rating = 9.5;
+  if (name.includes("elden ring") && rating < 9.4) rating = 9.4;
+  if (name.includes("zelda") && (name.includes("breath") || name.includes("tears")) && rating < 9.2) rating = 9.2;
+  if (name.includes("zelda") && name.includes("ocarina") && rating < 9.0) rating = 9.0;
+  if (name.includes("hades") && rating < 9.0) rating = 9.0;
+  if (name.includes("hollow knight") && rating < 9.0) rating = 9.0;
+  if (name.includes("celeste") && rating < 8.8) rating = 8.8;
+  if (name.includes("undertale") && rating < 8.8) rating = 8.8;
+  if (name.includes("stardew valley") && rating < 8.8) rating = 8.8;
+  
+  // ========== 4. ABSOLUTES MAXIMUM (NUR WENN WIRKLICH ÜBERTRIEBEN) ==========
+  // Kein Spiel sollte über 9.8 sein – das ist unrealistisch
+  rating = Math.min(rating, 9.7);
+  
+  // ========== 5. MINDESTRATING ==========
   rating = Math.max(rating, 5.5);
   
   // Runden
@@ -248,7 +272,7 @@ export default function NexPlay() {
     }
   };
 
-  // ========== UNIVERSELLE RATING-KORREKTUR FÜR ALLE SPIELE ==========
+  // ========== RATING-KORREKTUR FÜR ALLE SPIELE ==========
   const gamesWithData = useMemo(() => {
     const steamAppIds = allGames
       .map(g => g.steamId)
@@ -261,7 +285,7 @@ export default function NexPlay() {
     return allGames.map(game => {
       const steamData = game.steamId ? steamGamesCache[game.steamId] : null;
       
-      // Universelle Rating-Korrektur für JEDES Spiel
+      // Rating korrigieren
       let finalRating = getRealisticRating(game.rawgRating, game.name, game.genre);
       
       // Steam-Rating einmischen (falls vorhanden)
@@ -275,10 +299,10 @@ export default function NexPlay() {
       if (steamData && steamData.reviewCount > 0) {
         reviewCount = steamData.reviewCount;
       } else {
-        if (finalRating >= 8.5) reviewCount = 150000;
-        else if (finalRating >= 8.0) reviewCount = 50000;
-        else if (finalRating >= 7.5) reviewCount = 15000;
-        else if (finalRating >= 7.0) reviewCount = 5000;
+        if (finalRating >= 9.0) reviewCount = 150000;
+        else if (finalRating >= 8.5) reviewCount = 50000;
+        else if (finalRating >= 8.0) reviewCount = 15000;
+        else if (finalRating >= 7.5) reviewCount = 5000;
         else reviewCount = 1000;
       }
       
@@ -301,7 +325,7 @@ export default function NexPlay() {
   // ========== SELBSTPRÜFUNG ==========
   useEffect(() => {
     if (gamesWithData.length > 0) {
-      console.log("=== UNIVERSELLE RATING-KORREKTUR PRÜFUNG ===");
+      console.log("=== RATING-KORREKTUR PRÜFUNG ===");
       
       let korrigiert = 0;
       gamesWithData.forEach(game => {
@@ -316,11 +340,14 @@ export default function NexPlay() {
       console.log(`✅ ${korrigiert} von ${gamesWithData.length} Spielen wurden korrigiert!`);
       
       // Spezifische Checks
-      const zelda = gamesWithData.find(g => g.name?.toLowerCase().includes("zelda") && g.name?.toLowerCase().includes("ocarina"));
-      if (zelda) console.log(`✅ Zelda Ocarina of Time: ${zelda.finalRating} (sollte 8.5 sein)`);
+      const rdr2 = gamesWithData.find(g => g.name?.toLowerCase().includes("red dead redemption 2"));
+      if (rdr2) console.log(`✅ Red Dead Redemption 2: ${rdr2.finalRating} (sollte ca. 9.3 sein)`);
       
-      const elden = gamesWithData.find(g => g.name?.toLowerCase().includes("elden ring"));
-      if (elden) console.log(`✅ Elden Ring: ${elden.finalRating} (sollte 9.0 sein)`);
+      const zelda = gamesWithData.find(g => g.name?.toLowerCase().includes("zelda") && g.name?.toLowerCase().includes("breath"));
+      if (zelda) console.log(`✅ Zelda Breath of the Wild: ${zelda.finalRating} (sollte ca. 9.2 sein)`);
+      
+      const hades = gamesWithData.find(g => g.name?.toLowerCase().includes("hades"));
+      if (hades) console.log(`✅ Hades: ${hades.finalRating} (sollte ca. 9.0 sein)`);
       
       console.log("=== PRÜFUNG ABGESCHLOSSEN ===");
     }
