@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
-import { FaHome, FaUser, FaFire, FaSearch, FaHeart, FaStar, FaTrash, FaSignOutAlt, FaPlus, FaCheck, FaEnvelope, FaEye, FaEyeSlash, FaEdit, FaUsers, FaClock, FaRandom, FaThumbsUp, FaThumbsDown, FaArrowLeft, FaCog, FaVolumeUp, FaVolumeMute, FaLanguage, FaSteam, FaPlaystation, FaGamepad, FaTrophy, FaGem, FaShoppingCart, FaRobot, FaFilter, FaLink, FaExternalLinkAlt, FaDonate, FaAward, FaList, FaMedal, FaGamepad as FaGamepadIcon, FaDiceD6, FaGlobe, FaStarHalfAlt } from "react-icons/fa";
-import { GiConsoleController, GiAchievement, GiSwordman, GiPuzzle, GiMusicalNotes, GiBrain, GiShield, GiMagicSwirl } from "react-icons/gi";
-import { BsFillCollectionFill, BsFillHeartFill, BsFillStarFill } from "react-icons/bs";
+import { FaHome, FaUser, FaFire, FaSearch, FaHeart, FaStar, FaTrash, FaSignOutAlt, FaPlus, FaCheck, FaEnvelope, FaEye, FaEyeSlash, FaEdit, FaUsers, FaClock, FaRandom, FaThumbsUp, FaThumbsDown, FaArrowLeft, FaCog, FaVolumeUp, FaVolumeMute, FaLanguage, FaSteam, FaPlaystation, FaGamepad, FaTrophy, FaGem, FaShoppingCart, FaRobot, FaFilter, FaLink, FaExternalLinkAlt, FaDonate, FaAward, FaList, FaMedal, FaGamepad as FaGamepadIcon, FaDiceD6, FaGlobe, FaStarHalfAlt, FaTv, FaMicrophone, FaVideo, FaDesktop } from "react-icons/fa";
+import { GiConsoleController, GiAchievement, GiSwordman, GiPuzzle, GiMusicalNotes, GiBrain, GiShield, GiMagicSwirl, GiTrophy, GiLaurels } from "react-icons/gi";
+import { BsFillCollectionFill, BsFillHeartFill, BsFillStarFill, BsFillAwardFill } from "react-icons/bs";
 import { auth, loginWithEmail, registerWithEmail, logout, loadLibraryFromFirestore, saveLibraryToFirestore, loadProfileFromFirestore, saveProfileToFirestore, updateUsername, updateBio, togglePrivacy, searchUsers, resetPassword, addGameReview, getGameReviews, updateLastPlayed, likeReview, dislikeReview } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
 
@@ -27,107 +27,227 @@ const MOODS = ["Emotional", "Action", "Dark", "Fantasy", "Horror", "Mystery", "C
 const GENRES = ["Action", "Adventure", "RPG", "Indie", "Horror", "Strategy", "Puzzle", "Open World", "Story Rich", "Fighting", "Sports", "Racing", "Simulation"];
 const PLAYTIMES = ["Under 10h", "10-20h", "20-40h", "40-60h", "60-100h", "100h+"];
 
-// ========== AOFTY (ALL OF THE YEAR) DATENBANK ==========
-const AOFTY_DATA = {
-  2014: {
-    goty: { winner: "Dragon Age: Inquisition", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1222690/header.jpg", steamId: 1222690 },
-    action: { winner: "Middle-earth: Shadow of Mordor", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/241930/header.jpg", steamId: 241930 },
-    rpg: { winner: "Dragon Age: Inquisition", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1222690/header.jpg", steamId: 1222690 },
-    adventure: { winner: "The Walking Dead: Season Two", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/261030/header.jpg", steamId: 261030 },
-    indie: { winner: "Shovel Knight", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/250760/header.jpg", steamId: 250760 }
+// ========== AOTY (ALL OF THE YEAR) DATENBANK mit allen Quellen ==========
+// Basierend auf: The Game Awards (TGA/VGX 2003-2026), BAFTA, DICE, Golden Joystick, GDCA
+const AOTY_DATA = {
+  2026: {
+    tga: { winner: "TBA 2026", img: "https://placehold.co/300x200/14141f/ffd400?text=TBA", note: "Awards not yet held" }
   },
-  2015: {
-    goty: { winner: "The Witcher 3: Wild Hunt", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/292030/header.jpg", steamId: 292030 },
-    action: { winner: "Metal Gear Solid V", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/287700/header.jpg", steamId: 287700 },
-    rpg: { winner: "The Witcher 3: Wild Hunt", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/292030/header.jpg", steamId: 292030 },
-    adventure: { winner: "Life is Strange", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/319630/header.jpg", steamId: 319630 },
-    indie: { winner: "Undertale", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/391540/header.jpg", steamId: 391540 }
+  2025: {
+    tga: { winner: "Clair Obscur: Expedition 33", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2358720/header.jpg", steamId: 2358720 },
+    dice: { winner: "Clair Obscur: Expedition 33", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2358720/header.jpg", steamId: 2358720 },
+    baFta: { winner: "Clair Obscur: Expedition 33", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2358720/header.jpg", steamId: 2358720, note: "Expected" },
+    goldenJoystick: { winner: "Clair Obscur: Expedition 33", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2358720/header.jpg", steamId: 2358720, note: "Ultimate Game of the Year" },
+    gdca: { winner: "Clair Obscur: Expedition 33", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2358720/header.jpg", steamId: 2358720, note: "Game of the Year" },
+    goty: { winner: "Clair Obscur: Expedition 33", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2358720/header.jpg", steamId: 2358720 },
+    action: { winner: "Hades II", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1145350/header.jpg", steamId: 1145350 },
+    rpg: { winner: "Clair Obscur: Expedition 33", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2358720/header.jpg", steamId: 2358720 },
+    adventure: { winner: "Ghost of Yōtei", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1472490/header.jpg", steamId: 1472490 },
+    indie: { winner: "Blue Prince", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1234567/header.jpg", steamId: null }
   },
-  2016: {
-    goty: { winner: "Overwatch", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2357570/header.jpg", steamId: 2357570 },
-    action: { winner: "Doom", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/379720/header.jpg", steamId: 379720 },
-    rpg: { winner: "Dark Souls III", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/374320/header.jpg", steamId: 374320 },
-    adventure: { winner: "Uncharted 4", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/418370/header.jpg", steamId: 418370 },
-    indie: { winner: "Inside", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/304430/header.jpg", steamId: 304430 }
-  },
-  2017: {
-    goty: { winner: "The Legend of Zelda: Breath of the Wild", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg", steamId: 1245620 },
-    action: { winner: "Nier: Automata", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/524220/header.jpg", steamId: 524220 },
-    rpg: { winner: "Persona 5", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1203620/header.jpg", steamId: 1203620 },
-    adventure: { winner: "The Legend of Zelda: Breath of the Wild", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg", steamId: 1245620 },
-    indie: { winner: "Cuphead", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/268910/header.jpg", steamId: 268910 }
-  },
-  2018: {
-    goty: { winner: "God of War", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1593500/header.jpg", steamId: 1593500 },
-    action: { winner: "God of War", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1593500/header.jpg", steamId: 1593500 },
-    rpg: { winner: "Monster Hunter: World", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/582010/header.jpg", steamId: 582010 },
-    adventure: { winner: "Red Dead Redemption 2", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1174180/header.jpg", steamId: 1174180 },
-    indie: { winner: "Celeste", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/504230/header.jpg", steamId: 504230 }
-  },
-  2019: {
-    goty: { winner: "Sekiro: Shadows Die Twice", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/814380/header.jpg", steamId: 814380 },
-    action: { winner: "Sekiro: Shadows Die Twice", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/814380/header.jpg", steamId: 814380 },
-    rpg: { winner: "Disco Elysium", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/632470/header.jpg", steamId: 632470 },
-    adventure: { winner: "Control", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/870780/header.jpg", steamId: 870780 },
-    indie: { winner: "Outer Wilds", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/753640/header.jpg", steamId: 753640 }
-  },
-  2020: {
-    goty: { winner: "The Last of Us Part II", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1888930/header.jpg", steamId: 1888930 },
-    action: { winner: "Doom Eternal", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/782330/header.jpg", steamId: 782330 },
-    rpg: { winner: "Final Fantasy VII Remake", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1462040/header.jpg", steamId: 1462040 },
-    adventure: { winner: "Ghost of Tsushima", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1472490/header.jpg", steamId: 1472490 },
-    indie: { winner: "Hades", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1145360/header.jpg", steamId: 1145360 }
-  },
-  2021: {
-    goty: { winner: "It Takes Two", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1426210/header.jpg", steamId: 1426210 },
-    action: { winner: "Returnal", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1649240/header.jpg", steamId: 1649240 },
-    rpg: { winner: "Final Fantasy XIV: Endwalker", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/39210/header.jpg", steamId: 39210 },
-    adventure: { winner: "Psychonauts 2", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1189190/header.jpg", steamId: 1189190 },
-    indie: { winner: "Death's Door", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1319870/header.jpg", steamId: 1319870 }
-  },
-  2022: {
-    goty: { winner: "Elden Ring", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg", steamId: 1245620 },
-    action: { winner: "Elden Ring", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg", steamId: 1245620 },
-    rpg: { winner: "Elden Ring", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg", steamId: 1245620 },
-    adventure: { winner: "God of War Ragnarök", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1593500/header.jpg", steamId: 1593500 },
-    indie: { winner: "Stray", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1332010/header.jpg", steamId: 1332010 }
+  2024: {
+    tga: { winner: "Astro Bot", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2357570/header.jpg", steamId: 2357570 },
+    dice: { winner: "Astro Bot", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2357570/header.jpg", steamId: 2357570 },
+    baFta: { winner: "Astro Bot", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2357570/header.jpg", steamId: 2357570 },
+    goldenJoystick: { winner: "Black Myth: Wukong", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2358720/header.jpg", steamId: 2358720 },
+    gdca: { winner: "Astro Bot", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2357570/header.jpg", steamId: 2357570 },
+    goty: { winner: "Astro Bot", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2357570/header.jpg", steamId: 2357570 },
+    action: { winner: "Black Myth: Wukong", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2358720/header.jpg", steamId: 2358720 },
+    rpg: { winner: "Final Fantasy VII Rebirth", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1462040/header.jpg", steamId: 1462040 },
+    adventure: { winner: "The Legend of Zelda: Echoes of Wisdom", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg", steamId: 1245620 },
+    indie: { winner: "Balatro", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2379780/header.jpg", steamId: 2379780 }
   },
   2023: {
+    tga: { winner: "Baldur's Gate 3", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1086940/header.jpg", steamId: 1086940 },
+    dice: { winner: "Baldur's Gate 3", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1086940/header.jpg", steamId: 1086940 },
+    baFta: { winner: "Baldur's Gate 3", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1086940/header.jpg", steamId: 1086940 },
+    goldenJoystick: { winner: "Baldur's Gate 3", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1086940/header.jpg", steamId: 1086940 },
+    gdca: { winner: "Baldur's Gate 3", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1086940/header.jpg", steamId: 1086940 },
     goty: { winner: "Baldur's Gate 3", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1086940/header.jpg", steamId: 1086940 },
     action: { winner: "Armored Core VI", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1888160/header.jpg", steamId: 1888160 },
     rpg: { winner: "Baldur's Gate 3", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1086940/header.jpg", steamId: 1086940 },
     adventure: { winner: "The Legend of Zelda: Tears of the Kingdom", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg", steamId: 1245620 },
     indie: { winner: "Sea of Stars", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1244090/header.jpg", steamId: 1244090 }
   },
-  2024: {
-    goty: { winner: "Astro Bot", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2357570/header.jpg", steamId: 2357570 },
-    action: { winner: "Black Myth: Wukong", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2358720/header.jpg", steamId: 2358720 },
-    rpg: { winner: "Final Fantasy VII Rebirth", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1462040/header.jpg", steamId: 1462040 },
-    adventure: { winner: "Metaphor: ReFantazio", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2358721/header.jpg", steamId: 2358721 },
-    indie: { winner: "Animal Well", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2398690/header.jpg", steamId: 2398690 }
+  2022: {
+    tga: { winner: "Elden Ring", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg", steamId: 1245620 },
+    dice: { winner: "Elden Ring", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg", steamId: 1245620 },
+    baFta: { winner: "Vampire Survivors", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1794680/header.jpg", steamId: 1794680 },
+    goldenJoystick: { winner: "Elden Ring", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg", steamId: 1245620 },
+    gdca: { winner: "Elden Ring", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg", steamId: 1245620 },
+    goty: { winner: "Elden Ring", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg", steamId: 1245620 },
+    action: { winner: "Elden Ring", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg", steamId: 1245620 },
+    rpg: { winner: "Elden Ring", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg", steamId: 1245620 },
+    adventure: { winner: "God of War Ragnarök", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1593500/header.jpg", steamId: 1593500 },
+    indie: { winner: "Stray", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1332010/header.jpg", steamId: 1332010 }
+  },
+  2021: {
+    tga: { winner: "It Takes Two", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1426210/header.jpg", steamId: 1426210 },
+    dice: { winner: "It Takes Two", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1426210/header.jpg", steamId: 1426210 },
+    baFta: { winner: "Returnal", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1649240/header.jpg", steamId: 1649240 },
+    goldenJoystick: { winner: "Resident Evil Village", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1196590/header.jpg", steamId: 1196590 },
+    gdca: { winner: "Unpacking", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1135690/header.jpg", steamId: 1135690 },
+    goty: { winner: "It Takes Two", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1426210/header.jpg", steamId: 1426210 },
+    action: { winner: "Returnal", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1649240/header.jpg", steamId: 1649240 },
+    rpg: { winner: "Final Fantasy XIV: Endwalker", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/39210/header.jpg", steamId: 39210 },
+    adventure: { winner: "Psychonauts 2", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1189190/header.jpg", steamId: 1189190 },
+    indie: { winner: "Death's Door", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1319870/header.jpg", steamId: 1319870 }
+  },
+  2020: {
+    tga: { winner: "The Last of Us Part II", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1888930/header.jpg", steamId: 1888930 },
+    dice: { winner: "Hades", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1145360/header.jpg", steamId: 1145360 },
+    baFta: { winner: "Hades", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1145360/header.jpg", steamId: 1145360 },
+    goldenJoystick: { winner: "The Last of Us Part II", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1888930/header.jpg", steamId: 1888930 },
+    gdca: { winner: "Hades", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1145360/header.jpg", steamId: 1145360 },
+    goty: { winner: "The Last of Us Part II", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1888930/header.jpg", steamId: 1888930 },
+    action: { winner: "Doom Eternal", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/782330/header.jpg", steamId: 782330 },
+    rpg: { winner: "Final Fantasy VII Remake", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1462040/header.jpg", steamId: 1462040 },
+    adventure: { winner: "Ghost of Tsushima", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1472490/header.jpg", steamId: 1472490 },
+    indie: { winner: "Hades", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1145360/header.jpg", steamId: 1145360 }
+  },
+  2019: {
+    tga: { winner: "Sekiro: Shadows Die Twice", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/814380/header.jpg", steamId: 814380 },
+    dice: { winner: "Untitled Goose Game", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/837470/header.jpg", steamId: 837470 },
+    baFta: { winner: "Outer Wilds", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/753640/header.jpg", steamId: 753640 },
+    goldenJoystick: { winner: "Resident Evil 2", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/883710/header.jpg", steamId: 883710 },
+    gdca: { winner: "Untitled Goose Game", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/837470/header.jpg", steamId: 837470 },
+    goty: { winner: "Sekiro: Shadows Die Twice", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/814380/header.jpg", steamId: 814380 },
+    action: { winner: "Sekiro: Shadows Die Twice", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/814380/header.jpg", steamId: 814380 },
+    rpg: { winner: "Disco Elysium", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/632470/header.jpg", steamId: 632470 },
+    adventure: { winner: "Control", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/870780/header.jpg", steamId: 870780 },
+    indie: { winner: "Outer Wilds", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/753640/header.jpg", steamId: 753640 }
+  },
+  2018: {
+    tga: { winner: "God of War", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1593500/header.jpg", steamId: 1593500 },
+    dice: { winner: "God of War", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1593500/header.jpg", steamId: 1593500 },
+    baFta: { winner: "God of War", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1593500/header.jpg", steamId: 1593500 },
+    goldenJoystick: { winner: "God of War", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1593500/header.jpg", steamId: 1593500 },
+    gdca: { winner: "God of War", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1593500/header.jpg", steamId: 1593500 },
+    goty: { winner: "God of War", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1593500/header.jpg", steamId: 1593500 },
+    action: { winner: "God of War", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1593500/header.jpg", steamId: 1593500 },
+    rpg: { winner: "Monster Hunter: World", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/582010/header.jpg", steamId: 582010 },
+    adventure: { winner: "Red Dead Redemption 2", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1174180/header.jpg", steamId: 1174180 },
+    indie: { winner: "Celeste", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/504230/header.jpg", steamId: 504230 }
+  },
+  2017: {
+    tga: { winner: "The Legend of Zelda: Breath of the Wild", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg", steamId: 1245620 },
+    dice: { winner: "The Legend of Zelda: Breath of the Wild", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg", steamId: 1245620 },
+    baFta: { winner: "What Remains of Edith Finch", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/501300/header.jpg", steamId: 501300 },
+    goldenJoystick: { winner: "The Legend of Zelda: Breath of the Wild", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg", steamId: 1245620 },
+    gdca: { winner: "The Legend of Zelda: Breath of the Wild", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg", steamId: 1245620 },
+    goty: { winner: "The Legend of Zelda: Breath of the Wild", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg", steamId: 1245620 },
+    action: { winner: "Nier: Automata", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/524220/header.jpg", steamId: 524220 },
+    rpg: { winner: "Persona 5", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1203620/header.jpg", steamId: 1203620 },
+    adventure: { winner: "The Legend of Zelda: Breath of the Wild", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg", steamId: 1245620 },
+    indie: { winner: "Cuphead", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/268910/header.jpg", steamId: 268910 }
+  },
+  2016: {
+    tga: { winner: "Overwatch", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2357570/header.jpg", steamId: 2357570 },
+    dice: { winner: "Overwatch", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2357570/header.jpg", steamId: 2357570 },
+    baFta: { winner: "Uncharted 4", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/418370/header.jpg", steamId: 418370 },
+    goldenJoystick: { winner: "Dark Souls III", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/374320/header.jpg", steamId: 374320 },
+    gdca: { winner: "Overwatch", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2357570/header.jpg", steamId: 2357570 },
+    goty: { winner: "Overwatch", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2357570/header.jpg", steamId: 2357570 },
+    action: { winner: "Doom", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/379720/header.jpg", steamId: 379720 },
+    rpg: { winner: "Dark Souls III", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/374320/header.jpg", steamId: 374320 },
+    adventure: { winner: "Uncharted 4", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/418370/header.jpg", steamId: 418370 },
+    indie: { winner: "Inside", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/304430/header.jpg", steamId: 304430 }
+  },
+  2015: {
+    tga: { winner: "The Witcher 3: Wild Hunt", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/292030/header.jpg", steamId: 292030 },
+    dice: { winner: "Fallout 4", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/377160/header.jpg", steamId: 377160 },
+    baFta: { winner: "Fallout 4", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/377160/header.jpg", steamId: 377160 },
+    goldenJoystick: { winner: "The Witcher 3: Wild Hunt", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/292030/header.jpg", steamId: 292030 },
+    gdca: { winner: "The Witcher 3: Wild Hunt", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/292030/header.jpg", steamId: 292030 },
+    goty: { winner: "The Witcher 3: Wild Hunt", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/292030/header.jpg", steamId: 292030 },
+    action: { winner: "Metal Gear Solid V", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/287700/header.jpg", steamId: 287700 },
+    rpg: { winner: "The Witcher 3: Wild Hunt", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/292030/header.jpg", steamId: 292030 },
+    adventure: { winner: "Life is Strange", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/319630/header.jpg", steamId: 319630 },
+    indie: { winner: "Rocket League", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/252950/header.jpg", steamId: 252950 }
+  },
+  2014: {
+    tga: { winner: "Dragon Age: Inquisition", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1222690/header.jpg", steamId: 1222690 },
+    dice: { winner: "Dragon Age: Inquisition", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1222690/header.jpg", steamId: 1222690 },
+    baFta: { winner: "Destiny", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1085660/header.jpg", steamId: 1085660 },
+    goldenJoystick: { winner: "Dark Souls II", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/335300/header.jpg", steamId: 335300 },
+    gdca: { winner: "Middle-earth: Shadow of Mordor", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/241930/header.jpg", steamId: 241930 },
+    goty: { winner: "Dragon Age: Inquisition", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1222690/header.jpg", steamId: 1222690 },
+    action: { winner: "Middle-earth: Shadow of Mordor", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/241930/header.jpg", steamId: 241930 },
+    rpg: { winner: "Dragon Age: Inquisition", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1222690/header.jpg", steamId: 1222690 },
+    adventure: { winner: "The Walking Dead: Season Two", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/261030/header.jpg", steamId: 261030 },
+    indie: { winner: "Shovel Knight", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/250760/header.jpg", steamId: 250760 }
+  },
+  2013: {
+    tga: { winner: "Grand Theft Auto V", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/271590/header.jpg", steamId: 271590 },
+    dice: { winner: "The Last of Us", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1888930/header.jpg", steamId: 1888930 },
+    baFta: { winner: "The Last of Us", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1888930/header.jpg", steamId: 1888930 },
+    goldenJoystick: { winner: "Grand Theft Auto V", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/271590/header.jpg", steamId: 271590 },
+    gdca: { winner: "The Last of Us", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1888930/header.jpg", steamId: 1888930 },
+    goty: { winner: "Grand Theft Auto V", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/271590/header.jpg", steamId: 271590 },
+    action: { winner: "Grand Theft Auto V", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/271590/header.jpg", steamId: 271590 }
+  },
+  2012: {
+    tga: { winner: "The Walking Dead: Season One", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/207610/header.jpg", steamId: 207610 },
+    goty: { winner: "The Walking Dead: Season One", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/207610/header.jpg", steamId: 207610 }
+  },
+  2011: {
+    tga: { winner: "The Elder Scrolls V: Skyrim", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/489830/header.jpg", steamId: 489830 },
+    goty: { winner: "The Elder Scrolls V: Skyrim", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/489830/header.jpg", steamId: 489830 }
+  },
+  2010: {
+    tga: { winner: "Red Dead Redemption", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1174180/header.jpg", steamId: 1174180 },
+    goty: { winner: "Red Dead Redemption", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1174180/header.jpg", steamId: 1174180 }
+  },
+  2009: {
+    tga: { winner: "Uncharted 2: Among Thieves", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1250/header.jpg", steamId: 1250 },
+    goty: { winner: "Uncharted 2: Among Thieves", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1250/header.jpg", steamId: 1250 }
+  },
+  2008: {
+    tga: { winner: "Grand Theft Auto IV", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/12210/header.jpg", steamId: 12210 },
+    goty: { winner: "Grand Theft Auto IV", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/12210/header.jpg", steamId: 12210 }
+  },
+  2007: {
+    tga: { winner: "BioShock", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/7670/header.jpg", steamId: 7670 },
+    goty: { winner: "BioShock", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/7670/header.jpg", steamId: 7670 }
+  },
+  2006: {
+    tga: { winner: "The Elder Scrolls IV: Oblivion", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/22330/header.jpg", steamId: 22330 },
+    goty: { winner: "The Elder Scrolls IV: Oblivion", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/22330/header.jpg", steamId: 22330 }
+  },
+  2005: {
+    tga: { winner: "Resident Evil 4", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/254700/header.jpg", steamId: 254700 },
+    goty: { winner: "Resident Evil 4", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/254700/header.jpg", steamId: 254700 }
+  },
+  2004: {
+    tga: { winner: "Grand Theft Auto: San Andreas", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/12120/header.jpg", steamId: 12120 },
+    goty: { winner: "Grand Theft Auto: San Andreas", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/12120/header.jpg", steamId: 12120 }
+  },
+  2003: {
+    tga: { winner: "Madden NFL 2004", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/15530/header.jpg", steamId: 15530 },
+    goty: { winner: "Madden NFL 2004", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/15530/header.jpg", steamId: 15530 }
   }
 };
 
-const categoryIcons = {
-  goty: <FaAward />,
-  action: <GiSwordman />,
-  rpg: <GiMagicSwirl />,
-  adventure: <FaGlobe />,
-  indie: <FaDiceD6 />
+// Award ceremony icons and names
+const awardIcons = {
+  tga: { icon: <FaTrophy />, name: "The Game Awards", color: "#ffd400", short: "TGA" },
+  dice: { icon: <GiLaurels />, name: "D.I.C.E. Awards", color: "#c0c0c0", short: "DICE" },
+  baFta: { icon: <FaVideo />, name: "BAFTA Games Awards", color: "#ffffff", short: "BAFTA" },
+  goldenJoystick: { icon: <FaGamepadIcon />, name: "Golden Joystick Awards", color: "#ffa500", short: "Golden Joystick" },
+  gdca: { icon: <FaMicrophone />, name: "Game Developers Choice Awards", color: "#00ff00", short: "GDCA" },
+  goty: { icon: <BsFillAwardFill />, name: "Game of the Year (Meta)", color: colors.primary, short: "GOTY" },
+  action: { icon: <GiSwordman />, name: "Best Action Game", color: "#ff4444", short: "Action" },
+  rpg: { icon: <GiMagicSwirl />, name: "Best RPG", color: "#44ff44", short: "RPG" },
+  adventure: { icon: <FaGlobe />, name: "Best Adventure Game", color: "#4444ff", short: "Adventure" },
+  indie: { icon: <FaDiceD6 />, name: "Best Indie Game", color: "#ff44ff", short: "Indie" }
 };
 
-const categoryNames = {
-  goty: "Game of the Year",
-  action: "Best Action Game",
-  rpg: "Best RPG",
-  adventure: "Best Adventure",
-  indie: "Best Indie Game"
-};
+const categoryOrder = ["tga", "dice", "baFta", "goldenJoystick", "gdca", "goty", "action", "rpg", "adventure", "indie"];
 
 const translations = {
   en: { 
-    home: "Discover", library: "Library", profile: "Profile", friends: "Friends", ai: "AI Assistant",
-    login: "Login", register: "Register", logout: "Logout", search: "Search games...", searchAOFTY: "Search by year or game name...",
+    home: "Discover", library: "Library", profile: "Profile", friends: "Friends", ai: "AI Assistant", aoty: "AOTY",
+    login: "Login", register: "Register", logout: "Logout", search: "Search games...", searchAOTY: "Search by year or game name...",
     mood: "What's your mood?", genre: "Pick your genres", playtime: "How long?", 
     next: "Next", results: "Show Results", topPicks: "Top Picks", bestEver: "Best Ever", allResults: "All Results", hiddenGems: "Hidden Gems",
     sort: "Sort", bestMatch: "Best Match", rating: "Rating", year: "Year", 
@@ -143,14 +263,13 @@ const translations = {
     sound: "Sound Effects", language: "Language", steamId: "Steam ID", 
     importGames: "Import Steam Games", findSteamId: "How to find your Steam ID",
     donate: "Support the developer", topRated: "Top Rated Game", topGenre: "Top Genre",
-    totalPlaytime: "Total Playtime", aofty: "AOFTY", top20: "Top 20 by Genre",
-    findYourGame: "Find Your Game", allCategories: "All Categories",
-    gameOfTheYear: "Game of the Year", bestAction: "Best Action Game", bestRPG: "Best RPG",
-    bestAdventure: "Best Adventure", bestIndie: "Best Indie Game"
+    totalPlaytime: "Total Playtime", aotyTitle: "All Of The Year", top20: "Top 20 by Genre",
+    findYourGame: "Find Your Game", allAwards: "All Awards",
+    backToAOTY: "Back to AOTY Overview"
   },
   de: { 
-    home: "Entdecken", library: "Bibliothek", profile: "Profil", friends: "Freunde", ai: "KI-Assistent",
-    login: "Anmelden", register: "Registrieren", logout: "Abmelden", search: "Spiele suchen...", searchAOFTY: "Suche nach Jahr oder Spielname...",
+    home: "Entdecken", library: "Bibliothek", profile: "Profil", friends: "Freunde", ai: "KI-Assistent", aoty: "AOTY",
+    login: "Anmelden", register: "Registrieren", logout: "Abmelden", search: "Spiele suchen...", searchAOTY: "Suche nach Jahr oder Spielname...",
     mood: "Wie ist deine Stimmung?", genre: "Wähle deine Genres", playtime: "Wie lange?", 
     next: "Weiter", results: "Ergebnisse", topPicks: "Top Empfehlungen", bestEver: "Beste Aller Zeiten", allResults: "Alle Ergebnisse", hiddenGems: "Geheimtipps",
     sort: "Sortieren", bestMatch: "Bester Treffer", rating: "Bewertung", year: "Jahr", 
@@ -166,19 +285,18 @@ const translations = {
     sound: "Soundeffekte", language: "Sprache", steamId: "Steam ID", 
     importGames: "Steam Spiele importieren", findSteamId: "So findest du deine Steam ID",
     donate: "Unterstütze den Entwickler", topRated: "Bestbewertetes Spiel", topGenre: "Top Genre",
-    totalPlaytime: "Spielzeit Gesamt", aofty: "AOFTY", top20: "Top 20 pro Genre",
-    findYourGame: "Finde dein Spiel", allCategories: "Alle Kategorien",
-    gameOfTheYear: "Spiel des Jahres", bestAction: "Bestes Action Spiel", bestRPG: "Bestes RPG",
-    bestAdventure: "Bestes Adventure", bestIndie: "Bestes Indie Spiel"
+    totalPlaytime: "Spielzeit Gesamt", aotyTitle: "All Of The Year", top20: "Top 20 pro Genre",
+    findYourGame: "Finde dein Spiel", allAwards: "Alle Auszeichnungen",
+    backToAOTY: "Zurück zur AOTY Übersicht"
   }
 };
 
 const RAWG_API_KEY = '4da2c00cf3b2459d988e0ed0ac16988d';
 const MANUAL_HIDDEN_GEMS = [
-  { id: 9001, name: "CrossCode", rating: 9.1, genre: "Indie", playtime: "40-60h", year: 2018, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/368340/header.jpg", developer: "Radical Fish Games", mood: "Action", description: "CrossCode ist ein Action-RPG im Retro-Stil, das in einem fiktiven MMORPG spielt. Die schnellen Kämpfe, die herausfordernden Rätsel und die emotionale Geschichte machen es zu einem der besten Indie-Spiele aller Zeiten.", platforms: ["PC", "Switch", "PS4", "Xbox One"], steamId: 368340, finalRating: 9.1 },
-  { id: 9002, name: "Outer Wilds", rating: 9.3, genre: "Adventure", playtime: "20-40h", year: 2019, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/753640/header.jpg", developer: "Mobius Digital", mood: "Mystery", description: "Outer Wilds ist ein Open-World-Mystery-Spiel über ein Sonnensystem, das in einer Zeitschleife gefangen ist. Jede Entdeckung fühlt sich bedeutungsvoll an.", platforms: ["PC", "PS4", "Xbox One", "Switch"], steamId: 753640, finalRating: 9.3 },
-  { id: 9003, name: "Return of the Obra Dinn", rating: 9.2, genre: "Puzzle", playtime: "10-20h", year: 2018, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/653530/header.jpg", developer: "Lucas Pope", mood: "Mystery", description: "Ein Detektivspiel in 1-Bit-Grafik, bei dem du das Schicksal einer verschollenen Schiffsbesatzung aufklären musst.", platforms: ["PC", "Switch", "PS4", "Xbox One"], steamId: 653530, finalRating: 9.2 },
-  { id: 9004, name: "Hades", rating: 9.3, genre: "Indie", playtime: "40-60h", year: 2020, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1145360/header.jpg", developer: "Supergiant Games", mood: "Action", description: "Ein Roguelite-Actionspiel, in dem du versuchst, die Unterwelt zu entkommen. Jeder Lauf ist einzigartig!", platforms: ["PC", "Switch", "PS4", "Xbox"], steamId: 1145360, finalRating: 9.3 },
+  { id: 9001, name: "CrossCode", rating: 9.1, genre: "Indie", playtime: "40-60h", year: 2018, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/368340/header.jpg", developer: "Radical Fish Games", mood: "Action", description: "CrossCode ist ein Action-RPG im Retro-Stil, das in einem fiktiven MMORPG spielt.", platforms: ["PC", "Switch", "PS4", "Xbox One"], steamId: 368340, finalRating: 9.1 },
+  { id: 9002, name: "Outer Wilds", rating: 9.3, genre: "Adventure", playtime: "20-40h", year: 2019, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/753640/header.jpg", developer: "Mobius Digital", mood: "Mystery", description: "Outer Wilds ist ein Open-World-Mystery-Spiel über ein Sonnensystem in einer Zeitschleife.", platforms: ["PC", "PS4", "Xbox One", "Switch"], steamId: 753640, finalRating: 9.3 },
+  { id: 9003, name: "Return of the Obra Dinn", rating: 9.2, genre: "Puzzle", playtime: "10-20h", year: 2018, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/653530/header.jpg", developer: "Lucas Pope", mood: "Mystery", description: "Ein Detektivspiel in 1-Bit-Grafik.", platforms: ["PC", "Switch", "PS4", "Xbox One"], steamId: 653530, finalRating: 9.2 },
+  { id: 9004, name: "Hades", rating: 9.3, genre: "Indie", playtime: "40-60h", year: 2020, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1145360/header.jpg", developer: "Supergiant Games", mood: "Action", description: "Ein Roguelite-Actionspiel, in dem du versuchst, die Unterwelt zu entkommen.", platforms: ["PC", "Switch", "PS4", "Xbox"], steamId: 1145360, finalRating: 9.3 },
   { id: 9005, name: "Hollow Knight", rating: 9.3, genre: "Indie", playtime: "40-60h", year: 2017, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/367520/header.jpg", developer: "Team Cherry", mood: "Atmospheric", description: "Ein wunderschönes und herausforderndes Metroidvania.", platforms: ["PC", "Switch", "PS4", "Xbox One"], steamId: 367520, finalRating: 9.3 },
   { id: 9006, name: "Celeste", rating: 9.2, genre: "Indie", playtime: "10-20h", year: 2018, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/504230/header.jpg", developer: "Maddy Makes Games", mood: "Emotional", description: "Ein präzises Plattformspiel über Angst und Selbstakzeptanz.", platforms: ["PC", "Switch", "PS4", "Xbox One"], steamId: 504230, finalRating: 9.2 },
   { id: 9007, name: "Stardew Valley", rating: 9.3, genre: "Indie", playtime: "100h+", year: 2016, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/413150/header.jpg", developer: "ConcernedApe", mood: "Cozy", description: "Das ultimative Farming-Spiel.", platforms: ["PC", "Switch", "PS4", "Xbox", "Mobile"], steamId: 413150, finalRating: 9.3 },
@@ -281,10 +399,9 @@ export default function NexPlay() {
   const [favorites, setFavorites] = useState([]);
   const [currentTab, setCurrentTab] = useState("home");
   const [discoverSubTab, setDiscoverSubTab] = useState("findGame");
-  const [aoftySearch, setAoftySearch] = useState("");
-  const [aoftyResult, setAoftyResult] = useState(null);
-  const [selectedAoftyYear, setSelectedAoftyYear] = useState(null);
-  const [selectedAoftyCategory, setSelectedAoftyCategory] = useState("goty");
+  const [aotySearch, setAotySearch] = useState("");
+  const [aotyResult, setAotyResult] = useState(null);
+  const [selectedAotyYear, setSelectedAotyYear] = useState(null);
   const [selectedGenreForTop, setSelectedGenreForTop] = useState("Action");
   const [searchQuery, setSearchQuery] = useState("");
   const [step, setStep] = useState(1);
@@ -422,29 +539,28 @@ export default function NexPlay() {
 
   const BEST_EVER_GAMES = useMemo(() => gamesWithData.sort((a,b) => b.finalRating - a.finalRating).slice(0, 40), [gamesWithData]);
 
-  const searchAOFTY = () => {
-    const search = aoftySearch.trim().toLowerCase();
-    if (!search) { setAoftyResult(null); setSelectedAoftyYear(null); return; }
+  const searchAOTY = () => {
+    const search = aotySearch.trim().toLowerCase();
+    if (!search) { setAotyResult(null); setSelectedAotyYear(null); return; }
     if (/^\d{4}$/.test(search)) {
       const year = parseInt(search);
-      if (AOFTY_DATA[year]) { setAoftyResult({ type: "year", year, data: AOFTY_DATA[year] }); setSelectedAoftyYear(year); }
-      else setAoftyResult({ type: "error", message: `No data for ${year}` });
+      if (AOTY_DATA[year]) { setAotyResult({ type: "year", year, data: AOTY_DATA[year] }); setSelectedAotyYear(year); }
+      else setAotyResult({ type: "error", message: `No data for ${year}` });
       return;
     }
-    for (const [year, data] of Object.entries(AOFTY_DATA)) {
+    for (const [year, data] of Object.entries(AOTY_DATA)) {
       for (const [category, catData] of Object.entries(data)) {
-        if (catData.winner.toLowerCase().includes(search)) {
-          setAoftyResult({ type: "game", year, game: catData.winner, category, data });
-          setSelectedAoftyYear(year);
-          setSelectedAoftyCategory(category);
+        if (catData.winner && catData.winner.toLowerCase().includes(search)) {
+          setAotyResult({ type: "game", year, game: catData.winner, category, data });
+          setSelectedAotyYear(year);
           return;
         }
       }
     }
-    setAoftyResult({ type: "error", message: "Game not found" });
+    setAotyResult({ type: "error", message: "Game not found" });
   };
 
-  useEffect(() => { searchAOFTY(); }, [aoftySearch]);
+  useEffect(() => { searchAOTY(); }, [aotySearch]);
 
   const top20ByGenre = useMemo(() => {
     const filtered = gamesWithData.filter(g => g.genre === selectedGenreForTop);
@@ -708,10 +824,12 @@ export default function NexPlay() {
     .game-card { transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1); cursor: pointer; }
     .game-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 20px 30px -12px rgba(0,0,0,0.5); }
     .btn-click:active { transform: scale(0.96); }
-    .aofty-year-card { transition: all 0.3s ease; cursor: pointer; }
-    .aofty-year-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px -10px rgba(255,212,0,0.2); }
+    .aoty-year-card { transition: all 0.3s ease; cursor: pointer; }
+    .aoty-year-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px -10px rgba(255,212,0,0.2); }
     .category-btn { transition: all 0.2s ease; }
     .category-btn:hover { transform: translateY(-2px); }
+    .award-card { transition: all 0.2s ease; cursor: pointer; }
+    .award-card:hover { transform: translateX(5px); background: rgba(255,212,0,0.1); }
   `;
 
   useEffect(() => {
@@ -833,12 +951,12 @@ export default function NexPlay() {
     achievementName: { fontSize: 13, fontWeight: 600, color: colors.text },
     achievementDesc: { fontSize: 11, color: colors.textSecondary },
     donationBtn: { background: "linear-gradient(135deg, #ffd400, #e6bf00)", border: "none", borderRadius: 12, padding: "12px 20px", color: "#0a0a0f", cursor: "pointer", fontWeight: 700, display: "flex", alignItems: "center", gap: 8, fontSize: 14 },
-    aoftyResultCard: { background: colors.bgCard, borderRadius: 24, padding: 28, marginBottom: 24, border: `1px solid ${colors.primary}30`, transition: "all 0.3s ease" },
-    aoftyWinnerCard: { background: `linear-gradient(135deg, ${colors.primary}15, ${colors.bgCard})`, borderRadius: 20, padding: 24, marginBottom: 20, cursor: "pointer", transition: "transform 0.2s" },
-    aoftyCategoryBtn: (active) => ({ background: active ? colors.primary : "rgba(255,255,255,0.05)", border: "none", borderRadius: 12, padding: "10px 18px", color: active ? colors.bg : colors.text, cursor: "pointer", fontSize: 13, fontWeight: active ? 600 : 400, display: "inline-flex", alignItems: "center", gap: 8, transition: "all 0.2s" }),
-    aoftyYearCard: { background: colors.bgCard, borderRadius: 16, padding: 16, textAlign: "center", cursor: "pointer", transition: "all 0.3s ease", border: "1px solid rgba(255,255,255,0.05)" },
+    aotyResultCard: { background: colors.bgCard, borderRadius: 24, padding: 28, marginBottom: 24, border: `1px solid ${colors.primary}30`, transition: "all 0.3s ease" },
+    aotyWinnerCard: { background: `linear-gradient(135deg, ${colors.primary}10, ${colors.bgCard})`, borderRadius: 16, padding: 16, marginBottom: 12, cursor: "pointer", transition: "transform 0.2s", display: "flex", gap: 16, alignItems: "center", flexWrap: "wrap" },
+    aotyAwardCard: { background: "rgba(255,255,255,0.03)", borderRadius: 12, padding: 12, marginBottom: 8, cursor: "pointer", transition: "all 0.2s" },
     gotyBackBtn: { background: "rgba(255,255,255,0.05)", border: "none", borderRadius: 12, padding: "10px 20px", color: colors.text, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 20, fontSize: 14 },
-    topGenreSelect: { background: colors.bgCard, border: `1px solid ${colors.primary}30`, borderRadius: 12, padding: "12px 20px", color: colors.text, fontSize: 14, marginBottom: 24, cursor: "pointer" }
+    topGenreSelect: { background: colors.bgCard, border: `1px solid ${colors.primary}30`, borderRadius: 12, padding: "12px 20px", color: colors.text, fontSize: 14, marginBottom: 24, cursor: "pointer" },
+    aotyYearCard: { background: colors.bgCard, borderRadius: 16, padding: 16, textAlign: "center", cursor: "pointer", transition: "all 0.3s ease", border: "1px solid rgba(255,255,255,0.05)" }
   };
 
   const GameCard = ({ game, showBtn = false }) => {
@@ -944,6 +1062,7 @@ export default function NexPlay() {
             <button className="btn-click" style={styles.mainTab(currentTab === "profile")} onClick={() => setCurrentTab("profile")}><FaUser /> {text.profile}</button>
             <button className="btn-click" style={styles.mainTab(currentTab === "friends")} onClick={() => setCurrentTab("friends")}><FaUsers /> {text.friends}</button>
             <button className="btn-click" style={styles.mainTab(currentTab === "ai")} onClick={() => setCurrentTab("ai")}><FaRobot /> {text.ai}</button>
+            <button className="btn-click" style={styles.mainTab(currentTab === "aoty")} onClick={() => setCurrentTab("aoty")}><FaTrophy /> {text.aoty}</button>
             <button className="btn-click" style={styles.iconBtn} onClick={() => setShowSettings(true)}><FaCog /></button>
             {!user ? <button className="btn-click" style={styles.loginBtn} onClick={() => setShowLoginModal(true)}><FaEnvelope /> {text.login}</button> :
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -961,7 +1080,6 @@ export default function NexPlay() {
               <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "topPicks")} onClick={() => setDiscoverSubTab("topPicks")}>🎯 {text.topPicks}</button>
               <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "bestEver")} onClick={() => setDiscoverSubTab("bestEver")}>🏆 {text.bestEver}</button>
               <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "hiddenGems")} onClick={() => setDiscoverSubTab("hiddenGems")}>💎 {text.hiddenGems}</button>
-              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "aofty")} onClick={() => setDiscoverSubTab("aofty")}>🏆 {text.aofty}</button>
               <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "top20")} onClick={() => setDiscoverSubTab("top20")}>📊 {text.top20}</button>
             </div>
 
@@ -1063,110 +1181,6 @@ export default function NexPlay() {
               </div>
             )}
 
-            {/* AOFTY - ALL OF THE YEAR */}
-            {discoverSubTab === "aofty" && (
-              <div className="fade-in">
-                {selectedAoftyYear ? (
-                  <>
-                    <button className="btn-click" style={styles.gotyBackBtn} onClick={() => { setSelectedAoftyYear(null); setAoftySearch(""); setAoftyResult(null); setSelectedAoftyCategory("goty"); }}>
-                      <FaArrowLeft /> {text.backToGOTY}
-                    </button>
-                    
-                    {/* Category Selection */}
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginBottom: 24, justifyContent: "center" }}>
-                      {Object.keys(categoryIcons).map(cat => (
-                        <button key={cat} className="category-btn" style={styles.aoftyCategoryBtn(selectedAoftyCategory === cat)} onClick={() => setSelectedAoftyCategory(cat)}>
-                          {categoryIcons[cat]} {categoryNames[cat]}
-                        </button>
-                      ))}
-                    </div>
-                    
-                    {/* Winner Display */}
-                    <div style={styles.aoftyResultCard}>
-                      <div style={{ fontSize: 28, fontWeight: 800, marginBottom: 8, textAlign: "center", color: colors.primary }}>{selectedAoftyYear}</div>
-                      <div style={styles.aoftyWinnerCard} onClick={() => {
-                        const winnerData = AOFTY_DATA[selectedAoftyYear][selectedAoftyCategory];
-                        const winnerGame = { id: selectedAoftyYear, name: winnerData.winner, rating: 9.0, genre: selectedAoftyCategory === "rpg" ? "RPG" : selectedAoftyCategory === "action" ? "Action" : selectedAoftyCategory === "adventure" ? "Adventure" : "Indie", playtime: "20-40h", year: selectedAoftyYear, img: winnerData.img, developer: "Various", mood: "Epic", description: `${categoryNames[selectedAoftyCategory]} winner ${selectedAoftyYear}.`, platforms: ["PC", "Console"], steamId: winnerData.steamId, finalRating: 9.0, finalImg: winnerData.img };
-                        openGameDetail(winnerGame);
-                      }}>
-                        <div style={{ display: "flex", gap: 20, alignItems: "center", flexWrap: "wrap" }}>
-                          <img src={AOFTY_DATA[selectedAoftyYear][selectedAoftyCategory].img} style={{ width: 120, height: 160, objectFit: "cover", borderRadius: 12 }} alt={AOFTY_DATA[selectedAoftyYear][selectedAoftyCategory].winner} />
-                          <div style={{ flex: 1 }}>
-                            <div style={{ fontSize: 14, color: colors.primary, marginBottom: 8 }}>{categoryIcons[selectedAoftyCategory]} {categoryNames[selectedAoftyCategory]} {text.winner}</div>
-                            <div style={{ fontSize: 24, fontWeight: 700 }}>{AOFTY_DATA[selectedAoftyYear][selectedAoftyCategory].winner}</div>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {/* Other Categories Quick View */}
-                      <div style={{ marginTop: 24 }}>
-                        <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 16, color: colors.textSecondary }}>{text.allCategories}</div>
-                        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 12 }}>
-                          {Object.entries(AOFTY_DATA[selectedAoftyYear]).map(([cat, catData]) => (
-                            <div key={cat} style={{ background: "rgba(255,255,255,0.03)", borderRadius: 12, padding: 12, cursor: "pointer" }} onClick={() => setSelectedAoftyCategory(cat)}>
-                              <div style={{ fontSize: 12, color: colors.primary, marginBottom: 4 }}>{categoryIcons[cat]} {categoryNames[cat]}</div>
-                              <div style={{ fontSize: 13, fontWeight: 500 }}>{catData.winner}</div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <input style={styles.searchBar} placeholder={text.searchAOFTY} value={aoftySearch} onChange={e => setAoftySearch(e.target.value)} />
-                    
-                    {aoftyResult?.type === "year" && (
-                      <div style={styles.aoftyResultCard}>
-                        <div style={{ fontSize: 28, fontWeight: 800, marginBottom: 16, textAlign: "center", color: colors.primary }}>{aoftyResult.year}</div>
-                        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", gap: 16 }}>
-                          {Object.entries(aoftyResult.data).map(([cat, catData]) => (
-                            <div key={cat} style={styles.aoftyWinnerCard} onClick={() => {
-                              const winnerGame = { id: aoftyResult.year, name: catData.winner, rating: 9.0, genre: cat === "rpg" ? "RPG" : cat === "action" ? "Action" : cat === "adventure" ? "Adventure" : "Indie", playtime: "20-40h", year: aoftyResult.year, img: catData.img, developer: "Various", mood: "Epic", description: `${categoryNames[cat]} winner ${aoftyResult.year}.`, platforms: ["PC", "Console"], steamId: catData.steamId, finalRating: 9.0, finalImg: catData.img };
-                              openGameDetail(winnerGame);
-                            }}>
-                              <div style={{ fontSize: 14, color: colors.primary, marginBottom: 8 }}>{categoryIcons[cat]} {categoryNames[cat]}</div>
-                              <div style={{ fontSize: 18, fontWeight: 600 }}>{catData.winner}</div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    
-                    {aoftyResult?.type === "game" && (
-                      <div style={styles.aoftyResultCard}>
-                        <div style={{ fontSize: 20, fontWeight: 700, color: colors.primary, marginBottom: 8 }}>{aoftyResult.game}</div>
-                        <div style={{ fontSize: 14, marginBottom: 16 }}>{categoryNames[aoftyResult.category]} - {aoftyResult.year}</div>
-                        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", gap: 16 }}>
-                          {Object.entries(aoftyResult.data).map(([cat, catData]) => (
-                            <div key={cat} style={styles.aoftyWinnerCard}>
-                              <div style={{ fontSize: 14, color: colors.primary, marginBottom: 8 }}>{categoryIcons[cat]} {categoryNames[cat]}</div>
-                              <div style={{ fontSize: 16, fontWeight: 500 }}>{catData.winner}</div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    
-                    {aoftyResult?.type === "error" && <div style={styles.emptyState}>{aoftyResult.message}</div>}
-                    
-                    {!aoftySearch && !selectedAoftyYear && (
-                      <div style={styles.grid}>
-                        {Object.entries(AOFTY_DATA).reverse().map(([year, data]) => (
-                          <div key={year} className="aofty-year-card" style={styles.aoftyYearCard} onClick={() => setSelectedAoftyYear(parseInt(year))}>
-                            <img src={data.goty.img} style={{ width: "100%", height: 120, objectFit: "cover", borderRadius: 12, marginBottom: 12 }} alt={data.goty.winner} />
-                            <div style={{ fontWeight: 700, fontSize: 20, color: colors.primary }}>{year}</div>
-                            <div style={{ fontSize: 12, marginTop: 8 }}>{data.goty.winner}</div>
-                            <div style={{ fontSize: 10, color: colors.textSecondary, marginTop: 4 }}>5 categories</div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
-            )}
-
             {/* TOP 20 BY GENRE */}
             {discoverSubTab === "top20" && (
               <div className="fade-in">
@@ -1176,6 +1190,115 @@ export default function NexPlay() {
                 <div style={{ ...styles.sectionTitle, fontSize: 20, marginBottom: 16 }}>⭐ {selectedGenreForTop}</div>
                 <div style={styles.grid}>{top20ByGenre.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
               </div>
+            )}
+          </div>
+        )}
+
+        {/* ========== AOTY TAB ========== */}
+        {currentTab === "aoty" && (
+          <div className="fade-in">
+            {selectedAotyYear ? (
+              <>
+                <button className="btn-click" style={styles.gotyBackBtn} onClick={() => { setSelectedAotyYear(null); setAotySearch(""); setAotyResult(null); }}>
+                  <FaArrowLeft /> {text.backToAOTY}
+                </button>
+                
+                <div style={styles.aotyResultCard}>
+                  <div style={{ fontSize: 28, fontWeight: 800, marginBottom: 8, textAlign: "center", color: colors.primary }}>{selectedAotyYear}</div>
+                  
+                  {/* Alle Awards für dieses Jahr */}
+                  <div style={{ marginTop: 16 }}>
+                    {categoryOrder.map(catId => {
+                      const award = AOTY_DATA[selectedAotyYear]?.[catId];
+                      if (!award || !award.winner) return null;
+                      const awardInfo = awardIcons[catId];
+                      return (
+                        <div key={catId} className="award-card" style={styles.aotyAwardCard} onClick={() => {
+                          const gameData = { id: selectedAotyYear, name: award.winner, rating: 9.0, genre: "Action", playtime: "20-40h", year: selectedAotyYear, img: award.img, developer: "Various", mood: "Epic", description: `${awardInfo.name} winner ${selectedAotyYear}.`, platforms: ["PC", "Console"], steamId: award.steamId, finalRating: 9.0, finalImg: award.img };
+                          openGameDetail(gameData);
+                        }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+                            <div style={{ width: 40, textAlign: "center" }}>{awardInfo.icon}</div>
+                            <div style={{ flex: 1 }}>
+                              <div style={{ fontSize: 12, color: awardInfo.color, marginBottom: 2 }}>{awardInfo.name}</div>
+                              <div style={{ fontSize: 14, fontWeight: 600 }}>{award.winner}</div>
+                            </div>
+                            {award.note && <div style={{ fontSize: 10, color: colors.textSecondary }}>{award.note}</div>}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                <div style={styles.sectionTitle}><FaTrophy /> {text.aotyTitle}</div>
+                <input style={styles.searchBar} placeholder={text.searchAOTY} value={aotySearch} onChange={e => setAotySearch(e.target.value)} />
+                
+                {aotyResult?.type === "year" && (
+                  <div style={styles.aotyResultCard}>
+                    <div style={{ fontSize: 28, fontWeight: 800, marginBottom: 16, textAlign: "center", color: colors.primary }}>{aotyResult.year}</div>
+                    {categoryOrder.map(catId => {
+                      const award = aotyResult.data?.[catId];
+                      if (!award || !award.winner) return null;
+                      const awardInfo = awardIcons[catId];
+                      return (
+                        <div key={catId} className="award-card" style={styles.aotyAwardCard} onClick={() => {
+                          const gameData = { id: aotyResult.year, name: award.winner, rating: 9.0, genre: "Action", playtime: "20-40h", year: aotyResult.year, img: award.img, developer: "Various", mood: "Epic", description: `${awardInfo.name} winner ${aotyResult.year}.`, platforms: ["PC", "Console"], steamId: award.steamId, finalRating: 9.0, finalImg: award.img };
+                          openGameDetail(gameData);
+                        }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                            <div style={{ width: 40, textAlign: "center" }}>{awardInfo.icon}</div>
+                            <div>
+                              <div style={{ fontSize: 12, color: awardInfo.color }}>{awardInfo.name}</div>
+                              <div style={{ fontSize: 14, fontWeight: 600 }}>{award.winner}</div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+                
+                {aotyResult?.type === "game" && (
+                  <div style={styles.aotyResultCard}>
+                    <div style={{ fontSize: 20, fontWeight: 700, color: colors.primary, marginBottom: 8 }}>{aotyResult.game}</div>
+                    <div style={{ fontSize: 14, marginBottom: 16 }}>{aotyResult.year}</div>
+                    {categoryOrder.map(catId => {
+                      const award = aotyResult.data?.[catId];
+                      if (!award || !award.winner) return null;
+                      const awardInfo = awardIcons[catId];
+                      return (
+                        <div key={catId} className="award-card" style={styles.aotyAwardCard}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                            <div style={{ width: 40, textAlign: "center" }}>{awardInfo.icon}</div>
+                            <div>
+                              <div style={{ fontSize: 12, color: awardInfo.color }}>{awardInfo.name}</div>
+                              <div style={{ fontSize: 14, fontWeight: 500 }}>{award.winner}</div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+                
+                {aotyResult?.type === "error" && <div style={styles.emptyState}>{aotyResult.message}</div>}
+                
+                {!aotySearch && !selectedAotyYear && (
+                  <div style={styles.grid}>
+                    {Object.entries(AOTY_DATA).reverse().map(([year, data]) => (
+                      <div key={year} className="aoty-year-card" style={styles.aotyYearCard} onClick={() => setSelectedAotyYear(parseInt(year))}>
+                        {data.tga?.img && <img src={data.tga.img} style={{ width: "100%", height: 120, objectFit: "cover", borderRadius: 12, marginBottom: 12 }} alt={data.tga.winner} />}
+                        <div style={{ fontWeight: 700, fontSize: 20, color: colors.primary }}>{year}</div>
+                        <div style={{ fontSize: 12, marginTop: 8 }}>{data.tga?.winner || data.goty?.winner || "No data"}</div>
+                        <div style={{ fontSize: 10, color: colors.textSecondary, marginTop: 4 }}>{Object.keys(data).length} awards</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
             )}
           </div>
         )}
