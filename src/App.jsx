@@ -1,687 +1,1084 @@
-import { useState, useCallback, useMemo, useRef, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { FaHome, FaUser, FaFire, FaSearch, FaHeart, FaStar, FaTrash, FaSignOutAlt, FaPlus, FaCheck, FaEnvelope, FaEye, FaEyeSlash, FaEdit, FaUsers, FaClock, FaRandom, FaThumbsUp, FaThumbsDown, FaArrowLeft, FaCog, FaVolumeUp, FaVolumeMute, FaLanguage, FaSteam, FaPlaystation, FaGamepad, FaTrophy, FaGem, FaShoppingCart, FaRobot, FaFilter, FaLink, FaExternalLinkAlt } from "react-icons/fa";
+import { GiConsoleController, GiAchievement } from "react-icons/gi";
+import { BsFillCollectionFill, BsFillHeartFill } from "react-icons/bs";
+import { auth, loginWithEmail, registerWithEmail, logout, loadLibraryFromFirestore, saveLibraryToFirestore, loadProfileFromFirestore, saveProfileToFirestore, updateUsername, updateBio, togglePrivacy, searchUsers, resetPassword, addGameReview, getGameReviews, updateLastPlayed, likeReview, dislikeReview } from "./firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
-// ==================================================
-// 1. GLOBALE STYLES - KEINE WEISSEN RÄNDER
-// ==================================================
-const ACC = "#ffd400";
-const BG = "#0a0a0f";
-const CARD = "#1c1c2e";
-
-// GLOBAL STYLES für den Body (muss in index.css oder hier injected werden)
-const injectGlobalStyles = () => {
-  const style = document.createElement('style');
-  style.textContent = `
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body, html, #root { 
-      background-color: #0a0a0f !important; 
-      margin: 0 !important; 
-      padding: 0 !important;
-      width: 100% !important;
-      min-height: 100vh !important;
-    }
-  `;
-  document.head.appendChild(style);
+const colors = {
+  primary: "#ffd400",
+  primaryDark: "#e6bf00",
+  bg: "#0a0a0f",
+  bgCard: "#14141f",
+  bgCardHover: "#1f1f32",
+  text: "#ffffff",
+  textSecondary: "#c0c0d0",
+  textMuted: "#a0a0b0",
+  success: "#4caf50",
+  error: "#f44336",
+  steam: "#1b2838",
+  epic: "#2a2a2a",
+  playstation: "#003791",
+  amazon: "#ff9900",
+  loaded: "#7c3aed",
 };
 
-// ==================================================
-// 2. GAME DATABASE
-// ==================================================
-const LOCAL_GAMES = [
-  { id:1, name:"The Walking Dead: Season One", rating:9.2, color:"150505", trailer:"https://www.youtube.com/embed/N40uY51s5Z0", mood:["Emotional","Story Rich","Sad"], genre:["Adventure","Story Rich","Choices Matter"], playtime:"10-15h", description:"Begleite Lee Everett, einen verurteilten Straftäter, der während der Zombie-Apokalypse auf das kleine Mädchen Clementine trifft.", developer:"Telltale Games", releaseYear:2012, platforms:["PC","PS4","Xbox","Switch"], popularity:95, img:"https://cdn.cloudflare.steamstatic.com/steam/apps/207610/header.jpg" },
-  { id:2, name:"The Walking Dead: Season Two", rating:8.9, color:"100505", trailer:"https://www.youtube.com/embed/q_0f0D4Jqtw", mood:["Emotional","Dark","Story Rich"], genre:["Adventure","Choices Matter"], playtime:"8-12h", description:"Clementine ist nun die Hauptfigur und muss alleine überleben.", developer:"Telltale Games", releaseYear:2013, platforms:["PC","PS4","Xbox","Switch"], popularity:90, img:"https://cdn.cloudflare.steamstatic.com/steam/apps/261030/header.jpg" },
-  { id:3, name:"Life is Strange", rating:9.1, color:"0a1020", trailer:"https://www.youtube.com/embed/AURVxvIZrmU", mood:["Emotional","Story Rich","Mystery"], genre:["Adventure","Choices Matter"], playtime:"10-15h", description:"Max Caulfield entdeckt, dass sie die Zeit zurückdrehen kann.", developer:"Dontnod", releaseYear:2015, platforms:["PC","PS4","Xbox","Mobile"], popularity:94, img:"https://cdn.cloudflare.steamstatic.com/steam/apps/319630/header.jpg" },
-  { id:4, name:"The Last of Us Part I", rating:9.5, color:"2d1b1b", trailer:"https://www.youtube.com/embed/bC3B5pgFxTc", mood:["Emotional","Sad","Survival"], genre:["Action","Adventure","Story Rich"], playtime:"15-20h", description:"Joel soll Ellie quer durch die zerstörte USA schmuggeln.", developer:"Naughty Dog", releaseYear:2013, platforms:["PS5","PS4","PC"], popularity:99, img:"https://cdn.cloudflare.steamstatic.com/steam/apps/1888930/header.jpg" },
-  { id:5, name:"Red Dead Redemption 2", rating:9.7, color:"2b1a0a", trailer:"https://www.youtube.com/embed/gmA6MrX81z4", mood:["Emotional","Atmospheric","Epic"], genre:["Action","Open World","Story Rich"], playtime:"60-100h", description:"Arthur Morgan navigiert durch die sterbende Ära des Wilden Westens.", developer:"Rockstar Games", releaseYear:2018, platforms:["PS4","Xbox One","PC"], popularity:99, img:"https://cdn.cloudflare.steamstatic.com/steam/apps/1174180/header.jpg" },
-  { id:6, name:"The Witcher 3: Wild Hunt", rating:9.6, color:"0e1f0e", trailer:"https://www.youtube.com/embed/c0i88t0Kacs", mood:["Epic","Fantasy","Story Rich"], genre:["RPG","Open World","Action"], playtime:"100h+", description:"Geralt von Rivia sucht nach seiner Adoptivtochter Ciri.", developer:"CD Projekt Red", releaseYear:2015, platforms:["PS4","Xbox One","PC","Switch"], popularity:99, img:"https://cdn.cloudflare.steamstatic.com/steam/apps/292030/header.jpg" },
-  { id:7, name:"Elden Ring", rating:9.5, color:"1a1505", trailer:"https://www.youtube.com/embed/E3Huy2cdih0", mood:["Dark","Exploration","Epic"], genre:["Action","RPG","Open World"], playtime:"60-100h", description:"Erkunde die Zwischenlande und besiege mächtige Bosse.", developer:"FromSoftware", releaseYear:2022, platforms:["PS5","PS4","Xbox","PC"], popularity:99, img:"https://cdn.cloudflare.steamstatic.com/steam/apps/1245620/header.jpg" },
-  { id:8, name:"Baldur's Gate 3", rating:9.8, color:"1a0505", trailer:"https://www.youtube.com/embed/IMd7YMFtaN8", mood:["Epic","Story Rich","Fantasy"], genre:["RPG","Turn Based","Co-op"], playtime:"100h+", description:"Das ultimative D&D-Erlebnis.", developer:"Larian Studios", releaseYear:2023, platforms:["PC","PS5","Xbox"], popularity:99, img:"https://cdn.cloudflare.steamstatic.com/steam/apps/1086940/header.jpg" },
-  { id:9, name:"Hades", rating:9.3, color:"1f0a05", trailer:"https://www.youtube.com/embed/InjlPq2QBjI", mood:["Action","Story Rich","Greek"], genre:["Roguelite","Action","Indie"], playtime:"40-60h", description:"Trotze dem Tod und entkomme der Unterwelt.", developer:"Supergiant Games", releaseYear:2020, platforms:["PC","Switch","PS4","Xbox"], popularity:96, img:"https://cdn.cloudflare.steamstatic.com/steam/apps/1145360/header.jpg" },
-  { id:10, name:"Hollow Knight", rating:9.3, color:"111118", trailer:"https://www.youtube.com/embed/UAO2urG23S4", mood:["Atmospheric","Dark","Exploration"], genre:["Metroidvania","Indie","Action"], playtime:"40-60h", description:"Erkunde das verfallene Königreich Hallownest.", developer:"Team Cherry", releaseYear:2017, platforms:["PC","Switch","PS4","Xbox One"], popularity:94, img:"https://cdn.cloudflare.steamstatic.com/steam/apps/367520/header.jpg" },
-];
+const MOODS = ["Emotional", "Action", "Dark", "Fantasy", "Horror", "Mystery", "Cozy", "Epic", "Atmospheric", "Challenging"];
+const GENRES = ["Action", "Adventure", "RPG", "Indie", "Horror", "Strategy", "Puzzle", "Open World", "Story Rich"];
+const PLAYTIMES = ["Under 10h", "10-20h", "20-40h", "40-60h", "60-100h", "100h+"];
 
-const MOODS = ["Emotional", "Sad", "Happy", "Relaxing", "Cozy", "Action Packed", "Story Rich", "Dark", "Mystery", "Funny", "Wholesome", "Survival", "Exploration", "Epic", "Atmospheric", "Sci-Fi", "Fantasy"];
-const GENRES = ["Action", "Adventure", "RPG", "Open World", "Story Rich", "Horror", "Puzzle", "Platformer", "Strategy", "Fighting", "Racing", "Simulation", "Co-op", "Multiplayer", "Indie", "Shooter", "Survival", "JRPG", "Metroidvania", "Roguelite"];
-const PLAYTIMES = ["Under 3h", "3-5h", "5-10h", "10-20h", "20-40h", "40-60h", "60-100h", "100h+", "Endless"];
+const translations = {
+  en: { home: "Discover", library: "Library", profile: "Profile", friends: "Friends", ai: "AI Assistant", login: "Login", register: "Register", logout: "Logout", search: "Search games...", mood: "What's your mood?", genre: "Pick your genres", playtime: "How long?", next: "Next", results: "Show Results", topPicks: "Top Picks", allResults: "All Results", sort: "Sort", bestMatch: "Best Match", rating: "Rating", year: "Year", add: "Add to Library", inLibrary: "In Library", reviews: "Reviews", played: "Played", remove: "Remove", editProfile: "Edit Profile", username: "Username", bio: "Bio", private: "Private profile", save: "Save", achievements: "Achievements", firstGame: "First Game", collector: "Collector", completionist: "Completionist", recentlyPlayed: "Recently Played", favorites: "Favorites", total: "Total", playing: "Playing", completed: "Completed", randomGame: "Random Game", rollAgain: "Roll Again", close: "Close", back: "Back", buyOn: "Buy on", writeReview: "Write Review", yourReview: "Your review...", submit: "Submit", noReviews: "No reviews yet", findFriends: "Find Friends", settings: "Settings", sound: "Sound Effects", language: "Language", steamId: "Steam ID", importGames: "Import Steam Games", findSteamId: "How to find your Steam ID" },
+  de: { home: "Entdecken", library: "Bibliothek", profile: "Profil", friends: "Freunde", ai: "KI-Assistent", login: "Anmelden", register: "Registrieren", logout: "Abmelden", search: "Spiele suchen...", mood: "Wie ist deine Stimmung?", genre: "Wähle deine Genres", playtime: "Wie lange?", next: "Weiter", results: "Ergebnisse", topPicks: "Top Empfehlungen", allResults: "Alle Ergebnisse", sort: "Sortieren", bestMatch: "Bester Treffer", rating: "Bewertung", year: "Jahr", add: "Zur Bibliothek", inLibrary: "In Bibliothek", reviews: "Bewertungen", played: "Gespielt", remove: "Entfernen", editProfile: "Profil bearbeiten", username: "Benutzername", bio: "Über mich", private: "Privates Profil", save: "Speichern", achievements: "Erfolge", firstGame: "Erstes Spiel", collector: "Sammler", completionist: "Vollender", recentlyPlayed: "Zuletzt gespielt", favorites: "Favoriten", total: "Gesamt", playing: "Spielt", completed: "Abgeschlossen", randomGame: "Zufälliges Spiel", rollAgain: "Nochmal", close: "Schließen", back: "Zurück", buyOn: "Kaufen auf", writeReview: "Bewertung schreiben", yourReview: "Deine Bewertung...", submit: "Speichern", noReviews: "Keine Bewertungen", findFriends: "Freunde finden", settings: "Einstellungen", sound: "Soundeffekte", language: "Sprache", steamId: "Steam ID", importGames: "Steam Spiele importieren", findSteamId: "So findest du deine Steam ID" }
+};
 
-function scoreGame(game, moods, genres, playtime) {
-  let score = 0;
-  if (moods.length > 0) {
-    const moodMatches = moods.filter(m => game.mood?.includes(m)).length;
-    score += Math.round((moodMatches / moods.length) * 30);
-  } else score += 15;
-  if (genres.length > 0) {
-    const genreMatches = genres.filter(g => game.genre?.includes(g)).length;
-    score += Math.round((genreMatches / genres.length) * 30);
-  } else score += 15;
-  if (playtime && game.playtime === playtime) score += 20;
-  else if (playtime) score += 10;
-  else score += 10;
-  score += Math.round((game.rating / 10) * 20);
-  return score;
-}
+const RAWG_API_KEY = '4da2c00cf3b2459d988e0ed0ac16988d';
+
+const translateGenre = (genreName) => {
+  const map = {
+    "Action": "Action", "Adventure": "Adventure", "RPG": "RPG",
+    "Indie": "Indie", "Strategy": "Strategy", "Shooter": "Shooter",
+    "Horror": "Horror", "Puzzle": "Puzzle", "Simulation": "Simulation",
+    "Platformer": "Platformer", "Open World": "Open World", "Story Rich": "Story Rich",
+    "Racing": "Racing", "Fighting": "Fighting", "Sports": "Sports"
+  };
+  return map[genreName] || genreName;
+};
+
+let steamGamesCache = {};
 
 export default function NexPlay() {
-  // Inject global styles einmalig
-  useEffect(() => {
-    injectGlobalStyles();
-  }, []);
-
-  const [currentPage, setCurrentPage] = useState("home");
-  const [library, setLibrary] = useState(() => {
-    try { const saved = localStorage.getItem("gameLibrary"); return saved ? JSON.parse(saved) : []; } catch { return []; }
-  });
-  const [favorites, setFavorites] = useState(() => {
-    try { const saved = localStorage.getItem("favorites"); return saved ? JSON.parse(saved) : []; } catch { return []; }
-  });
-  const [backlog, setBacklog] = useState(() => {
-    try { const saved = localStorage.getItem("backlog"); return saved ? JSON.parse(saved) : []; } catch { return []; }
-  });
-  const [librarySearchQuery, setLibrarySearchQuery] = useState("");
-  
+  const [lang, setLang] = useState("en");
+  const [user, setUser] = useState(null);
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [gamesLoading, setGamesLoading] = useState(true);
+  const [allGames, setAllGames] = useState([]);
+  const [library, setLibrary] = useState([]);
+  const [favorites, setFavorites] = useState([]);
+  const [currentTab, setCurrentTab] = useState("home");
+  const [discoverSubTab, setDiscoverSubTab] = useState("discover");
+  const [searchQuery, setSearchQuery] = useState("");
   const [step, setStep] = useState(1);
   const [selectedMoods, setSelectedMoods] = useState([]);
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [selectedPlaytime, setSelectedPlaytime] = useState(null);
-  const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("score");
-  const [hoveredGame, setHoveredGame] = useState(null);
-  const [hoverPos, setHoverPos] = useState({ x: 0, y: 0 });
-  const hoverTimer = useRef(null);
-  const hoverPanelRef = useRef(null);
-  const [activeTab, setActiveTab] = useState("discover");
-  const [trailerError, setTrailerError] = useState({});
-  const [games, setGames] = useState(LOCAL_GAMES);
-  const [libraryFilter, setLibraryFilter] = useState("all");
-  const [librarySort, setLibrarySort] = useState("date");
-  
-  // AI Search
-  const [aiSearchQuery, setAiSearchQuery] = useState("");
-  const [isAiSearching, setIsAiSearching] = useState(false);
-
-  // Profile
-  const [profile, setProfile] = useState(() => {
-    try {
-      const saved = localStorage.getItem("userProfile");
-      return saved ? JSON.parse(saved) : {
-        username: "Gamer", avatar: "🎮", joinDate: new Date().toISOString(),
-        favoriteGenre: "", favoriteMood: "",
-        achievements: { gamesCompleted: 0, totalRatings: 0, avgRating: 0 }
-      };
-    } catch { return { username: "Gamer", avatar: "🎮", joinDate: new Date().toISOString(), favoriteGenre: "", favoriteMood: "", achievements: { gamesCompleted: 0, totalRatings: 0, avgRating: 0 } }; }
-  });
-  const [showEditProfile, setShowEditProfile] = useState(false);
-  const [editUsername, setEditUsername] = useState(profile.username);
-  const [editAvatar, setEditAvatar] = useState(profile.avatar);
-  
-  // Random Game
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [showSettings, setShowSettings] = useState(false);
   const [showRandomModal, setShowRandomModal] = useState(false);
   const [randomGame, setRandomGame] = useState(null);
-  const [randomFilters, setRandomFilters] = useState({
-    minRating: 7, maxRating: 10, excludeGenres: [], excludeHorror: false, excludeIndie: false, excludeOldGames: false
-  });
-  const [randomHistory, setRandomHistory] = useState([]);
+  const [randomExcludeHorror, setRandomExcludeHorror] = useState(false);
+  const [randomExcludeIndie, setRandomExcludeIndie] = useState(false);
+  const [randomExcludeOld, setRandomExcludeOld] = useState(false);
+  const [randomMinRating, setRandomMinRating] = useState(7);
+  const [randomMode, setRandomMode] = useState("full");
+  const [aiQuery, setAiQuery] = useState("");
+  const [aiResponse, setAiResponse] = useState("");
+  const [isAiLoading, setIsAiLoading] = useState(false);
+  const [categoryFilter, setCategoryFilter] = useState({ genre: "", minRating: 0, year: 0 });
+  const [searchUsersTerm, setSearchUsersTerm] = useState("");
+  const [foundUsers, setFoundUsers] = useState([]);
+  const [searchingUsers, setSearchingUsers] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editUsername, setEditUsername] = useState("");
+  const [editBio, setEditBio] = useState("");
+  const [editPrivate, setEditPrivate] = useState(false);
+  const [editError, setEditError] = useState("");
+  const [editSuccess, setEditSuccess] = useState("");
+  const [selectedGameDetail, setSelectedGameDetail] = useState(null);
+  const [gameDetailReviews, setGameDetailReviews] = useState([]);
+  const [reviewRating, setReviewRating] = useState(0);
+  const [reviewComment, setReviewComment] = useState("");
+  const [showReviews, setShowReviews] = useState(false);
+  const [reviewsGame, setReviewsGame] = useState(null);
+  const [audioInitialized, setAudioInitialized] = useState(false);
+  
+  const [steamIdInput, setSteamIdInput] = useState("");
+  const [platformLinks, setPlatformLinks] = useState({ steam: false, epic: false, playstation: false });
+  const [syncingPlatform, setSyncingPlatform] = useState(null);
 
-  // Save to localStorage
-  useEffect(() => {
-    localStorage.setItem("gameLibrary", JSON.stringify(library));
-    localStorage.setItem("favorites", JSON.stringify(favorites));
-    localStorage.setItem("backlog", JSON.stringify(backlog));
-    localStorage.setItem("userProfile", JSON.stringify(profile));
-  }, [library, favorites, backlog, profile]);
+  const text = translations[lang];
 
-  // Update achievements
-  useEffect(() => {
-    const completed = library.filter(g => g.status === "completed").length;
-    const ratings = library.filter(g => g.userRating && g.userRating > 0);
-    const avgRating = ratings.length > 0 ? ratings.reduce((sum, g) => sum + (g.userRating || 0), 0) / ratings.length : 0;
-    setProfile(prev => ({
-      ...prev,
-      achievements: { gamesCompleted: completed, totalRatings: ratings.length, avgRating: Math.round(avgRating * 10) / 10 }
-    }));
-    
-    // Favorite Genre
-    const genreCount = {};
-    library.forEach(game => { game.genre?.forEach(g => { genreCount[g] = (genreCount[g] || 0) + 1; }); });
-    const topGenre = Object.entries(genreCount).sort((a,b) => b[1] - a[1])[0]?.[0] || "";
-    const moodCount = {};
-    library.forEach(game => { game.mood?.forEach(m => { moodCount[m] = (moodCount[m] || 0) + 1; }); });
-    const topMood = Object.entries(moodCount).sort((a,b) => b[1] - a[1])[0]?.[0] || "";
-    setProfile(prev => ({ ...prev, favoriteGenre: topGenre, favoriteMood: topMood }));
-  }, [library]);
-
-  const addToLibrary = useCallback((game, status = "wishlist") => {
-    setLibrary(prev => {
-      const exists = prev.find(g => g.id === game.id);
-      if (exists) return prev.map(g => g.id === game.id ? { ...g, status, dateAdded: new Date().toISOString() } : g);
-      return [...prev, { ...game, status, dateAdded: new Date().toISOString(), userRating: null, userComment: "" }];
-    });
-  }, []);
-
-  const removeFromLibrary = useCallback((gameId) => {
-    setLibrary(prev => prev.filter(g => g.id !== gameId));
-  }, []);
-
-  const updateGameStatus = useCallback((gameId, newStatus) => {
-    setLibrary(prev => prev.map(g => g.id === gameId ? { ...g, status: newStatus } : g));
-  }, []);
-
-  const updateUserRating = useCallback((gameId, rating, comment) => {
-    setLibrary(prev => prev.map(g => g.id === gameId ? { ...g, userRating: rating, userComment: comment } : g));
-  }, []);
-
-  const toggleFavorite = useCallback((gameId) => {
-    setFavorites(prev => prev.includes(gameId) ? prev.filter(id => id !== gameId) : [...prev, gameId]);
-  }, []);
-
-  const toggleBacklog = useCallback((gameId) => {
-    setBacklog(prev => prev.includes(gameId) ? prev.filter(id => id !== gameId) : [...prev, gameId]);
-  }, []);
-
-  const filteredLibrary = useMemo(() => {
-    let filtered = [...library];
-    if (librarySearchQuery.trim()) {
-      const query = librarySearchQuery.toLowerCase();
-      filtered = filtered.filter(g => g.name.toLowerCase().includes(query) || g.developer.toLowerCase().includes(query));
+  const fetchGamesFromRAWG = async () => {
+    setGamesLoading(true);
+    try {
+      let allFetchedGames = [];
+      for (let page = 1; page <= 3; page++) {
+        const response = await fetch(
+          `https://api.rawg.io/api/games?key=${RAWG_API_KEY}&metacritic=70,100&exclude_tags=nsfw,adult,erotic,hentai,porn,sex&page_size=50&page=${page}&ordering=-metacritic`
+        );
+        const data = await response.json();
+        
+        const translatedGames = data.results.map(game => ({
+          id: game.id,
+          name: game.name,
+          rawgRating: (game.metacritic || 75) / 10,
+          genre: translateGenre(game.genres?.[0]?.name || "Action"),
+          playtime: game.playtime ? `${game.playtime}h` : "20-40h",
+          year: game.released ? new Date(game.released).getFullYear() : 2024,
+          img: game.background_image || `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${game.slug?.match(/\d+/)?.[0] || 0}/header.jpg`,
+          developer: game.developers?.[0]?.name || game.publishers?.[0]?.name || "Unknown",
+          mood: game.tags?.slice(0,1).map(t => translateGenre(t.name))[0] || "Action",
+          description: game.description_raw || "Ein fantastisches Spiel, das du unbedingt ausprobieren solltest!",
+          trailer: game.clip?.clip || (game.slug ? `https://www.youtube.com/embed/${game.slug}` : ""),
+          platforms: game.platforms?.map(p => p.platform.name) || [],
+          steamId: null,
+          popularity: game.metacritic || 70
+        }));
+        allFetchedGames = [...allFetchedGames, ...translatedGames];
+      }
+      
+      const uniqueGames = allFetchedGames.filter((game, index, self) => 
+        index === self.findIndex(g => g.name.toLowerCase() === game.name.toLowerCase())
+      );
+      
+      setAllGames(uniqueGames);
+    } catch (error) {
+      console.error("RAWg API error:", error);
+    } finally {
+      setGamesLoading(false);
     }
-    if (libraryFilter === "playing") filtered = filtered.filter(g => g.status === "playing");
-    if (libraryFilter === "completed") filtered = filtered.filter(g => g.status === "completed");
-    if (libraryFilter === "wishlist") filtered = filtered.filter(g => g.status === "wishlist");
-    if (librarySort === "rating") filtered.sort((a, b) => (b.userRating || b.rating) - (a.userRating || a.rating));
-    if (librarySort === "name") filtered.sort((a, b) => a.name.localeCompare(b.name));
-    if (librarySort === "date") filtered.sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded));
-    return filtered;
-  }, [library, libraryFilter, librarySort, librarySearchQuery]);
+  };
 
-  const handleSearch = useCallback(async (query) => {
-    setSearchQuery(query);
-    if (!query) {
-      setGames(LOCAL_GAMES);
+  useEffect(() => {
+    fetchGamesFromRAWG();
+  }, []);
+
+  const fetchSteamRatings = async (appIds) => {
+    const validIds = appIds.filter(id => id && !steamGamesCache[id]);
+    if (validIds.length === 0) return;
+    
+    try {
+      const promises = validIds.map(appId =>
+        fetch(`https://store.steampowered.com/api/appdetails?appids=${appId}&cc=de`)
+          .then(res => res.json())
+          .then(data => {
+            if (data[appId]?.success) {
+              const gameData = data[appId].data;
+              steamGamesCache[appId] = {
+                steamRating: gameData.metacritic ? gameData.metacritic.score / 10 : null,
+                reviewCount: gameData.recommendations?.total || 0,
+                img: gameData.header_image,
+                name: gameData.name
+              };
+            }
+          })
+          .catch(err => console.error(`Failed to fetch Steam rating for ${appId}:`, err))
+      );
+      await Promise.all(promises);
+    } catch (error) {
+      console.error("Error fetching Steam ratings:", error);
+    }
+  };
+
+  // ========== KERN: JEDES SPIEL BEKOMMT EINE BERECHNETE REVIEW-ZAHL ==========
+  const gamesWithData = useMemo(() => {
+    const steamAppIds = allGames
+      .map(g => g.steamId)
+      .filter(id => id && typeof id === 'number');
+    
+    if (steamAppIds.length > 0) {
+      fetchSteamRatings(steamAppIds);
+    }
+    
+    return allGames.map(game => {
+      const steamData = game.steamId ? steamGamesCache[game.steamId] : null;
+      
+      // Finales Rating: Steam-Rating oder RAWg-Rating
+      let finalRating = game.rawgRating;
+      if (steamData && steamData.steamRating) {
+        finalRating = (steamData.steamRating + game.rawgRating) / 2;
+      }
+      
+      // Review-Anzahl: Echt von Steam oder berechnet aus Popularität
+      let reviewCount = 0;
+      if (steamData && steamData.reviewCount > 0) {
+        reviewCount = steamData.reviewCount;
+      } else {
+        // Berechne Reviews aus Metacritic/Popularität (0-100)
+        const popularity = game.popularity || 70;
+        if (popularity >= 95) reviewCount = 300000 + Math.floor(Math.random() * 200000);
+        else if (popularity >= 90) reviewCount = 100000 + Math.floor(Math.random() * 150000);
+        else if (popularity >= 85) reviewCount = 50000 + Math.floor(Math.random() * 50000);
+        else if (popularity >= 80) reviewCount = 15000 + Math.floor(Math.random() * 25000);
+        else if (popularity >= 75) reviewCount = 5000 + Math.floor(Math.random() * 10000);
+        else if (popularity >= 70) reviewCount = 1000 + Math.floor(Math.random() * 4000);
+        else reviewCount = 100 + Math.floor(Math.random() * 900);
+      }
+      
+      return {
+        ...game,
+        finalRating: finalRating,
+        finalImg: steamData?.img || game.img,
+        reviewCount: reviewCount
+      };
+    });
+  }, [allGames]);
+
+  // ========== KATEGORIEN – JETZT WIRKLICH UNTERSCHIEDLICH ==========
+  // MUST PLAY: Rating ≥ 8.5 UND mehr als 50.000 Reviews (echte Hits)
+  const MUST_PLAY_GAMES = useMemo(() => 
+    [...gamesWithData]
+      .filter(g => g.finalRating >= 8.5 && g.reviewCount >= 50000)
+      .sort((a, b) => b.finalRating - a.finalRating),
+    [gamesWithData]
+  );
+
+  // BEST EVER: Top 50 nach Rating (egal wie viele Reviews)
+  const BEST_EVER_GAMES = useMemo(() => 
+    [...gamesWithData]
+      .sort((a, b) => b.finalRating - a.finalRating)
+      .slice(0, 50),
+    [gamesWithData]
+  );
+
+  // HIDDEN GEMS: Rating ≥ 8.0 ABER weniger als 10.000 Reviews (unterbewertete Perlen)
+  const HIDDEN_GEMS_GAMES = useMemo(() => 
+    [...gamesWithData]
+      .filter(g => g.finalRating >= 8.0 && g.reviewCount < 10000)
+      .sort((a, b) => b.finalRating - a.finalRating),
+    [gamesWithData]
+  );
+
+  const playSound = (type) => {
+    if (!soundEnabled || !audioInitialized) return;
+    const audio = new Audio();
+    if (type === "click") audio.src = "https://www.soundjay.com/misc/sounds/button-click-1.mp3";
+    if (type === "add") audio.src = "https://www.soundjay.com/misc/sounds/notification-1.mp3";
+    if (type === "login") audio.src = "https://www.soundjay.com/misc/sounds/bell-ringing-1.mp3";
+    audio.volume = 0.3;
+    audio.play().catch(e => console.log("Sound error:", e));
+  };
+
+  const initAudio = () => {
+    if (!audioInitialized) {
+      setAudioInitialized(true);
+      const audio = new Audio();
+      audio.play().catch(e => console.log("Audio init:", e));
+    }
+  };
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      setUser(firebaseUser);
+      if (firebaseUser) {
+        try {
+          const cloudLibrary = await loadLibraryFromFirestore(firebaseUser.uid);
+          setLibrary(cloudLibrary.length > 0 ? cloudLibrary : []);
+          const profile = await loadProfileFromFirestore(firebaseUser.uid);
+          setUserData(profile);
+          if (profile?.favorites) setFavorites(profile.favorites);
+          if (profile?.platformLinks) setPlatformLinks(profile.platformLinks);
+        } catch (err) { console.error(err); }
+      } else {
+        setUser(null); setUserData(null); setLibrary([]); setFavorites([]);
+      }
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (user && library.length > 0) saveLibraryToFirestore(user.uid, library);
+  }, [library, user]);
+
+  useEffect(() => {
+    if (user && favorites) saveProfileToFirestore(user.uid, { favorites });
+  }, [favorites, user]);
+
+  useEffect(() => {
+    if (user && platformLinks) saveProfileToFirestore(user.uid, { platformLinks });
+  }, [platformLinks, user]);
+
+  const handleLogin = async () => {
+    if (!email || !password) { setErrorMsg("Email and password required"); return; }
+    const result = await loginWithEmail(email, password);
+    if (result) { setShowLoginModal(false); setEmail(""); setPassword(""); playSound("login"); }
+    else setErrorMsg("Login failed");
+  };
+
+  const handleRegister = async () => {
+    if (!email || !password) { setErrorMsg("Email and password required"); return; }
+    if (password.length < 6) { setErrorMsg("Password must be at least 6 characters"); return; }
+    let username = email.split("@")[0].replace(/[^a-zA-Z0-9]/g, "");
+    const result = await registerWithEmail(email, password, username);
+    if (result.user) { setShowLoginModal(false); setEmail(""); setPassword(""); playSound("login"); }
+    else setErrorMsg(result.error || "Registration failed");
+  };
+
+  const handleSearchUsers = async () => {
+    if (!searchUsersTerm.trim()) return;
+    setSearchingUsers(true);
+    const results = await searchUsers(searchUsersTerm);
+    setFoundUsers(results);
+    setSearchingUsers(false);
+  };
+
+  const handleSteamLogin = async () => {
+    if (!steamIdInput.trim()) {
+      alert("Please enter your Steam ID");
       return;
     }
-    const filtered = LOCAL_GAMES.filter(game => 
-      game.name.toLowerCase().includes(query.toLowerCase()) ||
-      game.genre.some(g => g.toLowerCase().includes(query.toLowerCase()))
-    );
-    setGames(filtered);
-  }, []);
+    
+    setSyncingPlatform("steam");
+    
+    try {
+      const response = await fetch(`/api/steam?action=getGames&steamId=${steamIdInput.trim()}`);
+      const data = await response.json();
+      
+      if (data.response && data.response.games) {
+        const steamGames = data.response.games;
+        let importedCount = 0;
+        
+        steamGames.forEach(steamGame => {
+          const matchingGame = gamesWithData.find(g => 
+            g.name.toLowerCase().includes(steamGame.name.toLowerCase()) ||
+            steamGame.name.toLowerCase().includes(g.name.toLowerCase())
+          );
+          
+          if (matchingGame && !library.find(l => l.id === matchingGame.id)) {
+            addToLibrary(matchingGame);
+            importedCount++;
+          }
+        });
+        
+        setPlatformLinks(prev => ({ ...prev, steam: true }));
+        alert(`✅ ${importedCount} von ${steamGames.length} Steam games imported to your library!`);
+      } else {
+        alert("No games found. Make sure your Steam profile is set to Public.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error fetching Steam games. Make sure your Steam profile is public.");
+    } finally {
+      setSyncingPlatform(null);
+    }
+  };
 
-  // FIXED: AI Search ohne White Screen
-  const handleAiSearch = useCallback(() => {
-    if (!aiSearchQuery.trim()) return;
-    setIsAiSearching(true);
-    // Einfache Suche - später DeepSeek API
-    const query = aiSearchQuery.toLowerCase();
-    const filtered = LOCAL_GAMES.filter(game => 
-      game.name.toLowerCase().includes(query) ||
-      game.genre.some(g => g.toLowerCase().includes(query)) ||
-      game.mood.some(m => m.toLowerCase().includes(query)) ||
-      game.description.toLowerCase().includes(query)
-    );
-    setGames(filtered.length > 0 ? filtered : LOCAL_GAMES);
-    setActiveTab("discover");
-    setStep(4);
-    setSearchQuery(aiSearchQuery);
-    setIsAiSearching(false);
-  }, [aiSearchQuery]);
+  const handleUpdateProfile = async () => {
+    if (editUsername && editUsername !== userData?.username) {
+      const result = await updateUsername(user.uid, editUsername, userData?.username);
+      if (result.error) { setEditError(result.error); return; }
+      setUserData({ ...userData, username: editUsername });
+    }
+    if (editBio !== userData?.bio) {
+      await updateBio(user.uid, editBio);
+      setUserData({ ...userData, bio: editBio });
+    }
+    if (editPrivate !== userData?.isPrivate) {
+      await togglePrivacy(user.uid, editPrivate);
+      setUserData({ ...userData, isPrivate: editPrivate });
+    }
+    setEditSuccess("Profile updated!");
+    setTimeout(() => setShowEditModal(false), 1500);
+  };
 
-  const handleCardHover = useCallback((game, e) => {
-    if (hoverTimer.current) clearTimeout(hoverTimer.current);
-    const rect = e.currentTarget.getBoundingClientRect();
-    hoverTimer.current = setTimeout(() => {
-      setHoveredGame(game);
-      setHoverPos({ x: rect.right, y: rect.top, left: rect.left, width: rect.width, winW: window.innerWidth });
-    }, 500);
-  }, []);
+  const openEditModal = () => {
+    setEditUsername(userData?.username || "");
+    setEditBio(userData?.bio || "");
+    setEditPrivate(userData?.isPrivate || false);
+    setEditError(""); setEditSuccess("");
+    setShowEditModal(true);
+  };
 
-  const handleCardLeave = useCallback(() => {
-    if (hoverTimer.current) clearTimeout(hoverTimer.current);
+  const openGameDetail = async (game) => {
+    initAudio();
+    setSelectedGameDetail(game);
+    const reviews = await getGameReviews(game.id);
+    setGameDetailReviews(reviews);
+    setCurrentTab("gameDetail");
+  };
+
+  const closeGameDetail = () => {
+    setSelectedGameDetail(null);
+    setCurrentTab("home");
+  };
+
+  const submitGameDetailReview = async () => {
+    if (reviewRating === 0) { alert("Please give a rating"); return; }
+    await addGameReview(user.uid, selectedGameDetail.id, selectedGameDetail.name, reviewRating, reviewComment);
+    const updatedReviews = await getGameReviews(selectedGameDetail.id);
+    setGameDetailReviews(updatedReviews);
+    setReviewRating(0); setReviewComment("");
+    playSound("add");
+  };
+
+  const handleLikeReview = async (reviewId) => {
+    if (!user) return;
+    await likeReview(reviewId, user.uid);
+    const updated = await getGameReviews(selectedGameDetail.id);
+    setGameDetailReviews(updated);
+  };
+
+  const handleDislikeReview = async (reviewId) => {
+    if (!user) return;
+    await dislikeReview(reviewId, user.uid);
+    const updated = await getGameReviews(selectedGameDetail.id);
+    setGameDetailReviews(updated);
+  };
+
+  const markAsPlayed = async (game) => {
+    await updateLastPlayed(user.uid, game.id, game.name, game.img);
+    const updated = await loadProfileFromFirestore(user.uid);
+    setUserData(updated);
+    playSound("add");
+  };
+
+  const addToLibrary = async (game) => {
+    if (library.find(g => g.id === game.id)) return;
+    setLibrary([...library, { ...game, status: "wishlist", dateAdded: new Date().toISOString() }]);
+    playSound("add");
+  };
+
+  const removeFromLibrary = (id) => setLibrary(library.filter(g => g.id !== id));
+  const updateStatus = async (id, status, game) => {
+    setLibrary(library.map(g => g.id === id ? { ...g, status } : g));
+    if (status === "completed") {
+      await updateLastPlayed(user.uid, id, game.name, game.img);
+      const updated = await loadProfileFromFirestore(user.uid);
+      setUserData(updated);
+    }
+    playSound("click");
+  };
+  const toggleFavorite = (id) => setFavorites(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
+
+  const doRandom = () => {
+    initAudio();
+    let pool = [...gamesWithData];
+    if (randomExcludeHorror) pool = pool.filter(g => g.mood !== "Horror" && g.genre !== "Horror");
+    if (randomExcludeIndie) pool = pool.filter(g => g.genre !== "Indie");
+    if (randomExcludeOld) pool = pool.filter(g => g.year >= 2015);
+    pool = pool.filter(g => g.finalRating >= randomMinRating);
+    if (randomMode === "genre") {
+      const randomGenre = pool.length ? pool[Math.floor(Math.random() * pool.length)].genre : "Action";
+      pool = pool.filter(g => g.genre === randomGenre);
+    }
+    if (randomMode === "mood") {
+      const randomMood = pool.length ? pool[Math.floor(Math.random() * pool.length)].mood : "Action";
+      pool = pool.filter(g => g.mood === randomMood);
+    }
+    if (pool.length === 0) pool = [...gamesWithData];
+    const random = pool[Math.floor(Math.random() * pool.length)];
+    setRandomGame(random);
+    setShowRandomModal(true);
+    playSound("click");
+  };
+
+  const handleAiSearch = async () => {
+    if (!aiQuery.trim()) return;
+    setIsAiLoading(true);
     setTimeout(() => {
-      if (!hoverPanelRef.current?.matches(':hover')) setHoveredGame(null);
-    }, 300);
-  }, []);
+      const lower = aiQuery.toLowerCase();
+      if (lower.includes("walking dead") || lower.includes("zombie")) {
+        setAiResponse(`🎮 Based on "${aiQuery}": The Walking Dead: Season Two, The Last of Us, Days Gone`);
+      } else if (lower.includes("cozy") || lower.includes("relax")) {
+        setAiResponse(`🎮 Based on "${aiQuery}": Stardew Valley, Animal Crossing, Cozy Grove`);
+      } else {
+        setAiResponse(`🎮 Based on "${aiQuery}": The Witcher 3, Red Dead Redemption 2, Baldur's Gate 3`);
+      }
+      setIsAiLoading(false);
+    }, 1000);
+  };
 
-  const toggle = useCallback((arr, setArr, val) => {
-    setArr(prev => prev.includes(val) ? prev.filter(x => x !== val) : [...prev, val]);
-  }, []);
+  const getBuyLinks = (game) => {
+    const links = [];
+    if (game.steamId) {
+      links.push({ name: "Steam", url: `https://store.steampowered.com/app/${game.steamId}`, icon: <FaSteam />, color: colors.steam });
+    } else {
+      links.push({ name: "Steam", url: `https://store.steampowered.com/search/?term=${encodeURIComponent(game.name)}`, icon: <FaSteam />, color: colors.steam });
+    }
+    links.push({ name: "Amazon", url: `https://www.amazon.de/s?k=${encodeURIComponent(game.name)}`, icon: <FaShoppingCart />, color: colors.amazon });
+    links.push({ name: "Loaded", url: `https://www.loaded.com/de_de/search?q=${encodeURIComponent(game.name)}`, icon: <FaExternalLinkAlt />, color: colors.loaded });
+    return links;
+  };
+
+  const filteredCategoryGames = (games) => {
+    let filtered = [...games];
+    if (categoryFilter.genre) filtered = filtered.filter(g => g.genre === categoryFilter.genre);
+    if (categoryFilter.minRating > 0) filtered = filtered.filter(g => g.finalRating >= categoryFilter.minRating);
+    if (categoryFilter.year > 0) filtered = filtered.filter(g => g.year >= categoryFilter.year);
+    return filtered;
+  };
 
   const results = useMemo(() => {
-    let gameList = games.length > 0 ? games : LOCAL_GAMES;
-    let gameListWithScore = gameList.map(g => ({ 
+    let list = gamesWithData.map(g => ({ 
       ...g, 
-      score: scoreGame(g, selectedMoods, selectedGenres, selectedPlaytime),
-      isFavorite: favorites.includes(g.id),
-      isBacklog: backlog.includes(g.id)
+      score: (selectedMoods.includes(g.mood) ? 40 : 20) + 
+             (selectedGenres.includes(g.genre) ? 40 : 20) + 
+             (selectedPlaytime === g.playtime ? 20 : 0) + 
+             (g.finalRating * 2) 
     }));
-    if (searchQuery) {
-      const q = searchQuery.toLowerCase();
-      gameListWithScore = gameListWithScore.filter(g => g.name.toLowerCase().includes(q));
-    }
-    let sorted = [...gameListWithScore];
-    if (sortBy === "score") sorted.sort((a, b) => b.score - a.score);
-    else if (sortBy === "rating") sorted.sort((a, b) => b.rating - a.rating);
-    else if (sortBy === "year") sorted.sort((a, b) => b.releaseYear - a.releaseYear);
-    else if (sortBy === "popularity") sorted.sort((a, b) => b.popularity - a.popularity);
-    return sorted;
-  }, [games, selectedMoods, selectedGenres, selectedPlaytime, searchQuery, sortBy, favorites, backlog]);
+    if (searchQuery) list = list.filter(g => g.name.toLowerCase().includes(searchQuery.toLowerCase()));
+    if (sortBy === "score") list.sort((a,b) => b.score - a.score);
+    if (sortBy === "rating") list.sort((a,b) => b.finalRating - a.finalRating);
+    if (sortBy === "year") list.sort((a,b) => b.year - a.year);
+    return list;
+  }, [selectedMoods, selectedGenres, selectedPlaytime, searchQuery, sortBy, gamesWithData]);
 
-  const topPicks = useMemo(() => results.slice(0, 10), [results]);
-  const restResults = useMemo(() => results.slice(10), [results]);
-  const mustPlayNow = useMemo(() => [...LOCAL_GAMES].filter(g => g.rating >= 8.5).sort((a, b) => b.rating - a.rating).slice(0, 30), []);
-  const bestAllTime = useMemo(() => [...LOCAL_GAMES].sort((a, b) => b.rating - a.rating).slice(0, 30), []);
-  const hiddenGems = useMemo(() => [...LOCAL_GAMES].filter(g => g.rating >= 8.2 && g.popularity < 85).sort((a, b) => b.rating - a.rating).slice(0, 20), []);
-  const trendingGames = useMemo(() => [...LOCAL_GAMES].sort((a, b) => b.popularity - a.popularity).slice(0, 20), []);
+  const topPicks = results.slice(0, 8);
+  const restResults = results.slice(3);
+  const toggle = (arr, setArr, val) => setArr(prev => prev.includes(val) ? prev.filter(x => x !== val) : [...prev, val]);
 
-  const doRandom = useCallback(() => {
-    let pool = [...LOCAL_GAMES];
-    if (randomFilters.minRating) pool = pool.filter(g => g.rating >= randomFilters.minRating);
-    if (randomFilters.excludeHorror) pool = pool.filter(g => !g.mood.includes("Horror"));
-    if (randomFilters.excludeIndie) pool = pool.filter(g => !g.genre.includes("Indie"));
-    if (randomFilters.excludeOldGames) pool = pool.filter(g => g.releaseYear >= 2015);
-    if (pool.length === 0) pool = LOCAL_GAMES;
-    const randomIndex = Math.floor(Math.random() * pool.length);
-    setRandomGame(pool[randomIndex]);
-  }, [randomFilters]);
+  const animationStyles = `
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes slideIn { from { opacity: 0; transform: translateY(-50px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .fade-in { animation: fadeIn 0.4s ease-out; }
+    .slide-in { animation: slideIn 0.3s ease-out; }
+    .game-card { transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1); cursor: pointer; }
+    .game-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 20px 30px -12px rgba(0,0,0,0.5); }
+    .btn-click:active { transform: scale(0.96); }
+  `;
 
-  const libraryStats = useMemo(() => ({
-    total: library.length,
-    playing: library.filter(g => g.status === "playing").length,
-    completed: library.filter(g => g.status === "completed").length,
-    wishlist: library.filter(g => g.status === "wishlist").length,
-    favorites: favorites.length,
-    backlog: backlog.length,
-  }), [library, favorites, backlog]);
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = animationStyles;
+    document.head.appendChild(style);
+  }, []);
 
-  // ==================================================
-  // 3. STYLES - VOLLBREITE, KEINE RÄNDER
-  // ==================================================
   const styles = {
-    app: { background: BG, minHeight: "100vh", width: "100%", margin: 0, padding: 0 },
-    container: { maxWidth: 1400, margin: "0 auto", padding: "0 20px", width: "100%", boxSizing: "border-box" },
-    header: { textAlign: "center", padding: "20px 0 16px", borderBottom: `1px solid rgba(255,212,0,0.15)`, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 15 },
-    logo: { fontSize: 28, fontWeight: 800, color: ACC, letterSpacing: -1 },
-    tagline: { fontSize: 12, color: "rgba(255,255,255,0.5)", marginTop: 2 },
-    navButtons: { display: "flex", gap: 12, flexWrap: "wrap" },
-    navBtn: (active) => ({ background: active ? ACC : "rgba(255,255,255,0.08)", border: "none", borderRadius: 12, padding: "10px 20px", color: active ? "#0a0a0f" : "#fff", cursor: "pointer", fontWeight: 600, fontSize: 14 }),
-    randomBtn: { background: "rgba(255,212,0,0.15)", border: `1px solid ${ACC}40`, borderRadius: 12, padding: "10px 18px", color: ACC, cursor: "pointer", fontWeight: 600, fontSize: 14 },
-    subNav: { display: "flex", gap: 4, borderBottom: `1px solid rgba(255,255,255,0.08)`, padding: "0", overflowX: "auto", marginTop: 20 },
-    subNavBtn: (active) => ({ background: "none", border: "none", borderBottom: active ? `2px solid ${ACC}` : "2px solid transparent", color: active ? ACC : "rgba(255,255,255,0.6)", padding: "10px 18px", cursor: "pointer", fontSize: 14, fontWeight: active ? 600 : 400, whiteSpace: "nowrap" }),
-    statCard: { background: CARD, borderRadius: 12, padding: "14px 20px", textAlign: "center", minWidth: 90 },
-    statNumber: { fontSize: 26, fontWeight: 800, color: ACC },
-    statLabel: { fontSize: 11, color: "rgba(255,255,255,0.5)", marginTop: 4 },
-    filterRow: { display: "flex", gap: 8, marginBottom: 20, flexWrap: "wrap", alignItems: "center" },
-    filterBtn: (active) => ({ background: active ? ACC : "rgba(255,255,255,0.06)", border: "none", borderRadius: 8, padding: "7px 16px", color: active ? "#0a0a0f" : "#fff", cursor: "pointer", fontSize: 12, fontWeight: active ? 600 : 400 }),
-    searchBar: { background: CARD, border: `1px solid rgba(255,255,255,0.1)`, borderRadius: 10, padding: "12px 16px", color: "#fff", fontSize: 14, width: "100%", outline: "none" },
-    grid: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 16 },
-    gameCard: { background: CARD, borderRadius: 12, overflow: "hidden", cursor: "pointer", transition: "transform 0.2s", border: "1px solid rgba(255,255,255,0.06)", position: "relative" },
-    gameImg: { width: "100%", aspectRatio: "3/4", objectFit: "cover", display: "block" },
-    gameInfo: { padding: "10px" },
-    gameName: { fontSize: 13, fontWeight: 600, color: "#fff", marginBottom: 4, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" },
-    badge: (color) => ({ background: color || "rgba(255,255,255,0.1)", color: "#fff", fontSize: 9, fontWeight: 600, padding: "3px 8px", borderRadius: 10 }),
-    addBtn: { background: ACC, border: "none", borderRadius: 8, padding: "8px 12px", fontSize: 12, fontWeight: 600, cursor: "pointer", marginTop: 8, width: "100%" },
-    selectDark: { background: "#2a2a3a", border: `1px solid ${ACC}40`, borderRadius: 8, padding: "8px 12px", color: "#fff", fontSize: 12, cursor: "pointer", outline: "none" },
-    pillGrid: { display: "flex", flexWrap: "wrap", gap: 8, maxHeight: 280, overflowY: "auto", padding: 4 },
-    pill: (selected) => ({ background: selected ? ACC : "rgba(255,255,255,0.06)", color: selected ? "#0a0a0f" : "rgba(255,255,255,0.8)", border: `1px solid ${selected ? ACC : "rgba(255,255,255,0.1)"}`, borderRadius: 30, padding: "8px 18px", cursor: "pointer", fontSize: 13, fontWeight: selected ? 600 : 400 }),
-    stepContainer: { padding: "30px 0", maxWidth: 900, margin: "0 auto" },
-    stepTitle: { fontSize: 24, fontWeight: 700, marginBottom: 8, color: "#fff" },
-    nextBtn: { marginTop: 28, background: ACC, color: "#0a0a0f", border: "none", borderRadius: 10, padding: "12px 36px", fontSize: 15, fontWeight: 700, cursor: "pointer" },
-    topPicksRow: { display: "flex", gap: 14, marginBottom: 28, overflowX: "auto", paddingBottom: 10 },
-    topPickCard: (i) => ({ minWidth: 270, background: i === 0 ? "linear-gradient(135deg,#2a2408,#1c1c2e)" : CARD, border: `1px solid ${i === 0 ? "rgba(255,212,0,0.3)" : "rgba(255,255,255,0.08)"}`, borderRadius: 12, padding: "12px", cursor: "pointer", position: "relative" }),
-    sectionLabel: { fontSize: 12, fontWeight: 700, color: ACC, letterSpacing: 1, textTransform: "uppercase", marginBottom: 16 },
-    hoverPanel: { position: "fixed", zIndex: 1000, background: "#13131f", border: `1px solid rgba(255,212,0,0.2)`, borderRadius: 14, boxShadow: "0 20px 60px rgba(0,0,0,0.8)", display: "flex", gap: 0, overflow: "hidden", maxWidth: 560 },
-    ratingStars: { display: "flex", gap: 5, flexWrap: "wrap", alignItems: "center", marginTop: 8 },
-    star: (filled) => ({ fontSize: 18, cursor: "pointer", color: filled ? ACC : "rgba(255,255,255,0.2)" }),
-    commentInput: { width: "100%", background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 8, padding: "8px 10px", color: "#fff", fontSize: 11, marginTop: 8, resize: "vertical" },
-    libraryGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 16 },
-    libraryCard: { background: CARD, borderRadius: 12, overflow: "hidden", border: "1px solid rgba(255,255,255,0.06)" },
-    libraryCardHeader: { display: "flex", gap: 12, padding: 12 },
-    libraryImg: { width: 70, height: 93, objectFit: "cover", borderRadius: 8 },
-    profileHeader: { display: "flex", gap: 24, alignItems: "center", background: CARD, borderRadius: 20, padding: 24, marginBottom: 24, flexWrap: "wrap" },
-    profileAvatar: { fontSize: 70, background: "rgba(255,212,0,0.1)", borderRadius: "50%", padding: 16, textAlign: "center" },
-    profileUsername: { fontSize: 26, fontWeight: 800, marginBottom: 4 },
-    achievementsGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 14, marginTop: 16 },
-    achievementCard: { background: CARD, borderRadius: 12, padding: 14, textAlign: "center" },
-    editModal: { position: "fixed", inset: 0, background: "rgba(0,0,0,0.95)", zIndex: 2000, display: "flex", alignItems: "center", justifyContent: "center" },
-    editModalContent: { background: CARD, borderRadius: 20, padding: 24, width: "90%", maxWidth: 400 },
-    aiSearchRow: { display: "flex", gap: 10, marginBottom: 20, alignItems: "center", flexWrap: "wrap" },
-    aiInput: { flex: 1, background: CARD, border: `1px solid ${ACC}40`, borderRadius: 10, padding: "12px 16px", color: "#fff", fontSize: 14, outline: "none", minWidth: 200 },
-    aiButton: { background: "linear-gradient(135deg, #2a2408, #1c1c2e)", border: `1px solid ${ACC}40`, borderRadius: 10, padding: "12px 20px", color: ACC, cursor: "pointer", fontWeight: 600, whiteSpace: "nowrap" },
+    app: { background: colors.bg, minHeight: "100vh", width: "100%", color: colors.text, fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif" },
+    container: { maxWidth: 1200, margin: "0 auto", padding: "0 24px" },
+    header: { padding: "20px 0", borderBottom: `1px solid rgba(255,212,0,0.15)`, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 },
+    logo: { fontSize: 26, fontWeight: 800, display: "flex", alignItems: "center", gap: 10, cursor: "pointer" },
+    logoIcon: { background: `linear-gradient(135deg, ${colors.primary} 0%, ${colors.primaryDark} 100%)`, borderRadius: "14px", padding: "8px 12px", color: colors.bg },
+    logoText: { background: `linear-gradient(135deg, ${colors.primary} 0%, ${colors.primaryDark} 100%)`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" },
+    mainTabs: { display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" },
+    mainTab: (active) => ({ background: active ? colors.primary : "rgba(255,255,255,0.06)", border: "none", borderRadius: 14, padding: "10px 22px", color: active ? colors.bg : colors.text, cursor: "pointer", fontWeight: 600, fontSize: 15, display: "flex", alignItems: "center", gap: 8 }),
+    iconBtn: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 12, padding: "10px 14px", color: colors.text, cursor: "pointer", display: "flex", alignItems: "center", gap: 8, fontSize: 14 },
+    loginBtn: { background: "linear-gradient(135deg, #4285f4, #3367d6)", border: "none", borderRadius: 12, padding: "10px 20px", color: "#fff", cursor: "pointer", fontWeight: 600, display: "flex", alignItems: "center", gap: 8, fontSize: 14 },
+    logoutBtn: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 12, padding: "10px 20px", color: colors.text, cursor: "pointer", display: "flex", alignItems: "center", gap: 8, fontSize: 14 },
+    userAvatar: { width: 36, height: 36, borderRadius: "50%", background: colors.primary, display: "flex", alignItems: "center", justifyContent: "center", color: colors.bg, fontWeight: 700, fontSize: 16 },
+    tabNav: { display: "flex", gap: 4, borderBottom: `1px solid rgba(255,255,255,0.08)`, marginTop: 24, marginBottom: 24, overflowX: "auto" },
+    tabNavBtn: (active) => ({ background: "none", border: "none", borderBottom: active ? `2px solid ${colors.primary}` : "2px solid transparent", color: active ? colors.primary : colors.textSecondary, padding: "12px 24px", cursor: "pointer", fontSize: 14, fontWeight: active ? 600 : 400, whiteSpace: "nowrap" }),
+    grid: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 24 },
+    gameCard: { background: colors.bgCard, borderRadius: 16, overflow: "hidden", cursor: "pointer", border: "1px solid rgba(255,255,255,0.06)", position: "relative" },
+    gameImg: { width: "100%", aspectRatio: "3/4", objectFit: "cover" },
+    gameInfo: { padding: "14px" },
+    gameName: { fontSize: 15, fontWeight: 700, marginBottom: 4, color: colors.text, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" },
+    rating: { display: "flex", alignItems: "center", gap: 4, color: colors.primary, fontSize: 13, fontWeight: 600, marginBottom: 8 },
+    addBtn: { background: colors.primary, border: "none", borderRadius: 10, padding: "10px 12px", fontSize: 13, fontWeight: 600, cursor: "pointer", width: "100%", marginTop: 10, color: colors.bg, display: "flex", alignItems: "center", justifyContent: "center", gap: 8 },
+    searchBar: { background: colors.bgCard, border: `1px solid rgba(255,255,255,0.08)`, borderRadius: 14, padding: "14px 18px", color: colors.text, fontSize: 15, width: "100%", marginBottom: 24, outline: "none" },
+    pillGrid: { display: "flex", flexWrap: "wrap", gap: 12, marginBottom: 28 },
+    pill: (selected) => ({ background: selected ? colors.primary : "rgba(255,255,255,0.06)", border: "none", borderRadius: 40, padding: "12px 24px", color: selected ? colors.bg : colors.text, cursor: "pointer", fontSize: 14, fontWeight: selected ? 600 : 400 }),
+    nextBtn: { background: colors.primary, border: "none", borderRadius: 14, padding: "14px 32px", fontSize: 16, fontWeight: 600, cursor: "pointer", color: colors.bg, marginTop: 28 },
+    stepContainer: { padding: "28px 0", maxWidth: 650, margin: "0 auto" },
+    stepTitle: { fontSize: 28, fontWeight: 700, marginBottom: 28, textAlign: "center", color: colors.text },
+    filterRow: { display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 24, alignItems: "center" },
+    filterBtn: (active) => ({ background: active ? colors.primary : "rgba(255,255,255,0.05)", border: "none", borderRadius: 10, padding: "8px 16px", color: active ? colors.bg : colors.text, cursor: "pointer", fontSize: 13 }),
+    sectionTitle: { fontSize: 24, fontWeight: 700, marginBottom: 24, display: "flex", alignItems: "center", gap: 12, color: colors.text },
+    topPicksRow: { display: "flex", gap: 20, overflowX: "auto", marginBottom: 32, paddingBottom: 12 },
+    topPickCard: { minWidth: 220, background: colors.bgCard, borderRadius: 14, padding: 14, cursor: "pointer", position: "relative" },
+    libraryCard: { background: colors.bgCard, borderRadius: 14, display: "flex", gap: 16, padding: 16, marginBottom: 14, alignItems: "center", flexWrap: "wrap" },
+    libraryImg: { width: 65, height: 87, objectFit: "cover", borderRadius: 10 },
+    libraryInfo: { flex: 1 },
+    libraryTitle: { fontWeight: 700, fontSize: 16, color: colors.text, marginBottom: 4 },
+    libraryMeta: { fontSize: 12, color: colors.textSecondary, marginBottom: 8 },
+    libraryActions: { display: "flex", gap: 10, flexWrap: "wrap" },
+    select: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 10, padding: "8px 14px", color: colors.text, fontSize: 13, cursor: "pointer" },
+    statCard: { background: colors.bgCard, borderRadius: 14, padding: "16px", textAlign: "center", minWidth: 100 },
+    statNumber: { fontSize: 32, fontWeight: 800, color: colors.primary },
+    statLabel: { fontSize: 12, color: colors.textSecondary, marginTop: 4 },
+    statsRow: { display: "flex", gap: 16, marginBottom: 28, flexWrap: "wrap" },
+    profileHeader: { display: "flex", gap: 24, alignItems: "center", background: colors.bgCard, borderRadius: 24, padding: 28, marginBottom: 28, flexWrap: "wrap", justifyContent: "center", textAlign: "center" },
+    profileAvatarLarge: { width: 90, height: 90, borderRadius: "50%", background: colors.primary, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 38, fontWeight: 700, color: colors.bg },
+    editBtn: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 10, padding: "10px 20px", color: colors.text, cursor: "pointer", fontSize: 13, marginTop: 18, display: "inline-flex", alignItems: "center", gap: 8 },
+    lastPlayedRow: { display: "flex", gap: 16, overflowX: "auto", marginBottom: 28, paddingBottom: 10 },
+    lastPlayedCard: { minWidth: 90, background: colors.bgCard, borderRadius: 12, padding: 10, textAlign: "center", cursor: "pointer" },
+    lastPlayedImg: { width: 70, height: 70, objectFit: "cover", borderRadius: 10, marginBottom: 6 },
+    lastPlayedName: { fontSize: 11, color: colors.text, fontWeight: 500 },
+    randomFilterSection: { background: colors.bgCard, borderRadius: 16, padding: 20, marginBottom: 24 },
+    randomFilterTitle: { fontSize: 16, fontWeight: 600, color: colors.text, marginBottom: 16, display: "flex", alignItems: "center", gap: 10 },
+    randomFilterRow: { display: "flex", gap: 20, flexWrap: "wrap", alignItems: "center" },
+    randomCheckbox: { display: "flex", alignItems: "center", gap: 8, cursor: "pointer", fontSize: 13, color: colors.textSecondary },
+    randomSlider: { width: 220, accentColor: colors.primary },
+    randomSelect: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 10, padding: "8px 14px", color: colors.text, fontSize: 13, cursor: "pointer" },
+    aiSection: { background: colors.bgCard, borderRadius: 16, padding: 24, marginBottom: 24 },
+    aiRow: { display: "flex", gap: 14, marginBottom: 20, flexWrap: "wrap" },
+    aiResultBox: { background: "rgba(0,0,0,0.3)", borderRadius: 14, padding: 18, marginTop: 18, fontSize: 14, color: colors.textSecondary, lineHeight: 1.6 },
+    platformSection: { background: colors.bgCard, borderRadius: 16, padding: 20, marginBottom: 24 },
+    platformRow: { display: "flex", gap: 16, flexWrap: "wrap", alignItems: "center", marginBottom: 16 },
+    platformBtn: (bgColor) => ({ background: bgColor, border: "none", borderRadius: 12, padding: "10px 18px", color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", gap: 10, fontSize: 13, fontWeight: 500 }),
+    modalOverlay: { position: "fixed", inset: 0, background: "rgba(0,0,0,0.96)", zIndex: 2000, display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" },
+    modalContent: { background: colors.bgCard, borderRadius: 28, padding: 32, width: "90%", maxWidth: 520, border: `1px solid ${colors.primary}30` },
+    modalTitle: { fontSize: 26, fontWeight: 700, marginBottom: 24, textAlign: "center", color: colors.text },
+    input: { width: "100%", background: "rgba(255,255,255,0.08)", border: `1px solid rgba(255,255,255,0.1)`, borderRadius: 12, padding: "14px 18px", color: colors.text, fontSize: 15, marginBottom: 16, outline: "none" },
+    textarea: { width: "100%", background: "rgba(255,255,255,0.08)", border: `1px solid rgba(255,255,255,0.1)`, borderRadius: 12, padding: "14px 18px", color: colors.text, fontSize: 15, marginBottom: 16, outline: "none", resize: "vertical", fontFamily: "inherit" },
+    passwordWrapper: { position: "relative", width: "100%" },
+    passwordEye: { position: "absolute", right: 16, top: "50%", transform: "translateY(-50%)", cursor: "pointer", color: colors.textSecondary },
+    modalBtn: { background: colors.primary, border: "none", borderRadius: 14, padding: "14px", fontSize: 16, fontWeight: 600, cursor: "pointer", width: "100%", marginTop: 12, color: colors.bg },
+    modalBtnSecondary: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 14, padding: "14px", fontSize: 16, fontWeight: 600, cursor: "pointer", width: "auto", color: colors.text },
+    switchText: { textAlign: "center", marginTop: 16, color: colors.textSecondary, fontSize: 14, cursor: "pointer" },
+    errorText: { color: colors.error, fontSize: 13, textAlign: "center", marginBottom: 14 },
+    successText: { color: colors.success, fontSize: 13, textAlign: "center", marginBottom: 14 },
+    loadingSpinner: { width: 48, height: 48, border: `3px solid ${colors.primary}20`, borderTop: `3px solid ${colors.primary}`, borderRadius: "50%", animation: "spin 1s linear infinite" },
+    emptyState: { textAlign: "center", padding: 60, background: colors.bgCard, borderRadius: 24, color: colors.textSecondary },
+    reviewStars: { display: "flex", gap: 12, justifyContent: "center", marginBottom: 24 },
+    reviewStar: { fontSize: 36, cursor: "pointer", color: colors.textSecondary },
+    reviewCard: { background: colors.bgCard, borderRadius: 14, padding: 16, marginBottom: 14 },
+    reviewHeader: { display: "flex", justifyContent: "space-between", marginBottom: 10 },
+    reviewUsername: { fontWeight: 700, fontSize: 14, color: colors.text },
+    reviewRating: { color: colors.primary, fontSize: 13 },
+    reviewComment: { fontSize: 14, color: colors.textSecondary, lineHeight: 1.4 },
+    reviewActions: { display: "flex", gap: 16, marginTop: 12 },
+    likeBtn: { display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: colors.textSecondary, cursor: "pointer", background: "none", border: "none" },
+    userCard: { background: colors.bgCard, borderRadius: 14, padding: 16, marginBottom: 14, display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" },
+    userAvatarSmall: { width: 48, height: 48, borderRadius: "50%", background: colors.primary, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, fontWeight: 700, color: colors.bg },
+    searchRow: { display: "flex", gap: 14, marginBottom: 24 },
+    gameDetailHeader: { display: "flex", gap: 28, flexWrap: "wrap", marginBottom: 28 },
+    gameDetailImg: { width: 240, borderRadius: 18, objectFit: "cover" },
+    gameDetailInfo: { flex: 1 },
+    gameDetailName: { fontSize: 32, fontWeight: 700, marginBottom: 10, color: colors.text },
+    gameDetailDeveloper: { fontSize: 14, color: colors.textSecondary, marginBottom: 8 },
+    gameDetailRating: { fontSize: 16, color: colors.primary, marginBottom: 12 },
+    gameDetailDescription: { fontSize: 15, color: colors.textSecondary, lineHeight: 1.6, marginBottom: 16 },
+    gameDetailPlatforms: { display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 20 },
+    platformBadge: { background: "rgba(255,255,255,0.1)", borderRadius: 24, padding: "6px 14px", fontSize: 12, color: colors.text },
+    buyButtonsRow: { display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 20 },
+    buyBtn: (bgColor) => ({ background: bgColor, border: "none", borderRadius: 10, padding: "10px 18px", color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", gap: 10, fontSize: 13, fontWeight: 500 }),
+    backBtn: { display: "flex", alignItems: "center", gap: 10, background: "rgba(255,255,255,0.05)", border: "none", borderRadius: 12, padding: "10px 20px", color: colors.text, cursor: "pointer", marginBottom: 24, fontSize: 14 },
+    trailerFrame: { width: "100%", height: 350, borderRadius: 18, marginBottom: 24, border: "none" },
+    settingsSection: { background: colors.bgCard, borderRadius: 16, padding: 24, marginBottom: 24 },
+    settingsRow: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18, flexWrap: "wrap", gap: 14 },
+    settingsLabel: { fontSize: 15, color: colors.text },
+    checkbox: { display: "flex", alignItems: "center", gap: 12, marginBottom: 16, cursor: "pointer", fontSize: 14, color: colors.textSecondary },
   };
 
-  // Library Card Component
-  const LibraryCardComponent = ({ game }) => {
-    const [localComment, setLocalComment] = useState(game.userComment || "");
-    const [localRating, setLocalRating] = useState(game.userRating || 0);
-    const saveTimeout = useRef(null);
-    
-    const handleCommentChange = (e) => {
-      const newComment = e.target.value;
-      setLocalComment(newComment);
-      if (saveTimeout.current) clearTimeout(saveTimeout.current);
-      saveTimeout.current = setTimeout(() => updateUserRating(game.id, localRating, newComment), 1000);
-    };
-    
-    const handleRatingChange = (rating) => {
-      setLocalRating(rating);
-      updateUserRating(game.id, rating, localComment);
-    };
-    
-    useEffect(() => () => { if (saveTimeout.current) clearTimeout(saveTimeout.current); }, []);
-    
-    return (
-      <div style={styles.libraryCard}>
-        <div style={styles.libraryCardHeader}>
-          <img src={game.img} style={styles.libraryImg} alt={game.name} />
-          <div style={{ flex: 1 }}>
-            <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 4, color: "#fff" }}>{game.name}</div>
-            <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", marginBottom: 6 }}>{game.developer} · {game.releaseYear}</div>
-            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 8 }}>
-              <select value={game.status} onChange={(e) => updateGameStatus(game.id, e.target.value)} style={styles.selectDark}>
-                <option value="wishlist">📝 Wishlist</option>
-                <option value="playing">🎮 Playing</option>
-                <option value="completed">✅ Completed</option>
-              </select>
-              <button onClick={() => toggleFavorite(game.id)} style={{ background: favorites.includes(game.id) ? ACC : "rgba(255,255,255,0.08)", border: "none", borderRadius: 6, padding: "6px 12px", color: favorites.includes(game.id) ? "#0a0a0f" : "#fff", fontSize: 11, cursor: "pointer" }}>❤️</button>
-              <button onClick={() => toggleBacklog(game.id)} style={{ background: backlog.includes(game.id) ? ACC : "rgba(255,255,255,0.08)", border: "none", borderRadius: 6, padding: "6px 12px", color: backlog.includes(game.id) ? "#0a0a0f" : "#fff", fontSize: 11, cursor: "pointer" }}>📋</button>
-              <button onClick={() => removeFromLibrary(game.id)} style={{ background: "rgba(255,0,0,0.2)", border: "none", borderRadius: 6, padding: "6px 12px", color: "#ff6b6b", fontSize: 11, cursor: "pointer" }}>🗑️</button>
-            </div>
-          </div>
-        </div>
-        <div style={{ padding: "0 12px 12px 12px", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 8 }}>
-            <span style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>Your Rating:</span>
-            <div style={styles.ratingStars}>
-              {[0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10].map(star => (
-                <span key={star} style={styles.star(localRating >= star)} onClick={() => handleRatingChange(star)}>{star % 1 === 0 ? "★" : "½"}</span>
-              ))}
-            </div>
-            {localRating > 0 && <span style={{ fontSize: 11, color: ACC }}>{localRating}/10</span>}
-          </div>
-          <textarea style={styles.commentInput} placeholder="Your review..." value={localComment} onChange={handleCommentChange} rows={2} />
-          <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", marginTop: 6 }}>Global: ★ {game.rating}/10</div>
-        </div>
-      </div>
-    );
-  };
-
-  const renderGameCard = (game, showButtons = false) => {
+  const GameCard = ({ game, showBtn = false }) => {
+    const isFavorite = favorites.includes(game.id);
     const inLibrary = library.some(g => g.id === game.id);
     return (
-      <div key={game.id} style={styles.gameCard} onMouseEnter={e => handleCardHover(game, e)} onMouseLeave={handleCardLeave}>
-        <div style={{ position: "relative" }}>
-          <img src={game.img} style={styles.gameImg} onError={e => { e.target.src = `https://placehold.co/300x400/1c1c2e/ffd400?text=${encodeURIComponent(game.name?.slice(0,4) || "Game")}`; }} />
-          <div style={{ position: "absolute", top: 6, right: 6, background: "rgba(0,0,0,0.85)", borderRadius: 6, padding: "3px 8px", fontSize: 11, fontWeight: 700, color: ACC }}>{game.rating?.toFixed(1)}</div>
-          <div style={{ position: "absolute", top: 6, left: 6, display: "flex", gap: 4 }}>
-            {favorites.includes(game.id) && <span style={{ fontSize: 14 }}>❤️</span>}
-            {backlog.includes(game.id) && <span style={{ fontSize: 14 }}>📋</span>}
-          </div>
-        </div>
+      <div className="game-card" style={styles.gameCard} onClick={() => openGameDetail(game)}>
+        <img src={game.finalImg || game.img} style={styles.gameImg} alt={game.name} onError={(e) => { e.target.src = `https://placehold.co/300x400/14141f/ffd400?text=${encodeURIComponent(game.name.slice(0,3))}`; }} />
+        <div style={{ position: "absolute", top: 10, right: 10, background: "rgba(0,0,0,0.7)", borderRadius: 20, padding: "3px 10px", fontSize: 12, fontWeight: 700, color: colors.primary }}>★ {game.finalRating?.toFixed(1)}</div>
+        <button className="btn-click" style={{ position: "absolute", top: 10, left: 10, background: "rgba(0,0,0,0.7)", border: "none", borderRadius: 20, padding: "6px 8px", cursor: "pointer" }} onClick={(e) => { e.stopPropagation(); toggleFavorite(game.id); }}>
+          {isFavorite ? <BsFillHeartFill color={colors.primary} size={12} /> : <FaHeart color="#fff" size={12} />}
+        </button>
         <div style={styles.gameInfo}>
           <div style={styles.gameName}>{game.name}</div>
-          <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
-            {game.genre?.slice(0, 2).map(g => <span key={g} style={{ ...styles.badge(), fontSize: 8 }}>{g}</span>)}
-          </div>
-          {showButtons && (
-            <button style={styles.addBtn} onClick={(e) => { e.stopPropagation(); addToLibrary(game, "wishlist"); }}>
-              {inLibrary ? "✓ In Library" : "+ Add"}
-            </button>
-          )}
+          <div style={styles.rating}><FaStar size={11} /> {game.finalRating?.toFixed(1)}</div>
+          <div style={{ fontSize: 11, color: colors.textSecondary, marginBottom: 8 }}>{game.playtime}</div>
+          {showBtn && <button className="btn-click" style={styles.addBtn} onClick={(e) => { e.stopPropagation(); addToLibrary(game); }}>{inLibrary ? <FaCheck size={12} /> : <FaPlus size={12} />} {inLibrary ? "In Library" : "Add"}</button>}
         </div>
       </div>
     );
   };
 
-  const hoverPanelPos = useMemo(() => {
-    if (!hoverPos.winW) return {};
-    const panelW = 560;
-    const right = hoverPos.winW - hoverPos.x;
-    if (right > panelW + 20) return { left: hoverPos.x + 12, top: Math.max(10, hoverPos.y - 20) };
-    return { right: hoverPos.winW - hoverPos.left + 12, top: Math.max(10, hoverPos.y - 20) };
-  }, [hoverPos]);
+  if (loading || gamesLoading) {
+    return <div style={{ background: colors.bg, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}><div style={styles.loadingSpinner}></div></div>;
+  }
+
+  if (currentTab === "gameDetail" && selectedGameDetail) {
+    const buyLinks = getBuyLinks(selectedGameDetail);
+    return (
+      <div style={styles.app}>
+        <div style={styles.container}>
+          <div style={styles.header}>
+            <div style={styles.logo} onClick={() => setCurrentTab("home")}>
+              <span style={styles.logoIcon}>NX</span>
+              <span style={styles.logoText}>NexPlay</span>
+            </div>
+            <div style={styles.mainTabs}>
+              <button className="btn-click" style={styles.iconBtn} onClick={() => setShowSettings(true)}><FaCog /> Settings</button>
+              {!user ? <button className="btn-click" style={styles.loginBtn} onClick={() => setShowLoginModal(true)}><FaEnvelope /> Login</button> :
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <div style={styles.userAvatar}>{userData?.username?.charAt(0).toUpperCase()}</div>
+                  <button className="btn-click" style={styles.logoutBtn} onClick={logout}>Logout</button>
+                </div>}
+            </div>
+          </div>
+          <button className="btn-click" style={styles.backBtn} onClick={closeGameDetail}><FaArrowLeft /> Back</button>
+          <div className="fade-in" style={styles.gameDetailHeader}>
+            <img src={selectedGameDetail.finalImg || selectedGameDetail.img} style={styles.gameDetailImg} alt={selectedGameDetail.name} />
+            <div style={styles.gameDetailInfo}>
+              <div style={styles.gameDetailName}>{selectedGameDetail.name}</div>
+              <div style={styles.gameDetailDeveloper}>{selectedGameDetail.developer}</div>
+              <div style={styles.gameDetailRating}>★ {selectedGameDetail.finalRating?.toFixed(1)} · {selectedGameDetail.year} · {selectedGameDetail.playtime}</div>
+              <div style={styles.gameDetailDescription}>{selectedGameDetail.description}</div>
+              <div style={styles.gameDetailPlatforms}>{selectedGameDetail.platforms?.map(p => <span key={p} style={styles.platformBadge}>{p}</span>)}</div>
+              <div style={styles.buyButtonsRow}>{buyLinks.map(link => <button key={link.name} className="btn-click" style={styles.buyBtn(link.color)} onClick={() => window.open(link.url, "_blank")}>{link.icon} Buy on {link.name}</button>)}</div>
+              <button className="btn-click" style={{ ...styles.addBtn, width: "auto", display: "inline-flex" }} onClick={() => addToLibrary(selectedGameDetail)}>+ Add to Library</button>
+            </div>
+          </div>
+          {selectedGameDetail.trailer && <iframe src={selectedGameDetail.trailer} style={styles.trailerFrame} title="Trailer" allowFullScreen />}
+          <div className="fade-in">
+            <div style={styles.sectionTitle}>Write a Review</div>
+            <div style={styles.reviewStars}>{[1,2,3,4,5].map(star => <span key={star} className="btn-click" style={{ ...styles.reviewStar, color: star <= reviewRating ? colors.primary : colors.textSecondary }} onClick={() => setReviewRating(star)}>★</span>)}</div>
+            <textarea style={styles.textarea} placeholder="Your review..." rows="2" value={reviewComment} onChange={e => setReviewComment(e.target.value)} />
+            <button className="btn-click" style={styles.modalBtn} onClick={submitGameDetailReview}>Submit Review</button>
+          </div>
+          <div className="fade-in" style={{ marginTop: 28 }}>
+            <div style={styles.sectionTitle}>Reviews ({gameDetailReviews.length})</div>
+            {gameDetailReviews.length === 0 ? <div style={styles.emptyState}>No reviews yet. Be the first!</div> :
+              gameDetailReviews.map(review => (
+                <div key={review.id} style={styles.reviewCard}>
+                  <div style={styles.reviewHeader}>
+                    <span style={styles.reviewUsername}>{review.username}</span>
+                    <span style={styles.reviewRating}>★ {review.rating}/5</span>
+                  </div>
+                  <div style={styles.reviewComment}>{review.comment || "No comment"}</div>
+                  {user && (
+                    <div style={styles.reviewActions}>
+                      <button className="btn-click" style={styles.likeBtn} onClick={() => handleLikeReview(review.id)}><FaThumbsUp /> {review.likes?.length || 0}</button>
+                      <button className="btn-click" style={styles.likeBtn} onClick={() => handleDislikeReview(review.id)}><FaThumbsDown /> {review.dislikes?.length || 0}</button>
+                    </div>
+                  )}
+                </div>
+              ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div style={styles.app}>
+    <div style={styles.app} onClick={initAudio}>
       <div style={styles.container}>
         <div style={styles.header}>
-          <div>
-            <div style={styles.logo}>🎮 NexPlay</div>
-            <div style={styles.tagline}>Find • Track • Review • Discover</div>
+          <div style={styles.logo} onClick={() => setCurrentTab("home")}>
+            <span style={styles.logoIcon}>NX</span>
+            <span style={styles.logoText}>NexPlay</span>
           </div>
-          <div style={styles.navButtons}>
-            <button style={styles.navBtn(currentPage === "home")} onClick={() => setCurrentPage("home")}>🏠 Home</button>
-            <button style={styles.navBtn(currentPage === "trending")} onClick={() => setCurrentPage("trending")}>📈 Trending</button>
-            <button style={styles.navBtn(currentPage === "library")} onClick={() => setCurrentPage("library")}>📚 Library ({library.length})</button>
-            <button style={styles.navBtn(currentPage === "profile")} onClick={() => setCurrentPage("profile")}>👤 Profile</button>
-            <button style={styles.randomBtn} onClick={() => { setShowRandomModal(true); doRandom(); }}>🎲 Random</button>
-          </div>
-        </div>
-
-        {/* AI SEARCH BAR */}
-        <div style={{ margin: "20px 0" }}>
-          <div style={styles.aiSearchRow}>
-            <input style={styles.aiInput} placeholder="🔍 AI Search: 'I want something like Firewatch but darker'" value={aiSearchQuery} onChange={e => setAiSearchQuery(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleAiSearch()} />
-            <button style={styles.aiButton} onClick={handleAiSearch} disabled={isAiSearching}>{isAiSearching ? "🤔 Thinking..." : "✨ AI Search"}</button>
+          <div style={styles.mainTabs}>
+            <button className="btn-click" style={styles.mainTab(currentTab === "home")} onClick={() => setCurrentTab("home")}><FaHome /> Discover</button>
+            <button className="btn-click" style={styles.mainTab(currentTab === "library")} onClick={() => setCurrentTab("library")}><BsFillCollectionFill /> Library</button>
+            <button className="btn-click" style={styles.mainTab(currentTab === "profile")} onClick={() => setCurrentTab("profile")}><FaUser /> Profile</button>
+            <button className="btn-click" style={styles.mainTab(currentTab === "friends")} onClick={() => setCurrentTab("friends")}><FaUsers /> Friends</button>
+            <button className="btn-click" style={styles.mainTab(currentTab === "ai")} onClick={() => setCurrentTab("ai")}><FaRobot /> AI</button>
+            <button className="btn-click" style={styles.iconBtn} onClick={() => setShowSettings(true)}><FaCog /></button>
+            {!user ? <button className="btn-click" style={styles.loginBtn} onClick={() => setShowLoginModal(true)}><FaEnvelope /> Login</button> :
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <div style={styles.userAvatar}>{userData?.username?.charAt(0).toUpperCase()}</div>
+                <button className="btn-click" style={styles.logoutBtn} onClick={logout}>Logout</button>
+              </div>}
           </div>
         </div>
 
-        {/* TRENDING PAGE */}
-        {currentPage === "trending" && (
-          <div>
-            <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 20 }}>📈 Trending Now</h2>
-            <div style={styles.grid}>{trendingGames.map(g => renderGameCard(g, true))}</div>
-          </div>
-        )}
-
-        {/* PROFILE PAGE */}
-        {currentPage === "profile" && (
-          <div>
-            <div style={styles.profileHeader}>
-              <div style={styles.profileAvatar}>{profile.avatar}</div>
-              <div style={{ flex: 1 }}>
-                <div style={styles.profileUsername}>{profile.username}</div>
-                <div style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", marginBottom: 12 }}>Member since: {new Date(profile.joinDate).toLocaleDateString()}</div>
-                <button style={styles.filterBtn(true)} onClick={() => setShowEditProfile(true)}>✏️ Edit Profile</button>
-                <div style={{ display: "flex", gap: 20, flexWrap: "wrap", marginTop: 16 }}>
-                  <div><div style={styles.statNumber}>{libraryStats.total}</div><div style={styles.statLabel}>Games</div></div>
-                  <div><div style={styles.statNumber}>{libraryStats.completed}</div><div style={styles.statLabel}>Completed</div></div>
-                  <div><div style={styles.statNumber}>{profile.achievements.avgRating}</div><div style={styles.statLabel}>Avg Rating</div></div>
-                  <div><div style={styles.statNumber}>{libraryStats.favorites}</div><div style={styles.statLabel}>Favorites</div></div>
-                </div>
-              </div>
-            </div>
-            
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 16, marginBottom: 24 }}>
-              <div style={styles.statCard}><div style={styles.statNumber}>{profile.favoriteGenre || "—"}</div><div style={styles.statLabel}>Favorite Genre</div></div>
-              <div style={styles.statCard}><div style={styles.statNumber}>{profile.favoriteMood || "—"}</div><div style={styles.statLabel}>Favorite Mood</div></div>
-            </div>
-            
-            <div style={styles.sectionLabel}>🏆 Achievements</div>
-            <div style={styles.achievementsGrid}>
-              <div style={styles.achievementCard}><div style={{ fontSize: 32, marginBottom: 4 }}>🏅</div><div>First Game</div>{library.length >= 1 && <div style={{ color: ACC }}>✓</div>}</div>
-              <div style={styles.achievementCard}><div style={{ fontSize: 32, marginBottom: 4 }}>⭐</div><div>Rater (5+)</div>{profile.achievements.totalRatings >= 5 && <div style={{ color: ACC }}>✓</div>}</div>
-              <div style={styles.achievementCard}><div style={{ fontSize: 32, marginBottom: 4 }}>🎮</div><div>Collector (10+)</div>{library.length >= 10 && <div style={{ color: ACC }}>✓</div>}</div>
-              <div style={styles.achievementCard}><div style={{ fontSize: 32, marginBottom: 4 }}>✅</div><div>Completionist (5+)</div>{profile.achievements.gamesCompleted >= 5 && <div style={{ color: ACC }}>✓</div>}</div>
-            </div>
-          </div>
-        )}
-
-        {/* LIBRARY PAGE */}
-        {currentPage === "library" && (
-          <div>
-            <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 10 }}>📚 My Game Library</h2>
-            <div style={{ display: "flex", gap: 16, marginBottom: 24, flexWrap: "wrap" }}>
-              <div style={styles.statCard}><div style={styles.statNumber}>{libraryStats.total}</div><div>Total</div></div>
-              <div style={styles.statCard}><div style={styles.statNumber}>{libraryStats.playing}</div><div>Playing</div></div>
-              <div style={styles.statCard}><div style={styles.statNumber}>{libraryStats.completed}</div><div>Completed</div></div>
-              <div style={styles.statCard}><div style={styles.statNumber}>{libraryStats.wishlist}</div><div>Wishlist</div></div>
-            </div>
-            
-            <input style={styles.searchBar} placeholder="🔍 Search library..." value={librarySearchQuery} onChange={e => setLibrarySearchQuery(e.target.value)} />
-            
-            <div style={styles.filterRow}>
-              <span>Filter:</span>
-              <button style={styles.filterBtn(libraryFilter === "all")} onClick={() => setLibraryFilter("all")}>All</button>
-              <button style={styles.filterBtn(libraryFilter === "playing")} onClick={() => setLibraryFilter("playing")}>🎮 Playing</button>
-              <button style={styles.filterBtn(libraryFilter === "completed")} onClick={() => setLibraryFilter("completed")}>✅ Completed</button>
-              <button style={styles.filterBtn(libraryFilter === "wishlist")} onClick={() => setLibraryFilter("wishlist")}>📝 Wishlist</button>
-              <span style={{ marginLeft: "auto" }}>Sort:</span>
-              <button style={styles.filterBtn(librarySort === "date")} onClick={() => setLibrarySort("date")}>📅 Date</button>
-              <button style={styles.filterBtn(librarySort === "rating")} onClick={() => setLibrarySort("rating")}>⭐ Rating</button>
-              <button style={styles.filterBtn(librarySort === "name")} onClick={() => setLibrarySort("name")}>🔤 Name</button>
-            </div>
-            
-            {filteredLibrary.length === 0 ? (
-              <div style={{ textAlign: "center", padding: 60, background: CARD, borderRadius: 16 }}>
-                <div style={{ fontSize: 48, marginBottom: 16 }}>📭</div>
-                <div style={{ fontSize: 18, marginBottom: 8 }}>Your library is empty</div>
-                <button style={styles.filterBtn(true)} onClick={() => setCurrentPage("home")}>🔍 Browse Games</button>
-              </div>
-            ) : (
-              <div style={styles.libraryGrid}>{filteredLibrary.map(game => <LibraryCardComponent key={game.id} game={game} />)}</div>
-            )}
-          </div>
-        )}
-
-        {/* HOME PAGE */}
-        {currentPage === "home" && (
-          <>
-            <div style={styles.subNav}>
-              {[["discover","🔍 Discover"],["must","🔥 Must Play"],["best","🏆 Best Ever"],["gems","💎 Hidden Gems"]].map(([id, label]) => (
-                <button key={id} style={styles.subNavBtn(activeTab === id)} onClick={() => setActiveTab(id)}>{label}</button>
-              ))}
+        {currentTab === "home" && (
+          <div className="fade-in">
+            <div style={styles.tabNav}>
+              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "discover")} onClick={() => setDiscoverSubTab("discover")}>🔍 Discover</button>
+              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "must")} onClick={() => setDiscoverSubTab("must")}>🔥 Must Play</button>
+              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "best")} onClick={() => setDiscoverSubTab("best")}>🏆 Best Ever</button>
+              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "gems")} onClick={() => setDiscoverSubTab("gems")}>💎 Hidden Gems</button>
             </div>
 
-            {activeTab === "discover" && (
+            {discoverSubTab === "discover" && (
               <>
+                <div style={styles.randomFilterSection}>
+                  <div style={styles.randomFilterTitle}><FaRandom /> Random Game</div>
+                  <div style={styles.randomFilterRow}>
+                    <label className="btn-click" style={styles.randomCheckbox}><input type="checkbox" checked={randomExcludeHorror} onChange={e => setRandomExcludeHorror(e.target.checked)} /> Exclude Horror</label>
+                    <label className="btn-click" style={styles.randomCheckbox}><input type="checkbox" checked={randomExcludeIndie} onChange={e => setRandomExcludeIndie(e.target.checked)} /> Exclude Indie</label>
+                    <label className="btn-click" style={styles.randomCheckbox}><input type="checkbox" checked={randomExcludeOld} onChange={e => setRandomExcludeOld(e.target.checked)} /> Exclude before 2015</label>
+                    <div><span style={{ color: colors.textSecondary }}>Min Rating: {randomMinRating}</span><input type="range" min="0" max="10" step="0.5" value={randomMinRating} onChange={e => setRandomMinRating(parseFloat(e.target.value))} style={styles.randomSlider} /></div>
+                    <select className="btn-click" value={randomMode} onChange={e => setRandomMode(e.target.value)} style={styles.randomSelect}>
+                      <option value="full">Fully Random</option><option value="genre">Random by Genre</option><option value="mood">Random by Mood</option>
+                    </select>
+                    <button className="btn-click" style={styles.loginBtn} onClick={doRandom}><FaRandom /> Random Game</button>
+                  </div>
+                </div>
+
+                <div style={styles.tabNav}>
+                  <button className="btn-click" style={styles.tabNavBtn(step === 1)} onClick={() => setStep(1)}>Mood</button>
+                  <button className="btn-click" style={styles.tabNavBtn(step === 2)} onClick={() => setStep(2)}>Genre</button>
+                  <button className="btn-click" style={styles.tabNavBtn(step === 3)} onClick={() => setStep(3)}>Playtime</button>
+                  <button className="btn-click" style={styles.tabNavBtn(step === 4)} onClick={() => setStep(4)}>Results</button>
+                </div>
+
                 {step === 1 && (
-                  <div style={styles.stepContainer}>
+                  <div className="slide-in">
                     <div style={styles.stepTitle}>What's your mood? 🎭</div>
-                    <div style={styles.pillGrid}>{MOODS.map(m => <button key={m} style={styles.pill(selectedMoods.includes(m))} onClick={() => toggle(selectedMoods, setSelectedMoods, m)}>{m}</button>)}</div>
-                    <button style={styles.nextBtn} onClick={() => setStep(2)}>Next →</button>
+                    <div style={styles.pillGrid}>{MOODS.map(m => <button key={m} className="btn-click" style={styles.pill(selectedMoods.includes(m))} onClick={() => toggle(selectedMoods, setSelectedMoods, m)}>{m}</button>)}</div>
+                    <button className="btn-click" style={styles.nextBtn} onClick={() => setStep(2)}>Next →</button>
                   </div>
                 )}
                 {step === 2 && (
-                  <div style={styles.stepContainer}>
+                  <div className="slide-in">
                     <div style={styles.stepTitle}>Pick your genres 🎮</div>
-                    <div style={styles.pillGrid}>{GENRES.map(g => <button key={g} style={styles.pill(selectedGenres.includes(g))} onClick={() => toggle(selectedGenres, setSelectedGenres, g)}>{g}</button>)}</div>
-                    <button style={styles.nextBtn} onClick={() => setStep(3)}>Next →</button>
+                    <div style={styles.pillGrid}>{GENRES.map(g => <button key={g} className="btn-click" style={styles.pill(selectedGenres.includes(g))} onClick={() => toggle(selectedGenres, setSelectedGenres, g)}>{g}</button>)}</div>
+                    <button className="btn-click" style={styles.nextBtn} onClick={() => setStep(3)}>Next →</button>
                   </div>
                 )}
                 {step === 3 && (
-                  <div style={styles.stepContainer}>
+                  <div className="slide-in">
                     <div style={styles.stepTitle}>How long? ⏱️</div>
-                    <div style={styles.pillGrid}>{PLAYTIMES.map(p => <button key={p} style={{ ...styles.pill(selectedPlaytime === p), padding: "10px 20px" }} onClick={() => setSelectedPlaytime(p === selectedPlaytime ? null : p)}>{p}</button>)}</div>
-                    <button style={styles.nextBtn} onClick={() => setStep(4)}>Show Results 🚀</button>
+                    <div style={styles.pillGrid}>{PLAYTIMES.map(p => <button key={p} className="btn-click" style={styles.pill(selectedPlaytime === p)} onClick={() => setSelectedPlaytime(p === selectedPlaytime ? null : p)}>{p}</button>)}</div>
+                    <button className="btn-click" style={styles.nextBtn} onClick={() => setStep(4)}>Show Results 🚀</button>
                   </div>
                 )}
                 {step === 4 && (
-                  <div>
-                    <input style={styles.searchBar} placeholder="🔍 Search games..." value={searchQuery} onChange={e => handleSearch(e.target.value)} />
+                  <div className="fade-in">
+                    <input style={styles.searchBar} placeholder="Search games..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
                     <div style={styles.filterRow}>
                       <span>Sort:</span>
-                      {[["score","⚡ Match"],["rating","⭐ Rating"],["year","📅 New"],["popularity","🔥 Popular"]].map(([id, label]) => <button key={id} style={styles.filterBtn(sortBy === id)} onClick={() => setSortBy(id)}>{label}</button>)}
-                      <span style={{ marginLeft: "auto" }}>{results.length} games</span>
+                      <button className="btn-click" style={styles.filterBtn(sortBy === "score")} onClick={() => setSortBy("score")}>Best Match</button>
+                      <button className="btn-click" style={styles.filterBtn(sortBy === "rating")} onClick={() => setSortBy("rating")}>Rating</button>
+                      <button className="btn-click" style={styles.filterBtn(sortBy === "year")} onClick={() => setSortBy("year")}>Year</button>
                     </div>
-                    
                     {topPicks.length > 0 && (
-                      <div style={{ marginBottom: 28 }}>
-                        <div style={styles.sectionLabel}>🎯 Top Picks For You →</div>
-                        <div style={styles.topPicksRow}>
-                          {topPicks.map((g, i) => (
-                            <div key={g.id} style={styles.topPickCard(i)} onMouseEnter={e => handleCardHover(g, e)} onMouseLeave={handleCardLeave}>
-                              <div style={{ position: "absolute", top: 10, right: 10, fontSize: 20 }}>{["🥇","🥈","🥉","4","5","6","7","8","9","10"][i]}</div>
-                              <div style={{ display: "flex", gap: 12 }}>
-                                <img src={g.img} style={{ width: 55, height: 73, objectFit: "cover", borderRadius: 8 }} />
-                                <div style={{ flex: 1 }}>
-                                  <div style={{ fontWeight: 700, fontSize: 13 }}>{g.name}</div>
-                                  <div style={{ fontSize: 11, color: ACC }}>★ {g.rating} · {g.releaseYear}</div>
-                                  <div style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>{g.description?.slice(0, 60)}…</div>
-                                  <button style={styles.addBtn} onClick={(e) => { e.stopPropagation(); addToLibrary(g, "wishlist"); }}>+ Library</button>
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
+                      <div>
+                        <div style={styles.sectionTitle}>🎯 Top Picks For You</div>
+                        <div style={styles.topPicksRow}>{topPicks.map((g,i) => <div key={g.id} className="game-card" style={styles.topPickCard} onClick={() => openGameDetail(g)}><div style={{ fontSize: 24, marginBottom: 8 }}>{["🥇","🥈","🥉","4","5","6","7","8"][i]}</div><img src={g.finalImg || g.img} style={{ width: "100%", height: 90, objectFit: "cover", borderRadius: 10 }} alt={g.name} /><div style={{ fontWeight: 700, marginTop: 10, color: colors.text }}>{g.name}</div><div style={{ fontSize: 12, color: colors.primary }}>★ {g.finalRating?.toFixed(1)}</div><button className="btn-click" style={styles.addBtn} onClick={(e) => { e.stopPropagation(); addToLibrary(g); }}>+ Add</button></div>)}</div>
                       </div>
                     )}
-                    
-                    <div style={styles.sectionLabel}>📋 All Results</div>
-                    <div style={styles.grid}>{restResults.map(g => renderGameCard(g, true))}</div>
+                    <div style={styles.sectionTitle}>📋 All Results</div>
+                    <div style={styles.grid}>{restResults.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
                   </div>
                 )}
               </>
             )}
-            {activeTab === "must" && <div style={styles.grid}>{mustPlayNow.map(g => renderGameCard(g, true))}</div>}
-            {activeTab === "best" && <div style={styles.grid}>{bestAllTime.map(g => renderGameCard(g, true))}</div>}
-            {activeTab === "gems" && <div style={styles.grid}>{hiddenGems.map(g => renderGameCard(g, true))}</div>}
-          </>
-        )}
 
-        {/* EDIT PROFILE MODAL */}
-        {showEditProfile && (
-          <div style={styles.editModal} onClick={() => setShowEditProfile(false)}>
-            <div style={styles.editModalContent} onClick={e => e.stopPropagation()}>
-              <h3 style={{ marginBottom: 16, fontSize: 20 }}>Edit Profile</h3>
-              <div style={{ textAlign: "center", fontSize: 48, marginBottom: 12 }}>{editAvatar}</div>
-              <input style={styles.searchBar} placeholder="Avatar Emoji (🎮, 👾, 🎲)" value={editAvatar} onChange={e => setEditAvatar(e.target.value)} />
-              <input style={styles.searchBar} placeholder="Username" value={editUsername} onChange={e => setEditUsername(e.target.value)} />
-              <div style={{ display: "flex", gap: 12, justifyContent: "flex-end", marginTop: 16 }}>
-                <button style={styles.filterBtn(false)} onClick={() => setShowEditProfile(false)}>Cancel</button>
-                <button style={styles.filterBtn(true)} onClick={() => { setProfile(prev => ({ ...prev, username: editUsername, avatar: editAvatar })); setShowEditProfile(false); }}>Save</button>
+            {discoverSubTab === "must" && (
+              <div>
+                <div style={styles.randomFilterSection}>
+                  <div style={styles.randomFilterTitle}><FaFilter /> Filter</div>
+                  <div style={styles.randomFilterRow}>
+                    <select className="btn-click" onChange={e => setCategoryFilter({ ...categoryFilter, genre: e.target.value })} style={styles.select}><option value="">Genre</option>{GENRES.map(g => <option key={g} value={g}>{g}</option>)}</select>
+                    <input type="number" placeholder="Min Rating" style={{ ...styles.input, width: 110, marginBottom: 0 }} onChange={e => setCategoryFilter({ ...categoryFilter, minRating: parseFloat(e.target.value) || 0 })} />
+                    <input type="number" placeholder="Min Year" style={{ ...styles.input, width: 110, marginBottom: 0 }} onChange={e => setCategoryFilter({ ...categoryFilter, year: parseInt(e.target.value) || 0 })} />
+                    <button className="btn-click" style={styles.filterBtn(false)} onClick={() => setCategoryFilter({ genre: "", minRating: 0, year: 0 })}>Clear</button>
+                  </div>
+                </div>
+                <div style={styles.grid}>{filteredCategoryGames(MUST_PLAY_GAMES).slice(0, 40).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
               </div>
-            </div>
+            )}
+
+            {discoverSubTab === "best" && (
+              <div>
+                <div style={styles.randomFilterSection}>
+                  <div style={styles.randomFilterTitle}><FaFilter /> Filter</div>
+                  <div style={styles.randomFilterRow}>
+                    <select className="btn-click" onChange={e => setCategoryFilter({ ...categoryFilter, genre: e.target.value })} style={styles.select}><option value="">Genre</option>{GENRES.map(g => <option key={g} value={g}>{g}</option>)}</select>
+                    <input type="number" placeholder="Min Rating" style={{ ...styles.input, width: 110, marginBottom: 0 }} onChange={e => setCategoryFilter({ ...categoryFilter, minRating: parseFloat(e.target.value) || 0 })} />
+                    <input type="number" placeholder="Min Year" style={{ ...styles.input, width: 110, marginBottom: 0 }} onChange={e => setCategoryFilter({ ...categoryFilter, year: parseInt(e.target.value) || 0 })} />
+                    <button className="btn-click" style={styles.filterBtn(false)} onClick={() => setCategoryFilter({ genre: "", minRating: 0, year: 0 })}>Clear</button>
+                  </div>
+                </div>
+                <div style={styles.grid}>{filteredCategoryGames(BEST_EVER_GAMES).slice(0, 40).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
+              </div>
+            )}
+
+            {discoverSubTab === "gems" && (
+              <div>
+                <div style={styles.randomFilterSection}>
+                  <div style={styles.randomFilterTitle}><FaFilter /> Filter</div>
+                  <div style={styles.randomFilterRow}>
+                    <select className="btn-click" onChange={e => setCategoryFilter({ ...categoryFilter, genre: e.target.value })} style={styles.select}><option value="">Genre</option>{GENRES.map(g => <option key={g} value={g}>{g}</option>)}</select>
+                    <input type="number" placeholder="Min Rating" style={{ ...styles.input, width: 110, marginBottom: 0 }} onChange={e => setCategoryFilter({ ...categoryFilter, minRating: parseFloat(e.target.value) || 0 })} />
+                    <input type="number" placeholder="Min Year" style={{ ...styles.input, width: 110, marginBottom: 0 }} onChange={e => setCategoryFilter({ ...categoryFilter, year: parseInt(e.target.value) || 0 })} />
+                    <button className="btn-click" style={styles.filterBtn(false)} onClick={() => setCategoryFilter({ genre: "", minRating: 0, year: 0 })}>Clear</button>
+                  </div>
+                </div>
+                <div style={styles.grid}>{filteredCategoryGames(HIDDEN_GEMS_GAMES).slice(0, 30).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
+              </div>
+            )}
           </div>
         )}
 
-        {/* RANDOM MODAL */}
-        {showRandomModal && randomGame && (
-          <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.96)", zIndex: 2000, overflow: "auto" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", padding: "20px 28px", borderBottom: `1px solid ${ACC}30` }}>
-              <div style={{ fontSize: 22, fontWeight: 800, color: ACC }}>🎲 Random Game</div>
-              <button style={{ background: "none", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 8, color: "#fff", padding: "8px 16px", cursor: "pointer" }} onClick={() => setShowRandomModal(false)}>✕ Close</button>
+        {currentTab === "library" && (
+          <div className="fade-in">
+            <div style={styles.sectionTitle}>📚 My Library ({library.length})</div>
+            <div style={styles.statsRow}>
+              <div style={styles.statCard}><div style={styles.statNumber}>{library.length}</div><div>Total</div></div>
+              <div style={styles.statCard}><div style={styles.statNumber}>{library.filter(g => g.status === "playing").length}</div><div>Playing</div></div>
+              <div style={styles.statCard}><div style={styles.statNumber}>{library.filter(g => g.status === "completed").length}</div><div>Completed</div></div>
             </div>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 24, padding: 28 }}>
-              <div style={{ width: 260, background: CARD, borderRadius: 16, padding: 20 }}>
-                <h3 style={{ marginBottom: 16 }}>Filters</h3>
-                <div style={{ marginBottom: 16 }}>
-                  <div style={{ fontSize: 12, color: ACC }}>⭐ Min Rating</div>
-                  <input type="range" min={0} max={10} step={0.5} value={randomFilters.minRating} onChange={e => setRandomFilters(prev => ({ ...prev, minRating: parseFloat(e.target.value) }))} style={{ width: "100%", accentColor: ACC }} />
-                  <div>{randomFilters.minRating}</div>
-                </div>
-                <label style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}><input type="checkbox" checked={randomFilters.excludeHorror} onChange={e => setRandomFilters(prev => ({ ...prev, excludeHorror: e.target.checked }))} /> Exclude Horror</label>
-                <label style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}><input type="checkbox" checked={randomFilters.excludeIndie} onChange={e => setRandomFilters(prev => ({ ...prev, excludeIndie: e.target.checked }))} /> Exclude Indie</label>
-                <label style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}><input type="checkbox" checked={randomFilters.excludeOldGames} onChange={e => setRandomFilters(prev => ({ ...prev, excludeOldGames: e.target.checked }))} /> Exclude before 2015</label>
-                <button style={{ ...styles.filterBtn(true), width: "100%", marginTop: 16 }} onClick={() => { doRandom(); }}>🎲 Roll Again</button>
-              </div>
-              <div style={{ flex: 1, background: CARD, borderRadius: 16, padding: 24 }}>
-                <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
-                  <img src={randomGame.img} style={{ width: 160, borderRadius: 12 }} />
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{randomGame.name}</div>
-                    <div style={{ fontSize: 14, color: ACC, marginBottom: 12 }}>★ {randomGame.rating} · {randomGame.releaseYear}</div>
-                    <div style={{ fontSize: 13, lineHeight: 1.5, marginBottom: 16 }}>{randomGame.description}</div>
-                    <button style={styles.addBtn} onClick={() => { addToLibrary(randomGame, "wishlist"); setShowRandomModal(false); }}>+ Add to Library</button>
+            {library.length === 0 ? <div style={styles.emptyState}>Your library is empty. Add games from Discover!</div> : library.map(game => (
+              <div key={game.id} className="fade-in" style={styles.libraryCard}>
+                <img src={game.finalImg || game.img} style={styles.libraryImg} onClick={() => openGameDetail(game)} alt={game.name} />
+                <div style={styles.libraryInfo}>
+                  <div style={styles.libraryTitle}>{game.name}</div>
+                  <div style={styles.libraryMeta}>{game.developer} · {game.year}</div>
+                  <div style={styles.libraryActions}>
+                    <select className="btn-click" value={game.status} onChange={e => updateStatus(game.id, e.target.value, game)} style={styles.select}>
+                      <option value="wishlist">📝 Wishlist</option><option value="playing">🎮 Playing</option><option value="completed">✅ Completed</option>
+                    </select>
+                    <button className="btn-click" onClick={() => toggleFavorite(game.id)} style={styles.select}><FaHeart color={favorites.includes(game.id) ? colors.primary : "#fff"} /></button>
+                    <button className="btn-click" onClick={() => markAsPlayed(game)} style={styles.select}><FaClock /> Played</button>
+                    <button className="btn-click" onClick={() => removeFromLibrary(game.id)} style={{ ...styles.select, color: "#ff6b6b" }}>Remove</button>
                   </div>
                 </div>
               </div>
-            </div>
+            ))}
           </div>
         )}
 
-        {/* HOVER PANEL */}
-        {hoveredGame && (
-          <div ref={hoverPanelRef} style={{ ...styles.hoverPanel, ...hoverPanelPos }} onMouseLeave={handleCardLeave}>
-            <div style={{ width: 200, background: "#0a0a0f" }}>
-              <iframe src={`${hoveredGame.trailer}?autoplay=1&mute=1&controls=0&loop=1`} style={{ width: "100%", height: 260, border: "none" }} allow="autoplay" title={hoveredGame.name} />
+        {currentTab === "profile" && (
+          <div className="fade-in">
+            {user ? (
+              <>
+                <div style={styles.profileHeader}>
+                  <div style={styles.profileAvatarLarge}>{userData?.username?.charAt(0).toUpperCase()}</div>
+                  <div>
+                    <div style={{ fontSize: 24, fontWeight: 700, display: "flex", alignItems: "center", gap: 8 }}>{userData?.username}{userData?.username === "Sherlock10K" && <span style={{ color: colors.primary }}>👑</span>}</div>
+                    <div style={{ fontSize: 13, color: colors.textSecondary }}>{user.email}</div>
+                    <div style={{ fontSize: 13, color: colors.textSecondary, marginBottom: 14 }}>{userData?.bio || "No bio"}</div>
+                    <div style={styles.statsRow}>
+                      <div><div style={styles.statNumber}>{library.length}</div><div>Games</div></div>
+                      <div><div style={styles.statNumber}>{library.filter(g => g.status === "completed").length}</div><div>Completed</div></div>
+                      <div><div style={styles.statNumber}>{favorites.length}</div><div>Favorites</div></div>
+                    </div>
+                    <button className="btn-click" style={styles.editBtn} onClick={openEditModal}><FaEdit /> Edit Profile</button>
+                  </div>
+                </div>
+
+                <div style={styles.platformSection}>
+                  <div style={styles.randomFilterTitle}><FaSteam /> Steam Connection</div>
+                  <div style={styles.platformRow}>
+                    <input type="text" placeholder={text.steamId} value={steamIdInput} onChange={e => setSteamIdInput(e.target.value)} style={{ ...styles.input, marginBottom: 0, flex: 1 }} />
+                    <button className="btn-click" style={styles.platformBtn(colors.steam)} onClick={handleSteamLogin} disabled={syncingPlatform === "steam"}>
+                      <FaSteam /> {syncingPlatform === "steam" ? "Importing..." : text.importGames}
+                    </button>
+                  </div>
+                  <div style={{ fontSize: 12, color: colors.textSecondary, marginTop: 12 }}>
+                    🔍 {text.findSteamId}: <a href="https://steamidfinder.com/" target="_blank" rel="noreferrer" style={{ color: colors.primary }}>steamidfinder.com</a>
+                  </div>
+                  <div style={{ fontSize: 11, color: colors.textMuted, marginTop: 8 }}>
+                    ⚠️ Make sure your Steam profile is set to "Public"
+                  </div>
+                </div>
+
+                {userData?.lastPlayed?.length > 0 && (
+                  <><div style={styles.sectionTitle}><FaClock /> Recently Played</div><div style={styles.lastPlayedRow}>{userData.lastPlayed.slice(0,6).map((g,i) => <div key={i} className="hover-lift" style={styles.lastPlayedCard} onClick={() => { const game = gamesWithData.find(a => a.id === g.gameId); if (game) openGameDetail(game); }}><img src={g.gameImg} style={styles.lastPlayedImg} alt={g.gameName} /><div style={styles.lastPlayedName}>{g.gameName}</div></div>)}</div></>
+                )}
+                <div style={styles.sectionTitle}><GiAchievement /> Achievements</div>
+                <div style={styles.statsRow}>
+                  <div style={styles.statCard}><div style={{ fontSize: 36 }}>🏅</div><div>First Game</div>{library.length >= 1 && <div style={{ color: colors.primary }}>✓</div>}</div>
+                  <div style={styles.statCard}><div style={{ fontSize: 36 }}>🎮</div><div>Collector</div>{library.length >= 10 && <div style={{ color: colors.primary }}>✓</div>}</div>
+                  <div style={styles.statCard}><div style={{ fontSize: 36 }}>✅</div><div>Completionist</div>{library.filter(g => g.status === "completed").length >= 5 && <div style={{ color: colors.primary }}>✓</div>}</div>
+                </div>
+              </>
+            ) : <div style={styles.emptyState}>Login to see your profile</div>}
+          </div>
+        )}
+
+        {currentTab === "friends" && (
+          <div className="fade-in">
+            <div style={styles.sectionTitle}><FaUsers /> Find Friends</div>
+            <div style={styles.searchRow}>
+              <input style={{ ...styles.input, marginBottom: 0, flex: 1 }} placeholder="Search by username..." value={searchUsersTerm} onChange={e => setSearchUsersTerm(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSearchUsers()} />
+              <button className="btn-click" style={styles.loginBtn} onClick={handleSearchUsers}><FaSearch /> Search</button>
             </div>
-            <div style={{ flex: 1, padding: "14px", maxHeight: 340, overflow: "auto" }}>
-              <div style={{ fontWeight: 800, fontSize: 15 }}>{hoveredGame.name}</div>
-              <div style={{ fontSize: 11, color: ACC, marginBottom: 6 }}>★ {hoveredGame.rating} · {hoveredGame.releaseYear}</div>
-              <div style={{ fontSize: 11, color: "rgba(255,255,255,0.6)", lineHeight: 1.4 }}>{hoveredGame.description?.slice(0, 120)}…</div>
-              <button style={styles.addBtn} onClick={() => addToLibrary(hoveredGame, "wishlist")}>+ Add to Library</button>
+            {searchingUsers && <div style={{ textAlign: "center", color: colors.textSecondary }}>Searching...</div>}
+            {foundUsers.length === 0 && searchUsersTerm && !searchingUsers && <div style={styles.emptyState}>No users found</div>}
+            {foundUsers.map(u => (
+              <div key={u.id} className="fade-in" style={styles.userCard}>
+                <div style={styles.userAvatarSmall}>{u.username?.charAt(0).toUpperCase()}</div>
+                <div><div style={{ fontWeight: 700, display: "flex", alignItems: "center", gap: 8 }}>{u.username}{u.username === "Sherlock10K" && <span style={{ color: colors.primary }}>👑</span>}</div><div style={{ fontSize: 13, color: colors.textSecondary }}>{u.bio || "No bio"}</div></div>
+                <button className="btn-click" style={{ ...styles.addBtn, width: "auto", marginTop: 0, padding: "8px 16px", fontSize: 12 }} onClick={() => alert(`Friend request sent to ${u.username}`)}>Add Friend</button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {currentTab === "ai" && (
+          <div className="fade-in">
+            <div style={styles.aiSection}>
+              <div style={styles.randomFilterTitle}><FaRobot /> AI Assistant</div>
+              <div style={styles.aiRow}>
+                <input style={{ ...styles.input, marginBottom: 0, flex: 1 }} placeholder="Ask AI for game recommendations..." value={aiQuery} onChange={e => setAiQuery(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleAiSearch()} />
+                <button className="btn-click" style={styles.loginBtn} onClick={handleAiSearch} disabled={isAiLoading}>{isAiLoading ? "Thinking..." : "✨ Go"}</button>
+              </div>
+              {aiResponse && <div className="fade-in" style={styles.aiResultBox}>{aiResponse}</div>}
             </div>
+            <div style={styles.randomFilterSection}>
+              <div style={styles.randomFilterTitle}><FaFilter /> Filter Games</div>
+              <div style={styles.randomFilterRow}>
+                <select className="btn-click" onChange={e => setCategoryFilter({ ...categoryFilter, genre: e.target.value })} style={styles.select}><option value="">Genre</option>{GENRES.map(g => <option key={g} value={g}>{g}</option>)}</select>
+                <input type="number" placeholder="Min Rating" style={{ ...styles.input, width: 110, marginBottom: 0 }} onChange={e => setCategoryFilter({ ...categoryFilter, minRating: parseFloat(e.target.value) || 0 })} />
+                <input type="number" placeholder="Min Year" style={{ ...styles.input, width: 110, marginBottom: 0 }} onChange={e => setCategoryFilter({ ...categoryFilter, year: parseInt(e.target.value) || 0 })} />
+                <button className="btn-click" style={styles.filterBtn(false)} onClick={() => setCategoryFilter({ genre: "", minRating: 0, year: 0 })}>Clear</button>
+              </div>
+            </div>
+            <div style={styles.sectionTitle}>🔥 Must Play</div>
+            <div style={styles.grid}>{filteredCategoryGames(MUST_PLAY_GAMES).slice(0, 20).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
+            <div style={styles.sectionTitle}>🏆 Best Ever</div>
+            <div style={styles.grid}>{filteredCategoryGames(BEST_EVER_GAMES).slice(0, 20).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
+            <div style={styles.sectionTitle}>💎 Hidden Gems</div>
+            <div style={styles.grid}>{filteredCategoryGames(HIDDEN_GEMS_GAMES).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
           </div>
         )}
       </div>
+
+      {showSettings && (
+        <div className="fade-in" style={styles.modalOverlay} onClick={() => setShowSettings(false)}>
+          <div className="slide-in" style={styles.modalContent} onClick={e => e.stopPropagation()}>
+            <div style={styles.modalTitle}>Settings ⚙️</div>
+            <div style={styles.settingsSection}>
+              <div style={styles.settingsRow}><span style={styles.settingsLabel}>Sound Effects:</span><button className="btn-click" style={styles.iconBtn} onClick={() => setSoundEnabled(!soundEnabled)}>{soundEnabled ? <FaVolumeUp /> : <FaVolumeMute />} {soundEnabled ? "ON" : "OFF"}</button></div>
+              <div style={styles.settingsRow}><span style={styles.settingsLabel}>Language:</span><button className="btn-click" style={styles.iconBtn} onClick={() => setLang(lang === "en" ? "de" : "en")}><FaLanguage /> {lang === "en" ? "DE" : "EN"}</button></div>
+            </div>
+            <button className="btn-click" style={styles.modalBtn} onClick={() => setShowSettings(false)}>Close</button>
+          </div>
+        </div>
+      )}
+
+      {showRandomModal && randomGame && (
+        <div className="fade-in" style={styles.modalOverlay} onClick={() => setShowRandomModal(false)}>
+          <div className="slide-in" style={styles.modalContent} onClick={e => e.stopPropagation()}>
+            <div style={styles.modalTitle}>🎲 Random Game</div>
+            <img src={randomGame.finalImg || randomGame.img} style={{ width: "100%", borderRadius: 18, marginBottom: 20 }} alt={randomGame.name} />
+            <div style={{ fontSize: 18, fontWeight: 700, textAlign: "center", marginBottom: 8 }}>{randomGame.name}</div>
+            <div style={{ fontSize: 15, color: colors.primary, textAlign: "center", marginBottom: 14 }}>★ {randomGame.finalRating?.toFixed(1)} · {randomGame.playtime} · {randomGame.year}</div>
+            <div style={{ fontSize: 14, marginBottom: 24, color: colors.textSecondary, textAlign: "center" }}>{randomGame.description}</div>
+            <div style={{ display: "flex", gap: 14, justifyContent: "center" }}><button className="btn-click" style={{ ...styles.addBtn, width: "auto", marginTop: 0, padding: "10px 24px" }} onClick={() => { addToLibrary(randomGame); setShowRandomModal(false); }}>+ Add to Library</button><button className="btn-click" style={styles.modalBtnSecondary} onClick={doRandom}>Roll Again</button></div>
+          </div>
+        </div>
+      )}
+
+      {showLoginModal && (
+        <div className="fade-in" style={styles.modalOverlay} onClick={() => setShowLoginModal(false)}>
+          <div className="slide-in" style={styles.modalContent} onClick={e => e.stopPropagation()}>
+            <div style={styles.modalTitle}>{isLogin ? "Login" : "Register"}</div>
+            {errorMsg && <div style={styles.errorText}>{errorMsg}</div>}
+            <input style={styles.input} type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
+            <div style={styles.passwordWrapper}><input style={styles.input} type={showPassword ? "text" : "password"} placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} /><span className="btn-click" style={styles.passwordEye} onClick={() => setShowPassword(!showPassword)}>{showPassword ? <FaEyeSlash /> : <FaEye />}</span></div>
+            <button className="btn-click" style={styles.modalBtn} onClick={isLogin ? handleLogin : handleRegister}>{isLogin ? "Login" : "Register"}</button>
+            <div className="btn-click" style={styles.switchText} onClick={() => { setIsLogin(!isLogin); setErrorMsg(""); }}>{isLogin ? "No account? Register" : "Already have an account? Login"}</div>
+          </div>
+        </div>
+      )}
+
+      {showEditModal && user && (
+        <div className="fade-in" style={styles.modalOverlay} onClick={() => setShowEditModal(false)}>
+          <div className="slide-in" style={styles.modalContent} onClick={e => e.stopPropagation()}>
+            <div style={styles.modalTitle}>Edit Profile</div>
+            {editError && <div style={styles.errorText}>{editError}</div>}
+            {editSuccess && <div style={styles.successText}>{editSuccess}</div>}
+            <input style={styles.input} placeholder="Username" value={editUsername} onChange={e => setEditUsername(e.target.value)} />
+            <textarea style={styles.textarea} placeholder="Bio" rows="2" value={editBio} onChange={e => setEditBio(e.target.value)} />
+            <label className="btn-click" style={styles.checkbox}><input type="checkbox" checked={editPrivate} onChange={e => setEditPrivate(e.target.checked)} /> Private profile</label>
+            <button className="btn-click" style={styles.modalBtn} onClick={handleUpdateProfile}>Save</button>
+          </div>
+        </div>
+      )}
+
+      {showReviews && reviewsGame && (
+        <div className="fade-in" style={styles.modalOverlay} onClick={closeReviews}>
+          <div className="slide-in" style={{ ...styles.modalContent, maxWidth: 550 }} onClick={e => e.stopPropagation()}>
+            <div style={styles.modalTitle}>Reviews for {reviewsGame.name}</div>
+            {gameDetailReviews.length === 0 ? <div style={styles.emptyState}>No reviews yet. Be the first!</div> :
+              gameDetailReviews.map(review => (
+                <div key={review.id} style={styles.reviewCard}>
+                  <div style={styles.reviewHeader}>
+                    <span style={styles.reviewUsername}>{review.username}</span>
+                    <span style={styles.reviewRating}>★ {review.rating}/5</span>
+                  </div>
+                  <div style={styles.reviewComment}>{review.comment || "No comment"}</div>
+                </div>
+              ))}
+            <button className="btn-click" style={styles.modalBtn} onClick={closeReviews}>Close</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
