@@ -27,7 +27,6 @@ const MOODS = ["Emotional", "Action", "Dark", "Fantasy", "Horror", "Mystery", "C
 const GENRES = ["Action", "Adventure", "RPG", "Indie", "Horror", "Strategy", "Puzzle", "Open World", "Story Rich", "Fighting", "Sports", "Racing", "Simulation"];
 const PLAYTIMES = ["Under 10h", "10-20h", "20-40h", "40-60h", "60-100h", "100h+"];
 
-// ========== GOTY DATENBANK (Gewinner & Nominierte) ==========
 const GOTY_DATA = {
   2014: { winner: "Dragon Age: Inquisition", nominees: ["Dark Souls II", "Hearthstone", "Middle-earth: Shadow of Mordor", "Destiny"] },
   2015: { winner: "The Witcher 3: Wild Hunt", nominees: ["Bloodborne", "Fallout 4", "Metal Gear Solid V", "Super Mario Maker"] },
@@ -47,7 +46,7 @@ const translations = {
     home: "Discover", library: "Library", profile: "Profile", friends: "Friends", ai: "AI Assistant", goty: "GOTY", topGenres: "Top 20 by Genre",
     login: "Login", register: "Register", logout: "Logout", search: "Search games...", searchGOTY: "Search by year or game name...",
     mood: "What's your mood?", genre: "Pick your genres", playtime: "How long?", 
-    next: "Next", results: "Show Results", topPicks: "Top Picks", allResults: "All Results", 
+    next: "Next", results: "Show Results", topPicks: "🎯 Top Picks", bestEver: "🏆 Best Ever", allResults: "📋 All Results", hiddenGems: "💎 Hidden Gems",
     sort: "Sort", bestMatch: "Best Match", rating: "Rating", year: "Year", 
     add: "Add to Library", inLibrary: "In Library", reviews: "Reviews", played: "Played", 
     remove: "Remove", editProfile: "Edit Profile", username: "Username", bio: "Bio", 
@@ -62,13 +61,14 @@ const translations = {
     importGames: "Import Steam Games", findSteamId: "How to find your Steam ID",
     donate: "Support the developer", topRated: "Top Rated Game", topGenre: "Top Genre",
     totalPlaytime: "Total Playtime", gotyWinner: "Game of the Year Winner", gotyNominees: "Nominees",
-    winner: "🏆 WINNER", nominee: "📋 Nominee", playerFavorites: "Top 20 Player Favorites"
+    winner: "🏆 WINNER", nominee: "📋 Nominee", playerFavorites: "Top 20 Player Favorites",
+    backToGOTY: "← Back to GOTY Overview"
   },
   de: { 
     home: "Entdecken", library: "Bibliothek", profile: "Profil", friends: "Freunde", ai: "KI-Assistent", goty: "GOTY", topGenres: "Top 20 pro Genre",
     login: "Anmelden", register: "Registrieren", logout: "Abmelden", search: "Spiele suchen...", searchGOTY: "Suche nach Jahr oder Spielname...",
     mood: "Wie ist deine Stimmung?", genre: "Wähle deine Genres", playtime: "Wie lange?", 
-    next: "Weiter", results: "Ergebnisse", topPicks: "Top Empfehlungen", allResults: "Alle Ergebnisse", 
+    next: "Weiter", results: "Ergebnisse", topPicks: "🎯 Top Empfehlungen", bestEver: "🏆 Beste Aller Zeiten", allResults: "📋 Alle Ergebnisse", hiddenGems: "💎 Geheimtipps",
     sort: "Sortieren", bestMatch: "Bester Treffer", rating: "Bewertung", year: "Jahr", 
     add: "Zur Bibliothek", inLibrary: "In Bibliothek", reviews: "Bewertungen", played: "Gespielt", 
     remove: "Entfernen", editProfile: "Profil bearbeiten", username: "Benutzername", bio: "Über mich", 
@@ -83,7 +83,8 @@ const translations = {
     importGames: "Steam Spiele importieren", findSteamId: "So findest du deine Steam ID",
     donate: "Unterstütze den Entwickler", topRated: "Bestbewertetes Spiel", topGenre: "Top Genre",
     totalPlaytime: "Spielzeit Gesamt", gotyWinner: "Spiel des Jahres Gewinner", gotyNominees: "Nominiert",
-    winner: "🏆 GEWINNER", nominee: "📋 Nominiert", playerFavorites: "Top 20 Spieler-Favoriten"
+    winner: "🏆 GEWINNER", nominee: "📋 Nominiert", playerFavorites: "Top 20 Spieler-Favoriten",
+    backToGOTY: "← Zurück zur GOTY Übersicht"
   }
 };
 
@@ -102,24 +103,13 @@ const translateGenre = (genreName) => {
 
 let steamGamesCache = {};
 
-// ========== VERBESSERTES GEWICHTETES RATING-SYSTEM ==========
-// Formel: (Metacritic × 0.3) + (User-Rating × 0.4) + (Popularität × 0.2) + (Relevanz × 0.1)
 const calculateWeightedRating = (game, steamData) => {
   let rating = 7.0;
-  
-  // Metacritic/RAWg Rating (30% Gewicht)
   const metacriticScore = game.rawgRating || 7.0;
-  
-  // Steam User Rating (40% Gewicht) – höchstes Gewicht, da realistische User-Meinungen
   let userRating = 7.0;
-  if (steamData?.steamRating) {
-    userRating = steamData.steamRating;
-  } else {
-    // Schätzung basierend auf Metacritic
-    userRating = metacriticScore * 0.9;
-  }
+  if (steamData?.steamRating) userRating = steamData.steamRating;
+  else userRating = metacriticScore * 0.9;
   
-  // Popularität (20% Gewicht) – basierend auf Review-Anzahl
   let popularity = 7.0;
   const reviewCount = steamData?.reviewCount || game.popularity || 50;
   if (reviewCount > 500000) popularity = 9.5;
@@ -129,7 +119,6 @@ const calculateWeightedRating = (game, steamData) => {
   else if (reviewCount > 10000) popularity = 7.5;
   else popularity = 7.0;
   
-  // Relevanz (10% Gewicht) – basierend auf Jahr und Aktualität
   let relevance = 7.0;
   const currentYear = new Date().getFullYear();
   const gameAge = currentYear - (game.year || 2020);
@@ -140,28 +129,23 @@ const calculateWeightedRating = (game, steamData) => {
   else if (gameAge <= 8) relevance = 7.5;
   else relevance = 7.0;
   
-  // Gewichtetes Rating berechnen
   let weightedRating = (metacriticScore * 0.3) + (userRating * 0.4) + (popularity * 0.2) + (relevance * 0.1);
   
-  // Genre-spezifische Anpassungen (realistisch)
   const name = game.name?.toLowerCase() || "";
-  const genre = game.genre?.toLowerCase() || "";
   
-  // Spezifische Korrekturen für überschätzte Spiele
-  if (name.includes("soulcalibur") || name.includes("tekken") && !name.includes("8")) {
-    weightedRating = Math.min(weightedRating, 8.2);
+  if (name.includes("soulcalibur") || (name.includes("tekken") && !name.includes("8"))) weightedRating = Math.min(weightedRating, 8.2);
+  if (name.includes("fifa") || name.includes("pes") || name.includes("efootball")) weightedRating = Math.min(weightedRating, 7.5);
+  if (name.includes("call of duty") && !name.includes("modern warfare 2")) weightedRating = Math.min(weightedRating, 7.8);
+  if (name.includes("goldeneye") || name.includes("perfect dark")) weightedRating = Math.min(weightedRating, 8.5);
+  
+  // BUFFER: Gute Games können 0.1-0.4 höher sein
+  if (weightedRating >= 8.5 && weightedRating < 9.0) {
+    weightedRating += 0.2;
   }
-  if (name.includes("fifa") || name.includes("pes") || name.includes("efootball")) {
-    weightedRating = Math.min(weightedRating, 7.5);
-  }
-  if (name.includes("call of duty") && !name.includes("modern warfare 2")) {
-    weightedRating = Math.min(weightedRating, 7.8);
-  }
-  if (name.includes("goldeneye") || name.includes("perfect dark")) {
-    weightedRating = Math.min(weightedRating, 8.5);
+  if (weightedRating >= 9.0 && weightedRating < 9.3) {
+    weightedRating += 0.15;
   }
   
-  // Absolute Limits
   if (name.includes("witcher 3") || name.includes("baldur's gate 3") || name.includes("elden ring") || name.includes("red dead redemption 2")) {
     weightedRating = Math.max(weightedRating, 9.3);
     weightedRating = Math.min(weightedRating, 9.7);
@@ -177,15 +161,11 @@ const calculateWeightedRating = (game, steamData) => {
   
   weightedRating = Math.round(weightedRating * 10) / 10;
   weightedRating = Math.max(weightedRating, 6.0);
-  
   return weightedRating;
 };
 
-// ========== LANGE DESCRIPTION ==========
 const generateLongDescription = (gameName, rawDescription) => {
-  if (rawDescription && rawDescription.length > 200) {
-    return rawDescription;
-  }
+  if (rawDescription && rawDescription.length > 200) return rawDescription;
   const templates = [
     `${gameName} ist ein Meisterwerk der Videospielgeschichte, das Spieler seit Jahren begeistert. Die Entwickler haben unglaubliche Arbeit in jedes Detail gesteckt, von der Grafik bis zum Sounddesign. Die Spielmechanik ist intuitiv und dennoch tiefgründig genug, um auch erfahrene Spieler herauszufordern. Die Geschichte fesselt von der ersten Minute an und lässt dich nicht mehr los. Besonders die Charaktere und ihre Entwicklung bleiben noch lange im Gedächtnis. Ein absolutes Muss für jeden Fan des Genres!`,
     `Erlebe ein unvergessliches Abenteuer mit ${gameName}. Dieses Spiel bietet eine packende Story, die dich in eine faszinierende Welt entführt. Die Grafik ist atemberaubend und die Soundkulisse unterstreicht die Atmosphäre perfekt. Die Steuerung ist präzise und fühlt sich natürlich an. Mit über 20 Stunden Spielzeit bekommst du mehr als dein Geld wert. Ein Highlight, das man nicht verpassen sollte!`
@@ -193,14 +173,12 @@ const generateLongDescription = (gameName, rawDescription) => {
   return templates[Math.floor(Math.random() * templates.length)];
 };
 
-// ========== BILDER ==========
 const getGameImage = (rawgImg, gameName, steamData) => {
   if (steamData?.img && !steamData.img.includes("null")) return steamData.img;
   if (rawgImg && !rawgImg.includes("null") && !rawgImg.includes("placeholder")) return rawgImg;
   return `https://placehold.co/300x400/14141f/ffd400?text=${encodeURIComponent(gameName?.slice(0, 8) || "Game")}`;
 };
 
-// ========== TRAILER ==========
 const getTrailerUrl = (game) => {
   if (game.trailer && game.trailer.includes("youtube.com/embed")) return game.trailer;
   return `https://www.youtube.com/embed?listType=search&q=${encodeURIComponent(game.name)}+trailer`;
@@ -216,9 +194,10 @@ export default function NexPlay() {
   const [library, setLibrary] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const [currentTab, setCurrentTab] = useState("home");
-  const [discoverSubTab, setDiscoverSubTab] = useState("discover");
+  const [discoverSubTab, setDiscoverSubTab] = useState("topPicks");
   const [gotySearch, setGotySearch] = useState("");
   const [gotyResult, setGotyResult] = useState(null);
+  const [selectedGotyYear, setSelectedGotyYear] = useState(null);
   const [selectedGenreForTop, setSelectedGenreForTop] = useState("Action");
   const [searchQuery, setSearchQuery] = useState("");
   const [step, setStep] = useState(1);
@@ -350,59 +329,49 @@ export default function NexPlay() {
     });
   }, [allGames]);
 
-  // ========== GOTY SUCHE ==========
   const searchGOTY = () => {
     const search = gotySearch.trim().toLowerCase();
-    if (!search) {
-      setGotyResult(null);
-      return;
-    }
-    
-    // Suche nach Jahr
+    if (!search) { setGotyResult(null); setSelectedGotyYear(null); return; }
     if (/^\d{4}$/.test(search)) {
       const year = parseInt(search);
-      if (GOTY_DATA[year]) {
-        setGotyResult({ type: "year", year, data: GOTY_DATA[year] });
-      } else {
-        setGotyResult({ type: "error", message: `No GOTY data for ${year}` });
-      }
+      if (GOTY_DATA[year]) { setGotyResult({ type: "year", year, data: GOTY_DATA[year] }); setSelectedGotyYear(year); }
+      else setGotyResult({ type: "error", message: `No GOTY data for ${year}` });
       return;
     }
-    
-    // Suche nach Spielname
     for (const [year, data] of Object.entries(GOTY_DATA)) {
       if (data.winner.toLowerCase().includes(search)) {
         setGotyResult({ type: "game", year, game: data.winner, role: "winner", data });
+        setSelectedGotyYear(year);
         return;
       }
       if (data.nominees.some(n => n.toLowerCase().includes(search))) {
         const nominee = data.nominees.find(n => n.toLowerCase().includes(search));
         setGotyResult({ type: "game", year, game: nominee, role: "nominee", data });
+        setSelectedGotyYear(year);
         return;
       }
     }
     setGotyResult({ type: "error", message: "Game not found in GOTY history" });
+    setSelectedGotyYear(null);
   };
 
   useEffect(() => { searchGOTY(); }, [gotySearch]);
 
-  // ========== TOP 20 PER GENRE ==========
   const top20ByGenre = useMemo(() => {
     const filtered = gamesWithData.filter(g => g.genre === selectedGenreForTop);
     return [...filtered].sort((a, b) => b.finalRating - a.finalRating).slice(0, 20);
   }, [gamesWithData, selectedGenreForTop]);
 
-  // ========== KATEGORIEN ==========
-  const MUST_PLAY_GAMES = useMemo(() => 
-    [...gamesWithData].filter(g => g.finalRating >= 9.0 && g.reviewCount >= 50000).sort((a,b) => b.finalRating - a.finalRating),
+  const TOP_PICKS_GAMES = useMemo(() => 
+    [...gamesWithData].filter(g => g.finalRating >= 8.8 && g.reviewCount >= 30000).sort((a,b) => b.finalRating - a.finalRating).slice(0, 30),
     [gamesWithData]
   );
   const BEST_EVER_GAMES = useMemo(() => 
-    [...gamesWithData].sort((a,b) => b.finalRating - a.finalRating).slice(0, 50),
+    [...gamesWithData].sort((a,b) => b.finalRating - a.finalRating).slice(0, 40),
     [gamesWithData]
   );
   const HIDDEN_GEMS_GAMES = useMemo(() => 
-    [...gamesWithData].filter(g => g.finalRating >= 8.5 && g.reviewCount < 10000).sort((a,b) => b.finalRating - a.finalRating),
+    [...gamesWithData].filter(g => g.finalRating >= 8.5 && g.reviewCount < 10000 && g.genre === "Indie").sort((a,b) => b.finalRating - a.finalRating).slice(0, 30),
     [gamesWithData]
   );
 
@@ -637,8 +606,7 @@ export default function NexPlay() {
     if (library.length >= 10) ach.push({ id: "collector", name: text.collector, desc: "10 games", icon: "🎮", unlocked: true });
     if (library.filter(g => g.status === "completed").length >= 5) ach.push({ id: "completionist", name: text.completionist, desc: "5 completed", icon: "✅", unlocked: true });
     if (favorites.length >= 5) ach.push({ id: "favorites", name: "5 Favorites", desc: "5 games in favorites", icon: "❤️", unlocked: true });
-    if (library.length >= 25) ach.push({ id: "master", name: text.gameMaster || "Game Master", desc: "25 games", icon: "👑", unlocked: true });
-    if (library.length >= 50) ach.push({ id: "legend", name: text.legend || "Legend", desc: "50 games", icon: "⭐", unlocked: true });
+    if (library.length >= 25) ach.push({ id: "master", name: "Game Master", desc: "25 games", icon: "👑", unlocked: true });
     return ach;
   }, [library, favorites]);
 
@@ -774,8 +742,9 @@ export default function NexPlay() {
     donationBtn: { background: "linear-gradient(135deg, #ffd400, #e6bf00)", border: "none", borderRadius: 12, padding: "12px 20px", color: "#0a0a0f", cursor: "pointer", fontWeight: 700, display: "flex", alignItems: "center", gap: 8, fontSize: 14 },
     gotyResultCard: { background: colors.bgCard, borderRadius: 20, padding: 24, marginBottom: 24, textAlign: "center", border: `1px solid ${colors.primary}30` },
     gotyWinnerCard: { background: `linear-gradient(135deg, ${colors.primary}20, ${colors.bgCard})`, borderRadius: 16, padding: 20, marginBottom: 16 },
-    gotyNomineeCard: { background: "rgba(255,255,255,0.03)", borderRadius: 12, padding: 12, marginBottom: 8, display: "inline-block", width: "auto" },
-    topGenreSelect: { background: colors.bgCard, border: `1px solid ${colors.primary}30`, borderRadius: 12, padding: "12px 20px", color: colors.text, fontSize: 14, marginBottom: 24, cursor: "pointer" }
+    gotyNomineeCard: { background: "rgba(255,255,255,0.03)", borderRadius: 12, padding: 12, marginBottom: 8, display: "inline-block", width: "auto", margin: 4 },
+    topGenreSelect: { background: colors.bgCard, border: `1px solid ${colors.primary}30`, borderRadius: 12, padding: "12px 20px", color: colors.text, fontSize: 14, marginBottom: 24, cursor: "pointer" },
+    gotyBackBtn: { background: "rgba(255,255,255,0.05)", border: "none", borderRadius: 12, padding: "10px 20px", color: colors.text, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 20, fontSize: 14 }
   };
 
   const GameCard = ({ game, showBtn = false }) => {
@@ -890,93 +859,17 @@ export default function NexPlay() {
           </div>
         </div>
 
-        {/* ========== GOTY TAB ========== */}
-        {currentTab === "goty" && (
-          <div className="fade-in">
-            <div style={styles.sectionTitle}><FaAward /> {text.goty}</div>
-            <input style={styles.searchBar} placeholder={text.searchGOTY} value={gotySearch} onChange={e => setGotySearch(e.target.value)} />
-            
-            {gotyResult?.type === "year" && (
-              <div style={styles.gotyResultCard}>
-                <div style={{ fontSize: 28, fontWeight: 800, marginBottom: 16, color: colors.primary }}>{gotyResult.year}</div>
-                <div style={styles.gotyWinnerCard}>
-                  <div style={{ fontSize: 14, color: colors.primary, marginBottom: 8 }}>{text.winner}</div>
-                  <div style={{ fontSize: 24, fontWeight: 700 }}>{gotyResult.data.winner}</div>
-                </div>
-                <div style={{ fontSize: 18, fontWeight: 600, marginBottom: 16, color: colors.textSecondary }}>{text.gotyNominees}</div>
-                <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 12 }}>
-                  {gotyResult.data.nominees.map(nom => (
-                    <div key={nom} style={styles.gotyNomineeCard}>
-                      <span style={{ fontSize: 16 }}>📋 {nom}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-            
-            {gotyResult?.type === "game" && (
-              <div style={styles.gotyResultCard}>
-                <div style={{ fontSize: 20, fontWeight: 700, color: colors.primary, marginBottom: 8 }}>{gotyResult.game}</div>
-                <div style={{ fontSize: 14, color: gotyResult.role === "winner" ? colors.primary : colors.textSecondary, marginBottom: 16 }}>
-                  {gotyResult.role === "winner" ? text.winner : text.nominee} - {gotyResult.year}
-                </div>
-                <div style={styles.gotyWinnerCard}>
-                  <div style={{ fontSize: 14, color: colors.primary, marginBottom: 8 }}>{text.winner}</div>
-                  <div style={{ fontSize: 20, fontWeight: 600 }}>{gotyResult.data.winner}</div>
-                </div>
-                <div style={{ fontSize: 14, fontWeight: 500, marginTop: 16 }}>{text.gotyNominees}:</div>
-                <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 8, marginTop: 8 }}>
-                  {gotyResult.data.nominees.map(nom => (
-                    <div key={nom} style={styles.gotyNomineeCard}>
-                      <span style={{ fontSize: 13 }}>{nom}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-            
-            {gotyResult?.type === "error" && (
-              <div style={styles.emptyState}>{gotyResult.message}</div>
-            )}
-            
-            {!gotySearch && (
-              <div style={styles.grid}>
-                {Object.entries(GOTY_DATA).reverse().map(([year, data]) => (
-                  <div key={year} className="game-card" style={{ ...styles.gameCard, padding: 16, textAlign: "center" }} onClick={() => setGotySearch(year)}>
-                    <div style={{ fontSize: 32, marginBottom: 8 }}>🏆</div>
-                    <div style={{ fontWeight: 700, fontSize: 20, color: colors.primary }}>{year}</div>
-                    <div style={{ fontSize: 13, marginTop: 8 }}>{data.winner}</div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* ========== TOP 20 PER GENRE TAB ========== */}
-        {currentTab === "topGenres" && (
-          <div className="fade-in">
-            <div style={styles.sectionTitle}><FaList /> {text.topGenres}</div>
-            <select className="btn-click" value={selectedGenreForTop} onChange={e => setSelectedGenreForTop(e.target.value)} style={styles.topGenreSelect}>
-              {GENRES.map(g => <option key={g} value={g}>{g}</option>)}
-            </select>
-            <div style={{ ...styles.sectionTitle, fontSize: 20, marginBottom: 16 }}>⭐ {selectedGenreForTop}</div>
-            <div style={styles.grid}>{top20ByGenre.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
-          </div>
-        )}
-
-        {/* ========== HOME TAB ========== */}
+        {/* ========== HOME TAB (mit Top Picks, Best Ever, Hidden Gems) ========== */}
         {currentTab === "home" && (
           <div className="fade-in">
             <div style={styles.tabNav}>
-              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "discover")} onClick={() => setDiscoverSubTab("discover")}>🔍 {text.home}</button>
-              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "must")} onClick={() => setDiscoverSubTab("must")}>🔥 {text.topPicks}</button>
-              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "best")} onClick={() => setDiscoverSubTab("best")}>🏆 {text.bestMatch}</button>
-              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "gems")} onClick={() => setDiscoverSubTab("gems")}>💎 {text.hiddenAchievement}</button>
+              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "topPicks")} onClick={() => setDiscoverSubTab("topPicks")}>🎯 {text.topPicks}</button>
+              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "bestEver")} onClick={() => setDiscoverSubTab("bestEver")}>🏆 {text.bestEver}</button>
+              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "hiddenGems")} onClick={() => setDiscoverSubTab("hiddenGems")}>💎 {text.hiddenGems}</button>
             </div>
 
-            {discoverSubTab === "discover" && (
-              <>
+            {discoverSubTab === "topPicks" && (
+              <div className="fade-in">
                 <div style={styles.randomFilterSection}>
                   <div style={styles.randomFilterTitle}><FaRandom /> {text.randomGame}</div>
                   <div style={styles.randomFilterRow}>
@@ -991,64 +884,127 @@ export default function NexPlay() {
                   </div>
                 </div>
 
-                <div style={styles.tabNav}>
-                  <button className="btn-click" style={styles.tabNavBtn(step === 1)} onClick={() => setStep(1)}>{text.mood}</button>
-                  <button className="btn-click" style={styles.tabNavBtn(step === 2)} onClick={() => setStep(2)}>{text.genre}</button>
-                  <button className="btn-click" style={styles.tabNavBtn(step === 3)} onClick={() => setStep(3)}>{text.playtime}</button>
-                  <button className="btn-click" style={styles.tabNavBtn(step === 4)} onClick={() => setStep(4)}>{text.results}</button>
-                </div>
+                <div style={styles.sectionTitle}>🎯 {text.topPicks}</div>
+                <div style={styles.grid}>{TOP_PICKS_GAMES.slice(0, 30).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
+              </div>
+            )}
 
-                {step === 1 && (
-                  <div className="slide-in">
-                    <div style={styles.stepTitle}>{text.mood} 🎭</div>
-                    <div style={styles.pillGrid}>{MOODS.map(m => <button key={m} className="btn-click" style={styles.pill(selectedMoods.includes(m))} onClick={() => toggle(selectedMoods, setSelectedMoods, m)}>{m}</button>)}</div>
-                    <button className="btn-click" style={styles.nextBtn} onClick={() => setStep(2)}>{text.next} →</button>
+            {discoverSubTab === "bestEver" && (
+              <div className="fade-in">
+                <div style={styles.sectionTitle}>🏆 {text.bestEver}</div>
+                <div style={styles.grid}>{BEST_EVER_GAMES.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
+              </div>
+            )}
+
+            {discoverSubTab === "hiddenGems" && (
+              <div className="fade-in">
+                <div style={styles.sectionTitle}>💎 {text.hiddenGems}</div>
+                <div style={styles.grid}>{HIDDEN_GEMS_GAMES.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ========== GOTY TAB ========== */}
+        {currentTab === "goty" && (
+          <div className="fade-in">
+            {selectedGotyYear ? (
+              <>
+                <button className="btn-click" style={styles.gotyBackBtn} onClick={() => { setSelectedGotyYear(null); setGotySearch(""); setGotyResult(null); }}>
+                  <FaArrowLeft /> {text.backToGOTY}
+                </button>
+                <div style={styles.gotyResultCard}>
+                  <div style={{ fontSize: 28, fontWeight: 800, marginBottom: 16, color: colors.primary }}>{selectedGotyYear}</div>
+                  <div style={styles.gotyWinnerCard}>
+                    <div style={{ fontSize: 14, color: colors.primary, marginBottom: 8 }}>{text.winner}</div>
+                    <div style={{ fontSize: 24, fontWeight: 700 }}>{GOTY_DATA[selectedGotyYear].winner}</div>
                   </div>
-                )}
-                {step === 2 && (
-                  <div className="slide-in">
-                    <div style={styles.stepTitle}>{text.genre} 🎮</div>
-                    <div style={styles.pillGrid}>{GENRES.map(g => <button key={g} className="btn-click" style={styles.pill(selectedGenres.includes(g))} onClick={() => toggle(selectedGenres, setSelectedGenres, g)}>{g}</button>)}</div>
-                    <button className="btn-click" style={styles.nextBtn} onClick={() => setStep(3)}>{text.next} →</button>
-                  </div>
-                )}
-                {step === 3 && (
-                  <div className="slide-in">
-                    <div style={styles.stepTitle}>{text.playtime} ⏱️</div>
-                    <div style={styles.pillGrid}>{PLAYTIMES.map(p => <button key={p} className="btn-click" style={styles.pill(selectedPlaytime === p)} onClick={() => setSelectedPlaytime(p === selectedPlaytime ? null : p)}>{p}</button>)}</div>
-                    <button className="btn-click" style={styles.nextBtn} onClick={() => setStep(4)}>{text.results} 🚀</button>
-                  </div>
-                )}
-                {step === 4 && (
-                  <div className="fade-in">
-                    <input style={styles.searchBar} placeholder={text.search} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
-                    <div style={styles.filterRow}>
-                      <span>{text.sort}:</span>
-                      <button className="btn-click" style={styles.filterBtn(sortBy === "score")} onClick={() => setSortBy("score")}>{text.bestMatch}</button>
-                      <button className="btn-click" style={styles.filterBtn(sortBy === "rating")} onClick={() => setSortBy("rating")}>{text.rating}</button>
-                      <button className="btn-click" style={styles.filterBtn(sortBy === "year")} onClick={() => setSortBy("year")}>{text.year}</button>
-                    </div>
-                    {topPicks.length > 0 && (
-                      <div>
-                        <div style={styles.sectionTitle}>🎯 {text.topPicks}</div>
-                        <div style={styles.topPicksRow}>{topPicks.map((g,i) => <div key={g.id} className="game-card" style={styles.topPickCard} onClick={() => openGameDetail(g)}><div style={{ fontSize: 24, marginBottom: 8 }}>{["🥇","🥈","🥉","4","5","6","7","8"][i]}</div><img src={g.finalImg} style={{ width: "100%", height: 90, objectFit: "cover", borderRadius: 10 }} alt={g.name} /><div style={{ fontWeight: 700, marginTop: 10, color: colors.text }}>{g.name}</div><div style={{ fontSize: 12, color: colors.primary }}>★ {g.finalRating?.toFixed(1)}</div><button className="btn-click" style={styles.addBtn} onClick={(e) => { e.stopPropagation(); addToLibrary(g); }}>+ {text.add}</button></div>)}</div>
+                  <div style={{ fontSize: 18, fontWeight: 600, marginBottom: 16, color: colors.textSecondary }}>{text.gotyNominees}</div>
+                  <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 8 }}>
+                    {GOTY_DATA[selectedGotyYear].nominees.map(nom => (
+                      <div key={nom} style={styles.gotyNomineeCard}>
+                        <span style={{ fontSize: 16 }}>📋 {nom}</span>
                       </div>
-                    )}
-                    <div style={styles.sectionTitle}>📋 {text.allResults}</div>
-                    <div style={styles.grid}>{restResults.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
+                    ))}
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                <div style={styles.sectionTitle}><FaAward /> {text.goty}</div>
+                <input style={styles.searchBar} placeholder={text.searchGOTY} value={gotySearch} onChange={e => setGotySearch(e.target.value)} />
+                
+                {gotyResult?.type === "year" && !selectedGotyYear && (
+                  <div style={styles.gotyResultCard}>
+                    <div style={{ fontSize: 28, fontWeight: 800, marginBottom: 16, color: colors.primary }}>{gotyResult.year}</div>
+                    <div style={styles.gotyWinnerCard}>
+                      <div style={{ fontSize: 14, color: colors.primary, marginBottom: 8 }}>{text.winner}</div>
+                      <div style={{ fontSize: 24, fontWeight: 700 }}>{gotyResult.data.winner}</div>
+                    </div>
+                    <div style={{ fontSize: 18, fontWeight: 600, marginBottom: 16, color: colors.textSecondary }}>{text.gotyNominees}</div>
+                    <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 8 }}>
+                      {gotyResult.data.nominees.map(nom => (
+                        <div key={nom} style={styles.gotyNomineeCard}>
+                          <span style={{ fontSize: 16 }}>📋 {nom}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                {gotyResult?.type === "game" && !selectedGotyYear && (
+                  <div style={styles.gotyResultCard}>
+                    <div style={{ fontSize: 20, fontWeight: 700, color: colors.primary, marginBottom: 8 }}>{gotyResult.game}</div>
+                    <div style={{ fontSize: 14, color: gotyResult.role === "winner" ? colors.primary : colors.textSecondary, marginBottom: 16 }}>
+                      {gotyResult.role === "winner" ? text.winner : text.nominee} - {gotyResult.year}
+                    </div>
+                    <div style={styles.gotyWinnerCard}>
+                      <div style={{ fontSize: 14, color: colors.primary, marginBottom: 8 }}>{text.winner}</div>
+                      <div style={{ fontSize: 20, fontWeight: 600 }}>{gotyResult.data.winner}</div>
+                    </div>
+                    <div style={{ fontSize: 14, fontWeight: 500, marginTop: 16 }}>{text.gotyNominees}:</div>
+                    <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 8, marginTop: 8 }}>
+                      {gotyResult.data.nominees.map(nom => (
+                        <div key={nom} style={styles.gotyNomineeCard}>
+                          <span style={{ fontSize: 13 }}>{nom}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                {gotyResult?.type === "error" && (
+                  <div style={styles.emptyState}>{gotyResult.message}</div>
+                )}
+                
+                {!gotySearch && !selectedGotyYear && (
+                  <div style={styles.grid}>
+                    {Object.entries(GOTY_DATA).reverse().map(([year, data]) => (
+                      <div key={year} className="game-card" style={{ ...styles.gameCard, padding: 16, textAlign: "center" }} onClick={() => setSelectedGotyYear(parseInt(year))}>
+                        <div style={{ fontSize: 32, marginBottom: 8 }}>🏆</div>
+                        <div style={{ fontWeight: 700, fontSize: 20, color: colors.primary }}>{year}</div>
+                        <div style={{ fontSize: 13, marginTop: 8 }}>{data.winner}</div>
+                      </div>
+                    ))}
                   </div>
                 )}
               </>
             )}
+          </div>
+        )}
 
-            {discoverSubTab === "must" && (
-              <div><div style={styles.grid}>{MUST_PLAY_GAMES.slice(0, 40).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div></div>
-            )}
-            {discoverSubTab === "best" && (
-              <div><div style={styles.grid}>{BEST_EVER_GAMES.slice(0, 40).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div></div>
-            )}
-            {discoverSubTab === "gems" && (
-              <div><div style={styles.grid}>{HIDDEN_GEMS_GAMES.slice(0, 30).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div></div>
+        {/* ========== TOP 20 BY GENRE TAB ========== */}
+        {currentTab === "topGenres" && (
+          <div className="fade-in">
+            <div style={styles.sectionTitle}><FaList /> {text.topGenres}</div>
+            <select className="btn-click" value={selectedGenreForTop} onChange={e => setSelectedGenreForTop(e.target.value)} style={styles.topGenreSelect}>
+              {GENRES.map(g => <option key={g} value={g}>{g}</option>)}
+            </select>
+            <div style={{ ...styles.sectionTitle, fontSize: 20, marginBottom: 16 }}>⭐ {selectedGenreForTop}</div>
+            {top20ByGenre.length === 0 ? (
+              <div style={styles.emptyState}>No games found in this genre yet. More games will be added soon!</div>
+            ) : (
+              <div style={styles.grid}>{top20ByGenre.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
             )}
           </div>
         )}
@@ -1173,26 +1129,16 @@ export default function NexPlay() {
               </div>
               {aiResponse && <div className="fade-in" style={styles.aiResultBox}>{aiResponse}</div>}
             </div>
-            <div style={styles.randomFilterSection}>
-              <div style={styles.randomFilterTitle}><FaFilter /> Filter Games</div>
-              <div style={styles.randomFilterRow}>
-                <select className="btn-click" onChange={e => setCategoryFilter({ ...categoryFilter, genre: e.target.value })} style={styles.select}><option value="">Genre</option>{GENRES.map(g => <option key={g} value={g}>{g}</option>)}</select>
-                <input type="number" placeholder="Min Rating" style={{ ...styles.input, width: 110, marginBottom: 0 }} onChange={e => setCategoryFilter({ ...categoryFilter, minRating: parseFloat(e.target.value) || 0 })} />
-                <input type="number" placeholder="Min Year" style={{ ...styles.input, width: 110, marginBottom: 0 }} onChange={e => setCategoryFilter({ ...categoryFilter, year: parseInt(e.target.value) || 0 })} />
-                <button className="btn-click" style={styles.filterBtn(false)} onClick={() => setCategoryFilter({ genre: "", minRating: 0, year: 0 })}>Clear</button>
-              </div>
-            </div>
             <div style={styles.sectionTitle}>🔥 {text.topPicks}</div>
-            <div style={styles.grid}>{MUST_PLAY_GAMES.slice(0, 20).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
-            <div style={styles.sectionTitle}>🏆 {text.bestMatch}</div>
+            <div style={styles.grid}>{TOP_PICKS_GAMES.slice(0, 20).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
+            <div style={styles.sectionTitle}>🏆 {text.bestEver}</div>
             <div style={styles.grid}>{BEST_EVER_GAMES.slice(0, 20).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
-            <div style={styles.sectionTitle}>💎 {text.hiddenAchievement}</div>
+            <div style={styles.sectionTitle}>💎 {text.hiddenGems}</div>
             <div style={styles.grid}>{HIDDEN_GEMS_GAMES.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
           </div>
         )}
       </div>
 
-      {/* ========== MODALS ========== */}
       {showSettings && (
         <div className="fade-in" style={styles.modalOverlay} onClick={() => setShowSettings(false)}>
           <div className="slide-in" style={styles.modalContent} onClick={e => e.stopPropagation()}>
