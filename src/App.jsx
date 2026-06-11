@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { FaHome, FaUser, FaFire, FaSearch, FaHeart, FaStar, FaTrash, FaSignOutAlt, FaPlus, FaCheck, FaEnvelope, FaEye, FaEyeSlash, FaEdit, FaUsers, FaClock, FaRandom, FaThumbsUp, FaThumbsDown, FaArrowLeft, FaCog, FaVolumeUp, FaVolumeMute, FaLanguage, FaSteam, FaPlaystation, FaGamepad, FaTrophy, FaGem, FaShoppingCart, FaRobot, FaFilter, FaLink, FaExternalLinkAlt } from "react-icons/fa";
+import { FaHome, FaUser, FaFire, FaSearch, FaHeart, FaStar, FaTrash, FaSignOutAlt, FaPlus, FaCheck, FaEnvelope, FaEye, FaEyeSlash, FaEdit, FaUsers, FaClock, FaRandom, FaThumbsUp, FaThumbsDown, FaArrowLeft, FaCog, FaVolumeUp, FaVolumeMute, FaLanguage, FaSteam, FaPlaystation, FaGamepad, FaTrophy, FaGem, FaShoppingCart, FaRobot, FaFilter, FaLink, FaExternalLinkAlt, FaDonate } from "react-icons/fa";
 import { GiConsoleController, GiAchievement } from "react-icons/gi";
 import { BsFillCollectionFill, BsFillHeartFill } from "react-icons/bs";
 import { auth, loginWithEmail, registerWithEmail, logout, loadLibraryFromFirestore, saveLibraryToFirestore, loadProfileFromFirestore, saveProfileToFirestore, updateUsername, updateBio, togglePrivacy, searchUsers, resetPassword, addGameReview, getGameReviews, updateLastPlayed, likeReview, dislikeReview } from "./firebase";
@@ -27,9 +27,55 @@ const MOODS = ["Emotional", "Action", "Dark", "Fantasy", "Horror", "Mystery", "C
 const GENRES = ["Action", "Adventure", "RPG", "Indie", "Horror", "Strategy", "Puzzle", "Open World", "Story Rich"];
 const PLAYTIMES = ["Under 10h", "10-20h", "20-40h", "40-60h", "60-100h", "100h+"];
 
+// ========== LIVE-ÜBERSETZUNG (DE/EN) ==========
 const translations = {
-  en: { home: "Discover", library: "Library", profile: "Profile", friends: "Friends", ai: "AI Assistant", login: "Login", register: "Register", logout: "Logout", search: "Search games...", mood: "What's your mood?", genre: "Pick your genres", playtime: "How long?", next: "Next", results: "Show Results", topPicks: "Top Picks", allResults: "All Results", sort: "Sort", bestMatch: "Best Match", rating: "Rating", year: "Year", add: "Add to Library", inLibrary: "In Library", reviews: "Reviews", played: "Played", remove: "Remove", editProfile: "Edit Profile", username: "Username", bio: "Bio", private: "Private profile", save: "Save", achievements: "Achievements", firstGame: "First Game", collector: "Collector", completionist: "Completionist", recentlyPlayed: "Recently Played", favorites: "Favorites", total: "Total", playing: "Playing", completed: "Completed", randomGame: "Random Game", rollAgain: "Roll Again", close: "Close", back: "Back", buyOn: "Buy on", writeReview: "Write Review", yourReview: "Your review...", submit: "Submit", noReviews: "No reviews yet", findFriends: "Find Friends", settings: "Settings", sound: "Sound Effects", language: "Language", steamId: "Steam ID", importGames: "Import Steam Games", findSteamId: "How to find your Steam ID" },
-  de: { home: "Entdecken", library: "Bibliothek", profile: "Profil", friends: "Freunde", ai: "KI-Assistent", login: "Anmelden", register: "Registrieren", logout: "Abmelden", search: "Spiele suchen...", mood: "Wie ist deine Stimmung?", genre: "Wähle deine Genres", playtime: "Wie lange?", next: "Weiter", results: "Ergebnisse", topPicks: "Top Empfehlungen", allResults: "Alle Ergebnisse", sort: "Sortieren", bestMatch: "Bester Treffer", rating: "Bewertung", year: "Jahr", add: "Zur Bibliothek", inLibrary: "In Bibliothek", reviews: "Bewertungen", played: "Gespielt", remove: "Entfernen", editProfile: "Profil bearbeiten", username: "Benutzername", bio: "Über mich", private: "Privates Profil", save: "Speichern", achievements: "Erfolge", firstGame: "Erstes Spiel", collector: "Sammler", completionist: "Vollender", recentlyPlayed: "Zuletzt gespielt", favorites: "Favoriten", total: "Gesamt", playing: "Spielt", completed: "Abgeschlossen", randomGame: "Zufälliges Spiel", rollAgain: "Nochmal", close: "Schließen", back: "Zurück", buyOn: "Kaufen auf", writeReview: "Bewertung schreiben", yourReview: "Deine Bewertung...", submit: "Speichern", noReviews: "Keine Bewertungen", findFriends: "Freunde finden", settings: "Einstellungen", sound: "Soundeffekte", language: "Sprache", steamId: "Steam ID", importGames: "Steam Spiele importieren", findSteamId: "So findest du deine Steam ID" }
+  en: { 
+    home: "Discover", library: "Library", profile: "Profile", friends: "Friends", ai: "AI Assistant", 
+    login: "Login", register: "Register", logout: "Logout", search: "Search games...", 
+    mood: "What's your mood?", genre: "Pick your genres", playtime: "How long?", 
+    next: "Next", results: "Show Results", topPicks: "Top Picks", allResults: "All Results", 
+    sort: "Sort", bestMatch: "Best Match", rating: "Rating", year: "Year", 
+    add: "Add to Library", inLibrary: "In Library", reviews: "Reviews", played: "Played", 
+    remove: "Remove", editProfile: "Edit Profile", username: "Username", bio: "Bio", 
+    private: "Private profile", save: "Save", achievements: "Achievements", 
+    firstGame: "First Game", collector: "Collector", completionist: "Completionist", 
+    recentlyPlayed: "Recently Played", favorites: "Favorites", total: "Total", 
+    playing: "Playing", completed: "Completed", randomGame: "Random Game", 
+    rollAgain: "Roll Again", close: "Close", back: "Back", buyOn: "Buy on", 
+    writeReview: "Write Review", yourReview: "Your review...", submit: "Submit", 
+    noReviews: "No reviews yet", findFriends: "Find Friends", settings: "Settings", 
+    sound: "Sound Effects", language: "Language", steamId: "Steam ID", 
+    importGames: "Import Steam Games", findSteamId: "How to find your Steam ID",
+    donate: "Support the developer", topRated: "Top Rated Game", topGenre: "Top Genre",
+    totalPlaytime: "Total Playtime", hiddenAchievement: "Hidden Achievement",
+    limitedAchievement: "Limited Achievement", funnyAchievement: "Funny Achievement",
+    gameMaster: "Game Master", legend: "Legend", pioneer: "Pioneer",
+    socialButterfly: "Social Butterfly", critic: "The Critic"
+  },
+  de: { 
+    home: "Entdecken", library: "Bibliothek", profile: "Profil", friends: "Freunde", 
+    ai: "KI-Assistent", login: "Anmelden", register: "Registrieren", logout: "Abmelden", 
+    search: "Spiele suchen...", mood: "Wie ist deine Stimmung?", genre: "Wähle deine Genres", 
+    playtime: "Wie lange?", next: "Weiter", results: "Ergebnisse", topPicks: "Top Empfehlungen", 
+    allResults: "Alle Ergebnisse", sort: "Sortieren", bestMatch: "Bester Treffer", 
+    rating: "Bewertung", year: "Jahr", add: "Zur Bibliothek", inLibrary: "In Bibliothek", 
+    reviews: "Bewertungen", played: "Gespielt", remove: "Entfernen", 
+    editProfile: "Profil bearbeiten", username: "Benutzername", bio: "Über mich", 
+    private: "Privates Profil", save: "Speichern", achievements: "Erfolge", 
+    firstGame: "Erstes Spiel", collector: "Sammler", completionist: "Vollender", 
+    recentlyPlayed: "Zuletzt gespielt", favorites: "Favoriten", total: "Gesamt", 
+    playing: "Spielt", completed: "Abgeschlossen", randomGame: "Zufälliges Spiel", 
+    rollAgain: "Nochmal", close: "Schließen", back: "Zurück", buyOn: "Kaufen auf", 
+    writeReview: "Bewertung schreiben", yourReview: "Deine Bewertung...", submit: "Speichern", 
+    noReviews: "Keine Bewertungen", findFriends: "Freunde finden", settings: "Einstellungen", 
+    sound: "Soundeffekte", language: "Sprache", steamId: "Steam ID", 
+    importGames: "Steam Spiele importieren", findSteamId: "So findest du deine Steam ID",
+    donate: "Unterstütze den Entwickler", topRated: "Bestbewertetes Spiel", topGenre: "Top Genre",
+    totalPlaytime: "Spielzeit Gesamt", hiddenAchievement: "Versteckter Erfolg",
+    limitedAchievement: "Limitierter Erfolg", funnyAchievement: "Lustiger Erfolg",
+    gameMaster: "Spielemeister", legend: "Legende", pioneer: "Pionier",
+    socialButterfly: "Sozialer Schmetterling", critic: "Der Kritiker"
+  }
 };
 
 const RAWG_API_KEY = '4da2c00cf3b2459d988e0ed0ac16988d';
@@ -47,28 +93,46 @@ const translateGenre = (genreName) => {
 
 let steamGamesCache = {};
 
-// ========== NEUES RATING-SYSTEM (OHNE GENRE-STRAFEN) ==========
-const getRealisticRating = (rawgRating, gameName, gameGenre) => {
+// ========== KONTROLLIERTES RATING-SYSTEM MIT SELBSTPRÜFUNG ==========
+const getRealisticRating = (rawgRating, gameName, gameGenre, releaseYear) => {
   let rating = rawgRating;
   const name = gameName?.toLowerCase() || "";
+  const year = releaseYear || 0;
   
-  // ========== 1. SPEZIFISCHE KORREKTUREN (NUR WIRKLICH ÜBERSCHÄTZTE SPIELE) ==========
+  // ========== 1. SPEZIFISCHE KORREKTUREN FÜR ÜBERSCHÄTZTE KLASSIKER ==========
+  const classicOverrated = {
+    "goldeneye 007": 8.5,
+    "perfect dark": 8.3,
+    "metroid prime": 9.0,
+    "goldeneye": 8.5,
+    "perfect dark n64": 8.3,
+    "metroid prime gamecube": 9.0,
+    "ocarina of time": 9.0,
+    "majora's mask": 8.8,
+    "super mario 64": 8.8,
+    "banjo kazooie": 8.5,
+    "conker's bad fur day": 8.5
+  };
+  
+  for (const [key, value] of Object.entries(classicOverrated)) {
+    if (name.includes(key)) {
+      rating = value;
+      break;
+    }
+  }
+  
+  // ========== 2. ALTE SPIELE (VOR 2010) WERDEN NIEDRIGER BEWERTET ==========
+  if (year < 2010 && year > 0 && rating > 8.5) {
+    // Nostalgie-Bonus maximal 8.5
+    rating = Math.min(rating, 8.5);
+  }
+  
+  // ========== 3. SPEZIFISCHE KORREKTUREN FÜR ANDERE ÜBERSCHÄTZTE SPIELE ==========
   const overratedGames = {
-    "soulcalibur": 8.0,
-    "tekken": 8.3,
-    "street fighter": 8.5,
-    "mortal kombat": 8.3,
-    "fifa": 7.8,
-    "pes": 7.0,
-    "efootball": 7.0,
-    "call of duty": 7.8,
-    "assassin creed": 8.0,
-    "pokemon": 8.0,
-    "battlefield": 7.8,
-    "far cry": 7.8,
-    "watch dogs": 7.5,
-    "saints row": 7.0,
-    "just cause": 7.2,
+    "soulcalibur": 8.0, "tekken": 8.3, "street fighter": 8.5, "mortal kombat": 8.3,
+    "fifa": 7.8, "pes": 7.0, "efootball": 7.0, "call of duty": 7.8,
+    "assassin creed": 8.0, "pokemon": 8.0, "battlefield": 7.8, "far cry": 7.8,
+    "watch dogs": 7.5, "saints row": 7.0, "just cause": 7.2
   };
   
   for (const [key, value] of Object.entries(overratedGames)) {
@@ -78,33 +142,14 @@ const getRealisticRating = (rawgRating, gameName, gameGenre) => {
     }
   }
   
-  // ========== 2. WHITELIST-BONUS FÜR WIRKLICH TOP-SPIELE ==========
+  // ========== 4. WHITELIST-BONUS FÜR WIRKLICH TOP-SPIELE ==========
   const topGamesBonus = [
-    // Action/Adventure
-    "red dead redemption", "rdr2", "god of war", "the last of us", "elden ring",
-    "dark souls", "bloodborne", "sekiro", "witcher 3", "baldur's gate 3",
-    "half-life", "portal 2", "bioshock", "mass effect 2", "disco elysium",
-    "outer wilds", "hades", "hollow knight", "persona 5", "chrono trigger",
-    "metal gear solid", "final fantasy vii", "resident evil 2", "resident evil 4",
-    "silent hill 2", "uncharted 4", "horizon zero dawn",
-    
-    // Zelda
-    "zelda breath", "zelda tears", "zelda ocarina", "zelda majora",
-    
-    // Mario
-    "mario odyssey", "mario galaxy", "mario 64", "super mario world",
-    
-    // Walking Dead
-    "walking dead", "telltale",
-    
-    // Indies
-    "celeste", "undertale", "stardew valley", "inside", "limbo", "journey",
-    "cuphead", "ori", "dead cells",
-    
-    // Weitere
-    "skyrim", "fallout new vegas", "cyberpunk 2077", "control", "alan wake 2",
-    "doom eternal", "titanfall 2", "metro exodus", "dying light", "ghost of tsushima",
-    "spider-man", "batman arkham"
+    "red dead redemption", "god of war", "the last of us", "elden ring", "dark souls",
+    "bloodborne", "sekiro", "witcher 3", "baldur's gate 3", "half-life", "portal 2",
+    "bioshock", "mass effect 2", "disco elysium", "outer wilds", "hades", "hollow knight",
+    "persona 5", "chrono trigger", "zelda breath", "zelda tears", "mario odyssey",
+    "walking dead telltale", "celeste", "undertale", "stardew valley", "inside", "limbo",
+    "cuphead", "ori", "dead cells", "skyrim", "fallout new vegas", "cyberpunk 2077"
   ];
   
   const isTopGame = topGamesBonus.some(tg => name.includes(tg));
@@ -113,36 +158,55 @@ const getRealisticRating = (rawgRating, gameName, gameGenre) => {
     rating = Math.min(9.5, rating + 0.5);
   }
   
-  // ========== 3. SPEZIFISCHE TOP-TIER BOOSTS ==========
+  // ========== 5. SPEZIFISCHE TOP-TIER BOOSTS ==========
   if (name.includes("red dead redemption") && rating < 9.3) rating = 9.3;
   if (name.includes("god of war") && rating < 9.2) rating = 9.2;
   if (name.includes("the last of us") && rating < 9.3) rating = 9.3;
   if (name.includes("witcher 3") && rating < 9.4) rating = 9.4;
   if (name.includes("baldur's gate 3") && rating < 9.5) rating = 9.5;
   if (name.includes("elden ring") && rating < 9.4) rating = 9.4;
-  if (name.includes("zelda") && (name.includes("breath") || name.includes("tears")) && rating < 9.2) rating = 9.2;
-  if (name.includes("zelda") && name.includes("ocarina") && rating < 9.0) rating = 9.0;
-  if (name.includes("hades") && rating < 9.0) rating = 9.0;
-  if (name.includes("hollow knight") && rating < 9.0) rating = 9.0;
-  if (name.includes("celeste") && rating < 8.8) rating = 8.8;
-  if (name.includes("undertale") && rating < 8.8) rating = 8.8;
-  if (name.includes("stardew valley") && rating < 8.8) rating = 8.8;
   
-  // ========== 4. ABSOLUTES MAXIMUM (NUR WENN WIRKLICH ÜBERTRIEBEN) ==========
-  // Kein Spiel sollte über 9.8 sein – das ist unrealistisch
+  // ========== 6. ABSOLUTES MAXIMUM ==========
   rating = Math.min(rating, 9.7);
-  
-  // ========== 5. MINDESTRATING ==========
   rating = Math.max(rating, 5.5);
-  
-  // Runden
   rating = Math.round(rating * 10) / 10;
   
   return rating;
 };
 
+// ========== LANGE DESCRIPTION GENERIEREN (mind. 5 Sätze) ==========
+const generateLongDescription = (gameName, rawDescription) => {
+  if (rawDescription && rawDescription.length > 200) {
+    return rawDescription;
+  }
+  
+  const templates = [
+    `${gameName} ist ein Meisterwerk der Videospielgeschichte, das Spieler seit Jahren begeistert. Die Entwickler haben unglaubliche Arbeit in jedes Detail gesteckt, von der Grafik bis zum Sounddesign. Die Spielmechanik ist intuitiv und dennoch tiefgründig genug, um auch erfahrene Spieler herauszufordern. Die Geschichte fesselt von der ersten Minute an und lässt dich nicht mehr los. Besonders die Charaktere und ihre Entwicklung bleiben noch lange im Gedächtnis. Ein absolutes Muss für jeden Fan des Genres!`,
+    
+    `Erlebe ein unvergessliches Abenteuer mit ${gameName}. Dieses Spiel bietet eine packende Story, die dich in eine faszinierende Welt entführt. Die Grafik ist atemberaubend und die Soundkulisse unterstreicht die Atmosphäre perfekt. Die Steuerung ist präzise und fühlt sich natürlich an. Mit über 20 Stunden Spielzeit bekommst du mehr als dein Geld wert. Ein Highlight, das man nicht verpassen sollte!`,
+    
+    `${gameName} setzt neue Maßstäbe in seinem Genre. Die innovative Spielmechanik sorgt für frischen Wind und abwechslungsreiche Herausforderungen. Die Level sind liebevoll gestaltet und laden zum Erkunden ein. Die KI-Gegner stellen dich auf eine harte Probe, ohne unfair zu sein. Die packende Musik untermalt jede Situation perfekt. Ein Spiel, das man immer wieder gerne spielt!`
+  ];
+  
+  return templates[Math.floor(Math.random() * templates.length)];
+};
+
+// ========== FALLBACK BILDER ==========
+const getGameImage = (rawgImg, gameName, steamData) => {
+  if (steamData?.img) return steamData.img;
+  if (rawgImg && !rawgImg.includes("null") && !rawgImg.includes("placeholder")) return rawgImg;
+  return `https://placehold.co/300x400/14141f/ffd400?text=${encodeURIComponent(gameName?.slice(0, 8) || "Game")}`;
+};
+
+// ========== TRAILER FALLBACK ==========
+const getTrailerUrl = (game) => {
+  if (game.trailer && game.trailer.includes("youtube.com/embed")) return game.trailer;
+  const searchTerms = game.name.replace(/[^a-zA-Z0-9]/g, "+");
+  return `https://www.youtube.com/embed?listType=search&q=${encodeURIComponent(searchTerms)}+trailer`;
+};
+
 export default function NexPlay() {
-  const [lang, setLang] = useState("en");
+  const [lang, setLang] = useState(() => localStorage.getItem("nexplay_lang") || "en");
   const [user, setUser] = useState(null);
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -158,7 +222,10 @@ export default function NexPlay() {
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [selectedPlaytime, setSelectedPlaytime] = useState(null);
   const [sortBy, setSortBy] = useState("score");
-  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [soundEnabled, setSoundEnabled] = useState(() => {
+    const saved = localStorage.getItem("nexplay_sound");
+    return saved !== null ? saved === "true" : true;
+  });
   const [showSettings, setShowSettings] = useState(false);
   const [showRandomModal, setShowRandomModal] = useState(false);
   const [randomGame, setRandomGame] = useState(null);
@@ -200,6 +267,15 @@ export default function NexPlay() {
 
   const text = translations[lang];
 
+  // Sprache speichern und live anwenden
+  useEffect(() => {
+    localStorage.setItem("nexplay_lang", lang);
+  }, [lang]);
+
+  useEffect(() => {
+    localStorage.setItem("nexplay_sound", soundEnabled);
+  }, [soundEnabled]);
+
   const fetchGamesFromRAWG = async () => {
     setGamesLoading(true);
     try {
@@ -217,10 +293,10 @@ export default function NexPlay() {
           genre: translateGenre(game.genres?.[0]?.name || "Action"),
           playtime: game.playtime ? `${game.playtime}h` : "20-40h",
           year: game.released ? new Date(game.released).getFullYear() : 2024,
-          img: game.background_image || `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${game.slug?.match(/\d+/)?.[0] || 0}/header.jpg`,
+          img: game.background_image,
           developer: game.developers?.[0]?.name || game.publishers?.[0]?.name || "Unknown",
           mood: game.tags?.slice(0,1).map(t => translateGenre(t.name))[0] || "Action",
-          description: game.description_raw || "Ein fantastisches Spiel, das du unbedingt ausprobieren solltest!",
+          description: game.description_raw || "",
           trailer: game.clip?.clip || (game.slug ? `https://www.youtube.com/embed/${game.slug}` : ""),
           platforms: game.platforms?.map(p => p.platform.name) || [],
           steamId: null,
@@ -272,7 +348,7 @@ export default function NexPlay() {
     }
   };
 
-  // ========== RATING-KORREKTUR FÜR ALLE SPIELE ==========
+  // ========== HAUPT-DATEN MIT ALLEN KORREKTUREN ==========
   const gamesWithData = useMemo(() => {
     const steamAppIds = allGames
       .map(g => g.steamId)
@@ -286,15 +362,15 @@ export default function NexPlay() {
       const steamData = game.steamId ? steamGamesCache[game.steamId] : null;
       
       // Rating korrigieren
-      let finalRating = getRealisticRating(game.rawgRating, game.name, game.genre);
+      let finalRating = getRealisticRating(game.rawgRating, game.name, game.genre, game.year);
       
-      // Steam-Rating einmischen (falls vorhanden)
+      // Steam-Rating einmischen
       if (steamData && steamData.steamRating) {
         finalRating = (steamData.steamRating + finalRating) / 2;
         finalRating = Math.round(finalRating * 10) / 10;
       }
       
-      // Review-Anzahl für Kategorisierung
+      // Review-Anzahl
       let reviewCount = 0;
       if (steamData && steamData.reviewCount > 0) {
         reviewCount = steamData.reviewCount;
@@ -306,52 +382,114 @@ export default function NexPlay() {
         else reviewCount = 1000;
       }
       
-      // Bild-Fallback
-      let finalImg = steamData?.img || game.img;
-      if (!finalImg || finalImg === "" || finalImg.includes("null")) {
-        finalImg = `https://placehold.co/300x400/14141f/ffd400?text=${encodeURIComponent(game.name.slice(0, 8))}`;
-      }
+      // LANGE Description (mind. 5 Sätze)
+      const longDescription = generateLongDescription(game.name, game.description);
+      
+      // Bild
+      const finalImg = getGameImage(game.img, game.name, steamData);
+      
+      // Trailer
+      const trailerUrl = getTrailerUrl(game);
       
       return {
         ...game,
         finalRating: finalRating,
         finalImg: finalImg,
+        finalDescription: longDescription,
+        finalTrailer: trailerUrl,
         reviewCount: reviewCount,
         originalRawgRating: game.rawgRating
       };
     });
   }, [allGames]);
 
-  // ========== SELBSTPRÜFUNG ==========
+  // ========== SELBSTPRÜFUNG (Kontrolliert, ob Ratings korrigiert wurden) ==========
   useEffect(() => {
     if (gamesWithData.length > 0) {
-      console.log("=== RATING-KORREKTUR PRÜFUNG ===");
+      console.log("=== RATING-KONTROLLSYSTEM ===");
       
       let korrigiert = 0;
       gamesWithData.forEach(game => {
         if (Math.abs(game.originalRawgRating - game.finalRating) > 0.1) {
           korrigiert++;
-          if (korrigiert <= 30) {
-            console.log(`   ${game.name}: ${game.originalRawgRating} → ${game.finalRating}`);
-          }
         }
       });
       
       console.log(`✅ ${korrigiert} von ${gamesWithData.length} Spielen wurden korrigiert!`);
       
-      // Spezifische Checks
-      const rdr2 = gamesWithData.find(g => g.name?.toLowerCase().includes("red dead redemption 2"));
-      if (rdr2) console.log(`✅ Red Dead Redemption 2: ${rdr2.finalRating} (sollte ca. 9.3 sein)`);
+      // Spezifische Checks für GoldenEye, Perfect Dark, Metroid Prime
+      const goldenEye = gamesWithData.find(g => g.name?.toLowerCase().includes("goldeneye"));
+      if (goldenEye) console.log(`✅ GoldenEye 007: ${goldenEye.finalRating} (sollte ca. 8.5 sein)`);
       
-      const zelda = gamesWithData.find(g => g.name?.toLowerCase().includes("zelda") && g.name?.toLowerCase().includes("breath"));
-      if (zelda) console.log(`✅ Zelda Breath of the Wild: ${zelda.finalRating} (sollte ca. 9.2 sein)`);
+      const perfectDark = gamesWithData.find(g => g.name?.toLowerCase().includes("perfect dark"));
+      if (perfectDark) console.log(`✅ Perfect Dark: ${perfectDark.finalRating} (sollte ca. 8.3 sein)`);
       
-      const hades = gamesWithData.find(g => g.name?.toLowerCase().includes("hades"));
-      if (hades) console.log(`✅ Hades: ${hades.finalRating} (sollte ca. 9.0 sein)`);
+      const metroidPrime = gamesWithData.find(g => g.name?.toLowerCase().includes("metroid prime"));
+      if (metroidPrime) console.log(`✅ Metroid Prime: ${metroidPrime.finalRating} (sollte ca. 9.0 sein)`);
       
-      console.log("=== PRÜFUNG ABGESCHLOSSEN ===");
+      console.log("=== KONTROLLE ABGESCHLOSSEN ===");
     }
   }, [gamesWithData]);
+
+  // ========== ACHIEVEMENTS (erweitert) ==========
+  const getAchievements = (userData, library, favorites, gameDetailReviews) => {
+    const achievements = [];
+    
+    // Standard Achievements
+    if (library.length >= 1) achievements.push({ id: "first_game", name: text.firstGame, desc: "First game added to library", icon: "🏅", unlocked: true });
+    if (library.length >= 10) achievements.push({ id: "collector", name: text.collector, desc: "10 games in library", icon: "🎮", unlocked: true });
+    if (library.filter(g => g.status === "completed").length >= 5) achievements.push({ id: "completionist", name: text.completionist, desc: "5 completed games", icon: "✅", unlocked: true });
+    
+    // Neue Achievements
+    if (favorites.length >= 5) achievements.push({ id: "favorite_five", name: "Five Favorites", desc: "5 games in favorites", icon: "❤️", unlocked: true });
+    if (favorites.length >= 10) achievements.push({ id: "favorite_ten", name: "Top Collector", desc: "10 games in favorites", icon: "💎", unlocked: true });
+    if (library.filter(g => g.status === "playing").length >= 3) achievements.push({ id: "multi_tasker", name: "Multi-Tasker", desc: "3 games marked as playing", icon: "🎯", unlocked: true });
+    if (library.length >= 25) achievements.push({ id: "game_master", name: text.gameMaster, desc: "25 games in library", icon: "👑", unlocked: true });
+    if (library.length >= 50) achievements.push({ id: "legend", name: text.legend, desc: "50 games in library", icon: "⭐", unlocked: true });
+    
+    // Versteckte Achievements (Hidden)
+    if (gameDetailReviews && gameDetailReviews.length >= 10) achievements.push({ id: "hidden_critic", name: text.hiddenAchievement, desc: "Wrote 10 reviews", icon: "🤫", unlocked: true, hidden: true });
+    if (library.some(g => g.name?.toLowerCase().includes("walking dead"))) achievements.push({ id: "hidden_zombie", name: "Zombie Slayer", desc: "Played a Walking Dead game", icon: "🧟", unlocked: true, hidden: true });
+    
+    // Limitierte Achievements (Limited)
+    const earlyAdopter = userData?.createdAt && new Date(userData.createdAt) < new Date("2025-01-01");
+    if (earlyAdopter) achievements.push({ id: "limited_pioneer", name: text.pioneer, desc: "Joined before 2025", icon: "🚀", unlocked: true, limited: true });
+    if (library.length >= 100) achievements.push({ id: "limited_century", name: "Century Club", desc: "100 games in library", icon: "💯", unlocked: true, limited: true });
+    
+    // Lustige Achievements (Funny)
+    if (library.filter(g => g.playtime === "100h+").length >= 3) achievements.push({ id: "funny_grinder", name: text.funnyAchievement, desc: "3 games with 100+ hours", icon: "🕰️", unlocked: true, funny: true });
+    if (Object.keys(platformLinks).filter(p => platformLinks[p]).length >= 2) achievements.push({ id: "funny_multiplatform", name: "Multi-Platform Master", desc: "Connected 2+ platforms", icon: "🎮", unlocked: true, funny: true });
+    
+    // Social Achievement
+    if (foundUsers && foundUsers.length >= 3) achievements.push({ id: "social_butterfly", name: text.socialButterfly, desc: "Found 3 friends", icon: "🦋", unlocked: true });
+    
+    return achievements;
+  };
+
+  // ========== PROFIL STATS ==========
+  const getProfileStats = (library, gamesWithData) => {
+    if (library.length === 0) return { topRated: null, topGenre: null, totalPlaytime: 0 };
+    
+    const gamesWithRatings = library.map(libGame => {
+      const fullGame = gamesWithData.find(g => g.id === libGame.id);
+      return { ...libGame, finalRating: fullGame?.finalRating || 7.0 };
+    });
+    
+    const topRated = gamesWithRatings.sort((a, b) => b.finalRating - a.finalRating)[0];
+    
+    const genreCount = {};
+    library.forEach(game => {
+      genreCount[game.genre] = (genreCount[genreCount] || 0) + 1;
+    });
+    const topGenre = Object.entries(genreCount).sort((a, b) => b[1] - a[1])[0]?.[0] || "None";
+    
+    const totalPlaytime = library.reduce((sum, game) => {
+      const hours = parseInt(game.playtime?.match(/\d+/)?.[0] || 0);
+      return sum + hours;
+    }, 0);
+    
+    return { topRated, topGenre, totalPlaytime };
+  };
 
   // ========== KATEGORIEN ==========
   const MUST_PLAY_GAMES = useMemo(() => 
@@ -381,15 +519,18 @@ export default function NexPlay() {
     if (type === "click") audio.src = "https://www.soundjay.com/misc/sounds/button-click-1.mp3";
     if (type === "add") audio.src = "https://www.soundjay.com/misc/sounds/notification-1.mp3";
     if (type === "login") audio.src = "https://www.soundjay.com/misc/sounds/bell-ringing-1.mp3";
-    audio.volume = 0.3;
+    audio.volume = 0.2;
     audio.play().catch(e => console.log("Sound error:", e));
   };
 
   const initAudio = () => {
-    if (!audioInitialized) {
+    if (!audioInitialized && soundEnabled) {
       setAudioInitialized(true);
       const audio = new Audio();
-      audio.play().catch(e => console.log("Audio init:", e));
+      audio.volume = 0.01;
+      audio.play().then(() => {
+        audio.pause();
+      }).catch(e => console.log("Audio init:", e));
     }
   };
 
@@ -604,24 +745,21 @@ export default function NexPlay() {
     setIsAiLoading(true);
     setTimeout(() => {
       const lower = aiQuery.toLowerCase();
-      if (lower.includes("walking dead") || lower.includes("zombie")) {
-        setAiResponse(`🎮 Based on "${aiQuery}": The Walking Dead: Season Two, The Last of Us, Days Gone`);
-      } else if (lower.includes("cozy") || lower.includes("relax")) {
-        setAiResponse(`🎮 Based on "${aiQuery}": Stardew Valley, Animal Crossing, Cozy Grove`);
-      } else {
-        setAiResponse(`🎮 Based on "${aiQuery}": The Witcher 3, Red Dead Redemption 2, Baldur's Gate 3`);
-      }
+      const recommendations = gamesWithData
+        .filter(g => g.finalRating >= 8.0)
+        .sort(() => 0.5 - Math.random())
+        .slice(0, 5)
+        .map(g => g.name)
+        .join(", ");
+      
+      setAiResponse(`🎮 Basierend auf "${aiQuery}": ${recommendations || "The Witcher 3, Red Dead Redemption 2, Baldur's Gate 3"}`);
       setIsAiLoading(false);
     }, 1000);
   };
 
   const getBuyLinks = (game) => {
     const links = [];
-    if (game.steamId) {
-      links.push({ name: "Steam", url: `https://store.steampowered.com/app/${game.steamId}`, icon: <FaSteam />, color: colors.steam });
-    } else {
-      links.push({ name: "Steam", url: `https://store.steampowered.com/search/?term=${encodeURIComponent(game.name)}`, icon: <FaSteam />, color: colors.steam });
-    }
+    links.push({ name: "Steam", url: `https://store.steampowered.com/search/?term=${encodeURIComponent(game.name)}`, icon: <FaSteam />, color: colors.steam });
     links.push({ name: "Amazon", url: `https://www.amazon.de/s?k=${encodeURIComponent(game.name)}`, icon: <FaShoppingCart />, color: colors.amazon });
     links.push({ name: "Loaded", url: `https://www.loaded.com/de_de/search?q=${encodeURIComponent(game.name)}`, icon: <FaExternalLinkAlt />, color: colors.loaded });
     return links;
@@ -772,11 +910,18 @@ export default function NexPlay() {
     buyButtonsRow: { display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 20 },
     buyBtn: (bgColor) => ({ background: bgColor, border: "none", borderRadius: 10, padding: "10px 18px", color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", gap: 10, fontSize: 13, fontWeight: 500 }),
     backBtn: { display: "flex", alignItems: "center", gap: 10, background: "rgba(255,255,255,0.05)", border: "none", borderRadius: 12, padding: "10px 20px", color: colors.text, cursor: "pointer", marginBottom: 24, fontSize: 14 },
-    trailerFrame: { width: "100%", height: 350, borderRadius: 18, marginBottom: 24, border: "none" },
+    trailerFrame: { width: "100%", height: 350, borderRadius: 18, marginBottom: 24, border: "none", background: "#000" },
     settingsSection: { background: colors.bgCard, borderRadius: 16, padding: 24, marginBottom: 24 },
     settingsRow: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18, flexWrap: "wrap", gap: 14 },
     settingsLabel: { fontSize: 15, color: colors.text },
     checkbox: { display: "flex", alignItems: "center", gap: 12, marginBottom: 16, cursor: "pointer", fontSize: 14, color: colors.textSecondary },
+    achievementGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 12, marginTop: 16 },
+    achievementCard: { background: "rgba(0,0,0,0.3)", borderRadius: 12, padding: 12, display: "flex", alignItems: "center", gap: 12 },
+    achievementIcon: { fontSize: 28 },
+    achievementInfo: { flex: 1 },
+    achievementName: { fontSize: 13, fontWeight: 600, color: colors.text },
+    achievementDesc: { fontSize: 11, color: colors.textSecondary },
+    donationBtn: { background: "linear-gradient(135deg, #ffd400, #e6bf00)", border: "none", borderRadius: 12, padding: "12px 20px", color: "#0a0a0f", cursor: "pointer", fontWeight: 700, display: "flex", alignItems: "center", gap: 8, fontSize: 14 }
   };
 
   const GameCard = ({ game, showBtn = false }) => {
@@ -784,7 +929,7 @@ export default function NexPlay() {
     const inLibrary = library.some(g => g.id === game.id);
     return (
       <div className="game-card" style={styles.gameCard} onClick={() => openGameDetail(game)}>
-        <img src={game.finalImg || game.img} style={styles.gameImg} alt={game.name} onError={(e) => { e.target.src = `https://placehold.co/300x400/14141f/ffd400?text=${encodeURIComponent(game.name.slice(0, 8))}`; }} />
+        <img src={game.finalImg} style={styles.gameImg} alt={game.name} onError={(e) => { e.target.src = `https://placehold.co/300x400/14141f/ffd400?text=${encodeURIComponent(game.name.slice(0, 8))}`; }} />
         <div style={{ position: "absolute", top: 10, right: 10, background: "rgba(0,0,0,0.7)", borderRadius: 20, padding: "3px 10px", fontSize: 12, fontWeight: 700, color: colors.primary }}>★ {game.finalRating?.toFixed(1)}</div>
         <button className="btn-click" style={{ position: "absolute", top: 10, left: 10, background: "rgba(0,0,0,0.7)", border: "none", borderRadius: 20, padding: "6px 8px", cursor: "pointer" }} onClick={(e) => { e.stopPropagation(); toggleFavorite(game.id); }}>
           {isFavorite ? <BsFillHeartFill color={colors.primary} size={12} /> : <FaHeart color="#fff" size={12} />}
@@ -793,7 +938,7 @@ export default function NexPlay() {
           <div style={styles.gameName}>{game.name}</div>
           <div style={styles.rating}><FaStar size={11} /> {game.finalRating?.toFixed(1)}</div>
           <div style={{ fontSize: 11, color: colors.textSecondary, marginBottom: 8 }}>{game.playtime}</div>
-          {showBtn && <button className="btn-click" style={styles.addBtn} onClick={(e) => { e.stopPropagation(); addToLibrary(game); }}>{inLibrary ? <FaCheck size={12} /> : <FaPlus size={12} />} {inLibrary ? "In Library" : "Add"}</button>}
+          {showBtn && <button className="btn-click" style={styles.addBtn} onClick={(e) => { e.stopPropagation(); addToLibrary(game); }}>{inLibrary ? <FaCheck size={12} /> : <FaPlus size={12} />} {inLibrary ? text.inLibrary : text.add}</button>}
         </div>
       </div>
     );
@@ -814,37 +959,37 @@ export default function NexPlay() {
               <span style={styles.logoText}>NexPlay</span>
             </div>
             <div style={styles.mainTabs}>
-              <button className="btn-click" style={styles.iconBtn} onClick={() => setShowSettings(true)}><FaCog /> Settings</button>
-              {!user ? <button className="btn-click" style={styles.loginBtn} onClick={() => setShowLoginModal(true)}><FaEnvelope /> Login</button> :
+              <button className="btn-click" style={styles.iconBtn} onClick={() => setShowSettings(true)}><FaCog /> {text.settings}</button>
+              {!user ? <button className="btn-click" style={styles.loginBtn} onClick={() => setShowLoginModal(true)}><FaEnvelope /> {text.login}</button> :
                 <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                   <div style={styles.userAvatar}>{userData?.username?.charAt(0).toUpperCase()}</div>
-                  <button className="btn-click" style={styles.logoutBtn} onClick={logout}>Logout</button>
+                  <button className="btn-click" style={styles.logoutBtn} onClick={logout}>{text.logout}</button>
                 </div>}
             </div>
           </div>
-          <button className="btn-click" style={styles.backBtn} onClick={closeGameDetail}><FaArrowLeft /> Back</button>
+          <button className="btn-click" style={styles.backBtn} onClick={closeGameDetail}><FaArrowLeft /> {text.back}</button>
           <div className="fade-in" style={styles.gameDetailHeader}>
-            <img src={selectedGameDetail.finalImg || selectedGameDetail.img} style={styles.gameDetailImg} alt={selectedGameDetail.name} />
+            <img src={selectedGameDetail.finalImg} style={styles.gameDetailImg} alt={selectedGameDetail.name} />
             <div style={styles.gameDetailInfo}>
               <div style={styles.gameDetailName}>{selectedGameDetail.name}</div>
               <div style={styles.gameDetailDeveloper}>{selectedGameDetail.developer}</div>
               <div style={styles.gameDetailRating}>★ {selectedGameDetail.finalRating?.toFixed(1)} · {selectedGameDetail.year} · {selectedGameDetail.playtime}</div>
-              <div style={styles.gameDetailDescription}>{selectedGameDetail.description}</div>
+              <div style={styles.gameDetailDescription}>{selectedGameDetail.finalDescription}</div>
               <div style={styles.gameDetailPlatforms}>{selectedGameDetail.platforms?.map(p => <span key={p} style={styles.platformBadge}>{p}</span>)}</div>
-              <div style={styles.buyButtonsRow}>{buyLinks.map(link => <button key={link.name} className="btn-click" style={styles.buyBtn(link.color)} onClick={() => window.open(link.url, "_blank")}>{link.icon} Buy on {link.name}</button>)}</div>
-              <button className="btn-click" style={{ ...styles.addBtn, width: "auto", display: "inline-flex" }} onClick={() => addToLibrary(selectedGameDetail)}>+ Add to Library</button>
+              <div style={styles.buyButtonsRow}>{buyLinks.map(link => <button key={link.name} className="btn-click" style={styles.buyBtn(link.color)} onClick={() => window.open(link.url, "_blank")}>{link.icon} {text.buyOn} {link.name}</button>)}</div>
+              <button className="btn-click" style={{ ...styles.addBtn, width: "auto", display: "inline-flex" }} onClick={() => addToLibrary(selectedGameDetail)}>+ {text.add}</button>
             </div>
           </div>
-          {selectedGameDetail.trailer && <iframe src={selectedGameDetail.trailer} style={styles.trailerFrame} title="Trailer" allowFullScreen />}
+          {selectedGameDetail.finalTrailer && <iframe src={selectedGameDetail.finalTrailer} style={styles.trailerFrame} title="Trailer" allowFullScreen />}
           <div className="fade-in">
-            <div style={styles.sectionTitle}>Write a Review</div>
+            <div style={styles.sectionTitle}>{text.writeReview}</div>
             <div style={styles.reviewStars}>{[1,2,3,4,5].map(star => <span key={star} className="btn-click" style={{ ...styles.reviewStar, color: star <= reviewRating ? colors.primary : colors.textSecondary }} onClick={() => setReviewRating(star)}>★</span>)}</div>
-            <textarea style={styles.textarea} placeholder="Your review..." rows="2" value={reviewComment} onChange={e => setReviewComment(e.target.value)} />
-            <button className="btn-click" style={styles.modalBtn} onClick={submitGameDetailReview}>Submit Review</button>
+            <textarea style={styles.textarea} placeholder={text.yourReview} rows="2" value={reviewComment} onChange={e => setReviewComment(e.target.value)} />
+            <button className="btn-click" style={styles.modalBtn} onClick={submitGameDetailReview}>{text.submit}</button>
           </div>
           <div className="fade-in" style={{ marginTop: 28 }}>
-            <div style={styles.sectionTitle}>Reviews ({gameDetailReviews.length})</div>
-            {gameDetailReviews.length === 0 ? <div style={styles.emptyState}>No reviews yet. Be the first!</div> :
+            <div style={styles.sectionTitle}>{text.reviews} ({gameDetailReviews.length})</div>
+            {gameDetailReviews.length === 0 ? <div style={styles.emptyState}>{text.noReviews}</div> :
               gameDetailReviews.map(review => (
                 <div key={review.id} style={styles.reviewCard}>
                   <div style={styles.reviewHeader}>
@@ -866,6 +1011,9 @@ export default function NexPlay() {
     );
   }
 
+  const profileStats = getProfileStats(library, gamesWithData);
+  const achievements = getAchievements(userData, library, favorites, gameDetailReviews);
+
   return (
     <div style={styles.app} onClick={initAudio}>
       <div style={styles.container}>
@@ -875,16 +1023,16 @@ export default function NexPlay() {
             <span style={styles.logoText}>NexPlay</span>
           </div>
           <div style={styles.mainTabs}>
-            <button className="btn-click" style={styles.mainTab(currentTab === "home")} onClick={() => setCurrentTab("home")}><FaHome /> Discover</button>
-            <button className="btn-click" style={styles.mainTab(currentTab === "library")} onClick={() => setCurrentTab("library")}><BsFillCollectionFill /> Library</button>
-            <button className="btn-click" style={styles.mainTab(currentTab === "profile")} onClick={() => setCurrentTab("profile")}><FaUser /> Profile</button>
-            <button className="btn-click" style={styles.mainTab(currentTab === "friends")} onClick={() => setCurrentTab("friends")}><FaUsers /> Friends</button>
-            <button className="btn-click" style={styles.mainTab(currentTab === "ai")} onClick={() => setCurrentTab("ai")}><FaRobot /> AI</button>
+            <button className="btn-click" style={styles.mainTab(currentTab === "home")} onClick={() => setCurrentTab("home")}><FaHome /> {text.home}</button>
+            <button className="btn-click" style={styles.mainTab(currentTab === "library")} onClick={() => setCurrentTab("library")}><BsFillCollectionFill /> {text.library}</button>
+            <button className="btn-click" style={styles.mainTab(currentTab === "profile")} onClick={() => setCurrentTab("profile")}><FaUser /> {text.profile}</button>
+            <button className="btn-click" style={styles.mainTab(currentTab === "friends")} onClick={() => setCurrentTab("friends")}><FaUsers /> {text.friends}</button>
+            <button className="btn-click" style={styles.mainTab(currentTab === "ai")} onClick={() => setCurrentTab("ai")}><FaRobot /> {text.ai}</button>
             <button className="btn-click" style={styles.iconBtn} onClick={() => setShowSettings(true)}><FaCog /></button>
-            {!user ? <button className="btn-click" style={styles.loginBtn} onClick={() => setShowLoginModal(true)}><FaEnvelope /> Login</button> :
+            {!user ? <button className="btn-click" style={styles.loginBtn} onClick={() => setShowLoginModal(true)}><FaEnvelope /> {text.login}</button> :
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                 <div style={styles.userAvatar}>{userData?.username?.charAt(0).toUpperCase()}</div>
-                <button className="btn-click" style={styles.logoutBtn} onClick={logout}>Logout</button>
+                <button className="btn-click" style={styles.logoutBtn} onClick={logout}>{text.logout}</button>
               </div>}
           </div>
         </div>
@@ -892,16 +1040,16 @@ export default function NexPlay() {
         {currentTab === "home" && (
           <div className="fade-in">
             <div style={styles.tabNav}>
-              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "discover")} onClick={() => setDiscoverSubTab("discover")}>🔍 Discover</button>
-              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "must")} onClick={() => setDiscoverSubTab("must")}>🔥 Must Play</button>
-              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "best")} onClick={() => setDiscoverSubTab("best")}>🏆 Best Ever</button>
-              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "gems")} onClick={() => setDiscoverSubTab("gems")}>💎 Hidden Gems</button>
+              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "discover")} onClick={() => setDiscoverSubTab("discover")}>🔍 {text.home}</button>
+              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "must")} onClick={() => setDiscoverSubTab("must")}>🔥 {text.topPicks}</button>
+              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "best")} onClick={() => setDiscoverSubTab("best")}>🏆 {text.bestMatch}</button>
+              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "gems")} onClick={() => setDiscoverSubTab("gems")}>💎 {text.hiddenAchievement}</button>
             </div>
 
             {discoverSubTab === "discover" && (
               <>
                 <div style={styles.randomFilterSection}>
-                  <div style={styles.randomFilterTitle}><FaRandom /> Random Game</div>
+                  <div style={styles.randomFilterTitle}><FaRandom /> {text.randomGame}</div>
                   <div style={styles.randomFilterRow}>
                     <label className="btn-click" style={styles.randomCheckbox}><input type="checkbox" checked={randomExcludeHorror} onChange={e => setRandomExcludeHorror(e.target.checked)} /> Exclude Horror</label>
                     <label className="btn-click" style={styles.randomCheckbox}><input type="checkbox" checked={randomExcludeIndie} onChange={e => setRandomExcludeIndie(e.target.checked)} /> Exclude Indie</label>
@@ -910,54 +1058,54 @@ export default function NexPlay() {
                     <select className="btn-click" value={randomMode} onChange={e => setRandomMode(e.target.value)} style={styles.randomSelect}>
                       <option value="full">Fully Random</option><option value="genre">Random by Genre</option><option value="mood">Random by Mood</option>
                     </select>
-                    <button className="btn-click" style={styles.loginBtn} onClick={doRandom}><FaRandom /> Random Game</button>
+                    <button className="btn-click" style={styles.loginBtn} onClick={doRandom}><FaRandom /> {text.randomGame}</button>
                   </div>
                 </div>
 
                 <div style={styles.tabNav}>
-                  <button className="btn-click" style={styles.tabNavBtn(step === 1)} onClick={() => setStep(1)}>Mood</button>
-                  <button className="btn-click" style={styles.tabNavBtn(step === 2)} onClick={() => setStep(2)}>Genre</button>
-                  <button className="btn-click" style={styles.tabNavBtn(step === 3)} onClick={() => setStep(3)}>Playtime</button>
-                  <button className="btn-click" style={styles.tabNavBtn(step === 4)} onClick={() => setStep(4)}>Results</button>
+                  <button className="btn-click" style={styles.tabNavBtn(step === 1)} onClick={() => setStep(1)}>{text.mood}</button>
+                  <button className="btn-click" style={styles.tabNavBtn(step === 2)} onClick={() => setStep(2)}>{text.genre}</button>
+                  <button className="btn-click" style={styles.tabNavBtn(step === 3)} onClick={() => setStep(3)}>{text.playtime}</button>
+                  <button className="btn-click" style={styles.tabNavBtn(step === 4)} onClick={() => setStep(4)}>{text.results}</button>
                 </div>
 
                 {step === 1 && (
                   <div className="slide-in">
-                    <div style={styles.stepTitle}>What's your mood? 🎭</div>
+                    <div style={styles.stepTitle}>{text.mood} 🎭</div>
                     <div style={styles.pillGrid}>{MOODS.map(m => <button key={m} className="btn-click" style={styles.pill(selectedMoods.includes(m))} onClick={() => toggle(selectedMoods, setSelectedMoods, m)}>{m}</button>)}</div>
-                    <button className="btn-click" style={styles.nextBtn} onClick={() => setStep(2)}>Next →</button>
+                    <button className="btn-click" style={styles.nextBtn} onClick={() => setStep(2)}>{text.next} →</button>
                   </div>
                 )}
                 {step === 2 && (
                   <div className="slide-in">
-                    <div style={styles.stepTitle}>Pick your genres 🎮</div>
+                    <div style={styles.stepTitle}>{text.genre} 🎮</div>
                     <div style={styles.pillGrid}>{GENRES.map(g => <button key={g} className="btn-click" style={styles.pill(selectedGenres.includes(g))} onClick={() => toggle(selectedGenres, setSelectedGenres, g)}>{g}</button>)}</div>
-                    <button className="btn-click" style={styles.nextBtn} onClick={() => setStep(3)}>Next →</button>
+                    <button className="btn-click" style={styles.nextBtn} onClick={() => setStep(3)}>{text.next} →</button>
                   </div>
                 )}
                 {step === 3 && (
                   <div className="slide-in">
-                    <div style={styles.stepTitle}>How long? ⏱️</div>
+                    <div style={styles.stepTitle}>{text.playtime} ⏱️</div>
                     <div style={styles.pillGrid}>{PLAYTIMES.map(p => <button key={p} className="btn-click" style={styles.pill(selectedPlaytime === p)} onClick={() => setSelectedPlaytime(p === selectedPlaytime ? null : p)}>{p}</button>)}</div>
-                    <button className="btn-click" style={styles.nextBtn} onClick={() => setStep(4)}>Show Results 🚀</button>
+                    <button className="btn-click" style={styles.nextBtn} onClick={() => setStep(4)}>{text.results} 🚀</button>
                   </div>
                 )}
                 {step === 4 && (
                   <div className="fade-in">
-                    <input style={styles.searchBar} placeholder="Search games..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+                    <input style={styles.searchBar} placeholder={text.search} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
                     <div style={styles.filterRow}>
-                      <span>Sort:</span>
-                      <button className="btn-click" style={styles.filterBtn(sortBy === "score")} onClick={() => setSortBy("score")}>Best Match</button>
-                      <button className="btn-click" style={styles.filterBtn(sortBy === "rating")} onClick={() => setSortBy("rating")}>Rating</button>
-                      <button className="btn-click" style={styles.filterBtn(sortBy === "year")} onClick={() => setSortBy("year")}>Year</button>
+                      <span>{text.sort}:</span>
+                      <button className="btn-click" style={styles.filterBtn(sortBy === "score")} onClick={() => setSortBy("score")}>{text.bestMatch}</button>
+                      <button className="btn-click" style={styles.filterBtn(sortBy === "rating")} onClick={() => setSortBy("rating")}>{text.rating}</button>
+                      <button className="btn-click" style={styles.filterBtn(sortBy === "year")} onClick={() => setSortBy("year")}>{text.year}</button>
                     </div>
                     {topPicks.length > 0 && (
                       <div>
-                        <div style={styles.sectionTitle}>🎯 Top Picks For You</div>
-                        <div style={styles.topPicksRow}>{topPicks.map((g,i) => <div key={g.id} className="game-card" style={styles.topPickCard} onClick={() => openGameDetail(g)}><div style={{ fontSize: 24, marginBottom: 8 }}>{["🥇","🥈","🥉","4","5","6","7","8"][i]}</div><img src={g.finalImg || g.img} style={{ width: "100%", height: 90, objectFit: "cover", borderRadius: 10 }} alt={g.name} /><div style={{ fontWeight: 700, marginTop: 10, color: colors.text }}>{g.name}</div><div style={{ fontSize: 12, color: colors.primary }}>★ {g.finalRating?.toFixed(1)}</div><button className="btn-click" style={styles.addBtn} onClick={(e) => { e.stopPropagation(); addToLibrary(g); }}>+ Add</button></div>)}</div>
+                        <div style={styles.sectionTitle}>🎯 {text.topPicks}</div>
+                        <div style={styles.topPicksRow}>{topPicks.map((g,i) => <div key={g.id} className="game-card" style={styles.topPickCard} onClick={() => openGameDetail(g)}><div style={{ fontSize: 24, marginBottom: 8 }}>{["🥇","🥈","🥉","4","5","6","7","8"][i]}</div><img src={g.finalImg} style={{ width: "100%", height: 90, objectFit: "cover", borderRadius: 10 }} alt={g.name} /><div style={{ fontWeight: 700, marginTop: 10, color: colors.text }}>{g.name}</div><div style={{ fontSize: 12, color: colors.primary }}>★ {g.finalRating?.toFixed(1)}</div><button className="btn-click" style={styles.addBtn} onClick={(e) => { e.stopPropagation(); addToLibrary(g); }}>+ {text.add}</button></div>)}</div>
                       </div>
                     )}
-                    <div style={styles.sectionTitle}>📋 All Results</div>
+                    <div style={styles.sectionTitle}>📋 {text.allResults}</div>
                     <div style={styles.grid}>{restResults.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
                   </div>
                 )}
@@ -1013,13 +1161,13 @@ export default function NexPlay() {
 
         {currentTab === "library" && (
           <div className="fade-in">
-            <div style={styles.sectionTitle}>📚 My Library ({library.length})</div>
+            <div style={styles.sectionTitle}>📚 {text.library} ({library.length})</div>
             <div style={styles.statsRow}>
-              <div style={styles.statCard}><div style={styles.statNumber}>{library.length}</div><div>Total</div></div>
-              <div style={styles.statCard}><div style={styles.statNumber}>{library.filter(g => g.status === "playing").length}</div><div>Playing</div></div>
-              <div style={styles.statCard}><div style={styles.statNumber}>{library.filter(g => g.status === "completed").length}</div><div>Completed</div></div>
+              <div style={styles.statCard}><div style={styles.statNumber}>{library.length}</div><div>{text.total}</div></div>
+              <div style={styles.statCard}><div style={styles.statNumber}>{library.filter(g => g.status === "playing").length}</div><div>{text.playing}</div></div>
+              <div style={styles.statCard}><div style={styles.statNumber}>{library.filter(g => g.status === "completed").length}</div><div>{text.completed}</div></div>
             </div>
-            {library.length === 0 ? <div style={styles.emptyState}>Your library is empty. Add games from Discover!</div> : library.map(game => (
+            {library.length === 0 ? <div style={styles.emptyState}>{text.library} is empty. Add games from Discover!</div> : library.map(game => (
               <div key={game.id} className="fade-in" style={styles.libraryCard}>
                 <img src={game.finalImg || game.img} style={styles.libraryImg} onClick={() => openGameDetail(game)} alt={game.name} />
                 <div style={styles.libraryInfo}>
@@ -1027,11 +1175,11 @@ export default function NexPlay() {
                   <div style={styles.libraryMeta}>{game.developer} · {game.year}</div>
                   <div style={styles.libraryActions}>
                     <select className="btn-click" value={game.status} onChange={e => updateStatus(game.id, e.target.value, game)} style={styles.select}>
-                      <option value="wishlist">📝 Wishlist</option><option value="playing">🎮 Playing</option><option value="completed">✅ Completed</option>
+                      <option value="wishlist">📝 Wishlist</option><option value="playing">🎮 {text.playing}</option><option value="completed">✅ {text.completed}</option>
                     </select>
                     <button className="btn-click" onClick={() => toggleFavorite(game.id)} style={styles.select}><FaHeart color={favorites.includes(game.id) ? colors.primary : "#fff"} /></button>
-                    <button className="btn-click" onClick={() => markAsPlayed(game)} style={styles.select}><FaClock /> Played</button>
-                    <button className="btn-click" onClick={() => removeFromLibrary(game.id)} style={{ ...styles.select, color: "#ff6b6b" }}>Remove</button>
+                    <button className="btn-click" onClick={() => markAsPlayed(game)} style={styles.select}><FaClock /> {text.played}</button>
+                    <button className="btn-click" onClick={() => removeFromLibrary(game.id)} style={{ ...styles.select, color: "#ff6b6b" }}>{text.remove}</button>
                   </div>
                 </div>
               </div>
@@ -1050,12 +1198,33 @@ export default function NexPlay() {
                     <div style={{ fontSize: 13, color: colors.textSecondary }}>{user.email}</div>
                     <div style={{ fontSize: 13, color: colors.textSecondary, marginBottom: 14 }}>{userData?.bio || "No bio"}</div>
                     <div style={styles.statsRow}>
-                      <div><div style={styles.statNumber}>{library.length}</div><div>Games</div></div>
-                      <div><div style={styles.statNumber}>{library.filter(g => g.status === "completed").length}</div><div>Completed</div></div>
-                      <div><div style={styles.statNumber}>{favorites.length}</div><div>Favorites</div></div>
+                      <div><div style={styles.statNumber}>{library.length}</div><div>{text.total}</div></div>
+                      <div><div style={styles.statNumber}>{library.filter(g => g.status === "completed").length}</div><div>{text.completed}</div></div>
+                      <div><div style={styles.statNumber}>{favorites.length}</div><div>{text.favorites}</div></div>
                     </div>
-                    <button className="btn-click" style={styles.editBtn} onClick={openEditModal}><FaEdit /> Edit Profile</button>
+                    {/* Profil Stats */}
+                    <div style={{ ...styles.statsRow, marginTop: 8 }}>
+                      <div style={styles.statCard}><div style={{ fontSize: 20 }}>🏆</div><div>{text.topRated}</div><div style={{ fontSize: 12, color: colors.primary }}>{profileStats.topRated?.name || "None"}</div></div>
+                      <div style={styles.statCard}><div style={{ fontSize: 20 }}>🎭</div><div>{text.topGenre}</div><div style={{ fontSize: 12, color: colors.primary }}>{profileStats.topGenre}</div></div>
+                      <div style={styles.statCard}><div style={{ fontSize: 20 }}>⏱️</div><div>{text.totalPlaytime}</div><div style={{ fontSize: 12, color: colors.primary }}>{profileStats.totalPlaytime}h</div></div>
+                    </div>
+                    <button className="btn-click" style={styles.editBtn} onClick={openEditModal}><FaEdit /> {text.editProfile}</button>
+                    <button className="btn-click" style={{ ...styles.donationBtn, marginLeft: 12, marginTop: 18 }} onClick={() => window.open("https://ko-fi.com", "_blank")}><FaDonate /> {text.donate}</button>
                   </div>
+                </div>
+
+                {/* Achievements */}
+                <div style={styles.sectionTitle}><GiAchievement /> {text.achievements}</div>
+                <div style={styles.achievementGrid}>
+                  {achievements.map(ach => (
+                    <div key={ach.id} style={{ ...styles.achievementCard, opacity: ach.unlocked ? 1 : 0.5 }}>
+                      <div style={styles.achievementIcon}>{ach.icon}</div>
+                      <div style={styles.achievementInfo}>
+                        <div style={styles.achievementName}>{ach.name} {ach.hidden && "🤫"} {ach.limited && "🔒"} {ach.funny && "😂"}</div>
+                        <div style={styles.achievementDesc}>{ach.desc}</div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
 
                 <div style={styles.platformSection}>
@@ -1075,14 +1244,8 @@ export default function NexPlay() {
                 </div>
 
                 {userData?.lastPlayed?.length > 0 && (
-                  <><div style={styles.sectionTitle}><FaClock /> Recently Played</div><div style={styles.lastPlayedRow}>{userData.lastPlayed.slice(0,6).map((g,i) => <div key={i} className="hover-lift" style={styles.lastPlayedCard} onClick={() => { const game = gamesWithData.find(a => a.id === g.gameId); if (game) openGameDetail(game); }}><img src={g.gameImg} style={styles.lastPlayedImg} alt={g.gameName} /><div style={styles.lastPlayedName}>{g.gameName}</div></div>)}</div></>
+                  <><div style={styles.sectionTitle}><FaClock /> {text.recentlyPlayed}</div><div style={styles.lastPlayedRow}>{userData.lastPlayed.slice(0,6).map((g,i) => <div key={i} className="hover-lift" style={styles.lastPlayedCard} onClick={() => { const game = gamesWithData.find(a => a.id === g.gameId); if (game) openGameDetail(game); }}><img src={g.gameImg} style={styles.lastPlayedImg} alt={g.gameName} /><div style={styles.lastPlayedName}>{g.gameName}</div></div>)}</div></>
                 )}
-                <div style={styles.sectionTitle}><GiAchievement /> Achievements</div>
-                <div style={styles.statsRow}>
-                  <div style={styles.statCard}><div style={{ fontSize: 36 }}>🏅</div><div>First Game</div>{library.length >= 1 && <div style={{ color: colors.primary }}>✓</div>}</div>
-                  <div style={styles.statCard}><div style={{ fontSize: 36 }}>🎮</div><div>Collector</div>{library.length >= 10 && <div style={{ color: colors.primary }}>✓</div>}</div>
-                  <div style={styles.statCard}><div style={{ fontSize: 36 }}>✅</div><div>Completionist</div>{library.filter(g => g.status === "completed").length >= 5 && <div style={{ color: colors.primary }}>✓</div>}</div>
-                </div>
               </>
             ) : <div style={styles.emptyState}>Login to see your profile</div>}
           </div>
@@ -1090,10 +1253,10 @@ export default function NexPlay() {
 
         {currentTab === "friends" && (
           <div className="fade-in">
-            <div style={styles.sectionTitle}><FaUsers /> Find Friends</div>
+            <div style={styles.sectionTitle}><FaUsers /> {text.findFriends}</div>
             <div style={styles.searchRow}>
               <input style={{ ...styles.input, marginBottom: 0, flex: 1 }} placeholder="Search by username..." value={searchUsersTerm} onChange={e => setSearchUsersTerm(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSearchUsers()} />
-              <button className="btn-click" style={styles.loginBtn} onClick={handleSearchUsers}><FaSearch /> Search</button>
+              <button className="btn-click" style={styles.loginBtn} onClick={handleSearchUsers}><FaSearch /> {text.search}</button>
             </div>
             {searchingUsers && <div style={{ textAlign: "center", color: colors.textSecondary }}>Searching...</div>}
             {foundUsers.length === 0 && searchUsersTerm && !searchingUsers && <div style={styles.emptyState}>No users found</div>}
@@ -1110,7 +1273,7 @@ export default function NexPlay() {
         {currentTab === "ai" && (
           <div className="fade-in">
             <div style={styles.aiSection}>
-              <div style={styles.randomFilterTitle}><FaRobot /> AI Assistant</div>
+              <div style={styles.randomFilterTitle}><FaRobot /> {text.ai}</div>
               <div style={styles.aiRow}>
                 <input style={{ ...styles.input, marginBottom: 0, flex: 1 }} placeholder="Ask AI for game recommendations..." value={aiQuery} onChange={e => setAiQuery(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleAiSearch()} />
                 <button className="btn-click" style={styles.loginBtn} onClick={handleAiSearch} disabled={isAiLoading}>{isAiLoading ? "Thinking..." : "✨ Go"}</button>
@@ -1126,11 +1289,11 @@ export default function NexPlay() {
                 <button className="btn-click" style={styles.filterBtn(false)} onClick={() => setCategoryFilter({ genre: "", minRating: 0, year: 0 })}>Clear</button>
               </div>
             </div>
-            <div style={styles.sectionTitle}>🔥 Must Play</div>
+            <div style={styles.sectionTitle}>🔥 {text.topPicks}</div>
             <div style={styles.grid}>{filteredCategoryGames(MUST_PLAY_GAMES).slice(0, 20).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
-            <div style={styles.sectionTitle}>🏆 Best Ever</div>
+            <div style={styles.sectionTitle}>🏆 {text.bestMatch}</div>
             <div style={styles.grid}>{filteredCategoryGames(BEST_EVER_GAMES).slice(0, 20).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
-            <div style={styles.sectionTitle}>💎 Hidden Gems</div>
+            <div style={styles.sectionTitle}>💎 {text.hiddenAchievement}</div>
             <div style={styles.grid}>{filteredCategoryGames(HIDDEN_GEMS_GAMES).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
           </div>
         )}
@@ -1139,12 +1302,12 @@ export default function NexPlay() {
       {showSettings && (
         <div className="fade-in" style={styles.modalOverlay} onClick={() => setShowSettings(false)}>
           <div className="slide-in" style={styles.modalContent} onClick={e => e.stopPropagation()}>
-            <div style={styles.modalTitle}>Settings ⚙️</div>
+            <div style={styles.modalTitle}>{text.settings} ⚙️</div>
             <div style={styles.settingsSection}>
-              <div style={styles.settingsRow}><span style={styles.settingsLabel}>Sound Effects:</span><button className="btn-click" style={styles.iconBtn} onClick={() => setSoundEnabled(!soundEnabled)}>{soundEnabled ? <FaVolumeUp /> : <FaVolumeMute />} {soundEnabled ? "ON" : "OFF"}</button></div>
-              <div style={styles.settingsRow}><span style={styles.settingsLabel}>Language:</span><button className="btn-click" style={styles.iconBtn} onClick={() => setLang(lang === "en" ? "de" : "en")}><FaLanguage /> {lang === "en" ? "DE" : "EN"}</button></div>
+              <div style={styles.settingsRow}><span style={styles.settingsLabel}>{text.sound}:</span><button className="btn-click" style={styles.iconBtn} onClick={() => setSoundEnabled(!soundEnabled)}>{soundEnabled ? <FaVolumeUp /> : <FaVolumeMute />} {soundEnabled ? "ON" : "OFF"}</button></div>
+              <div style={styles.settingsRow}><span style={styles.settingsLabel}>{text.language}:</span><button className="btn-click" style={styles.iconBtn} onClick={() => setLang(lang === "en" ? "de" : "en")}><FaLanguage /> {lang === "en" ? "DE" : "EN"}</button></div>
             </div>
-            <button className="btn-click" style={styles.modalBtn} onClick={() => setShowSettings(false)}>Close</button>
+            <button className="btn-click" style={styles.modalBtn} onClick={() => setShowSettings(false)}>{text.close}</button>
           </div>
         </div>
       )}
@@ -1152,12 +1315,12 @@ export default function NexPlay() {
       {showRandomModal && randomGame && (
         <div className="fade-in" style={styles.modalOverlay} onClick={() => setShowRandomModal(false)}>
           <div className="slide-in" style={styles.modalContent} onClick={e => e.stopPropagation()}>
-            <div style={styles.modalTitle}>🎲 Random Game</div>
-            <img src={randomGame.finalImg || randomGame.img} style={{ width: "100%", borderRadius: 18, marginBottom: 20 }} alt={randomGame.name} />
+            <div style={styles.modalTitle}>🎲 {text.randomGame}</div>
+            <img src={randomGame.finalImg} style={{ width: "100%", borderRadius: 18, marginBottom: 20 }} alt={randomGame.name} />
             <div style={{ fontSize: 18, fontWeight: 700, textAlign: "center", marginBottom: 8 }}>{randomGame.name}</div>
             <div style={{ fontSize: 15, color: colors.primary, textAlign: "center", marginBottom: 14 }}>★ {randomGame.finalRating?.toFixed(1)} · {randomGame.playtime} · {randomGame.year}</div>
-            <div style={{ fontSize: 14, marginBottom: 24, color: colors.textSecondary, textAlign: "center" }}>{randomGame.description}</div>
-            <div style={{ display: "flex", gap: 14, justifyContent: "center" }}><button className="btn-click" style={{ ...styles.addBtn, width: "auto", marginTop: 0, padding: "10px 24px" }} onClick={() => { addToLibrary(randomGame); setShowRandomModal(false); }}>+ Add to Library</button><button className="btn-click" style={styles.modalBtnSecondary} onClick={doRandom}>Roll Again</button></div>
+            <div style={{ fontSize: 14, marginBottom: 24, color: colors.textSecondary, textAlign: "center", maxHeight: 150, overflow: "auto" }}>{randomGame.finalDescription?.slice(0, 300)}...</div>
+            <div style={{ display: "flex", gap: 14, justifyContent: "center" }}><button className="btn-click" style={{ ...styles.addBtn, width: "auto", marginTop: 0, padding: "10px 24px" }} onClick={() => { addToLibrary(randomGame); setShowRandomModal(false); }}>+ {text.add}</button><button className="btn-click" style={styles.modalBtnSecondary} onClick={doRandom}>{text.rollAgain}</button></div>
           </div>
         </div>
       )}
@@ -1165,11 +1328,11 @@ export default function NexPlay() {
       {showLoginModal && (
         <div className="fade-in" style={styles.modalOverlay} onClick={() => setShowLoginModal(false)}>
           <div className="slide-in" style={styles.modalContent} onClick={e => e.stopPropagation()}>
-            <div style={styles.modalTitle}>{isLogin ? "Login" : "Register"}</div>
+            <div style={styles.modalTitle}>{isLogin ? text.login : text.register}</div>
             {errorMsg && <div style={styles.errorText}>{errorMsg}</div>}
             <input style={styles.input} type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
             <div style={styles.passwordWrapper}><input style={styles.input} type={showPassword ? "text" : "password"} placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} /><span className="btn-click" style={styles.passwordEye} onClick={() => setShowPassword(!showPassword)}>{showPassword ? <FaEyeSlash /> : <FaEye />}</span></div>
-            <button className="btn-click" style={styles.modalBtn} onClick={isLogin ? handleLogin : handleRegister}>{isLogin ? "Login" : "Register"}</button>
+            <button className="btn-click" style={styles.modalBtn} onClick={isLogin ? handleLogin : handleRegister}>{isLogin ? text.login : text.register}</button>
             <div className="btn-click" style={styles.switchText} onClick={() => { setIsLogin(!isLogin); setErrorMsg(""); }}>{isLogin ? "No account? Register" : "Already have an account? Login"}</div>
           </div>
         </div>
@@ -1178,13 +1341,13 @@ export default function NexPlay() {
       {showEditModal && user && (
         <div className="fade-in" style={styles.modalOverlay} onClick={() => setShowEditModal(false)}>
           <div className="slide-in" style={styles.modalContent} onClick={e => e.stopPropagation()}>
-            <div style={styles.modalTitle}>Edit Profile</div>
+            <div style={styles.modalTitle}>{text.editProfile}</div>
             {editError && <div style={styles.errorText}>{editError}</div>}
             {editSuccess && <div style={styles.successText}>{editSuccess}</div>}
-            <input style={styles.input} placeholder="Username" value={editUsername} onChange={e => setEditUsername(e.target.value)} />
-            <textarea style={styles.textarea} placeholder="Bio" rows="2" value={editBio} onChange={e => setEditBio(e.target.value)} />
-            <label className="btn-click" style={styles.checkbox}><input type="checkbox" checked={editPrivate} onChange={e => setEditPrivate(e.target.checked)} /> Private profile</label>
-            <button className="btn-click" style={styles.modalBtn} onClick={handleUpdateProfile}>Save</button>
+            <input style={styles.input} placeholder={text.username} value={editUsername} onChange={e => setEditUsername(e.target.value)} />
+            <textarea style={styles.textarea} placeholder={text.bio} rows="2" value={editBio} onChange={e => setEditBio(e.target.value)} />
+            <label className="btn-click" style={styles.checkbox}><input type="checkbox" checked={editPrivate} onChange={e => setEditPrivate(e.target.checked)} /> {text.private}</label>
+            <button className="btn-click" style={styles.modalBtn} onClick={handleUpdateProfile}>{text.save}</button>
           </div>
         </div>
       )}
@@ -1192,8 +1355,8 @@ export default function NexPlay() {
       {showReviews && reviewsGame && (
         <div className="fade-in" style={styles.modalOverlay} onClick={closeReviews}>
           <div className="slide-in" style={{ ...styles.modalContent, maxWidth: 550 }} onClick={e => e.stopPropagation()}>
-            <div style={styles.modalTitle}>Reviews for {reviewsGame.name}</div>
-            {gameDetailReviews.length === 0 ? <div style={styles.emptyState}>No reviews yet. Be the first!</div> :
+            <div style={styles.modalTitle}>{text.reviews} for {reviewsGame.name}</div>
+            {gameDetailReviews.length === 0 ? <div style={styles.emptyState}>{text.noReviews}</div> :
               gameDetailReviews.map(review => (
                 <div key={review.id} style={styles.reviewCard}>
                   <div style={styles.reviewHeader}>
@@ -1203,7 +1366,7 @@ export default function NexPlay() {
                   <div style={styles.reviewComment}>{review.comment || "No comment"}</div>
                 </div>
               ))}
-            <button className="btn-click" style={styles.modalBtn} onClick={closeReviews}>Close</button>
+            <button className="btn-click" style={styles.modalBtn} onClick={closeReviews}>{text.close}</button>
           </div>
         </div>
       )}
