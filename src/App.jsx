@@ -178,49 +178,83 @@ export default function NexPlay() {
     }
   };
 
-  // ========== KERN: JEDES SPIEL BEKOMMT EINE BERECHNETE REVIEW-ZAHL ==========
-  const gamesWithData = useMemo(() => {
-    const steamAppIds = allGames
-      .map(g => g.steamId)
-      .filter(id => id && typeof id === 'number');
+// ========== KERN: JEDES SPIEL BEKOMMT EIN REALISTISCHES RATING ==========
+const gamesWithData = useMemo(() => {
+  const steamAppIds = allGames
+    .map(g => g.steamId)
+    .filter(id => id && typeof id === 'number');
+  
+  if (steamAppIds.length > 0) {
+    fetchSteamRatings(steamAppIds);
+  }
+  
+  return allGames.map(game => {
+    const steamData = game.steamId ? steamGamesCache[game.steamId] : null;
     
-    if (steamAppIds.length > 0) {
-      fetchSteamRatings(steamAppIds);
+    // ========== 1. RAWg RATING KORRIGIEREN ==========
+    let rawRating = game.rawgRating;
+    const name = game.name?.toLowerCase() || "";
+    const genre = game.genre?.toLowerCase() || "";
+    
+    // Spezifische Korrekturen (RAWg ist oft zu hoch)
+    if (name.includes("soulcalibur")) rawRating = 8.0;
+    if (name.includes("tekken")) rawRating = 8.2;
+    if (name.includes("street fighter")) rawRating = 8.5;
+    if (name.includes("mortal kombat")) rawRating = 8.3;
+    if (name.includes("fifa")) rawRating = 7.5;
+    if (name.includes("pes") || name.includes("efootball")) rawRating = 7.0;
+    if (name.includes("call of duty")) rawRating = 7.5;
+    if (name.includes("assassin") && name.includes("creed")) rawRating = 7.8;
+    if (name.includes("pokemon")) rawRating = 8.0;
+    if (name.includes("battlefield")) rawRating = 7.8;
+    if (name.includes("far cry")) rawRating = 7.8;
+    if (name.includes("watch dogs")) rawRating = 7.5;
+    
+    // Genre-basierte Maximalratings
+    let maxRating = 9.5; // AAA Action/RPG (Elden Ring, Witcher 3)
+    if (genre.includes("fighting") || genre.includes("sports")) maxRating = 8.5;
+    else if (genre.includes("indie")) maxRating = 9.0;
+    else if (genre.includes("horror")) maxRating = 9.0;
+    else if (genre.includes("puzzle")) maxRating = 8.5;
+    
+    // Rating nicht übers Maximum
+    let finalRating = Math.min(rawRating, maxRating);
+    
+    // Steam-Rating einmischen (falls vorhanden)
+    if (steamData && steamData.steamRating) {
+      finalRating = (steamData.steamRating + finalRating) / 2;
     }
     
-    return allGames.map(game => {
-      const steamData = game.steamId ? steamGamesCache[game.steamId] : null;
-      
-      // Finales Rating: Steam-Rating oder RAWg-Rating
-      let finalRating = game.rawgRating;
-      if (steamData && steamData.steamRating) {
-        finalRating = (steamData.steamRating + game.rawgRating) / 2;
-      }
-      
-      // Review-Anzahl: Echt von Steam oder berechnet aus Popularität
-      let reviewCount = 0;
-      if (steamData && steamData.reviewCount > 0) {
-        reviewCount = steamData.reviewCount;
-      } else {
-        // Berechne Reviews aus Metacritic/Popularität (0-100)
-        const popularity = game.popularity || 70;
-        if (popularity >= 95) reviewCount = 300000 + Math.floor(Math.random() * 200000);
-        else if (popularity >= 90) reviewCount = 100000 + Math.floor(Math.random() * 150000);
-        else if (popularity >= 85) reviewCount = 50000 + Math.floor(Math.random() * 50000);
-        else if (popularity >= 80) reviewCount = 15000 + Math.floor(Math.random() * 25000);
-        else if (popularity >= 75) reviewCount = 5000 + Math.floor(Math.random() * 10000);
-        else if (popularity >= 70) reviewCount = 1000 + Math.floor(Math.random() * 4000);
-        else reviewCount = 100 + Math.floor(Math.random() * 900);
-      }
-      
-      return {
-        ...game,
-        finalRating: finalRating,
-        finalImg: steamData?.img || game.img,
-        reviewCount: reviewCount
-      };
-    });
-  }, [allGames]);
+    // Auf eine Nachkommastelle runden
+    finalRating = Math.round(finalRating * 10) / 10;
+    
+    // ========== 2. REVIEW-ANZAHL (für Kategorisierung) ==========
+    let reviewCount = 0;
+    if (steamData && steamData.reviewCount > 0) {
+      reviewCount = steamData.reviewCount;
+    } else {
+      // Reviews basierend auf korrigiertem Rating
+      if (finalRating >= 9.0) reviewCount = 150000 + Math.floor(Math.random() * 150000);
+      else if (finalRating >= 8.5) reviewCount = 50000 + Math.floor(Math.random() * 100000);
+      else if (finalRating >= 8.0) reviewCount = 15000 + Math.floor(Math.random() * 35000);
+      else if (finalRating >= 7.5) reviewCount = 5000 + Math.floor(Math.random() * 10000);
+      else reviewCount = 1000 + Math.floor(Math.random() * 4000);
+    }
+    
+    // ========== 3. BILD (mit Fallback) ==========
+    let finalImg = steamData?.img || game.img;
+    if (!finalImg || finalImg === "" || finalImg.includes("null") || finalImg.includes("placeholder")) {
+      finalImg = `https://placehold.co/300x400/14141f/ffd400?text=${encodeURIComponent(game.name.slice(0, 8))}`;
+    }
+    
+    return {
+      ...game,
+      finalRating: finalRating,
+      finalImg: finalImg,
+      reviewCount: reviewCount
+    };
+  });
+}, [allGames]);
 
   // ========== KATEGORIEN – JETZT WIRKLICH UNTERSCHIEDLICH ==========
   // MUST PLAY: Rating ≥ 8.5 UND mehr als 50.000 Reviews (echte Hits)
