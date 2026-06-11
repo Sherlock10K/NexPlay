@@ -62,7 +62,8 @@ const translations = {
     donate: "Support the developer", topRated: "Top Rated Game", topGenre: "Top Genre",
     totalPlaytime: "Total Playtime", gotyWinner: "Game of the Year Winner", gotyNominees: "Nominees",
     winner: "WINNER", nominee: "Nominee", playerFavorites: "Player Favorites",
-    backToGOTY: "Back to GOTY Overview", goty: "GOTY", top20: "Top 20 by Genre"
+    backToGOTY: "Back to GOTY Overview", goty: "GOTY", top20: "Top 20 by Genre",
+    findYourGame: "Find Your Game"
   },
   de: { 
     home: "Entdecken", library: "Bibliothek", profile: "Profil", friends: "Freunde", ai: "KI-Assistent",
@@ -84,7 +85,8 @@ const translations = {
     donate: "Unterstütze den Entwickler", topRated: "Bestbewertetes Spiel", topGenre: "Top Genre",
     totalPlaytime: "Spielzeit Gesamt", gotyWinner: "Spiel des Jahres Gewinner", gotyNominees: "Nominiert",
     winner: "GEWINNER", nominee: "Nominiert", playerFavorites: "Spieler-Favoriten",
-    backToGOTY: "Zurück zur GOTY Übersicht", goty: "GOTY", top20: "Top 20 pro Genre"
+    backToGOTY: "Zurück zur GOTY Übersicht", goty: "GOTY", top20: "Top 20 pro Genre",
+    findYourGame: "Finde dein Spiel"
   }
 };
 
@@ -103,9 +105,27 @@ const translateGenre = (genreName) => {
 
 let steamGamesCache = {};
 
+// RATING-KONTROLLSYSTEM
+const checkAndFixRatings = (game, steamData) => {
+  let rating = game.rawgRating || 7.0;
+  const name = game.name?.toLowerCase() || "";
+  
+  // Spezifische Korrekturen für überschätzte Klassiker
+  if (name.includes("goldeneye") && name.includes("007")) rating = 8.5;
+  if (name.includes("perfect dark")) rating = 8.3;
+  if (name.includes("metroid prime") && !name.includes("remastered")) rating = 9.0;
+  if (name.includes("ocarina of time")) rating = 9.0;
+  if (name.includes("majora's mask")) rating = 8.8;
+  if (name.includes("super mario 64")) rating = 8.8;
+  
+  return rating;
+};
+
 const calculateWeightedRating = (game, steamData) => {
-  let rating = 7.0;
-  const metacriticScore = game.rawgRating || 7.0;
+  let rating = checkAndFixRatings(game, steamData);
+  const name = game.name?.toLowerCase() || "";
+  
+  const metacriticScore = rating;
   let userRating = 7.0;
   if (steamData?.steamRating) userRating = steamData.steamRating;
   else userRating = metacriticScore * 0.9;
@@ -131,12 +151,9 @@ const calculateWeightedRating = (game, steamData) => {
   
   let weightedRating = (metacriticScore * 0.3) + (userRating * 0.4) + (popularity * 0.2) + (relevance * 0.1);
   
-  const name = game.name?.toLowerCase() || "";
-  
   if (name.includes("soulcalibur") || (name.includes("tekken") && !name.includes("8"))) weightedRating = Math.min(weightedRating, 8.2);
   if (name.includes("fifa") || name.includes("pes") || name.includes("efootball")) weightedRating = Math.min(weightedRating, 7.5);
   if (name.includes("call of duty") && !name.includes("modern warfare 2")) weightedRating = Math.min(weightedRating, 7.8);
-  if (name.includes("goldeneye") || name.includes("perfect dark")) weightedRating = Math.min(weightedRating, 8.5);
   
   // BUFFER für gute Games
   if (weightedRating >= 8.5 && weightedRating < 9.0) weightedRating += 0.2;
@@ -164,7 +181,8 @@ const generateLongDescription = (gameName, rawDescription) => {
   if (rawDescription && rawDescription.length > 200) return rawDescription;
   const templates = [
     `${gameName} ist ein Meisterwerk der Videospielgeschichte, das Spieler seit Jahren begeistert. Die Entwickler haben unglaubliche Arbeit in jedes Detail gesteckt, von der Grafik bis zum Sounddesign. Die Spielmechanik ist intuitiv und dennoch tiefgründig genug, um auch erfahrene Spieler herauszufordern. Die Geschichte fesselt von der ersten Minute an und lässt dich nicht mehr los. Besonders die Charaktere und ihre Entwicklung bleiben noch lange im Gedächtnis. Ein absolutes Muss für jeden Fan des Genres!`,
-    `Erlebe ein unvergessliches Abenteuer mit ${gameName}. Dieses Spiel bietet eine packende Story, die dich in eine faszinierende Welt entführt. Die Grafik ist atemberaubend und die Soundkulisse unterstreicht die Atmosphäre perfekt. Die Steuerung ist präzise und fühlt sich natürlich an. Mit über 20 Stunden Spielzeit bekommst du mehr als dein Geld wert. Ein Highlight, das man nicht verpassen sollte!`
+    `Erlebe ein unvergessliches Abenteuer mit ${gameName}. Dieses Spiel bietet eine packende Story, die dich in eine faszinierende Welt entführt. Die Grafik ist atemberaubend und die Soundkulisse unterstreicht die Atmosphäre perfekt. Die Steuerung ist präzise und fühlt sich natürlich an. Mit über 20 Stunden Spielzeit bekommst du mehr als dein Geld wert. Ein Highlight, das man nicht verpassen sollte!`,
+    `${gameName} ist ein Spiel, das man einfach erlebt haben muss. Die Atmosphäre ist einzigartig und zieht dich sofort in ihren Bann. Die Level sind abwechslungsreich gestaltet und bieten immer wieder neue Herausforderungen. Die Musik untermalt jede Situation perfekt und bleibt noch lange im Ohr. Die packende Handlung hält bis zum Schluss Überraschungen bereit. Ein rundum gelungenes Spielerlebnis!`
   ];
   return templates[Math.floor(Math.random() * templates.length)];
 };
@@ -190,7 +208,7 @@ export default function NexPlay() {
   const [library, setLibrary] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const [currentTab, setCurrentTab] = useState("home");
-  const [discoverSubTab, setDiscoverSubTab] = useState("topPicks");
+  const [discoverSubTab, setDiscoverSubTab] = useState("findGame");
   const [gotySearch, setGotySearch] = useState("");
   const [gotyResult, setGotyResult] = useState(null);
   const [selectedGotyYear, setSelectedGotyYear] = useState(null);
@@ -359,7 +377,7 @@ export default function NexPlay() {
     return [...filtered].sort((a, b) => b.finalRating - a.finalRating).slice(0, 20);
   }, [gamesWithData, selectedGenreForTop]);
 
-  // UNTERSCHIEDLICHE KATEGORIEN
+  // KATEGORIEN
   const TOP_PICKS_GAMES = useMemo(() => 
     [...gamesWithData].filter(g => g.finalRating >= 9.0 && g.reviewCount >= 50000).sort((a,b) => b.finalRating - a.finalRating).slice(0, 30),
     [gamesWithData]
@@ -615,8 +633,10 @@ export default function NexPlay() {
     if (library.filter(g => g.status === "completed").length >= 5) ach.push({ id: "completionist", name: text.completionist, desc: "5 completed", icon: "✅", unlocked: true });
     if (favorites.length >= 5) ach.push({ id: "favorites", name: "5 Favorites", desc: "5 games in favorites", icon: "❤️", unlocked: true });
     if (library.length >= 25) ach.push({ id: "master", name: "Game Master", desc: "25 games", icon: "👑", unlocked: true });
+    if (library.length >= 50) ach.push({ id: "legend", name: "Legend", desc: "50 games", icon: "⭐", unlocked: true });
+    if (gameDetailReviews.length >= 10) ach.push({ id: "critic", name: "The Critic", desc: "Wrote 10 reviews", icon: "✍️", unlocked: true, hidden: true });
     return ach;
-  }, [library, favorites]);
+  }, [library, favorites, gameDetailReviews]);
 
   const animationStyles = `
     @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -648,7 +668,7 @@ export default function NexPlay() {
     loginBtn: { background: "linear-gradient(135deg, #4285f4, #3367d6)", border: "none", borderRadius: 12, padding: "10px 20px", color: "#fff", cursor: "pointer", fontWeight: 600, display: "flex", alignItems: "center", gap: 8, fontSize: 14 },
     logoutBtn: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 12, padding: "10px 20px", color: colors.text, cursor: "pointer", display: "flex", alignItems: "center", gap: 8, fontSize: 14 },
     userAvatar: { width: 36, height: 36, borderRadius: "50%", background: colors.primary, display: "flex", alignItems: "center", justifyContent: "center", color: colors.bg, fontWeight: 700, fontSize: 16 },
-    tabNav: { display: "flex", gap: 0, borderBottom: `1px solid rgba(255,255,255,0.08)`, marginTop: 24, marginBottom: 24, overflowX: "auto" },
+    tabNav: { display: "flex", gap: 4, borderBottom: `1px solid rgba(255,255,255,0.08)`, marginTop: 24, marginBottom: 24, overflowX: "auto" },
     tabNavBtn: (active) => ({ background: "none", border: "none", borderBottom: active ? `2px solid ${colors.primary}` : "2px solid transparent", color: active ? colors.primary : colors.textSecondary, padding: "12px 20px", cursor: "pointer", fontSize: 13, fontWeight: active ? 600 : 400, whiteSpace: "nowrap" }),
     grid: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 24 },
     gameCard: { background: colors.bgCard, borderRadius: 16, overflow: "hidden", cursor: "pointer", border: "1px solid rgba(255,255,255,0.06)", position: "relative" },
@@ -750,7 +770,7 @@ export default function NexPlay() {
     donationBtn: { background: "linear-gradient(135deg, #ffd400, #e6bf00)", border: "none", borderRadius: 12, padding: "12px 20px", color: "#0a0a0f", cursor: "pointer", fontWeight: 700, display: "flex", alignItems: "center", gap: 8, fontSize: 14 },
     gotyResultCard: { background: colors.bgCard, borderRadius: 20, padding: 24, marginBottom: 24, textAlign: "center", border: `1px solid ${colors.primary}30` },
     gotyWinnerCard: { background: `linear-gradient(135deg, ${colors.primary}20, ${colors.bgCard})`, borderRadius: 16, padding: 20, marginBottom: 16 },
-    gotyNomineeCard: { background: "rgba(255,255,255,0.03)", borderRadius: 12, padding: 12, marginBottom: 8, display: "inline-block", width: "auto", margin: 4 },
+    gotyNomineeCard: { background: "rgba(255,255,255,0.03)", borderRadius: 12, padding: 10, margin: 4, display: "inline-block" },
     topGenreSelect: { background: colors.bgCard, border: `1px solid ${colors.primary}30`, borderRadius: 12, padding: "12px 20px", color: colors.text, fontSize: 14, marginBottom: 24, cursor: "pointer" },
     gotyBackBtn: { background: "rgba(255,255,255,0.05)", border: "none", borderRadius: 12, padding: "10px 20px", color: colors.text, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 20, fontSize: 14 }
   };
@@ -865,20 +885,21 @@ export default function NexPlay() {
           </div>
         </div>
 
-        {/* ========== HOME TAB (Discover) mit Top Picks, Best Ever, Hidden Gems, GOTY, Top 20 ========== */}
+        {/* ========== HOME TAB (Discover) ========== */}
         {currentTab === "home" && (
           <div className="fade-in">
             <div style={styles.tabNav}>
-              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "topPicks")} onClick={() => setDiscoverSubTab("topPicks")}>{text.topPicks}</button>
-              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "bestEver")} onClick={() => setDiscoverSubTab("bestEver")}>{text.bestEver}</button>
-              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "hiddenGems")} onClick={() => setDiscoverSubTab("hiddenGems")}>{text.hiddenGems}</button>
-              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "goty")} onClick={() => setDiscoverSubTab("goty")}>{text.goty}</button>
-              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "top20")} onClick={() => setDiscoverSubTab("top20")}>{text.top20}</button>
+              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "findGame")} onClick={() => setDiscoverSubTab("findGame")}>🔍 {text.findYourGame}</button>
+              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "topPicks")} onClick={() => setDiscoverSubTab("topPicks")}>🎯 {text.topPicks}</button>
+              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "bestEver")} onClick={() => setDiscoverSubTab("bestEver")}>🏆 {text.bestEver}</button>
+              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "hiddenGems")} onClick={() => setDiscoverSubTab("hiddenGems")}>💎 {text.hiddenGems}</button>
+              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "goty")} onClick={() => setDiscoverSubTab("goty")}>🏆GOTY</button>
+              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "top20")} onClick={() => setDiscoverSubTab("top20")}>📊 {text.top20}</button>
             </div>
 
-            {/* TOP PICKS */}
-            {discoverSubTab === "topPicks" && (
-              <div className="fade-in">
+            {/* FIND YOUR GAME - Mood/Genre/Playtime Filter */}
+            {discoverSubTab === "findGame" && (
+              <>
                 <div style={styles.randomFilterSection}>
                   <div style={styles.randomFilterTitle}><FaRandom /> {text.randomGame}</div>
                   <div style={styles.randomFilterRow}>
@@ -892,7 +913,61 @@ export default function NexPlay() {
                     <button className="btn-click" style={styles.loginBtn} onClick={doRandom}><FaRandom /> {text.randomGame}</button>
                   </div>
                 </div>
-                <div style={styles.sectionTitle}>{text.topPicks}</div>
+
+                <div style={styles.tabNav}>
+                  <button className="btn-click" style={styles.tabNavBtn(step === 1)} onClick={() => setStep(1)}>{text.mood}</button>
+                  <button className="btn-click" style={styles.tabNavBtn(step === 2)} onClick={() => setStep(2)}>{text.genre}</button>
+                  <button className="btn-click" style={styles.tabNavBtn(step === 3)} onClick={() => setStep(3)}>{text.playtime}</button>
+                  <button className="btn-click" style={styles.tabNavBtn(step === 4)} onClick={() => setStep(4)}>{text.results}</button>
+                </div>
+
+                {step === 1 && (
+                  <div className="slide-in">
+                    <div style={styles.stepTitle}>{text.mood} 🎭</div>
+                    <div style={styles.pillGrid}>{MOODS.map(m => <button key={m} className="btn-click" style={styles.pill(selectedMoods.includes(m))} onClick={() => toggle(selectedMoods, setSelectedMoods, m)}>{m}</button>)}</div>
+                    <button className="btn-click" style={styles.nextBtn} onClick={() => setStep(2)}>{text.next} →</button>
+                  </div>
+                )}
+                {step === 2 && (
+                  <div className="slide-in">
+                    <div style={styles.stepTitle}>{text.genre} 🎮</div>
+                    <div style={styles.pillGrid}>{GENRES.map(g => <button key={g} className="btn-click" style={styles.pill(selectedGenres.includes(g))} onClick={() => toggle(selectedGenres, setSelectedGenres, g)}>{g}</button>)}</div>
+                    <button className="btn-click" style={styles.nextBtn} onClick={() => setStep(3)}>{text.next} →</button>
+                  </div>
+                )}
+                {step === 3 && (
+                  <div className="slide-in">
+                    <div style={styles.stepTitle}>{text.playtime} ⏱️</div>
+                    <div style={styles.pillGrid}>{PLAYTIMES.map(p => <button key={p} className="btn-click" style={styles.pill(selectedPlaytime === p)} onClick={() => setSelectedPlaytime(p === selectedPlaytime ? null : p)}>{p}</button>)}</div>
+                    <button className="btn-click" style={styles.nextBtn} onClick={() => setStep(4)}>{text.results} 🚀</button>
+                  </div>
+                )}
+                {step === 4 && (
+                  <div className="fade-in">
+                    <input style={styles.searchBar} placeholder={text.search} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+                    <div style={styles.filterRow}>
+                      <span>{text.sort}:</span>
+                      <button className="btn-click" style={styles.filterBtn(sortBy === "score")} onClick={() => setSortBy("score")}>{text.bestMatch}</button>
+                      <button className="btn-click" style={styles.filterBtn(sortBy === "rating")} onClick={() => setSortBy("rating")}>{text.rating}</button>
+                      <button className="btn-click" style={styles.filterBtn(sortBy === "year")} onClick={() => setSortBy("year")}>{text.year}</button>
+                    </div>
+                    {topPicks.length > 0 && (
+                      <div>
+                        <div style={styles.sectionTitle}>🎯 {text.topPicks}</div>
+                        <div style={styles.topPicksRow}>{topPicks.map((g,i) => <div key={g.id} className="game-card" style={styles.topPickCard} onClick={() => openGameDetail(g)}><div style={{ fontSize: 24, marginBottom: 8 }}>{["🥇","🥈","🥉","4","5","6","7","8"][i]}</div><img src={g.finalImg} style={{ width: "100%", height: 90, objectFit: "cover", borderRadius: 10 }} alt={g.name} /><div style={{ fontWeight: 700, marginTop: 10, color: colors.text }}>{g.name}</div><div style={{ fontSize: 12, color: colors.primary }}>★ {g.finalRating?.toFixed(1)}</div><button className="btn-click" style={styles.addBtn} onClick={(e) => { e.stopPropagation(); addToLibrary(g); }}>+ {text.add}</button></div>)}</div>
+                      </div>
+                    )}
+                    <div style={styles.sectionTitle}>📋 {text.allResults}</div>
+                    <div style={styles.grid}>{restResults.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* TOP PICKS */}
+            {discoverSubTab === "topPicks" && (
+              <div className="fade-in">
+                <div style={styles.sectionTitle}>🎯 {text.topPicks}</div>
                 <div style={styles.grid}>{TOP_PICKS_GAMES.slice(0, 30).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
               </div>
             )}
@@ -907,7 +982,7 @@ export default function NexPlay() {
                   <button className="btn-click" style={styles.filterBtn(sortBy === "rating")} onClick={() => setSortBy("rating")}>{text.rating}</button>
                   <button className="btn-click" style={styles.filterBtn(sortBy === "year")} onClick={() => setSortBy("year")}>{text.year}</button>
                 </div>
-                <div style={styles.sectionTitle}>{text.bestEver}</div>
+                <div style={styles.sectionTitle}>🏆 {text.bestEver}</div>
                 <div style={styles.grid}>{filteredCategoryGames(BEST_EVER_GAMES).slice(0, 40).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
               </div>
             )}
@@ -915,7 +990,7 @@ export default function NexPlay() {
             {/* HIDDEN GEMS */}
             {discoverSubTab === "hiddenGems" && (
               <div className="fade-in">
-                <div style={styles.sectionTitle}>{text.hiddenGems}</div>
+                <div style={styles.sectionTitle}>💎 {text.hiddenGems}</div>
                 <div style={styles.grid}>{HIDDEN_GEMS_GAMES.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
               </div>
             )}
@@ -938,7 +1013,7 @@ export default function NexPlay() {
                       <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 8 }}>
                         {GOTY_DATA[selectedGotyYear].nominees.map(nom => (
                           <div key={nom} style={styles.gotyNomineeCard}>
-                            <span style={{ fontSize: 16 }}>📋 {nom}</span>
+                            <span style={{ fontSize: 14 }}>📋 {nom}</span>
                           </div>
                         ))}
                       </div>
@@ -958,7 +1033,7 @@ export default function NexPlay() {
                         <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 8 }}>
                           {gotyResult.data.nominees.map(nom => (
                             <div key={nom} style={styles.gotyNomineeCard}>
-                              <span style={{ fontSize: 16 }}>📋 {nom}</span>
+                              <span style={{ fontSize: 14 }}>📋 {nom}</span>
                             </div>
                           ))}
                         </div>
@@ -1009,7 +1084,9 @@ export default function NexPlay() {
                 </select>
                 <div style={{ ...styles.sectionTitle, fontSize: 20, marginBottom: 16 }}>⭐ {selectedGenreForTop}</div>
                 {top20ByGenre.length === 0 ? (
-                  <div style={styles.emptyState}>No games found in this genre yet. More games will be added soon!</div>
+                  <div style={styles.emptyState}>No games found in this genre yet. More games will be added soon! (Minimum 15 games required for this genre)</div>
+                ) : top20ByGenre.length < 15 ? (
+                  <div style={styles.emptyState}>⚠️ Only {top20ByGenre.length} games found in this genre. Minimum 15 games required for full list.</div>
                 ) : (
                   <div style={styles.grid}>{top20ByGenre.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
                 )}
@@ -1138,11 +1215,11 @@ export default function NexPlay() {
               </div>
               {aiResponse && <div className="fade-in" style={styles.aiResultBox}>{aiResponse}</div>}
             </div>
-            <div style={styles.sectionTitle}>{text.topPicks}</div>
+            <div style={styles.sectionTitle}>🎯 {text.topPicks}</div>
             <div style={styles.grid}>{TOP_PICKS_GAMES.slice(0, 20).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
-            <div style={styles.sectionTitle}>{text.bestEver}</div>
+            <div style={styles.sectionTitle}>🏆 {text.bestEver}</div>
             <div style={styles.grid}>{BEST_EVER_GAMES.slice(0, 20).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
-            <div style={styles.sectionTitle}>{text.hiddenGems}</div>
+            <div style={styles.sectionTitle}>💎 {text.hiddenGems}</div>
             <div style={styles.grid}>{HIDDEN_GEMS_GAMES.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
           </div>
         )}
