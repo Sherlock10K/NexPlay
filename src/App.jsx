@@ -43,10 +43,10 @@ const GOTY_DATA = {
 
 const translations = {
   en: { 
-    home: "Discover", library: "Library", profile: "Profile", friends: "Friends", ai: "AI Assistant", goty: "GOTY", topGenres: "Top 20 by Genre",
+    home: "Discover", library: "Library", profile: "Profile", friends: "Friends", ai: "AI Assistant",
     login: "Login", register: "Register", logout: "Logout", search: "Search games...", searchGOTY: "Search by year or game name...",
     mood: "What's your mood?", genre: "Pick your genres", playtime: "How long?", 
-    next: "Next", results: "Show Results", topPicks: "🎯 Top Picks", bestEver: "🏆 Best Ever", allResults: "📋 All Results", hiddenGems: "💎 Hidden Gems",
+    next: "Next", results: "Show Results", topPicks: "Top Picks", bestEver: "Best Ever", allResults: "All Results", hiddenGems: "Hidden Gems",
     sort: "Sort", bestMatch: "Best Match", rating: "Rating", year: "Year", 
     add: "Add to Library", inLibrary: "In Library", reviews: "Reviews", played: "Played", 
     remove: "Remove", editProfile: "Edit Profile", username: "Username", bio: "Bio", 
@@ -61,14 +61,14 @@ const translations = {
     importGames: "Import Steam Games", findSteamId: "How to find your Steam ID",
     donate: "Support the developer", topRated: "Top Rated Game", topGenre: "Top Genre",
     totalPlaytime: "Total Playtime", gotyWinner: "Game of the Year Winner", gotyNominees: "Nominees",
-    winner: "🏆 WINNER", nominee: "📋 Nominee", playerFavorites: "Top 20 Player Favorites",
-    backToGOTY: "← Back to GOTY Overview"
+    winner: "WINNER", nominee: "Nominee", playerFavorites: "Player Favorites",
+    backToGOTY: "Back to GOTY Overview", goty: "GOTY", top20: "Top 20 by Genre"
   },
   de: { 
-    home: "Entdecken", library: "Bibliothek", profile: "Profil", friends: "Freunde", ai: "KI-Assistent", goty: "GOTY", topGenres: "Top 20 pro Genre",
+    home: "Entdecken", library: "Bibliothek", profile: "Profil", friends: "Freunde", ai: "KI-Assistent",
     login: "Anmelden", register: "Registrieren", logout: "Abmelden", search: "Spiele suchen...", searchGOTY: "Suche nach Jahr oder Spielname...",
     mood: "Wie ist deine Stimmung?", genre: "Wähle deine Genres", playtime: "Wie lange?", 
-    next: "Weiter", results: "Ergebnisse", topPicks: "🎯 Top Empfehlungen", bestEver: "🏆 Beste Aller Zeiten", allResults: "📋 Alle Ergebnisse", hiddenGems: "💎 Geheimtipps",
+    next: "Weiter", results: "Ergebnisse", topPicks: "Top Empfehlungen", bestEver: "Beste Aller Zeiten", allResults: "Alle Ergebnisse", hiddenGems: "Geheimtipps",
     sort: "Sortieren", bestMatch: "Bester Treffer", rating: "Bewertung", year: "Jahr", 
     add: "Zur Bibliothek", inLibrary: "In Bibliothek", reviews: "Bewertungen", played: "Gespielt", 
     remove: "Entfernen", editProfile: "Profil bearbeiten", username: "Benutzername", bio: "Über mich", 
@@ -83,8 +83,8 @@ const translations = {
     importGames: "Steam Spiele importieren", findSteamId: "So findest du deine Steam ID",
     donate: "Unterstütze den Entwickler", topRated: "Bestbewertetes Spiel", topGenre: "Top Genre",
     totalPlaytime: "Spielzeit Gesamt", gotyWinner: "Spiel des Jahres Gewinner", gotyNominees: "Nominiert",
-    winner: "🏆 GEWINNER", nominee: "📋 Nominiert", playerFavorites: "Top 20 Spieler-Favoriten",
-    backToGOTY: "← Zurück zur GOTY Übersicht"
+    winner: "GEWINNER", nominee: "Nominiert", playerFavorites: "Spieler-Favoriten",
+    backToGOTY: "Zurück zur GOTY Übersicht", goty: "GOTY", top20: "Top 20 pro Genre"
   }
 };
 
@@ -138,13 +138,9 @@ const calculateWeightedRating = (game, steamData) => {
   if (name.includes("call of duty") && !name.includes("modern warfare 2")) weightedRating = Math.min(weightedRating, 7.8);
   if (name.includes("goldeneye") || name.includes("perfect dark")) weightedRating = Math.min(weightedRating, 8.5);
   
-  // BUFFER: Gute Games können 0.1-0.4 höher sein
-  if (weightedRating >= 8.5 && weightedRating < 9.0) {
-    weightedRating += 0.2;
-  }
-  if (weightedRating >= 9.0 && weightedRating < 9.3) {
-    weightedRating += 0.15;
-  }
+  // BUFFER für gute Games
+  if (weightedRating >= 8.5 && weightedRating < 9.0) weightedRating += 0.2;
+  if (weightedRating >= 9.0 && weightedRating < 9.3) weightedRating += 0.15;
   
   if (name.includes("witcher 3") || name.includes("baldur's gate 3") || name.includes("elden ring") || name.includes("red dead redemption 2")) {
     weightedRating = Math.max(weightedRating, 9.3);
@@ -217,6 +213,7 @@ export default function NexPlay() {
   const [aiQuery, setAiQuery] = useState("");
   const [aiResponse, setAiResponse] = useState("");
   const [isAiLoading, setIsAiLoading] = useState(false);
+  const [categoryFilter, setCategoryFilter] = useState({ genre: "", minRating: 0, year: 0 });
   const [searchUsersTerm, setSearchUsersTerm] = useState("");
   const [foundUsers, setFoundUsers] = useState([]);
   const [searchingUsers, setSearchingUsers] = useState(false);
@@ -362,16 +359,19 @@ export default function NexPlay() {
     return [...filtered].sort((a, b) => b.finalRating - a.finalRating).slice(0, 20);
   }, [gamesWithData, selectedGenreForTop]);
 
+  // UNTERSCHIEDLICHE KATEGORIEN
   const TOP_PICKS_GAMES = useMemo(() => 
-    [...gamesWithData].filter(g => g.finalRating >= 8.8 && g.reviewCount >= 30000).sort((a,b) => b.finalRating - a.finalRating).slice(0, 30),
+    [...gamesWithData].filter(g => g.finalRating >= 9.0 && g.reviewCount >= 50000).sort((a,b) => b.finalRating - a.finalRating).slice(0, 30),
     [gamesWithData]
   );
+  
   const BEST_EVER_GAMES = useMemo(() => 
     [...gamesWithData].sort((a,b) => b.finalRating - a.finalRating).slice(0, 40),
     [gamesWithData]
   );
+  
   const HIDDEN_GEMS_GAMES = useMemo(() => 
-    [...gamesWithData].filter(g => g.finalRating >= 8.5 && g.reviewCount < 10000 && g.genre === "Indie").sort((a,b) => b.finalRating - a.finalRating).slice(0, 30),
+    [...gamesWithData].filter(g => g.finalRating >= 8.5 && g.reviewCount < 20000).sort((a,b) => b.finalRating - a.finalRating).slice(0, 30),
     [gamesWithData]
   );
 
@@ -576,6 +576,14 @@ export default function NexPlay() {
     { name: "Loaded", url: `https://www.loaded.com/de_de/search?q=${encodeURIComponent(game.name)}`, icon: <FaExternalLinkAlt />, color: colors.loaded }
   ];
 
+  const filteredCategoryGames = (games) => {
+    let filtered = [...games];
+    if (categoryFilter.genre) filtered = filtered.filter(g => g.genre === categoryFilter.genre);
+    if (categoryFilter.minRating > 0) filtered = filtered.filter(g => g.finalRating >= categoryFilter.minRating);
+    if (categoryFilter.year > 0) filtered = filtered.filter(g => g.year >= categoryFilter.year);
+    return filtered;
+  };
+
   const results = useMemo(() => {
     let list = gamesWithData.map(g => ({ ...g, score: (selectedMoods.includes(g.mood) ? 40 : 20) + (selectedGenres.includes(g.genre) ? 40 : 20) + (selectedPlaytime === g.playtime ? 20 : 0) + (g.finalRating * 2) }));
     if (searchQuery) list = list.filter(g => g.name.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -640,8 +648,8 @@ export default function NexPlay() {
     loginBtn: { background: "linear-gradient(135deg, #4285f4, #3367d6)", border: "none", borderRadius: 12, padding: "10px 20px", color: "#fff", cursor: "pointer", fontWeight: 600, display: "flex", alignItems: "center", gap: 8, fontSize: 14 },
     logoutBtn: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 12, padding: "10px 20px", color: colors.text, cursor: "pointer", display: "flex", alignItems: "center", gap: 8, fontSize: 14 },
     userAvatar: { width: 36, height: 36, borderRadius: "50%", background: colors.primary, display: "flex", alignItems: "center", justifyContent: "center", color: colors.bg, fontWeight: 700, fontSize: 16 },
-    tabNav: { display: "flex", gap: 4, borderBottom: `1px solid rgba(255,255,255,0.08)`, marginTop: 24, marginBottom: 24, overflowX: "auto" },
-    tabNavBtn: (active) => ({ background: "none", border: "none", borderBottom: active ? `2px solid ${colors.primary}` : "2px solid transparent", color: active ? colors.primary : colors.textSecondary, padding: "12px 24px", cursor: "pointer", fontSize: 14, fontWeight: active ? 600 : 400, whiteSpace: "nowrap" }),
+    tabNav: { display: "flex", gap: 0, borderBottom: `1px solid rgba(255,255,255,0.08)`, marginTop: 24, marginBottom: 24, overflowX: "auto" },
+    tabNavBtn: (active) => ({ background: "none", border: "none", borderBottom: active ? `2px solid ${colors.primary}` : "2px solid transparent", color: active ? colors.primary : colors.textSecondary, padding: "12px 20px", cursor: "pointer", fontSize: 13, fontWeight: active ? 600 : 400, whiteSpace: "nowrap" }),
     grid: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 24 },
     gameCard: { background: colors.bgCard, borderRadius: 16, overflow: "hidden", cursor: "pointer", border: "1px solid rgba(255,255,255,0.06)", position: "relative" },
     gameImg: { width: "100%", aspectRatio: "3/4", objectFit: "cover" },
@@ -848,8 +856,6 @@ export default function NexPlay() {
             <button className="btn-click" style={styles.mainTab(currentTab === "profile")} onClick={() => setCurrentTab("profile")}><FaUser /> {text.profile}</button>
             <button className="btn-click" style={styles.mainTab(currentTab === "friends")} onClick={() => setCurrentTab("friends")}><FaUsers /> {text.friends}</button>
             <button className="btn-click" style={styles.mainTab(currentTab === "ai")} onClick={() => setCurrentTab("ai")}><FaRobot /> {text.ai}</button>
-            <button className="btn-click" style={styles.mainTab(currentTab === "goty")} onClick={() => setCurrentTab("goty")}><FaAward /> {text.goty}</button>
-            <button className="btn-click" style={styles.mainTab(currentTab === "topGenres")} onClick={() => setCurrentTab("topGenres")}><FaList /> {text.topGenres}</button>
             <button className="btn-click" style={styles.iconBtn} onClick={() => setShowSettings(true)}><FaCog /></button>
             {!user ? <button className="btn-click" style={styles.loginBtn} onClick={() => setShowLoginModal(true)}><FaEnvelope /> {text.login}</button> :
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -859,15 +865,18 @@ export default function NexPlay() {
           </div>
         </div>
 
-        {/* ========== HOME TAB (mit Top Picks, Best Ever, Hidden Gems) ========== */}
+        {/* ========== HOME TAB (Discover) mit Top Picks, Best Ever, Hidden Gems, GOTY, Top 20 ========== */}
         {currentTab === "home" && (
           <div className="fade-in">
             <div style={styles.tabNav}>
-              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "topPicks")} onClick={() => setDiscoverSubTab("topPicks")}>🎯 {text.topPicks}</button>
-              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "bestEver")} onClick={() => setDiscoverSubTab("bestEver")}>🏆 {text.bestEver}</button>
-              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "hiddenGems")} onClick={() => setDiscoverSubTab("hiddenGems")}>💎 {text.hiddenGems}</button>
+              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "topPicks")} onClick={() => setDiscoverSubTab("topPicks")}>{text.topPicks}</button>
+              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "bestEver")} onClick={() => setDiscoverSubTab("bestEver")}>{text.bestEver}</button>
+              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "hiddenGems")} onClick={() => setDiscoverSubTab("hiddenGems")}>{text.hiddenGems}</button>
+              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "goty")} onClick={() => setDiscoverSubTab("goty")}>{text.goty}</button>
+              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "top20")} onClick={() => setDiscoverSubTab("top20")}>{text.top20}</button>
             </div>
 
+            {/* TOP PICKS */}
             {discoverSubTab === "topPicks" && (
               <div className="fade-in">
                 <div style={styles.randomFilterSection}>
@@ -883,128 +892,128 @@ export default function NexPlay() {
                     <button className="btn-click" style={styles.loginBtn} onClick={doRandom}><FaRandom /> {text.randomGame}</button>
                   </div>
                 </div>
-
-                <div style={styles.sectionTitle}>🎯 {text.topPicks}</div>
+                <div style={styles.sectionTitle}>{text.topPicks}</div>
                 <div style={styles.grid}>{TOP_PICKS_GAMES.slice(0, 30).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
               </div>
             )}
 
+            {/* BEST EVER mit Suche und Filter */}
             {discoverSubTab === "bestEver" && (
               <div className="fade-in">
-                <div style={styles.sectionTitle}>🏆 {text.bestEver}</div>
-                <div style={styles.grid}>{BEST_EVER_GAMES.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
+                <input style={styles.searchBar} placeholder={text.search} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+                <div style={styles.filterRow}>
+                  <span>{text.sort}:</span>
+                  <button className="btn-click" style={styles.filterBtn(sortBy === "score")} onClick={() => setSortBy("score")}>{text.bestMatch}</button>
+                  <button className="btn-click" style={styles.filterBtn(sortBy === "rating")} onClick={() => setSortBy("rating")}>{text.rating}</button>
+                  <button className="btn-click" style={styles.filterBtn(sortBy === "year")} onClick={() => setSortBy("year")}>{text.year}</button>
+                </div>
+                <div style={styles.sectionTitle}>{text.bestEver}</div>
+                <div style={styles.grid}>{filteredCategoryGames(BEST_EVER_GAMES).slice(0, 40).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
               </div>
             )}
 
+            {/* HIDDEN GEMS */}
             {discoverSubTab === "hiddenGems" && (
               <div className="fade-in">
-                <div style={styles.sectionTitle}>💎 {text.hiddenGems}</div>
+                <div style={styles.sectionTitle}>{text.hiddenGems}</div>
                 <div style={styles.grid}>{HIDDEN_GEMS_GAMES.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
               </div>
             )}
-          </div>
-        )}
 
-        {/* ========== GOTY TAB ========== */}
-        {currentTab === "goty" && (
-          <div className="fade-in">
-            {selectedGotyYear ? (
-              <>
-                <button className="btn-click" style={styles.gotyBackBtn} onClick={() => { setSelectedGotyYear(null); setGotySearch(""); setGotyResult(null); }}>
-                  <FaArrowLeft /> {text.backToGOTY}
-                </button>
-                <div style={styles.gotyResultCard}>
-                  <div style={{ fontSize: 28, fontWeight: 800, marginBottom: 16, color: colors.primary }}>{selectedGotyYear}</div>
-                  <div style={styles.gotyWinnerCard}>
-                    <div style={{ fontSize: 14, color: colors.primary, marginBottom: 8 }}>{text.winner}</div>
-                    <div style={{ fontSize: 24, fontWeight: 700 }}>{GOTY_DATA[selectedGotyYear].winner}</div>
-                  </div>
-                  <div style={{ fontSize: 18, fontWeight: 600, marginBottom: 16, color: colors.textSecondary }}>{text.gotyNominees}</div>
-                  <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 8 }}>
-                    {GOTY_DATA[selectedGotyYear].nominees.map(nom => (
-                      <div key={nom} style={styles.gotyNomineeCard}>
-                        <span style={{ fontSize: 16 }}>📋 {nom}</span>
+            {/* GOTY */}
+            {discoverSubTab === "goty" && (
+              <div className="fade-in">
+                {selectedGotyYear ? (
+                  <>
+                    <button className="btn-click" style={styles.gotyBackBtn} onClick={() => { setSelectedGotyYear(null); setGotySearch(""); setGotyResult(null); }}>
+                      <FaArrowLeft /> {text.backToGOTY}
+                    </button>
+                    <div style={styles.gotyResultCard}>
+                      <div style={{ fontSize: 28, fontWeight: 800, marginBottom: 16, color: colors.primary }}>{selectedGotyYear}</div>
+                      <div style={styles.gotyWinnerCard}>
+                        <div style={{ fontSize: 14, color: colors.primary, marginBottom: 8 }}>{text.winner}</div>
+                        <div style={{ fontSize: 24, fontWeight: 700 }}>{GOTY_DATA[selectedGotyYear].winner}</div>
                       </div>
-                    ))}
-                  </div>
-                </div>
-              </>
-            ) : (
-              <>
-                <div style={styles.sectionTitle}><FaAward /> {text.goty}</div>
-                <input style={styles.searchBar} placeholder={text.searchGOTY} value={gotySearch} onChange={e => setGotySearch(e.target.value)} />
-                
-                {gotyResult?.type === "year" && !selectedGotyYear && (
-                  <div style={styles.gotyResultCard}>
-                    <div style={{ fontSize: 28, fontWeight: 800, marginBottom: 16, color: colors.primary }}>{gotyResult.year}</div>
-                    <div style={styles.gotyWinnerCard}>
-                      <div style={{ fontSize: 14, color: colors.primary, marginBottom: 8 }}>{text.winner}</div>
-                      <div style={{ fontSize: 24, fontWeight: 700 }}>{gotyResult.data.winner}</div>
-                    </div>
-                    <div style={{ fontSize: 18, fontWeight: 600, marginBottom: 16, color: colors.textSecondary }}>{text.gotyNominees}</div>
-                    <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 8 }}>
-                      {gotyResult.data.nominees.map(nom => (
-                        <div key={nom} style={styles.gotyNomineeCard}>
-                          <span style={{ fontSize: 16 }}>📋 {nom}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                
-                {gotyResult?.type === "game" && !selectedGotyYear && (
-                  <div style={styles.gotyResultCard}>
-                    <div style={{ fontSize: 20, fontWeight: 700, color: colors.primary, marginBottom: 8 }}>{gotyResult.game}</div>
-                    <div style={{ fontSize: 14, color: gotyResult.role === "winner" ? colors.primary : colors.textSecondary, marginBottom: 16 }}>
-                      {gotyResult.role === "winner" ? text.winner : text.nominee} - {gotyResult.year}
-                    </div>
-                    <div style={styles.gotyWinnerCard}>
-                      <div style={{ fontSize: 14, color: colors.primary, marginBottom: 8 }}>{text.winner}</div>
-                      <div style={{ fontSize: 20, fontWeight: 600 }}>{gotyResult.data.winner}</div>
-                    </div>
-                    <div style={{ fontSize: 14, fontWeight: 500, marginTop: 16 }}>{text.gotyNominees}:</div>
-                    <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 8, marginTop: 8 }}>
-                      {gotyResult.data.nominees.map(nom => (
-                        <div key={nom} style={styles.gotyNomineeCard}>
-                          <span style={{ fontSize: 13 }}>{nom}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                
-                {gotyResult?.type === "error" && (
-                  <div style={styles.emptyState}>{gotyResult.message}</div>
-                )}
-                
-                {!gotySearch && !selectedGotyYear && (
-                  <div style={styles.grid}>
-                    {Object.entries(GOTY_DATA).reverse().map(([year, data]) => (
-                      <div key={year} className="game-card" style={{ ...styles.gameCard, padding: 16, textAlign: "center" }} onClick={() => setSelectedGotyYear(parseInt(year))}>
-                        <div style={{ fontSize: 32, marginBottom: 8 }}>🏆</div>
-                        <div style={{ fontWeight: 700, fontSize: 20, color: colors.primary }}>{year}</div>
-                        <div style={{ fontSize: 13, marginTop: 8 }}>{data.winner}</div>
+                      <div style={{ fontSize: 18, fontWeight: 600, marginBottom: 16, color: colors.textSecondary }}>{text.gotyNominees}</div>
+                      <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 8 }}>
+                        {GOTY_DATA[selectedGotyYear].nominees.map(nom => (
+                          <div key={nom} style={styles.gotyNomineeCard}>
+                            <span style={{ fontSize: 16 }}>📋 {nom}</span>
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <input style={styles.searchBar} placeholder={text.searchGOTY} value={gotySearch} onChange={e => setGotySearch(e.target.value)} />
+                    {gotyResult?.type === "year" && (
+                      <div style={styles.gotyResultCard}>
+                        <div style={{ fontSize: 28, fontWeight: 800, marginBottom: 16, color: colors.primary }}>{gotyResult.year}</div>
+                        <div style={styles.gotyWinnerCard}>
+                          <div style={{ fontSize: 14, color: colors.primary, marginBottom: 8 }}>{text.winner}</div>
+                          <div style={{ fontSize: 24, fontWeight: 700 }}>{gotyResult.data.winner}</div>
+                        </div>
+                        <div style={{ fontSize: 18, fontWeight: 600, marginBottom: 16, color: colors.textSecondary }}>{text.gotyNominees}</div>
+                        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 8 }}>
+                          {gotyResult.data.nominees.map(nom => (
+                            <div key={nom} style={styles.gotyNomineeCard}>
+                              <span style={{ fontSize: 16 }}>📋 {nom}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {gotyResult?.type === "game" && (
+                      <div style={styles.gotyResultCard}>
+                        <div style={{ fontSize: 20, fontWeight: 700, color: colors.primary, marginBottom: 8 }}>{gotyResult.game}</div>
+                        <div style={{ fontSize: 14, color: gotyResult.role === "winner" ? colors.primary : colors.textSecondary, marginBottom: 16 }}>
+                          {gotyResult.role === "winner" ? text.winner : text.nominee} - {gotyResult.year}
+                        </div>
+                        <div style={styles.gotyWinnerCard}>
+                          <div style={{ fontSize: 14, color: colors.primary, marginBottom: 8 }}>{text.winner}</div>
+                          <div style={{ fontSize: 20, fontWeight: 600 }}>{gotyResult.data.winner}</div>
+                        </div>
+                        <div style={{ fontSize: 14, fontWeight: 500, marginTop: 16 }}>{text.gotyNominees}:</div>
+                        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 8, marginTop: 8 }}>
+                          {gotyResult.data.nominees.map(nom => (
+                            <div key={nom} style={styles.gotyNomineeCard}>
+                              <span style={{ fontSize: 13 }}>{nom}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {gotyResult?.type === "error" && <div style={styles.emptyState}>{gotyResult.message}</div>}
+                    {!gotySearch && !selectedGotyYear && (
+                      <div style={styles.grid}>
+                        {Object.entries(GOTY_DATA).reverse().map(([year, data]) => (
+                          <div key={year} className="game-card" style={{ ...styles.gameCard, padding: 16, textAlign: "center" }} onClick={() => setSelectedGotyYear(parseInt(year))}>
+                            <div style={{ fontSize: 32, marginBottom: 8 }}>🏆</div>
+                            <div style={{ fontWeight: 700, fontSize: 20, color: colors.primary }}>{year}</div>
+                            <div style={{ fontSize: 13, marginTop: 8 }}>{data.winner}</div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </>
                 )}
-              </>
+              </div>
             )}
-          </div>
-        )}
 
-        {/* ========== TOP 20 BY GENRE TAB ========== */}
-        {currentTab === "topGenres" && (
-          <div className="fade-in">
-            <div style={styles.sectionTitle}><FaList /> {text.topGenres}</div>
-            <select className="btn-click" value={selectedGenreForTop} onChange={e => setSelectedGenreForTop(e.target.value)} style={styles.topGenreSelect}>
-              {GENRES.map(g => <option key={g} value={g}>{g}</option>)}
-            </select>
-            <div style={{ ...styles.sectionTitle, fontSize: 20, marginBottom: 16 }}>⭐ {selectedGenreForTop}</div>
-            {top20ByGenre.length === 0 ? (
-              <div style={styles.emptyState}>No games found in this genre yet. More games will be added soon!</div>
-            ) : (
-              <div style={styles.grid}>{top20ByGenre.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
+            {/* TOP 20 BY GENRE */}
+            {discoverSubTab === "top20" && (
+              <div className="fade-in">
+                <select className="btn-click" value={selectedGenreForTop} onChange={e => setSelectedGenreForTop(e.target.value)} style={styles.topGenreSelect}>
+                  {GENRES.map(g => <option key={g} value={g}>{g}</option>)}
+                </select>
+                <div style={{ ...styles.sectionTitle, fontSize: 20, marginBottom: 16 }}>⭐ {selectedGenreForTop}</div>
+                {top20ByGenre.length === 0 ? (
+                  <div style={styles.emptyState}>No games found in this genre yet. More games will be added soon!</div>
+                ) : (
+                  <div style={styles.grid}>{top20ByGenre.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
+                )}
+              </div>
             )}
           </div>
         )}
@@ -1129,11 +1138,11 @@ export default function NexPlay() {
               </div>
               {aiResponse && <div className="fade-in" style={styles.aiResultBox}>{aiResponse}</div>}
             </div>
-            <div style={styles.sectionTitle}>🔥 {text.topPicks}</div>
+            <div style={styles.sectionTitle}>{text.topPicks}</div>
             <div style={styles.grid}>{TOP_PICKS_GAMES.slice(0, 20).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
-            <div style={styles.sectionTitle}>🏆 {text.bestEver}</div>
+            <div style={styles.sectionTitle}>{text.bestEver}</div>
             <div style={styles.grid}>{BEST_EVER_GAMES.slice(0, 20).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
-            <div style={styles.sectionTitle}>💎 {text.hiddenGems}</div>
+            <div style={styles.sectionTitle}>{text.hiddenGems}</div>
             <div style={styles.grid}>{HIDDEN_GEMS_GAMES.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
           </div>
         )}
