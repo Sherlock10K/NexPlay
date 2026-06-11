@@ -47,6 +47,69 @@ const translateGenre = (genreName) => {
 
 let steamGamesCache = {};
 
+// ========== UNIVERSELLE RATING-KORREKTUR FÜR JEDES SPIEL ==========
+const getRealisticRating = (rawgRating, gameName, gameGenre) => {
+  let rating = rawgRating;
+  const name = gameName?.toLowerCase() || "";
+  const genre = gameGenre?.toLowerCase() || "";
+  
+  // ========== 1. MAXIMAL-RATINGS NACH GENRE ==========
+  let maxRating = 9.5;
+  if (genre.includes("fighting") || genre.includes("sports")) maxRating = 8.5;
+  else if (genre.includes("indie")) maxRating = 9.0;
+  else if (genre.includes("horror")) maxRating = 9.0;
+  else if (genre.includes("puzzle")) maxRating = 8.5;
+  
+  // ========== 2. ABZÜGE FÜ BESTIMMTE GENRES ==========
+  let genrePenalty = 0;
+  if (genre.includes("fighting")) genrePenalty = 1.2;
+  else if (genre.includes("sports")) genrePenalty = 1.5;
+  else if (genre.includes("puzzle")) genrePenalty = 0.8;
+  else if (genre.includes("horror")) genrePenalty = 0.5;
+  
+  rating = rating - genrePenalty;
+  
+  // ========== 3. SPEZIFISCHE KORREKTUREN ==========
+  const corrections = [
+    { keywords: ["soulcalibur", "soul calibur"], newRating: 8.0 },
+    { keywords: ["tekken"], newRating: 8.2 },
+    { keywords: ["street fighter"], newRating: 8.5 },
+    { keywords: ["mortal kombat"], newRating: 8.3 },
+    { keywords: ["fifa"], newRating: 7.5 },
+    { keywords: ["pes", "efootball"], newRating: 7.0 },
+    { keywords: ["call of duty"], newRating: 7.5 },
+    { keywords: ["assassin", "creed"], newRating: 7.8 },
+    { keywords: ["pokemon"], newRating: 8.0 },
+    { keywords: ["battlefield"], newRating: 7.8 },
+    { keywords: ["far cry"], newRating: 7.8 },
+    { keywords: ["watch dogs"], newRating: 7.5 },
+    { keywords: ["saints row"], newRating: 7.0 },
+    { keywords: ["mafia"], newRating: 7.5 },
+    { keywords: ["just cause"], newRating: 7.2 },
+    { keywords: ["dying light"], newRating: 8.2 },
+    { keywords: ["days gone"], newRating: 8.0 },
+    { keywords: ["cyberpunk"], newRating: 8.5 }
+  ];
+  
+  for (const correction of corrections) {
+    if (correction.keywords.some(kw => name.includes(kw))) {
+      rating = correction.newRating;
+      break;
+    }
+  }
+  
+  // ========== 4. MAXIMUM ANWENDEN ==========
+  rating = Math.min(rating, maxRating);
+  
+  // ========== 5. MINDESTRATING ==========
+  rating = Math.max(rating, 6.0);
+  
+  // ========== 6. AUF 1 NACHKOMMASTELLE RUNDEN ==========
+  rating = Math.round(rating * 10) / 10;
+  
+  return rating;
+};
+
 export default function NexPlay() {
   const [lang, setLang] = useState("en");
   const [user, setUser] = useState(null);
@@ -178,86 +241,82 @@ export default function NexPlay() {
     }
   };
 
-// ========== KERN: JEDES SPIEL BEKOMMT EIN REALISTISCHES RATING ==========
-const gamesWithData = useMemo(() => {
-  const steamAppIds = allGames
-    .map(g => g.steamId)
-    .filter(id => id && typeof id === 'number');
-  
-  if (steamAppIds.length > 0) {
-    fetchSteamRatings(steamAppIds);
-  }
-  
-  return allGames.map(game => {
-    const steamData = game.steamId ? steamGamesCache[game.steamId] : null;
+  // ========== UNIVERSELLE RATING-KORREKTUR FÜR ALLE SPIELE ==========
+  const gamesWithData = useMemo(() => {
+    const steamAppIds = allGames
+      .map(g => g.steamId)
+      .filter(id => id && typeof id === 'number');
     
-    // ========== 1. RAWg RATING KORRIGIEREN ==========
-    let rawRating = game.rawgRating;
-    const name = game.name?.toLowerCase() || "";
-    const genre = game.genre?.toLowerCase() || "";
-    
-    // Spezifische Korrekturen (RAWg ist oft zu hoch)
-    if (name.includes("soulcalibur")) rawRating = 8.0;
-    if (name.includes("tekken")) rawRating = 8.2;
-    if (name.includes("street fighter")) rawRating = 8.5;
-    if (name.includes("mortal kombat")) rawRating = 8.3;
-    if (name.includes("fifa")) rawRating = 7.5;
-    if (name.includes("pes") || name.includes("efootball")) rawRating = 7.0;
-    if (name.includes("call of duty")) rawRating = 7.5;
-    if (name.includes("assassin") && name.includes("creed")) rawRating = 7.8;
-    if (name.includes("pokemon")) rawRating = 8.0;
-    if (name.includes("battlefield")) rawRating = 7.8;
-    if (name.includes("far cry")) rawRating = 7.8;
-    if (name.includes("watch dogs")) rawRating = 7.5;
-    
-    // Genre-basierte Maximalratings
-    let maxRating = 9.5; // AAA Action/RPG (Elden Ring, Witcher 3)
-    if (genre.includes("fighting") || genre.includes("sports")) maxRating = 8.5;
-    else if (genre.includes("indie")) maxRating = 9.0;
-    else if (genre.includes("horror")) maxRating = 9.0;
-    else if (genre.includes("puzzle")) maxRating = 8.5;
-    
-    // Rating nicht übers Maximum
-    let finalRating = Math.min(rawRating, maxRating);
-    
-    // Steam-Rating einmischen (falls vorhanden)
-    if (steamData && steamData.steamRating) {
-      finalRating = (steamData.steamRating + finalRating) / 2;
+    if (steamAppIds.length > 0) {
+      fetchSteamRatings(steamAppIds);
     }
     
-    // Auf eine Nachkommastelle runden
-    finalRating = Math.round(finalRating * 10) / 10;
-    
-    // ========== 2. REVIEW-ANZAHL (für Kategorisierung) ==========
-    let reviewCount = 0;
-    if (steamData && steamData.reviewCount > 0) {
-      reviewCount = steamData.reviewCount;
-    } else {
-      // Reviews basierend auf korrigiertem Rating
-      if (finalRating >= 9.0) reviewCount = 150000 + Math.floor(Math.random() * 150000);
-      else if (finalRating >= 8.5) reviewCount = 50000 + Math.floor(Math.random() * 100000);
-      else if (finalRating >= 8.0) reviewCount = 15000 + Math.floor(Math.random() * 35000);
-      else if (finalRating >= 7.5) reviewCount = 5000 + Math.floor(Math.random() * 10000);
-      else reviewCount = 1000 + Math.floor(Math.random() * 4000);
-    }
-    
-    // ========== 3. BILD (mit Fallback) ==========
-    let finalImg = steamData?.img || game.img;
-    if (!finalImg || finalImg === "" || finalImg.includes("null") || finalImg.includes("placeholder")) {
-      finalImg = `https://placehold.co/300x400/14141f/ffd400?text=${encodeURIComponent(game.name.slice(0, 8))}`;
-    }
-    
-    return {
-      ...game,
-      finalRating: finalRating,
-      finalImg: finalImg,
-      reviewCount: reviewCount
-    };
-  });
-}, [allGames]);
+    return allGames.map(game => {
+      const steamData = game.steamId ? steamGamesCache[game.steamId] : null;
+      
+      // ========== UNIVERSELLE RATING-KORREKTUR ==========
+      let finalRating = getRealisticRating(game.rawgRating, game.name, game.genre);
+      
+      // Steam-Rating einmischen (falls vorhanden)
+      if (steamData && steamData.steamRating) {
+        finalRating = (steamData.steamRating + finalRating) / 2;
+        finalRating = Math.round(finalRating * 10) / 10;
+      }
+      
+      // Review-Anzahl für Kategorisierung
+      let reviewCount = 0;
+      if (steamData && steamData.reviewCount > 0) {
+        reviewCount = steamData.reviewCount;
+      } else {
+        if (finalRating >= 9.0) reviewCount = 150000;
+        else if (finalRating >= 8.5) reviewCount = 50000;
+        else if (finalRating >= 8.0) reviewCount = 15000;
+        else if (finalRating >= 7.5) reviewCount = 5000;
+        else reviewCount = 1000;
+      }
+      
+      // Bild-Fallback
+      let finalImg = steamData?.img || game.img;
+      if (!finalImg || finalImg === "" || finalImg.includes("null")) {
+        finalImg = `https://placehold.co/300x400/14141f/ffd400?text=${encodeURIComponent(game.name.slice(0, 8))}`;
+      }
+      
+      return {
+        ...game,
+        finalRating: finalRating,
+        finalImg: finalImg,
+        reviewCount: reviewCount,
+        originalRawgRating: game.rawgRating // für Debug
+      };
+    });
+  }, [allGames]);
 
-  // ========== KATEGORIEN – JETZT WIRKLICH UNTERSCHIEDLICH ==========
-  // MUST PLAY: Rating ≥ 8.5 UND mehr als 50.000 Reviews (echte Hits)
+  // ========== SELBSTPRÜFUNG: Zeigt ALLE korrigierten Spiele an ==========
+  useEffect(() => {
+    if (gamesWithData.length > 0) {
+      console.log("=== UNIVERSELLE RATING-KORREKTUR PRÜFUNG ===");
+      
+      let korrigiert = 0;
+      gamesWithData.forEach(game => {
+        if (game.originalRawgRating !== game.finalRating) {
+          korrigiert++;
+          if (korrigiert <= 30) {
+            console.log(`   ${game.name}: ${game.originalRawgRating} → ${game.finalRating}`);
+          }
+        }
+      });
+      
+      console.log(`✅ ${korrigiert} von ${gamesWithData.length} Spielen wurden korrigiert!`);
+      
+      if (korrigiert === 0) {
+        console.warn("⚠️ Keine Korrekturen! Die Funktion wird nicht angewendet.");
+      }
+      
+      console.log("=== PRÜFUNG ABGESCHLOSSEN ===");
+    }
+  }, [gamesWithData]);
+
+  // ========== KATEGORIEN ==========
   const MUST_PLAY_GAMES = useMemo(() => 
     [...gamesWithData]
       .filter(g => g.finalRating >= 8.5 && g.reviewCount >= 50000)
@@ -265,7 +324,6 @@ const gamesWithData = useMemo(() => {
     [gamesWithData]
   );
 
-  // BEST EVER: Top 50 nach Rating (egal wie viele Reviews)
   const BEST_EVER_GAMES = useMemo(() => 
     [...gamesWithData]
       .sort((a, b) => b.finalRating - a.finalRating)
@@ -273,7 +331,6 @@ const gamesWithData = useMemo(() => {
     [gamesWithData]
   );
 
-  // HIDDEN GEMS: Rating ≥ 8.0 ABER weniger als 10.000 Reviews (unterbewertete Perlen)
   const HIDDEN_GEMS_GAMES = useMemo(() => 
     [...gamesWithData]
       .filter(g => g.finalRating >= 8.0 && g.reviewCount < 10000)
@@ -690,7 +747,7 @@ const gamesWithData = useMemo(() => {
     const inLibrary = library.some(g => g.id === game.id);
     return (
       <div className="game-card" style={styles.gameCard} onClick={() => openGameDetail(game)}>
-        <img src={game.finalImg || game.img} style={styles.gameImg} alt={game.name} onError={(e) => { e.target.src = `https://placehold.co/300x400/14141f/ffd400?text=${encodeURIComponent(game.name.slice(0,3))}`; }} />
+        <img src={game.finalImg || game.img} style={styles.gameImg} alt={game.name} onError={(e) => { e.target.src = `https://placehold.co/300x400/14141f/ffd400?text=${encodeURIComponent(game.name.slice(0, 8))}`; }} />
         <div style={{ position: "absolute", top: 10, right: 10, background: "rgba(0,0,0,0.7)", borderRadius: 20, padding: "3px 10px", fontSize: 12, fontWeight: 700, color: colors.primary }}>★ {game.finalRating?.toFixed(1)}</div>
         <button className="btn-click" style={{ position: "absolute", top: 10, left: 10, background: "rgba(0,0,0,0.7)", border: "none", borderRadius: 20, padding: "6px 8px", cursor: "pointer" }} onClick={(e) => { e.stopPropagation(); toggleFavorite(game.id); }}>
           {isFavorite ? <BsFillHeartFill color={colors.primary} size={12} /> : <FaHeart color="#fff" size={12} />}
