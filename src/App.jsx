@@ -27,18 +27,38 @@ const MOODS = ["Emotional", "Action", "Dark", "Fantasy", "Horror", "Mystery", "C
 const GENRES = ["Action", "Adventure", "RPG", "Indie", "Horror", "Strategy", "Puzzle", "Open World", "Story Rich", "Fighting", "Sports", "Racing", "Simulation"];
 const PLAYTIMES = ["Under 10h", "10-20h", "20-40h", "40-60h", "60-100h", "100h+"];
 
+// ========== MANUELLE HIDDEN GEMS (weil RAWg nicht genug liefert) ==========
+const MANUAL_HIDDEN_GEMS = [
+  { id: 9001, name: "CrossCode", rating: 9.1, genre: "Indie", playtime: "40-60h", year: 2018, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/368340/header.jpg", developer: "Radical Fish Games", mood: "Action", description: "CrossCode ist ein Action-RPG im Retro-Stil, das in einem fiktiven MMORPG spielt. Die schnellen Kämpfe, die herausfordernden Rätsel und die emotionale Geschichte machen es zu einem der besten Indie-Spiele aller Zeiten. Leider hat es nie die Aufmerksamkeit bekommen, die es verdient hätte. Ein absolutes Meisterwerk!", platforms: ["PC", "Switch", "PS4", "Xbox One"], steamId: 368340, finalRating: 9.1 },
+  { id: 9002, name: "Outer Wilds", rating: 9.3, genre: "Adventure", playtime: "20-40h", year: 2019, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/753640/header.jpg", developer: "Mobius Digital", mood: "Mystery", description: "Outer Wilds ist ein Open-World-Mystery-Spiel über ein Sonnensystem, das in einer Zeitschleife gefangen ist. Jede Entdeckung fühlt sich bedeutungsvoll an und die Erzählung ist einzigartig. Ein Spiel, das man nie vergisst!", platforms: ["PC", "PS4", "Xbox One", "Switch"], steamId: 753640, finalRating: 9.3 },
+  { id: 9003, name: "Return of the Obra Dinn", rating: 9.2, genre: "Puzzle", playtime: "10-20h", year: 2018, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/653530/header.jpg", developer: "Lucas Pope", mood: "Mystery", description: "Ein Detektivspiel in 1-Bit-Grafik, bei dem du das Schicksal einer verschollenen Schiffsbesatzung aufklären musst. Genial!", platforms: ["PC", "Switch", "PS4", "Xbox One"], steamId: 653530, finalRating: 9.2 },
+  { id: 9004, name: "Hades", rating: 9.3, genre: "Indie", playtime: "40-60h", year: 2020, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1145360/header.jpg", developer: "Supergiant Games", mood: "Action", description: "Ein Roguelite-Actionspiel, in dem du versuchst, die Unterwelt zu entkommen. Jeder Lauf ist einzigartig!", platforms: ["PC", "Switch", "PS4", "Xbox"], steamId: 1145360, finalRating: 9.3 },
+  { id: 9005, name: "Hollow Knight", rating: 9.3, genre: "Indie", playtime: "40-60h", year: 2017, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/367520/header.jpg", developer: "Team Cherry", mood: "Atmospheric", description: "Ein wunderschönes und herausforderndes Metroidvania. Ein Muss!", platforms: ["PC", "Switch", "PS4", "Xbox One"], steamId: 367520, finalRating: 9.3 },
+  { id: 9006, name: "Celeste", rating: 9.2, genre: "Indie", playtime: "10-20h", year: 2018, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/504230/header.jpg", developer: "Maddy Makes Games", mood: "Emotional", description: "Ein präzises Plattformspiel über Angst und Selbstakzeptanz. Unglaublich gut!", platforms: ["PC", "Switch", "PS4", "Xbox One"], steamId: 504230, finalRating: 9.2 },
+  { id: 9007, name: "Stardew Valley", rating: 9.3, genre: "Indie", playtime: "100h+", year: 2016, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/413150/header.jpg", developer: "ConcernedApe", mood: "Cozy", description: "Das ultimative Farming-Spiel. Entspannt, tiefgründig und unendlich liebenswert!", platforms: ["PC", "Switch", "PS4", "Xbox", "Mobile"], steamId: 413150, finalRating: 9.3 },
+  { id: 9008, name: "Disco Elysium", rating: 9.4, genre: "RPG", playtime: "20-40h", year: 2019, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/632470/header.jpg", developer: "ZA/UM", mood: "Story Rich", description: "Ein RPG ohne Kämpfe, nur mit Dialogen. Das beste Geschichtenerzählen in einem Spiel!", platforms: ["PC", "PS4", "Xbox", "Switch"], steamId: 632470, finalRating: 9.4 },
+  { id: 9009, name: "Slay the Spire", rating: 9.2, genre: "Indie", playtime: "100h+", year: 2019, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/646570/header.jpg", developer: "MegaCrit", mood: "Action", description: "Ein Deckbuilding-Roguelite, der süchtig macht!", platforms: ["PC", "Switch", "PS4", "Mobile"], steamId: 646570, finalRating: 9.2 },
+  { id: 9010, name: "Undertale", rating: 9.2, genre: "Indie", playtime: "5-10h", year: 2015, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/391540/header.jpg", developer: "Toby Fox", mood: "Funny", description: "Ein RPG, in dem du niemanden töten musst. Genialer Humor und tolle Musik!", platforms: ["PC", "Switch", "PS4", "PS Vita"], steamId: 391540, finalRating: 9.2 },
+  { id: 9011, name: "Inside", rating: 9.1, genre: "Indie", playtime: "3-5h", year: 2016, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/304430/header.jpg", developer: "Playdead", mood: "Dark", description: "Ein düsteres Puzzle-Platformer mit einer genialen Atmosphäre.", platforms: ["PC", "PS4", "Xbox One", "Switch"], steamId: 304430, finalRating: 9.1 },
+  { id: 9012, name: "Limbo", rating: 9.0, genre: "Indie", playtime: "3-5h", year: 2010, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/48000/header.jpg", developer: "Playdead", mood: "Dark", description: "Das Spiel, das die Indie-Revolution mitgestartet hat. Großartig!", platforms: ["PC", "PS4", "Xbox", "Switch"], steamId: 48000, finalRating: 9.0 },
+  { id: 9013, name: "Braid", rating: 9.0, genre: "Indie", playtime: "3-5h", year: 2008, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/26800/header.jpg", developer: "Number None", mood: "Mindfuck", description: "Ein Puzzle-Platformer mit Zeitmanipulation. Ein Meilenstein der Indie-Spiele.", platforms: ["PC", "PS3", "Xbox 360", "Switch"], steamId: 26800, finalRating: 9.0 },
+  { id: 9014, name: "Journey", rating: 9.2, genre: "Adventure", playtime: "Under 3h", year: 2012, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/638230/header.jpg", developer: "Thatgamecompany", mood: "Emotional", description: "Ein emotionales Abenteuer durch eine Wüste. Ein Kunstwerk!", platforms: ["PC", "PS3", "PS4", "iOS"], steamId: 638230, finalRating: 9.2 },
+  { id: 9015, name: "What Remains of Edith Finch", rating: 9.1, genre: "Adventure", playtime: "Under 3h", year: 2017, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/501300/header.jpg", developer: "Giant Sparrow", mood: "Sad", description: "Ein Walking-Simulator über den Tod und das Leben einer Familie. Wunderschön!", platforms: ["PC", "PS4", "Xbox One", "Switch"], steamId: 501300, finalRating: 9.1 }
+];
+
+// ========== GOTY DATEN MIT BILDERN ==========
 const GOTY_DATA = {
-  2014: { winner: "Dragon Age: Inquisition", nominees: ["Dark Souls II", "Hearthstone", "Middle-earth: Shadow of Mordor", "Destiny"] },
-  2015: { winner: "The Witcher 3: Wild Hunt", nominees: ["Bloodborne", "Fallout 4", "Metal Gear Solid V", "Super Mario Maker"] },
-  2016: { winner: "Overwatch", nominees: ["Doom", "Inside", "Titanfall 2", "Uncharted 4"] },
-  2017: { winner: "The Legend of Zelda: Breath of the Wild", nominees: ["Horizon Zero Dawn", "Persona 5", "Super Mario Odyssey", "PlayerUnknown's Battlegrounds"] },
-  2018: { winner: "God of War", nominees: ["Red Dead Redemption 2", "Marvel's Spider-Man", "Celeste", "Monster Hunter: World"] },
-  2019: { winner: "Sekiro: Shadows Die Twice", nominees: ["Control", "Death Stranding", "Resident Evil 2", "Super Smash Bros. Ultimate"] },
-  2020: { winner: "The Last of Us Part II", nominees: ["Hades", "Ghost of Tsushima", "Doom Eternal", "Final Fantasy VII Remake"] },
-  2021: { winner: "It Takes Two", nominees: ["Deathloop", "Metroid Dread", "Psychonauts 2", "Resident Evil Village"] },
-  2022: { winner: "Elden Ring", nominees: ["God of War Ragnarök", "Horizon Forbidden West", "Stray", "Xenoblade Chronicles 3"] },
-  2023: { winner: "Baldur's Gate 3", nominees: ["Alan Wake 2", "Marvel's Spider-Man 2", "Resident Evil 4", "The Legend of Zelda: Tears of the Kingdom"] },
-  2024: { winner: "Astro Bot", nominees: ["Final Fantasy VII Rebirth", "Metaphor: ReFantazio", "Black Myth: Wukong", "Elden Ring: Shadow of the Erdtree"] }
+  2014: { winner: "Dragon Age: Inquisition", nominees: ["Dark Souls II", "Hearthstone", "Middle-earth: Shadow of Mordor", "Destiny"], img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1222690/header.jpg", steamId: 1222690 },
+  2015: { winner: "The Witcher 3: Wild Hunt", nominees: ["Bloodborne", "Fallout 4", "Metal Gear Solid V", "Super Mario Maker"], img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/292030/header.jpg", steamId: 292030 },
+  2016: { winner: "Overwatch", nominees: ["Doom", "Inside", "Titanfall 2", "Uncharted 4"], img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2357570/header.jpg", steamId: 2357570 },
+  2017: { winner: "The Legend of Zelda: Breath of the Wild", nominees: ["Horizon Zero Dawn", "Persona 5", "Super Mario Odyssey", "PlayerUnknown's Battlegrounds"], img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg", steamId: 1245620 },
+  2018: { winner: "God of War", nominees: ["Red Dead Redemption 2", "Marvel's Spider-Man", "Celeste", "Monster Hunter: World"], img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1593500/header.jpg", steamId: 1593500 },
+  2019: { winner: "Sekiro: Shadows Die Twice", nominees: ["Control", "Death Stranding", "Resident Evil 2", "Super Smash Bros. Ultimate"], img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/814380/header.jpg", steamId: 814380 },
+  2020: { winner: "The Last of Us Part II", nominees: ["Hades", "Ghost of Tsushima", "Doom Eternal", "Final Fantasy VII Remake"], img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1888930/header.jpg", steamId: 1888930 },
+  2021: { winner: "It Takes Two", nominees: ["Deathloop", "Metroid Dread", "Psychonauts 2", "Resident Evil Village"], img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1426210/header.jpg", steamId: 1426210 },
+  2022: { winner: "Elden Ring", nominees: ["God of War Ragnarök", "Horizon Forbidden West", "Stray", "Xenoblade Chronicles 3"], img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg", steamId: 1245620 },
+  2023: { winner: "Baldur's Gate 3", nominees: ["Alan Wake 2", "Marvel's Spider-Man 2", "Resident Evil 4", "The Legend of Zelda: Tears of the Kingdom"], img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1086940/header.jpg", steamId: 1086940 },
+  2024: { winner: "Astro Bot", nominees: ["Final Fantasy VII Rebirth", "Metaphor: ReFantazio", "Black Myth: Wukong", "Elden Ring: Shadow of the Erdtree"], img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2357570/header.jpg", steamId: 2357570 }
 };
 
 const translations = {
@@ -105,12 +125,10 @@ const translateGenre = (genreName) => {
 
 let steamGamesCache = {};
 
-// RATING-KONTROLLSYSTEM
 const checkAndFixRatings = (game, steamData) => {
   let rating = game.rawgRating || 7.0;
   const name = game.name?.toLowerCase() || "";
   
-  // Spezifische Korrekturen für überschätzte Klassiker
   if (name.includes("goldeneye") && name.includes("007")) rating = 8.5;
   if (name.includes("perfect dark")) rating = 8.3;
   if (name.includes("metroid prime") && !name.includes("remastered")) rating = 9.0;
@@ -155,7 +173,6 @@ const calculateWeightedRating = (game, steamData) => {
   if (name.includes("fifa") || name.includes("pes") || name.includes("efootball")) weightedRating = Math.min(weightedRating, 7.5);
   if (name.includes("call of duty") && !name.includes("modern warfare 2")) weightedRating = Math.min(weightedRating, 7.8);
   
-  // BUFFER für gute Games
   if (weightedRating >= 8.5 && weightedRating < 9.0) weightedRating += 0.2;
   if (weightedRating >= 9.0 && weightedRating < 9.3) weightedRating += 0.15;
   
@@ -344,6 +361,29 @@ export default function NexPlay() {
     });
   }, [allGames]);
 
+  // HIDDEN GEMS: Kombiniere RAWg + manuelle Liste
+  const HIDDEN_GEMS_GAMES = useMemo(() => {
+    const rawgGems = gamesWithData.filter(g => g.finalRating >= 8.5 && g.reviewCount < 20000 && g.genre === "Indie").slice(0, 10);
+    const manualGemsWithRating = MANUAL_HIDDEN_GEMS.map(g => ({ ...g, finalRating: g.rating }));
+    const allGems = [...rawgGems, ...manualGemsWithRating];
+    const uniqueGems = allGems.filter((g, index, self) => index === self.findIndex(g2 => g2.name === g.name));
+    return uniqueGems.sort((a, b) => b.finalRating - a.finalRating).slice(0, 30);
+  }, [gamesWithData]);
+
+  // TOP PICKS mit mindestens 10 Games
+  const TOP_PICKS_GAMES = useMemo(() => {
+    const rawgPicks = gamesWithData.filter(g => g.finalRating >= 9.0 && g.reviewCount >= 50000).slice(0, 20);
+    if (rawgPicks.length >= 10) return rawgPicks;
+    const fallback = gamesWithData.filter(g => g.finalRating >= 8.8).slice(0, 20);
+    return fallback;
+  }, [gamesWithData]);
+
+  // BEST EVER mit mindestens 10 Games
+  const BEST_EVER_GAMES = useMemo(() => {
+    const rawgBest = gamesWithData.sort((a,b) => b.finalRating - a.finalRating).slice(0, 40);
+    return rawgBest;
+  }, [gamesWithData]);
+
   const searchGOTY = () => {
     const search = gotySearch.trim().toLowerCase();
     if (!search) { setGotyResult(null); setSelectedGotyYear(null); return; }
@@ -374,24 +414,13 @@ export default function NexPlay() {
 
   const top20ByGenre = useMemo(() => {
     const filtered = gamesWithData.filter(g => g.genre === selectedGenreForTop);
-    return [...filtered].sort((a, b) => b.finalRating - a.finalRating).slice(0, 20);
+    let games = [...filtered].sort((a, b) => b.finalRating - a.finalRating);
+    if (games.length < 10) {
+      const fallback = gamesWithData.filter(g => g.finalRating >= 8.5).slice(0, 20);
+      return fallback;
+    }
+    return games.slice(0, 20);
   }, [gamesWithData, selectedGenreForTop]);
-
-  // KATEGORIEN
-  const TOP_PICKS_GAMES = useMemo(() => 
-    [...gamesWithData].filter(g => g.finalRating >= 9.0 && g.reviewCount >= 50000).sort((a,b) => b.finalRating - a.finalRating).slice(0, 30),
-    [gamesWithData]
-  );
-  
-  const BEST_EVER_GAMES = useMemo(() => 
-    [...gamesWithData].sort((a,b) => b.finalRating - a.finalRating).slice(0, 40),
-    [gamesWithData]
-  );
-  
-  const HIDDEN_GEMS_GAMES = useMemo(() => 
-    [...gamesWithData].filter(g => g.finalRating >= 8.5 && g.reviewCount < 20000).sort((a,b) => b.finalRating - a.finalRating).slice(0, 30),
-    [gamesWithData]
-  );
 
   const playSound = (type) => {
     if (!soundEnabled || !audioInitialized) return;
@@ -506,8 +535,9 @@ export default function NexPlay() {
 
   const openGameDetail = async (game) => {
     initAudio();
-    setSelectedGameDetail(game);
-    const reviews = await getGameReviews(game.id);
+    const fullGame = gamesWithData.find(g => g.id === game.id) || game;
+    setSelectedGameDetail(fullGame);
+    const reviews = await getGameReviews(fullGame.id);
     setGameDetailReviews(reviews);
     setCurrentTab("gameDetail");
   };
@@ -559,11 +589,11 @@ export default function NexPlay() {
 
   const doRandom = () => {
     initAudio();
-    let pool = [...gamesWithData];
+    let pool = [...gamesWithData, ...MANUAL_HIDDEN_GEMS];
     if (randomExcludeHorror) pool = pool.filter(g => g.mood !== "Horror" && g.genre !== "Horror");
     if (randomExcludeIndie) pool = pool.filter(g => g.genre !== "Indie");
     if (randomExcludeOld) pool = pool.filter(g => g.year >= 2015);
-    pool = pool.filter(g => g.finalRating >= randomMinRating);
+    pool = pool.filter(g => (g.finalRating || g.rating) >= randomMinRating);
     if (randomMode === "genre" && pool.length) {
       const randomGenre = pool[Math.floor(Math.random() * pool.length)].genre;
       pool = pool.filter(g => g.genre === randomGenre);
@@ -572,7 +602,7 @@ export default function NexPlay() {
       const randomMood = pool[Math.floor(Math.random() * pool.length)].mood;
       pool = pool.filter(g => g.mood === randomMood);
     }
-    if (!pool.length) pool = [...gamesWithData];
+    if (!pool.length) pool = [...gamesWithData, ...MANUAL_HIDDEN_GEMS];
     setRandomGame(pool[Math.floor(Math.random() * pool.length)]);
     setShowRandomModal(true);
     playSound("click");
@@ -582,7 +612,7 @@ export default function NexPlay() {
     if (!aiQuery.trim()) return;
     setIsAiLoading(true);
     setTimeout(() => {
-      const recommendations = gamesWithData.filter(g => g.finalRating >= 8.5).sort(() => 0.5 - Math.random()).slice(0, 5).map(g => g.name).join(", ");
+      const recommendations = [...gamesWithData, ...MANUAL_HIDDEN_GEMS].filter(g => (g.finalRating || g.rating) >= 8.5).sort(() => 0.5 - Math.random()).slice(0, 5).map(g => g.name).join(", ");
       setAiResponse(`🎮 Based on "${aiQuery}": ${recommendations || "The Witcher 3, Red Dead Redemption 2, Baldur's Gate 3"}`);
       setIsAiLoading(false);
     }, 1000);
@@ -597,16 +627,16 @@ export default function NexPlay() {
   const filteredCategoryGames = (games) => {
     let filtered = [...games];
     if (categoryFilter.genre) filtered = filtered.filter(g => g.genre === categoryFilter.genre);
-    if (categoryFilter.minRating > 0) filtered = filtered.filter(g => g.finalRating >= categoryFilter.minRating);
+    if (categoryFilter.minRating > 0) filtered = filtered.filter(g => (g.finalRating || g.rating) >= categoryFilter.minRating);
     if (categoryFilter.year > 0) filtered = filtered.filter(g => g.year >= categoryFilter.year);
     return filtered;
   };
 
   const results = useMemo(() => {
-    let list = gamesWithData.map(g => ({ ...g, score: (selectedMoods.includes(g.mood) ? 40 : 20) + (selectedGenres.includes(g.genre) ? 40 : 20) + (selectedPlaytime === g.playtime ? 20 : 0) + (g.finalRating * 2) }));
+    let list = gamesWithData.map(g => ({ ...g, score: (selectedMoods.includes(g.mood) ? 40 : 20) + (selectedGenres.includes(g.genre) ? 40 : 20) + (selectedPlaytime === g.playtime ? 20 : 0) + ((g.finalRating || g.rating) * 2) }));
     if (searchQuery) list = list.filter(g => g.name.toLowerCase().includes(searchQuery.toLowerCase()));
     if (sortBy === "score") list.sort((a,b) => b.score - a.score);
-    else if (sortBy === "rating") list.sort((a,b) => b.finalRating - a.finalRating);
+    else if (sortBy === "rating") list.sort((a,b) => (b.finalRating || b.rating) - (a.finalRating || a.rating));
     else if (sortBy === "year") list.sort((a,b) => b.year - a.year);
     return list;
   }, [selectedMoods, selectedGenres, selectedPlaytime, searchQuery, sortBy, gamesWithData]);
@@ -617,7 +647,8 @@ export default function NexPlay() {
 
   const profileStats = useMemo(() => {
     if (!library.length) return { topRated: null, topGenre: null, totalPlaytime: 0 };
-    const gamesWithRatings = library.map(libGame => ({ ...libGame, finalRating: gamesWithData.find(g => g.id === libGame.id)?.finalRating || 7.0 }));
+    const allGamesList = [...gamesWithData, ...MANUAL_HIDDEN_GEMS];
+    const gamesWithRatings = library.map(libGame => ({ ...libGame, finalRating: allGamesList.find(g => g.id === libGame.id)?.finalRating || allGamesList.find(g => g.id === libGame.id)?.rating || 7.0 }));
     const topRated = [...gamesWithRatings].sort((a,b) => b.finalRating - a.finalRating)[0];
     const genreCount = {};
     library.forEach(g => genreCount[g.genre] = (genreCount[g.genre] || 0) + 1);
@@ -633,8 +664,8 @@ export default function NexPlay() {
     if (library.filter(g => g.status === "completed").length >= 5) ach.push({ id: "completionist", name: text.completionist, desc: "5 completed", icon: "✅", unlocked: true });
     if (favorites.length >= 5) ach.push({ id: "favorites", name: "5 Favorites", desc: "5 games in favorites", icon: "❤️", unlocked: true });
     if (library.length >= 25) ach.push({ id: "master", name: "Game Master", desc: "25 games", icon: "👑", unlocked: true });
-    if (library.length >= 50) ach.push({ id: "legend", name: "Legend", desc: "50 games", icon: "⭐", unlocked: true });
-    if (gameDetailReviews.length >= 10) ach.push({ id: "critic", name: "The Critic", desc: "Wrote 10 reviews", icon: "✍️", unlocked: true, hidden: true });
+    if (gameDetailReviews.length >= 10) ach.push({ id: "critic", name: "The Critic", desc: "Wrote 10 reviews", icon: "✍️", unlocked: true });
+    if (library.filter(g => g.playtime === "100h+").length >= 3) ach.push({ id: "grinder", name: "The Grinder", desc: "3 games with 100+ hours", icon: "🕰️", unlocked: true, funny: true });
     return ach;
   }, [library, favorites, gameDetailReviews]);
 
@@ -768,26 +799,29 @@ export default function NexPlay() {
     achievementName: { fontSize: 13, fontWeight: 600, color: colors.text },
     achievementDesc: { fontSize: 11, color: colors.textSecondary },
     donationBtn: { background: "linear-gradient(135deg, #ffd400, #e6bf00)", border: "none", borderRadius: 12, padding: "12px 20px", color: "#0a0a0f", cursor: "pointer", fontWeight: 700, display: "flex", alignItems: "center", gap: 8, fontSize: 14 },
-    gotyResultCard: { background: colors.bgCard, borderRadius: 20, padding: 24, marginBottom: 24, textAlign: "center", border: `1px solid ${colors.primary}30` },
-    gotyWinnerCard: { background: `linear-gradient(135deg, ${colors.primary}20, ${colors.bgCard})`, borderRadius: 16, padding: 20, marginBottom: 16 },
-    gotyNomineeCard: { background: "rgba(255,255,255,0.03)", borderRadius: 12, padding: 10, margin: 4, display: "inline-block" },
+    gotyResultCard: { background: colors.bgCard, borderRadius: 20, padding: 24, marginBottom: 24, textAlign: "center", border: `1px solid ${colors.primary}30`, cursor: "pointer" },
+    gotyWinnerCard: { background: `linear-gradient(135deg, ${colors.primary}20, ${colors.bgCard})`, borderRadius: 16, padding: 20, marginBottom: 16, cursor: "pointer" },
+    gotyNomineeCard: { background: "rgba(255,255,255,0.03)", borderRadius: 12, padding: 10, margin: 4, display: "inline-block", cursor: "pointer" },
     topGenreSelect: { background: colors.bgCard, border: `1px solid ${colors.primary}30`, borderRadius: 12, padding: "12px 20px", color: colors.text, fontSize: 14, marginBottom: 24, cursor: "pointer" },
-    gotyBackBtn: { background: "rgba(255,255,255,0.05)", border: "none", borderRadius: 12, padding: "10px 20px", color: colors.text, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 20, fontSize: 14 }
+    gotyBackBtn: { background: "rgba(255,255,255,0.05)", border: "none", borderRadius: 12, padding: "10px 20px", color: colors.text, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 20, fontSize: 14 },
+    gotyYearCard: { background: colors.bgCard, borderRadius: 16, padding: 16, textAlign: "center", cursor: "pointer", transition: "transform 0.2s" }
   };
 
   const GameCard = ({ game, showBtn = false }) => {
     const isFavorite = favorites.includes(game.id);
     const inLibrary = library.some(g => g.id === game.id);
+    const rating = game.finalRating || game.rating;
+    const img = game.finalImg || game.img;
     return (
       <div className="game-card" style={styles.gameCard} onClick={() => openGameDetail(game)}>
-        <img src={game.finalImg} style={styles.gameImg} alt={game.name} onError={(e) => { e.target.src = `https://placehold.co/300x400/14141f/ffd400?text=${encodeURIComponent(game.name.slice(0, 8))}`; }} />
-        <div style={{ position: "absolute", top: 10, right: 10, background: "rgba(0,0,0,0.7)", borderRadius: 20, padding: "3px 10px", fontSize: 12, fontWeight: 700, color: colors.primary }}>★ {game.finalRating?.toFixed(1)}</div>
+        <img src={img} style={styles.gameImg} alt={game.name} onError={(e) => { e.target.src = `https://placehold.co/300x400/14141f/ffd400?text=${encodeURIComponent(game.name?.slice(0, 8) || "Game")}`; }} />
+        <div style={{ position: "absolute", top: 10, right: 10, background: "rgba(0,0,0,0.7)", borderRadius: 20, padding: "3px 10px", fontSize: 12, fontWeight: 700, color: colors.primary }}>★ {rating?.toFixed(1)}</div>
         <button className="btn-click" style={{ position: "absolute", top: 10, left: 10, background: "rgba(0,0,0,0.7)", border: "none", borderRadius: 20, padding: "6px 8px", cursor: "pointer" }} onClick={(e) => { e.stopPropagation(); toggleFavorite(game.id); }}>
           {isFavorite ? <BsFillHeartFill color={colors.primary} size={12} /> : <FaHeart color="#fff" size={12} />}
         </button>
         <div style={styles.gameInfo}>
           <div style={styles.gameName}>{game.name}</div>
-          <div style={styles.rating}><FaStar size={11} /> {game.finalRating?.toFixed(1)}</div>
+          <div style={styles.rating}><FaStar size={11} /> {rating?.toFixed(1)}</div>
           <div style={{ fontSize: 11, color: colors.textSecondary, marginBottom: 8 }}>{game.playtime}</div>
           {showBtn && <button className="btn-click" style={styles.addBtn} onClick={(e) => { e.stopPropagation(); addToLibrary(game); }}>{inLibrary ? <FaCheck size={12} /> : <FaPlus size={12} />} {inLibrary ? text.inLibrary : text.add}</button>}
         </div>
@@ -820,12 +854,12 @@ export default function NexPlay() {
           </div>
           <button className="btn-click" style={styles.backBtn} onClick={closeGameDetail}><FaArrowLeft /> {text.back}</button>
           <div className="fade-in" style={styles.gameDetailHeader}>
-            <img src={selectedGameDetail.finalImg} style={styles.gameDetailImg} alt={selectedGameDetail.name} />
+            <img src={selectedGameDetail.finalImg || selectedGameDetail.img} style={styles.gameDetailImg} alt={selectedGameDetail.name} />
             <div style={styles.gameDetailInfo}>
               <div style={styles.gameDetailName}>{selectedGameDetail.name}</div>
               <div style={styles.gameDetailDeveloper}>{selectedGameDetail.developer}</div>
-              <div style={styles.gameDetailRating}>★ {selectedGameDetail.finalRating?.toFixed(1)} · {selectedGameDetail.year} · {selectedGameDetail.playtime}</div>
-              <div style={styles.gameDetailDescription}>{selectedGameDetail.finalDescription}</div>
+              <div style={styles.gameDetailRating}>★ {(selectedGameDetail.finalRating || selectedGameDetail.rating)?.toFixed(1)} · {selectedGameDetail.year} · {selectedGameDetail.playtime}</div>
+              <div style={styles.gameDetailDescription}>{selectedGameDetail.finalDescription || generateLongDescription(selectedGameDetail.name, "")}</div>
               <div style={styles.gameDetailPlatforms}>{selectedGameDetail.platforms?.map(p => <span key={p} style={styles.platformBadge}>{p}</span>)}</div>
               <div style={styles.buyButtonsRow}>{buyLinks.map(link => <button key={link.name} className="btn-click" style={styles.buyBtn(link.color)} onClick={() => window.open(link.url, "_blank")}>{link.icon} {text.buyOn} {link.name}</button>)}</div>
               <button className="btn-click" style={{ ...styles.addBtn, width: "auto", display: "inline-flex" }} onClick={() => addToLibrary(selectedGameDetail)}>+ {text.add}</button>
@@ -897,7 +931,7 @@ export default function NexPlay() {
               <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "top20")} onClick={() => setDiscoverSubTab("top20")}>📊 {text.top20}</button>
             </div>
 
-            {/* FIND YOUR GAME - Mood/Genre/Playtime Filter */}
+            {/* FIND YOUR GAME */}
             {discoverSubTab === "findGame" && (
               <>
                 <div style={styles.randomFilterSection}>
@@ -954,7 +988,7 @@ export default function NexPlay() {
                     {topPicks.length > 0 && (
                       <div>
                         <div style={styles.sectionTitle}>🎯 {text.topPicks}</div>
-                        <div style={styles.topPicksRow}>{topPicks.map((g,i) => <div key={g.id} className="game-card" style={styles.topPickCard} onClick={() => openGameDetail(g)}><div style={{ fontSize: 24, marginBottom: 8 }}>{["🥇","🥈","🥉","4","5","6","7","8"][i]}</div><img src={g.finalImg} style={{ width: "100%", height: 90, objectFit: "cover", borderRadius: 10 }} alt={g.name} /><div style={{ fontWeight: 700, marginTop: 10, color: colors.text }}>{g.name}</div><div style={{ fontSize: 12, color: colors.primary }}>★ {g.finalRating?.toFixed(1)}</div><button className="btn-click" style={styles.addBtn} onClick={(e) => { e.stopPropagation(); addToLibrary(g); }}>+ {text.add}</button></div>)}</div>
+                        <div style={styles.topPicksRow}>{topPicks.map((g,i) => <div key={g.id} className="game-card" style={styles.topPickCard} onClick={() => openGameDetail(g)}><div style={{ fontSize: 24, marginBottom: 8 }}>{["🥇","🥈","🥉","4","5","6","7","8"][i]}</div><img src={g.finalImg || g.img} style={{ width: "100%", height: 90, objectFit: "cover", borderRadius: 10 }} alt={g.name} /><div style={{ fontWeight: 700, marginTop: 10, color: colors.text }}>{g.name}</div><div style={{ fontSize: 12, color: colors.primary }}>★ {(g.finalRating || g.rating)?.toFixed(1)}</div><button className="btn-click" style={styles.addBtn} onClick={(e) => { e.stopPropagation(); addToLibrary(g); }}>+ {text.add}</button></div>)}</div>
                       </div>
                     )}
                     <div style={styles.sectionTitle}>📋 {text.allResults}</div>
@@ -968,11 +1002,15 @@ export default function NexPlay() {
             {discoverSubTab === "topPicks" && (
               <div className="fade-in">
                 <div style={styles.sectionTitle}>🎯 {text.topPicks}</div>
-                <div style={styles.grid}>{TOP_PICKS_GAMES.slice(0, 30).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
+                {TOP_PICKS_GAMES.length === 0 ? (
+                  <div style={styles.emptyState}>No games found. Fallback games will be added soon!</div>
+                ) : (
+                  <div style={styles.grid}>{TOP_PICKS_GAMES.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
+                )}
               </div>
             )}
 
-            {/* BEST EVER mit Suche und Filter */}
+            {/* BEST EVER */}
             {discoverSubTab === "bestEver" && (
               <div className="fade-in">
                 <input style={styles.searchBar} placeholder={text.search} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
@@ -991,7 +1029,11 @@ export default function NexPlay() {
             {discoverSubTab === "hiddenGems" && (
               <div className="fade-in">
                 <div style={styles.sectionTitle}>💎 {text.hiddenGems}</div>
-                <div style={styles.grid}>{HIDDEN_GEMS_GAMES.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
+                {HIDDEN_GEMS_GAMES.length === 0 ? (
+                  <div style={styles.emptyState}>No hidden gems found yet. Check back soon!</div>
+                ) : (
+                  <div style={styles.grid}>{HIDDEN_GEMS_GAMES.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
+                )}
               </div>
             )}
 
@@ -1003,8 +1045,13 @@ export default function NexPlay() {
                     <button className="btn-click" style={styles.gotyBackBtn} onClick={() => { setSelectedGotyYear(null); setGotySearch(""); setGotyResult(null); }}>
                       <FaArrowLeft /> {text.backToGOTY}
                     </button>
-                    <div style={styles.gotyResultCard}>
-                      <div style={{ fontSize: 28, fontWeight: 800, marginBottom: 16, color: colors.primary }}>{selectedGotyYear}</div>
+                    <div style={styles.gotyResultCard} onClick={() => {
+                      const gameData = GOTY_DATA[selectedGotyYear];
+                      const gotyGame = { id: selectedGotyYear, name: gameData.winner, rating: 9.0, genre: "Action", playtime: "20-40h", year: selectedGotyYear, img: gameData.img, developer: "Various", mood: "Epic", description: `Game of the Year ${selectedGotyYear} winner.`, platforms: ["PC", "Console"], steamId: gameData.steamId, finalRating: 9.0, finalImg: gameData.img };
+                      openGameDetail(gotyGame);
+                    }}>
+                      <img src={GOTY_DATA[selectedGotyYear].img} style={{ width: "100%", maxHeight: 200, objectFit: "cover", borderRadius: 12, marginBottom: 16 }} alt={GOTY_DATA[selectedGotyYear].winner} />
+                      <div style={{ fontSize: 28, fontWeight: 800, marginBottom: 8, color: colors.primary }}>{selectedGotyYear}</div>
                       <div style={styles.gotyWinnerCard}>
                         <div style={{ fontSize: 14, color: colors.primary, marginBottom: 8 }}>{text.winner}</div>
                         <div style={{ fontSize: 24, fontWeight: 700 }}>{GOTY_DATA[selectedGotyYear].winner}</div>
@@ -1012,7 +1059,7 @@ export default function NexPlay() {
                       <div style={{ fontSize: 18, fontWeight: 600, marginBottom: 16, color: colors.textSecondary }}>{text.gotyNominees}</div>
                       <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 8 }}>
                         {GOTY_DATA[selectedGotyYear].nominees.map(nom => (
-                          <div key={nom} style={styles.gotyNomineeCard}>
+                          <div key={nom} style={styles.gotyNomineeCard} onClick={(e) => { e.stopPropagation(); const nomineeGame = { id: nom, name: nom, rating: 8.5, genre: "Action", playtime: "20-40h", year: selectedGotyYear, img: "https://placehold.co/300x400/14141f/ffd400?text=" + encodeURIComponent(nom.slice(0, 8)), developer: "Various", mood: "Epic", description: `Nominee for Game of the Year ${selectedGotyYear}.`, platforms: ["PC", "Console"] }; openGameDetail(nomineeGame); }}>
                             <span style={{ fontSize: 14 }}>📋 {nom}</span>
                           </div>
                         ))}
@@ -1023,8 +1070,9 @@ export default function NexPlay() {
                   <>
                     <input style={styles.searchBar} placeholder={text.searchGOTY} value={gotySearch} onChange={e => setGotySearch(e.target.value)} />
                     {gotyResult?.type === "year" && (
-                      <div style={styles.gotyResultCard}>
-                        <div style={{ fontSize: 28, fontWeight: 800, marginBottom: 16, color: colors.primary }}>{gotyResult.year}</div>
+                      <div style={styles.gotyResultCard} onClick={() => { setSelectedGotyYear(gotyResult.year); }}>
+                        <img src={gotyResult.data.img} style={{ width: "100%", maxHeight: 200, objectFit: "cover", borderRadius: 12, marginBottom: 16 }} alt={gotyResult.data.winner} />
+                        <div style={{ fontSize: 28, fontWeight: 800, marginBottom: 8, color: colors.primary }}>{gotyResult.year}</div>
                         <div style={styles.gotyWinnerCard}>
                           <div style={{ fontSize: 14, color: colors.primary, marginBottom: 8 }}>{text.winner}</div>
                           <div style={{ fontSize: 24, fontWeight: 700 }}>{gotyResult.data.winner}</div>
@@ -1063,10 +1111,10 @@ export default function NexPlay() {
                     {!gotySearch && !selectedGotyYear && (
                       <div style={styles.grid}>
                         {Object.entries(GOTY_DATA).reverse().map(([year, data]) => (
-                          <div key={year} className="game-card" style={{ ...styles.gameCard, padding: 16, textAlign: "center" }} onClick={() => setSelectedGotyYear(parseInt(year))}>
-                            <div style={{ fontSize: 32, marginBottom: 8 }}>🏆</div>
+                          <div key={year} className="game-card" style={styles.gotyYearCard} onClick={() => setSelectedGotyYear(parseInt(year))}>
+                            <img src={data.img} style={{ width: "100%", height: 120, objectFit: "cover", borderRadius: 12, marginBottom: 12 }} alt={data.winner} />
                             <div style={{ fontWeight: 700, fontSize: 20, color: colors.primary }}>{year}</div>
-                            <div style={{ fontSize: 13, marginTop: 8 }}>{data.winner}</div>
+                            <div style={{ fontSize: 12, marginTop: 8 }}>{data.winner}</div>
                           </div>
                         ))}
                       </div>
@@ -1084,9 +1132,7 @@ export default function NexPlay() {
                 </select>
                 <div style={{ ...styles.sectionTitle, fontSize: 20, marginBottom: 16 }}>⭐ {selectedGenreForTop}</div>
                 {top20ByGenre.length === 0 ? (
-                  <div style={styles.emptyState}>No games found in this genre yet. More games will be added soon! (Minimum 15 games required for this genre)</div>
-                ) : top20ByGenre.length < 15 ? (
-                  <div style={styles.emptyState}>⚠️ Only {top20ByGenre.length} games found in this genre. Minimum 15 games required for full list.</div>
+                  <div style={styles.emptyState}>No games found in this genre. Fallback games will be shown.</div>
                 ) : (
                   <div style={styles.grid}>{top20ByGenre.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
                 )}
@@ -1156,7 +1202,7 @@ export default function NexPlay() {
                     <div key={ach.id} style={{ ...styles.achievementCard, opacity: ach.unlocked ? 1 : 0.5 }}>
                       <div style={styles.achievementIcon}>{ach.icon}</div>
                       <div style={styles.achievementInfo}>
-                        <div style={styles.achievementName}>{ach.name}</div>
+                        <div style={styles.achievementName}>{ach.name} {ach.funny && "😂"}</div>
                         <div style={styles.achievementDesc}>{ach.desc}</div>
                       </div>
                     </div>
@@ -1177,7 +1223,7 @@ export default function NexPlay() {
                 </div>
 
                 {userData?.lastPlayed?.length > 0 && (
-                  <><div style={styles.sectionTitle}><FaClock /> {text.recentlyPlayed}</div><div style={styles.lastPlayedRow}>{userData.lastPlayed.slice(0,6).map((g,i) => <div key={i} className="hover-lift" style={styles.lastPlayedCard} onClick={() => { const game = gamesWithData.find(a => a.id === g.gameId); if (game) openGameDetail(game); }}><img src={g.gameImg} style={styles.lastPlayedImg} alt={g.gameName} /><div style={styles.lastPlayedName}>{g.gameName}</div></div>)}</div></>
+                  <><div style={styles.sectionTitle}><FaClock /> {text.recentlyPlayed}</div><div style={styles.lastPlayedRow}>{userData.lastPlayed.slice(0,6).map((g,i) => <div key={i} className="hover-lift" style={styles.lastPlayedCard} onClick={() => { const game = [...gamesWithData, ...MANUAL_HIDDEN_GEMS].find(a => a.id === g.gameId); if (game) openGameDetail(game); }}><img src={g.gameImg} style={styles.lastPlayedImg} alt={g.gameName} /><div style={styles.lastPlayedName}>{g.gameName}</div></div>)}</div></>
                 )}
               </>
             ) : <div style={styles.emptyState}>Login to see your profile</div>}
@@ -1242,10 +1288,10 @@ export default function NexPlay() {
         <div className="fade-in" style={styles.modalOverlay} onClick={() => setShowRandomModal(false)}>
           <div className="slide-in" style={styles.modalContent} onClick={e => e.stopPropagation()}>
             <div style={styles.modalTitle}>🎲 {text.randomGame}</div>
-            <img src={randomGame.finalImg} style={{ width: "100%", borderRadius: 18, marginBottom: 20 }} alt={randomGame.name} />
+            <img src={randomGame.finalImg || randomGame.img} style={{ width: "100%", borderRadius: 18, marginBottom: 20 }} alt={randomGame.name} />
             <div style={{ fontSize: 18, fontWeight: 700, textAlign: "center", marginBottom: 8 }}>{randomGame.name}</div>
-            <div style={{ fontSize: 15, color: colors.primary, textAlign: "center", marginBottom: 14 }}>★ {randomGame.finalRating?.toFixed(1)} · {randomGame.playtime} · {randomGame.year}</div>
-            <div style={{ fontSize: 14, marginBottom: 24, color: colors.textSecondary, textAlign: "center", maxHeight: 150, overflow: "auto" }}>{randomGame.finalDescription?.slice(0, 300)}...</div>
+            <div style={{ fontSize: 15, color: colors.primary, textAlign: "center", marginBottom: 14 }}>★ {(randomGame.finalRating || randomGame.rating)?.toFixed(1)} · {randomGame.playtime} · {randomGame.year}</div>
+            <div style={{ fontSize: 14, marginBottom: 24, color: colors.textSecondary, textAlign: "center", maxHeight: 150, overflow: "auto" }}>{randomGame.finalDescription || generateLongDescription(randomGame.name, "").slice(0, 300)}...</div>
             <div style={{ display: "flex", gap: 14, justifyContent: "center" }}><button className="btn-click" style={{ ...styles.addBtn, width: "auto", marginTop: 0, padding: "10px 24px" }} onClick={() => { addToLibrary(randomGame); setShowRandomModal(false); }}>+ {text.add}</button><button className="btn-click" style={styles.modalBtnSecondary} onClick={doRandom}>{text.rollAgain}</button></div>
           </div>
         </div>
