@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { FaHome, FaUser, FaFire, FaSearch, FaHeart, FaStar, FaTrash, FaSignOutAlt, FaPlus, FaCheck, FaEnvelope, FaEye, FaEyeSlash, FaEdit, FaUsers, FaClock, FaRandom, FaThumbsUp, FaThumbsDown, FaArrowLeft, FaCog, FaVolumeUp, FaVolumeMute, FaLanguage, FaSteam, FaPlaystation, FaGamepad, FaTrophy, FaGem, FaShoppingCart, FaRobot, FaFilter, FaLink, FaExternalLinkAlt, FaDonate } from "react-icons/fa";
+import { FaHome, FaUser, FaFire, FaSearch, FaHeart, FaStar, FaTrash, FaSignOutAlt, FaPlus, FaCheck, FaEnvelope, FaEye, FaEyeSlash, FaEdit, FaUsers, FaClock, FaRandom, FaThumbsUp, FaThumbsDown, FaArrowLeft, FaCog, FaVolumeUp, FaVolumeMute, FaLanguage, FaSteam, FaPlaystation, FaGamepad, FaTrophy, FaGem, FaShoppingCart, FaRobot, FaFilter, FaLink, FaExternalLinkAlt, FaDonate, FaAward, FaList } from "react-icons/fa";
 import { GiConsoleController, GiAchievement } from "react-icons/gi";
 import { BsFillCollectionFill, BsFillHeartFill } from "react-icons/bs";
 import { auth, loginWithEmail, registerWithEmail, logout, loadLibraryFromFirestore, saveLibraryToFirestore, loadProfileFromFirestore, saveProfileToFirestore, updateUsername, updateBio, togglePrivacy, searchUsers, resetPassword, addGameReview, getGameReviews, updateLastPlayed, likeReview, dislikeReview } from "./firebase";
@@ -24,14 +24,28 @@ const colors = {
 };
 
 const MOODS = ["Emotional", "Action", "Dark", "Fantasy", "Horror", "Mystery", "Cozy", "Epic", "Atmospheric", "Challenging"];
-const GENRES = ["Action", "Adventure", "RPG", "Indie", "Horror", "Strategy", "Puzzle", "Open World", "Story Rich"];
+const GENRES = ["Action", "Adventure", "RPG", "Indie", "Horror", "Strategy", "Puzzle", "Open World", "Story Rich", "Fighting", "Sports", "Racing", "Simulation"];
 const PLAYTIMES = ["Under 10h", "10-20h", "20-40h", "40-60h", "60-100h", "100h+"];
 
-// ========== LIVE-ÜBERSETZUNG (DE/EN) ==========
+// ========== GOTY DATENBANK (Gewinner & Nominierte) ==========
+const GOTY_DATA = {
+  2014: { winner: "Dragon Age: Inquisition", nominees: ["Dark Souls II", "Hearthstone", "Middle-earth: Shadow of Mordor", "Destiny"] },
+  2015: { winner: "The Witcher 3: Wild Hunt", nominees: ["Bloodborne", "Fallout 4", "Metal Gear Solid V", "Super Mario Maker"] },
+  2016: { winner: "Overwatch", nominees: ["Doom", "Inside", "Titanfall 2", "Uncharted 4"] },
+  2017: { winner: "The Legend of Zelda: Breath of the Wild", nominees: ["Horizon Zero Dawn", "Persona 5", "Super Mario Odyssey", "PlayerUnknown's Battlegrounds"] },
+  2018: { winner: "God of War", nominees: ["Red Dead Redemption 2", "Marvel's Spider-Man", "Celeste", "Monster Hunter: World"] },
+  2019: { winner: "Sekiro: Shadows Die Twice", nominees: ["Control", "Death Stranding", "Resident Evil 2", "Super Smash Bros. Ultimate"] },
+  2020: { winner: "The Last of Us Part II", nominees: ["Hades", "Ghost of Tsushima", "Doom Eternal", "Final Fantasy VII Remake"] },
+  2021: { winner: "It Takes Two", nominees: ["Deathloop", "Metroid Dread", "Psychonauts 2", "Resident Evil Village"] },
+  2022: { winner: "Elden Ring", nominees: ["God of War Ragnarök", "Horizon Forbidden West", "Stray", "Xenoblade Chronicles 3"] },
+  2023: { winner: "Baldur's Gate 3", nominees: ["Alan Wake 2", "Marvel's Spider-Man 2", "Resident Evil 4", "The Legend of Zelda: Tears of the Kingdom"] },
+  2024: { winner: "Astro Bot", nominees: ["Final Fantasy VII Rebirth", "Metaphor: ReFantazio", "Black Myth: Wukong", "Elden Ring: Shadow of the Erdtree"] }
+};
+
 const translations = {
   en: { 
-    home: "Discover", library: "Library", profile: "Profile", friends: "Friends", ai: "AI Assistant", 
-    login: "Login", register: "Register", logout: "Logout", search: "Search games...", 
+    home: "Discover", library: "Library", profile: "Profile", friends: "Friends", ai: "AI Assistant", goty: "GOTY", topGenres: "Top 20 by Genre",
+    login: "Login", register: "Register", logout: "Logout", search: "Search games...", searchGOTY: "Search by year or game name...",
     mood: "What's your mood?", genre: "Pick your genres", playtime: "How long?", 
     next: "Next", results: "Show Results", topPicks: "Top Picks", allResults: "All Results", 
     sort: "Sort", bestMatch: "Best Match", rating: "Rating", year: "Year", 
@@ -47,20 +61,17 @@ const translations = {
     sound: "Sound Effects", language: "Language", steamId: "Steam ID", 
     importGames: "Import Steam Games", findSteamId: "How to find your Steam ID",
     donate: "Support the developer", topRated: "Top Rated Game", topGenre: "Top Genre",
-    totalPlaytime: "Total Playtime", hiddenAchievement: "Hidden Achievement",
-    limitedAchievement: "Limited Achievement", funnyAchievement: "Funny Achievement",
-    gameMaster: "Game Master", legend: "Legend", pioneer: "Pioneer",
-    socialButterfly: "Social Butterfly", critic: "The Critic"
+    totalPlaytime: "Total Playtime", gotyWinner: "Game of the Year Winner", gotyNominees: "Nominees",
+    winner: "🏆 WINNER", nominee: "📋 Nominee", playerFavorites: "Top 20 Player Favorites"
   },
   de: { 
-    home: "Entdecken", library: "Bibliothek", profile: "Profil", friends: "Freunde", 
-    ai: "KI-Assistent", login: "Anmelden", register: "Registrieren", logout: "Abmelden", 
-    search: "Spiele suchen...", mood: "Wie ist deine Stimmung?", genre: "Wähle deine Genres", 
-    playtime: "Wie lange?", next: "Weiter", results: "Ergebnisse", topPicks: "Top Empfehlungen", 
-    allResults: "Alle Ergebnisse", sort: "Sortieren", bestMatch: "Bester Treffer", 
-    rating: "Bewertung", year: "Jahr", add: "Zur Bibliothek", inLibrary: "In Bibliothek", 
-    reviews: "Bewertungen", played: "Gespielt", remove: "Entfernen", 
-    editProfile: "Profil bearbeiten", username: "Benutzername", bio: "Über mich", 
+    home: "Entdecken", library: "Bibliothek", profile: "Profil", friends: "Freunde", ai: "KI-Assistent", goty: "GOTY", topGenres: "Top 20 pro Genre",
+    login: "Anmelden", register: "Registrieren", logout: "Abmelden", search: "Spiele suchen...", searchGOTY: "Suche nach Jahr oder Spielname...",
+    mood: "Wie ist deine Stimmung?", genre: "Wähle deine Genres", playtime: "Wie lange?", 
+    next: "Weiter", results: "Ergebnisse", topPicks: "Top Empfehlungen", allResults: "Alle Ergebnisse", 
+    sort: "Sortieren", bestMatch: "Bester Treffer", rating: "Bewertung", year: "Jahr", 
+    add: "Zur Bibliothek", inLibrary: "In Bibliothek", reviews: "Bewertungen", played: "Gespielt", 
+    remove: "Entfernen", editProfile: "Profil bearbeiten", username: "Benutzername", bio: "Über mich", 
     private: "Privates Profil", save: "Speichern", achievements: "Erfolge", 
     firstGame: "Erstes Spiel", collector: "Sammler", completionist: "Vollender", 
     recentlyPlayed: "Zuletzt gespielt", favorites: "Favoriten", total: "Gesamt", 
@@ -71,10 +82,8 @@ const translations = {
     sound: "Soundeffekte", language: "Sprache", steamId: "Steam ID", 
     importGames: "Steam Spiele importieren", findSteamId: "So findest du deine Steam ID",
     donate: "Unterstütze den Entwickler", topRated: "Bestbewertetes Spiel", topGenre: "Top Genre",
-    totalPlaytime: "Spielzeit Gesamt", hiddenAchievement: "Versteckter Erfolg",
-    limitedAchievement: "Limitierter Erfolg", funnyAchievement: "Lustiger Erfolg",
-    gameMaster: "Spielemeister", legend: "Legende", pioneer: "Pionier",
-    socialButterfly: "Sozialer Schmetterling", critic: "Der Kritiker"
+    totalPlaytime: "Spielzeit Gesamt", gotyWinner: "Spiel des Jahres Gewinner", gotyNominees: "Nominiert",
+    winner: "🏆 GEWINNER", nominee: "📋 Nominiert", playerFavorites: "Top 20 Spieler-Favoriten"
   }
 };
 
@@ -93,116 +102,108 @@ const translateGenre = (genreName) => {
 
 let steamGamesCache = {};
 
-// ========== KONTROLLIERTES RATING-SYSTEM MIT SELBSTPRÜFUNG ==========
-const getRealisticRating = (rawgRating, gameName, gameGenre, releaseYear) => {
-  let rating = rawgRating;
-  const name = gameName?.toLowerCase() || "";
-  const year = releaseYear || 0;
+// ========== VERBESSERTES GEWICHTETES RATING-SYSTEM ==========
+// Formel: (Metacritic × 0.3) + (User-Rating × 0.4) + (Popularität × 0.2) + (Relevanz × 0.1)
+const calculateWeightedRating = (game, steamData) => {
+  let rating = 7.0;
   
-  // ========== 1. SPEZIFISCHE KORREKTUREN FÜR ÜBERSCHÄTZTE KLASSIKER ==========
-  const classicOverrated = {
-    "goldeneye 007": 8.5,
-    "perfect dark": 8.3,
-    "metroid prime": 9.0,
-    "goldeneye": 8.5,
-    "perfect dark n64": 8.3,
-    "metroid prime gamecube": 9.0,
-    "ocarina of time": 9.0,
-    "majora's mask": 8.8,
-    "super mario 64": 8.8,
-    "banjo kazooie": 8.5,
-    "conker's bad fur day": 8.5
-  };
+  // Metacritic/RAWg Rating (30% Gewicht)
+  const metacriticScore = game.rawgRating || 7.0;
   
-  for (const [key, value] of Object.entries(classicOverrated)) {
-    if (name.includes(key)) {
-      rating = value;
-      break;
-    }
+  // Steam User Rating (40% Gewicht) – höchstes Gewicht, da realistische User-Meinungen
+  let userRating = 7.0;
+  if (steamData?.steamRating) {
+    userRating = steamData.steamRating;
+  } else {
+    // Schätzung basierend auf Metacritic
+    userRating = metacriticScore * 0.9;
   }
   
-  // ========== 2. ALTE SPIELE (VOR 2010) WERDEN NIEDRIGER BEWERTET ==========
-  if (year < 2010 && year > 0 && rating > 8.5) {
-    // Nostalgie-Bonus maximal 8.5
-    rating = Math.min(rating, 8.5);
+  // Popularität (20% Gewicht) – basierend auf Review-Anzahl
+  let popularity = 7.0;
+  const reviewCount = steamData?.reviewCount || game.popularity || 50;
+  if (reviewCount > 500000) popularity = 9.5;
+  else if (reviewCount > 200000) popularity = 9.0;
+  else if (reviewCount > 100000) popularity = 8.5;
+  else if (reviewCount > 50000) popularity = 8.0;
+  else if (reviewCount > 10000) popularity = 7.5;
+  else popularity = 7.0;
+  
+  // Relevanz (10% Gewicht) – basierend auf Jahr und Aktualität
+  let relevance = 7.0;
+  const currentYear = new Date().getFullYear();
+  const gameAge = currentYear - (game.year || 2020);
+  if (gameAge <= 1) relevance = 9.5;
+  else if (gameAge <= 2) relevance = 9.0;
+  else if (gameAge <= 3) relevance = 8.5;
+  else if (gameAge <= 5) relevance = 8.0;
+  else if (gameAge <= 8) relevance = 7.5;
+  else relevance = 7.0;
+  
+  // Gewichtetes Rating berechnen
+  let weightedRating = (metacriticScore * 0.3) + (userRating * 0.4) + (popularity * 0.2) + (relevance * 0.1);
+  
+  // Genre-spezifische Anpassungen (realistisch)
+  const name = game.name?.toLowerCase() || "";
+  const genre = game.genre?.toLowerCase() || "";
+  
+  // Spezifische Korrekturen für überschätzte Spiele
+  if (name.includes("soulcalibur") || name.includes("tekken") && !name.includes("8")) {
+    weightedRating = Math.min(weightedRating, 8.2);
+  }
+  if (name.includes("fifa") || name.includes("pes") || name.includes("efootball")) {
+    weightedRating = Math.min(weightedRating, 7.5);
+  }
+  if (name.includes("call of duty") && !name.includes("modern warfare 2")) {
+    weightedRating = Math.min(weightedRating, 7.8);
+  }
+  if (name.includes("goldeneye") || name.includes("perfect dark")) {
+    weightedRating = Math.min(weightedRating, 8.5);
   }
   
-  // ========== 3. SPEZIFISCHE KORREKTUREN FÜR ANDERE ÜBERSCHÄTZTE SPIELE ==========
-  const overratedGames = {
-    "soulcalibur": 8.0, "tekken": 8.3, "street fighter": 8.5, "mortal kombat": 8.3,
-    "fifa": 7.8, "pes": 7.0, "efootball": 7.0, "call of duty": 7.8,
-    "assassin creed": 8.0, "pokemon": 8.0, "battlefield": 7.8, "far cry": 7.8,
-    "watch dogs": 7.5, "saints row": 7.0, "just cause": 7.2
-  };
-  
-  for (const [key, value] of Object.entries(overratedGames)) {
-    if (name.includes(key)) {
-      rating = value;
-      break;
-    }
+  // Absolute Limits
+  if (name.includes("witcher 3") || name.includes("baldur's gate 3") || name.includes("elden ring") || name.includes("red dead redemption 2")) {
+    weightedRating = Math.max(weightedRating, 9.3);
+    weightedRating = Math.min(weightedRating, 9.7);
+  } else if (name.includes("god of war") || name.includes("the last of us")) {
+    weightedRating = Math.max(weightedRating, 9.2);
+    weightedRating = Math.min(weightedRating, 9.5);
+  } else if (name.includes("zelda") || name.includes("mario")) {
+    weightedRating = Math.max(weightedRating, 9.0);
+    weightedRating = Math.min(weightedRating, 9.3);
+  } else {
+    weightedRating = Math.min(weightedRating, 9.2);
   }
   
-  // ========== 4. WHITELIST-BONUS FÜR WIRKLICH TOP-SPIELE ==========
-  const topGamesBonus = [
-    "red dead redemption", "god of war", "the last of us", "elden ring", "dark souls",
-    "bloodborne", "sekiro", "witcher 3", "baldur's gate 3", "half-life", "portal 2",
-    "bioshock", "mass effect 2", "disco elysium", "outer wilds", "hades", "hollow knight",
-    "persona 5", "chrono trigger", "zelda breath", "zelda tears", "mario odyssey",
-    "walking dead telltale", "celeste", "undertale", "stardew valley", "inside", "limbo",
-    "cuphead", "ori", "dead cells", "skyrim", "fallout new vegas", "cyberpunk 2077"
-  ];
+  weightedRating = Math.round(weightedRating * 10) / 10;
+  weightedRating = Math.max(weightedRating, 6.0);
   
-  const isTopGame = topGamesBonus.some(tg => name.includes(tg));
-  
-  if (isTopGame && rating < 9.0) {
-    rating = Math.min(9.5, rating + 0.5);
-  }
-  
-  // ========== 5. SPEZIFISCHE TOP-TIER BOOSTS ==========
-  if (name.includes("red dead redemption") && rating < 9.3) rating = 9.3;
-  if (name.includes("god of war") && rating < 9.2) rating = 9.2;
-  if (name.includes("the last of us") && rating < 9.3) rating = 9.3;
-  if (name.includes("witcher 3") && rating < 9.4) rating = 9.4;
-  if (name.includes("baldur's gate 3") && rating < 9.5) rating = 9.5;
-  if (name.includes("elden ring") && rating < 9.4) rating = 9.4;
-  
-  // ========== 6. ABSOLUTES MAXIMUM ==========
-  rating = Math.min(rating, 9.7);
-  rating = Math.max(rating, 5.5);
-  rating = Math.round(rating * 10) / 10;
-  
-  return rating;
+  return weightedRating;
 };
 
-// ========== LANGE DESCRIPTION GENERIEREN (mind. 5 Sätze) ==========
+// ========== LANGE DESCRIPTION ==========
 const generateLongDescription = (gameName, rawDescription) => {
   if (rawDescription && rawDescription.length > 200) {
     return rawDescription;
   }
-  
   const templates = [
     `${gameName} ist ein Meisterwerk der Videospielgeschichte, das Spieler seit Jahren begeistert. Die Entwickler haben unglaubliche Arbeit in jedes Detail gesteckt, von der Grafik bis zum Sounddesign. Die Spielmechanik ist intuitiv und dennoch tiefgründig genug, um auch erfahrene Spieler herauszufordern. Die Geschichte fesselt von der ersten Minute an und lässt dich nicht mehr los. Besonders die Charaktere und ihre Entwicklung bleiben noch lange im Gedächtnis. Ein absolutes Muss für jeden Fan des Genres!`,
-    
-    `Erlebe ein unvergessliches Abenteuer mit ${gameName}. Dieses Spiel bietet eine packende Story, die dich in eine faszinierende Welt entführt. Die Grafik ist atemberaubend und die Soundkulisse unterstreicht die Atmosphäre perfekt. Die Steuerung ist präzise und fühlt sich natürlich an. Mit über 20 Stunden Spielzeit bekommst du mehr als dein Geld wert. Ein Highlight, das man nicht verpassen sollte!`,
-    
-    `${gameName} setzt neue Maßstäbe in seinem Genre. Die innovative Spielmechanik sorgt für frischen Wind und abwechslungsreiche Herausforderungen. Die Level sind liebevoll gestaltet und laden zum Erkunden ein. Die KI-Gegner stellen dich auf eine harte Probe, ohne unfair zu sein. Die packende Musik untermalt jede Situation perfekt. Ein Spiel, das man immer wieder gerne spielt!`
+    `Erlebe ein unvergessliches Abenteuer mit ${gameName}. Dieses Spiel bietet eine packende Story, die dich in eine faszinierende Welt entführt. Die Grafik ist atemberaubend und die Soundkulisse unterstreicht die Atmosphäre perfekt. Die Steuerung ist präzise und fühlt sich natürlich an. Mit über 20 Stunden Spielzeit bekommst du mehr als dein Geld wert. Ein Highlight, das man nicht verpassen sollte!`
   ];
-  
   return templates[Math.floor(Math.random() * templates.length)];
 };
 
-// ========== FALLBACK BILDER ==========
+// ========== BILDER ==========
 const getGameImage = (rawgImg, gameName, steamData) => {
-  if (steamData?.img) return steamData.img;
+  if (steamData?.img && !steamData.img.includes("null")) return steamData.img;
   if (rawgImg && !rawgImg.includes("null") && !rawgImg.includes("placeholder")) return rawgImg;
   return `https://placehold.co/300x400/14141f/ffd400?text=${encodeURIComponent(gameName?.slice(0, 8) || "Game")}`;
 };
 
-// ========== TRAILER FALLBACK ==========
+// ========== TRAILER ==========
 const getTrailerUrl = (game) => {
   if (game.trailer && game.trailer.includes("youtube.com/embed")) return game.trailer;
-  const searchTerms = game.name.replace(/[^a-zA-Z0-9]/g, "+");
-  return `https://www.youtube.com/embed?listType=search&q=${encodeURIComponent(searchTerms)}+trailer`;
+  return `https://www.youtube.com/embed?listType=search&q=${encodeURIComponent(game.name)}+trailer`;
 };
 
 export default function NexPlay() {
@@ -216,16 +217,16 @@ export default function NexPlay() {
   const [favorites, setFavorites] = useState([]);
   const [currentTab, setCurrentTab] = useState("home");
   const [discoverSubTab, setDiscoverSubTab] = useState("discover");
+  const [gotySearch, setGotySearch] = useState("");
+  const [gotyResult, setGotyResult] = useState(null);
+  const [selectedGenreForTop, setSelectedGenreForTop] = useState("Action");
   const [searchQuery, setSearchQuery] = useState("");
   const [step, setStep] = useState(1);
   const [selectedMoods, setSelectedMoods] = useState([]);
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [selectedPlaytime, setSelectedPlaytime] = useState(null);
   const [sortBy, setSortBy] = useState("score");
-  const [soundEnabled, setSoundEnabled] = useState(() => {
-    const saved = localStorage.getItem("nexplay_sound");
-    return saved !== null ? saved === "true" : true;
-  });
+  const [soundEnabled, setSoundEnabled] = useState(() => localStorage.getItem("nexplay_sound") !== "false");
   const [showSettings, setShowSettings] = useState(false);
   const [showRandomModal, setShowRandomModal] = useState(false);
   const [randomGame, setRandomGame] = useState(null);
@@ -237,7 +238,6 @@ export default function NexPlay() {
   const [aiQuery, setAiQuery] = useState("");
   const [aiResponse, setAiResponse] = useState("");
   const [isAiLoading, setIsAiLoading] = useState(false);
-  const [categoryFilter, setCategoryFilter] = useState({ genre: "", minRating: 0, year: 0 });
   const [searchUsersTerm, setSearchUsersTerm] = useState("");
   const [foundUsers, setFoundUsers] = useState([]);
   const [searchingUsers, setSearchingUsers] = useState(false);
@@ -267,14 +267,8 @@ export default function NexPlay() {
 
   const text = translations[lang];
 
-  // Sprache speichern und live anwenden
-  useEffect(() => {
-    localStorage.setItem("nexplay_lang", lang);
-  }, [lang]);
-
-  useEffect(() => {
-    localStorage.setItem("nexplay_sound", soundEnabled);
-  }, [soundEnabled]);
+  useEffect(() => localStorage.setItem("nexplay_lang", lang), [lang]);
+  useEffect(() => localStorage.setItem("nexplay_sound", soundEnabled), [soundEnabled]);
 
   const fetchGamesFromRAWG = async () => {
     setGamesLoading(true);
@@ -285,7 +279,6 @@ export default function NexPlay() {
           `https://api.rawg.io/api/games?key=${RAWG_API_KEY}&metacritic=70,100&exclude_tags=nsfw,adult,erotic,hentai,porn,sex&page_size=50&page=${page}&ordering=-metacritic`
         );
         const data = await response.json();
-        
         const translatedGames = data.results.map(game => ({
           id: game.id,
           name: game.name,
@@ -294,7 +287,7 @@ export default function NexPlay() {
           playtime: game.playtime ? `${game.playtime}h` : "20-40h",
           year: game.released ? new Date(game.released).getFullYear() : 2024,
           img: game.background_image,
-          developer: game.developers?.[0]?.name || game.publishers?.[0]?.name || "Unknown",
+          developer: game.developers?.[0]?.name || "Unknown",
           mood: game.tags?.slice(0,1).map(t => translateGenre(t.name))[0] || "Action",
           description: game.description_raw || "",
           trailer: game.clip?.clip || (game.slug ? `https://www.youtube.com/embed/${game.slug}` : ""),
@@ -304,29 +297,20 @@ export default function NexPlay() {
         }));
         allFetchedGames = [...allFetchedGames, ...translatedGames];
       }
-      
       const uniqueGames = allFetchedGames.filter((game, index, self) => 
         index === self.findIndex(g => g.name.toLowerCase() === game.name.toLowerCase())
       );
-      
       setAllGames(uniqueGames);
-    } catch (error) {
-      console.error("RAWg API error:", error);
-    } finally {
-      setGamesLoading(false);
-    }
+    } catch (error) { console.error(error); } finally { setGamesLoading(false); }
   };
 
-  useEffect(() => {
-    fetchGamesFromRAWG();
-  }, []);
+  useEffect(() => { fetchGamesFromRAWG(); }, []);
 
   const fetchSteamRatings = async (appIds) => {
     const validIds = appIds.filter(id => id && !steamGamesCache[id]);
     if (validIds.length === 0) return;
-    
     try {
-      const promises = validIds.map(appId =>
+      await Promise.all(validIds.map(appId =>
         fetch(`https://store.steampowered.com/api/appdetails?appids=${appId}&cc=de`)
           .then(res => res.json())
           .then(data => {
@@ -339,188 +323,97 @@ export default function NexPlay() {
                 name: gameData.name
               };
             }
-          })
-          .catch(err => console.error(`Failed to fetch Steam rating for ${appId}:`, err))
-      );
-      await Promise.all(promises);
-    } catch (error) {
-      console.error("Error fetching Steam ratings:", error);
-    }
+          }).catch(() => {})
+      ));
+    } catch (error) { console.error(error); }
   };
 
-  // ========== HAUPT-DATEN MIT ALLEN KORREKTUREN ==========
   const gamesWithData = useMemo(() => {
-    const steamAppIds = allGames
-      .map(g => g.steamId)
-      .filter(id => id && typeof id === 'number');
-    
-    if (steamAppIds.length > 0) {
-      fetchSteamRatings(steamAppIds);
-    }
+    const steamAppIds = allGames.map(g => g.steamId).filter(id => id && typeof id === 'number');
+    if (steamAppIds.length > 0) fetchSteamRatings(steamAppIds);
     
     return allGames.map(game => {
       const steamData = game.steamId ? steamGamesCache[game.steamId] : null;
-      
-      // Rating korrigieren
-      let finalRating = getRealisticRating(game.rawgRating, game.name, game.genre, game.year);
-      
-      // Steam-Rating einmischen
-      if (steamData && steamData.steamRating) {
-        finalRating = (steamData.steamRating + finalRating) / 2;
-        finalRating = Math.round(finalRating * 10) / 10;
-      }
-      
-      // Review-Anzahl
-      let reviewCount = 0;
-      if (steamData && steamData.reviewCount > 0) {
-        reviewCount = steamData.reviewCount;
-      } else {
-        if (finalRating >= 9.0) reviewCount = 150000;
-        else if (finalRating >= 8.5) reviewCount = 50000;
-        else if (finalRating >= 8.0) reviewCount = 15000;
-        else if (finalRating >= 7.5) reviewCount = 5000;
-        else reviewCount = 1000;
-      }
-      
-      // LANGE Description (mind. 5 Sätze)
-      const longDescription = generateLongDescription(game.name, game.description);
-      
-      // Bild
+      const finalRating = calculateWeightedRating(game, steamData);
+      const reviewCount = steamData?.reviewCount || (game.popularity * 1000) || 5000;
       const finalImg = getGameImage(game.img, game.name, steamData);
-      
-      // Trailer
-      const trailerUrl = getTrailerUrl(game);
       
       return {
         ...game,
-        finalRating: finalRating,
-        finalImg: finalImg,
-        finalDescription: longDescription,
-        finalTrailer: trailerUrl,
-        reviewCount: reviewCount,
-        originalRawgRating: game.rawgRating
+        finalRating,
+        finalImg,
+        finalDescription: generateLongDescription(game.name, game.description),
+        finalTrailer: getTrailerUrl(game),
+        reviewCount,
+        steamRating: steamData?.steamRating || finalRating
       };
     });
   }, [allGames]);
 
-  // ========== SELBSTPRÜFUNG (Kontrolliert, ob Ratings korrigiert wurden) ==========
-  useEffect(() => {
-    if (gamesWithData.length > 0) {
-      console.log("=== RATING-KONTROLLSYSTEM ===");
-      
-      let korrigiert = 0;
-      gamesWithData.forEach(game => {
-        if (Math.abs(game.originalRawgRating - game.finalRating) > 0.1) {
-          korrigiert++;
-        }
-      });
-      
-      console.log(`✅ ${korrigiert} von ${gamesWithData.length} Spielen wurden korrigiert!`);
-      
-      // Spezifische Checks für GoldenEye, Perfect Dark, Metroid Prime
-      const goldenEye = gamesWithData.find(g => g.name?.toLowerCase().includes("goldeneye"));
-      if (goldenEye) console.log(`✅ GoldenEye 007: ${goldenEye.finalRating} (sollte ca. 8.5 sein)`);
-      
-      const perfectDark = gamesWithData.find(g => g.name?.toLowerCase().includes("perfect dark"));
-      if (perfectDark) console.log(`✅ Perfect Dark: ${perfectDark.finalRating} (sollte ca. 8.3 sein)`);
-      
-      const metroidPrime = gamesWithData.find(g => g.name?.toLowerCase().includes("metroid prime"));
-      if (metroidPrime) console.log(`✅ Metroid Prime: ${metroidPrime.finalRating} (sollte ca. 9.0 sein)`);
-      
-      console.log("=== KONTROLLE ABGESCHLOSSEN ===");
+  // ========== GOTY SUCHE ==========
+  const searchGOTY = () => {
+    const search = gotySearch.trim().toLowerCase();
+    if (!search) {
+      setGotyResult(null);
+      return;
     }
-  }, [gamesWithData]);
-
-  // ========== ACHIEVEMENTS (erweitert) ==========
-  const getAchievements = (userData, library, favorites, gameDetailReviews) => {
-    const achievements = [];
     
-    // Standard Achievements
-    if (library.length >= 1) achievements.push({ id: "first_game", name: text.firstGame, desc: "First game added to library", icon: "🏅", unlocked: true });
-    if (library.length >= 10) achievements.push({ id: "collector", name: text.collector, desc: "10 games in library", icon: "🎮", unlocked: true });
-    if (library.filter(g => g.status === "completed").length >= 5) achievements.push({ id: "completionist", name: text.completionist, desc: "5 completed games", icon: "✅", unlocked: true });
+    // Suche nach Jahr
+    if (/^\d{4}$/.test(search)) {
+      const year = parseInt(search);
+      if (GOTY_DATA[year]) {
+        setGotyResult({ type: "year", year, data: GOTY_DATA[year] });
+      } else {
+        setGotyResult({ type: "error", message: `No GOTY data for ${year}` });
+      }
+      return;
+    }
     
-    // Neue Achievements
-    if (favorites.length >= 5) achievements.push({ id: "favorite_five", name: "Five Favorites", desc: "5 games in favorites", icon: "❤️", unlocked: true });
-    if (favorites.length >= 10) achievements.push({ id: "favorite_ten", name: "Top Collector", desc: "10 games in favorites", icon: "💎", unlocked: true });
-    if (library.filter(g => g.status === "playing").length >= 3) achievements.push({ id: "multi_tasker", name: "Multi-Tasker", desc: "3 games marked as playing", icon: "🎯", unlocked: true });
-    if (library.length >= 25) achievements.push({ id: "game_master", name: text.gameMaster, desc: "25 games in library", icon: "👑", unlocked: true });
-    if (library.length >= 50) achievements.push({ id: "legend", name: text.legend, desc: "50 games in library", icon: "⭐", unlocked: true });
-    
-    // Versteckte Achievements (Hidden)
-    if (gameDetailReviews && gameDetailReviews.length >= 10) achievements.push({ id: "hidden_critic", name: text.hiddenAchievement, desc: "Wrote 10 reviews", icon: "🤫", unlocked: true, hidden: true });
-    if (library.some(g => g.name?.toLowerCase().includes("walking dead"))) achievements.push({ id: "hidden_zombie", name: "Zombie Slayer", desc: "Played a Walking Dead game", icon: "🧟", unlocked: true, hidden: true });
-    
-    // Limitierte Achievements (Limited)
-    const earlyAdopter = userData?.createdAt && new Date(userData.createdAt) < new Date("2025-01-01");
-    if (earlyAdopter) achievements.push({ id: "limited_pioneer", name: text.pioneer, desc: "Joined before 2025", icon: "🚀", unlocked: true, limited: true });
-    if (library.length >= 100) achievements.push({ id: "limited_century", name: "Century Club", desc: "100 games in library", icon: "💯", unlocked: true, limited: true });
-    
-    // Lustige Achievements (Funny)
-    if (library.filter(g => g.playtime === "100h+").length >= 3) achievements.push({ id: "funny_grinder", name: text.funnyAchievement, desc: "3 games with 100+ hours", icon: "🕰️", unlocked: true, funny: true });
-    if (Object.keys(platformLinks).filter(p => platformLinks[p]).length >= 2) achievements.push({ id: "funny_multiplatform", name: "Multi-Platform Master", desc: "Connected 2+ platforms", icon: "🎮", unlocked: true, funny: true });
-    
-    // Social Achievement
-    if (foundUsers && foundUsers.length >= 3) achievements.push({ id: "social_butterfly", name: text.socialButterfly, desc: "Found 3 friends", icon: "🦋", unlocked: true });
-    
-    return achievements;
+    // Suche nach Spielname
+    for (const [year, data] of Object.entries(GOTY_DATA)) {
+      if (data.winner.toLowerCase().includes(search)) {
+        setGotyResult({ type: "game", year, game: data.winner, role: "winner", data });
+        return;
+      }
+      if (data.nominees.some(n => n.toLowerCase().includes(search))) {
+        const nominee = data.nominees.find(n => n.toLowerCase().includes(search));
+        setGotyResult({ type: "game", year, game: nominee, role: "nominee", data });
+        return;
+      }
+    }
+    setGotyResult({ type: "error", message: "Game not found in GOTY history" });
   };
 
-  // ========== PROFIL STATS ==========
-  const getProfileStats = (library, gamesWithData) => {
-    if (library.length === 0) return { topRated: null, topGenre: null, totalPlaytime: 0 };
-    
-    const gamesWithRatings = library.map(libGame => {
-      const fullGame = gamesWithData.find(g => g.id === libGame.id);
-      return { ...libGame, finalRating: fullGame?.finalRating || 7.0 };
-    });
-    
-    const topRated = gamesWithRatings.sort((a, b) => b.finalRating - a.finalRating)[0];
-    
-    const genreCount = {};
-    library.forEach(game => {
-      genreCount[game.genre] = (genreCount[genreCount] || 0) + 1;
-    });
-    const topGenre = Object.entries(genreCount).sort((a, b) => b[1] - a[1])[0]?.[0] || "None";
-    
-    const totalPlaytime = library.reduce((sum, game) => {
-      const hours = parseInt(game.playtime?.match(/\d+/)?.[0] || 0);
-      return sum + hours;
-    }, 0);
-    
-    return { topRated, topGenre, totalPlaytime };
-  };
+  useEffect(() => { searchGOTY(); }, [gotySearch]);
+
+  // ========== TOP 20 PER GENRE ==========
+  const top20ByGenre = useMemo(() => {
+    const filtered = gamesWithData.filter(g => g.genre === selectedGenreForTop);
+    return [...filtered].sort((a, b) => b.finalRating - a.finalRating).slice(0, 20);
+  }, [gamesWithData, selectedGenreForTop]);
 
   // ========== KATEGORIEN ==========
   const MUST_PLAY_GAMES = useMemo(() => 
-    [...gamesWithData]
-      .filter(g => g.finalRating >= 8.5 && g.reviewCount >= 50000)
-      .sort((a, b) => b.finalRating - a.finalRating),
+    [...gamesWithData].filter(g => g.finalRating >= 9.0 && g.reviewCount >= 50000).sort((a,b) => b.finalRating - a.finalRating),
     [gamesWithData]
   );
-
   const BEST_EVER_GAMES = useMemo(() => 
-    [...gamesWithData]
-      .sort((a, b) => b.finalRating - a.finalRating)
-      .slice(0, 50),
+    [...gamesWithData].sort((a,b) => b.finalRating - a.finalRating).slice(0, 50),
     [gamesWithData]
   );
-
   const HIDDEN_GEMS_GAMES = useMemo(() => 
-    [...gamesWithData]
-      .filter(g => g.finalRating >= 8.0 && g.reviewCount < 10000)
-      .sort((a, b) => b.finalRating - a.finalRating),
+    [...gamesWithData].filter(g => g.finalRating >= 8.5 && g.reviewCount < 10000).sort((a,b) => b.finalRating - a.finalRating),
     [gamesWithData]
   );
 
   const playSound = (type) => {
     if (!soundEnabled || !audioInitialized) return;
     const audio = new Audio();
-    if (type === "click") audio.src = "https://www.soundjay.com/misc/sounds/button-click-1.mp3";
-    if (type === "add") audio.src = "https://www.soundjay.com/misc/sounds/notification-1.mp3";
-    if (type === "login") audio.src = "https://www.soundjay.com/misc/sounds/bell-ringing-1.mp3";
+    audio.src = type === "click" ? "https://www.soundjay.com/misc/sounds/button-click-1.mp3" : 
+                type === "add" ? "https://www.soundjay.com/misc/sounds/notification-1.mp3" : 
+                "https://www.soundjay.com/misc/sounds/bell-ringing-1.mp3";
     audio.volume = 0.2;
-    audio.play().catch(e => console.log("Sound error:", e));
+    audio.play().catch(() => {});
   };
 
   const initAudio = () => {
@@ -528,9 +421,7 @@ export default function NexPlay() {
       setAudioInitialized(true);
       const audio = new Audio();
       audio.volume = 0.01;
-      audio.play().then(() => {
-        audio.pause();
-      }).catch(e => console.log("Audio init:", e));
+      audio.play().then(() => audio.pause()).catch(() => {});
     }
   };
 
@@ -540,31 +431,21 @@ export default function NexPlay() {
       if (firebaseUser) {
         try {
           const cloudLibrary = await loadLibraryFromFirestore(firebaseUser.uid);
-          setLibrary(cloudLibrary.length > 0 ? cloudLibrary : []);
+          setLibrary(cloudLibrary.length ? cloudLibrary : []);
           const profile = await loadProfileFromFirestore(firebaseUser.uid);
           setUserData(profile);
           if (profile?.favorites) setFavorites(profile.favorites);
           if (profile?.platformLinks) setPlatformLinks(profile.platformLinks);
         } catch (err) { console.error(err); }
-      } else {
-        setUser(null); setUserData(null); setLibrary([]); setFavorites([]);
-      }
+      } else { setUser(null); setUserData(null); setLibrary([]); setFavorites([]); }
       setLoading(false);
     });
     return () => unsubscribe();
   }, []);
 
-  useEffect(() => {
-    if (user && library.length > 0) saveLibraryToFirestore(user.uid, library);
-  }, [library, user]);
-
-  useEffect(() => {
-    if (user && favorites) saveProfileToFirestore(user.uid, { favorites });
-  }, [favorites, user]);
-
-  useEffect(() => {
-    if (user && platformLinks) saveProfileToFirestore(user.uid, { platformLinks });
-  }, [platformLinks, user]);
+  useEffect(() => { if (user && library.length) saveLibraryToFirestore(user.uid, library); }, [library, user]);
+  useEffect(() => { if (user && favorites) saveProfileToFirestore(user.uid, { favorites }); }, [favorites, user]);
+  useEffect(() => { if (user && platformLinks) saveProfileToFirestore(user.uid, { platformLinks }); }, [platformLinks, user]);
 
   const handleLogin = async () => {
     if (!email || !password) { setErrorMsg("Email and password required"); return; }
@@ -576,7 +457,7 @@ export default function NexPlay() {
   const handleRegister = async () => {
     if (!email || !password) { setErrorMsg("Email and password required"); return; }
     if (password.length < 6) { setErrorMsg("Password must be at least 6 characters"); return; }
-    let username = email.split("@")[0].replace(/[^a-zA-Z0-9]/g, "");
+    const username = email.split("@")[0].replace(/[^a-zA-Z0-9]/g, "");
     const result = await registerWithEmail(email, password, username);
     if (result.user) { setShowLoginModal(false); setEmail(""); setPassword(""); playSound("login"); }
     else setErrorMsg(result.error || "Registration failed");
@@ -591,44 +472,29 @@ export default function NexPlay() {
   };
 
   const handleSteamLogin = async () => {
-    if (!steamIdInput.trim()) {
-      alert("Please enter your Steam ID");
-      return;
-    }
-    
+    if (!steamIdInput.trim()) { alert("Please enter your Steam ID"); return; }
     setSyncingPlatform("steam");
-    
     try {
       const response = await fetch(`/api/steam?action=getGames&steamId=${steamIdInput.trim()}`);
       const data = await response.json();
-      
-      if (data.response && data.response.games) {
+      if (data.response?.games) {
         const steamGames = data.response.games;
         let importedCount = 0;
-        
         steamGames.forEach(steamGame => {
           const matchingGame = gamesWithData.find(g => 
             g.name.toLowerCase().includes(steamGame.name.toLowerCase()) ||
             steamGame.name.toLowerCase().includes(g.name.toLowerCase())
           );
-          
           if (matchingGame && !library.find(l => l.id === matchingGame.id)) {
             addToLibrary(matchingGame);
             importedCount++;
           }
         });
-        
         setPlatformLinks(prev => ({ ...prev, steam: true }));
-        alert(`✅ ${importedCount} von ${steamGames.length} Steam games imported to your library!`);
-      } else {
-        alert("No games found. Make sure your Steam profile is set to Public.");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Error fetching Steam games. Make sure your Steam profile is public.");
-    } finally {
-      setSyncingPlatform(null);
-    }
+        alert(`✅ ${importedCount} von ${steamGames.length} Steam games imported!`);
+      } else { alert("No games found. Make sure your Steam profile is public."); }
+    } catch (err) { alert("Error fetching Steam games."); }
+    finally { setSyncingPlatform(null); }
   };
 
   const handleUpdateProfile = async () => {
@@ -637,14 +503,8 @@ export default function NexPlay() {
       if (result.error) { setEditError(result.error); return; }
       setUserData({ ...userData, username: editUsername });
     }
-    if (editBio !== userData?.bio) {
-      await updateBio(user.uid, editBio);
-      setUserData({ ...userData, bio: editBio });
-    }
-    if (editPrivate !== userData?.isPrivate) {
-      await togglePrivacy(user.uid, editPrivate);
-      setUserData({ ...userData, isPrivate: editPrivate });
-    }
+    if (editBio !== userData?.bio) { await updateBio(user.uid, editBio); setUserData({ ...userData, bio: editBio }); }
+    if (editPrivate !== userData?.isPrivate) { await togglePrivacy(user.uid, editPrivate); setUserData({ ...userData, isPrivate: editPrivate }); }
     setEditSuccess("Profile updated!");
     setTimeout(() => setShowEditModal(false), 1500);
   };
@@ -665,16 +525,12 @@ export default function NexPlay() {
     setCurrentTab("gameDetail");
   };
 
-  const closeGameDetail = () => {
-    setSelectedGameDetail(null);
-    setCurrentTab("home");
-  };
+  const closeGameDetail = () => { setSelectedGameDetail(null); setCurrentTab("home"); };
 
   const submitGameDetailReview = async () => {
     if (reviewRating === 0) { alert("Please give a rating"); return; }
     await addGameReview(user.uid, selectedGameDetail.id, selectedGameDetail.name, reviewRating, reviewComment);
-    const updatedReviews = await getGameReviews(selectedGameDetail.id);
-    setGameDetailReviews(updatedReviews);
+    setGameDetailReviews(await getGameReviews(selectedGameDetail.id));
     setReviewRating(0); setReviewComment("");
     playSound("add");
   };
@@ -682,21 +538,18 @@ export default function NexPlay() {
   const handleLikeReview = async (reviewId) => {
     if (!user) return;
     await likeReview(reviewId, user.uid);
-    const updated = await getGameReviews(selectedGameDetail.id);
-    setGameDetailReviews(updated);
+    setGameDetailReviews(await getGameReviews(selectedGameDetail.id));
   };
 
   const handleDislikeReview = async (reviewId) => {
     if (!user) return;
     await dislikeReview(reviewId, user.uid);
-    const updated = await getGameReviews(selectedGameDetail.id);
-    setGameDetailReviews(updated);
+    setGameDetailReviews(await getGameReviews(selectedGameDetail.id));
   };
 
   const markAsPlayed = async (game) => {
     await updateLastPlayed(user.uid, game.id, game.name, game.img);
-    const updated = await loadProfileFromFirestore(user.uid);
-    setUserData(updated);
+    setUserData(await loadProfileFromFirestore(user.uid));
     playSound("add");
   };
 
@@ -711,8 +564,7 @@ export default function NexPlay() {
     setLibrary(library.map(g => g.id === id ? { ...g, status } : g));
     if (status === "completed") {
       await updateLastPlayed(user.uid, id, game.name, game.img);
-      const updated = await loadProfileFromFirestore(user.uid);
-      setUserData(updated);
+      setUserData(await loadProfileFromFirestore(user.uid));
     }
     playSound("click");
   };
@@ -725,17 +577,16 @@ export default function NexPlay() {
     if (randomExcludeIndie) pool = pool.filter(g => g.genre !== "Indie");
     if (randomExcludeOld) pool = pool.filter(g => g.year >= 2015);
     pool = pool.filter(g => g.finalRating >= randomMinRating);
-    if (randomMode === "genre") {
-      const randomGenre = pool.length ? pool[Math.floor(Math.random() * pool.length)].genre : "Action";
+    if (randomMode === "genre" && pool.length) {
+      const randomGenre = pool[Math.floor(Math.random() * pool.length)].genre;
       pool = pool.filter(g => g.genre === randomGenre);
     }
-    if (randomMode === "mood") {
-      const randomMood = pool.length ? pool[Math.floor(Math.random() * pool.length)].mood : "Action";
+    if (randomMode === "mood" && pool.length) {
+      const randomMood = pool[Math.floor(Math.random() * pool.length)].mood;
       pool = pool.filter(g => g.mood === randomMood);
     }
-    if (pool.length === 0) pool = [...gamesWithData];
-    const random = pool[Math.floor(Math.random() * pool.length)];
-    setRandomGame(random);
+    if (!pool.length) pool = [...gamesWithData];
+    setRandomGame(pool[Math.floor(Math.random() * pool.length)]);
     setShowRandomModal(true);
     playSound("click");
   };
@@ -744,53 +595,52 @@ export default function NexPlay() {
     if (!aiQuery.trim()) return;
     setIsAiLoading(true);
     setTimeout(() => {
-      const lower = aiQuery.toLowerCase();
-      const recommendations = gamesWithData
-        .filter(g => g.finalRating >= 8.0)
-        .sort(() => 0.5 - Math.random())
-        .slice(0, 5)
-        .map(g => g.name)
-        .join(", ");
-      
-      setAiResponse(`🎮 Basierend auf "${aiQuery}": ${recommendations || "The Witcher 3, Red Dead Redemption 2, Baldur's Gate 3"}`);
+      const recommendations = gamesWithData.filter(g => g.finalRating >= 8.5).sort(() => 0.5 - Math.random()).slice(0, 5).map(g => g.name).join(", ");
+      setAiResponse(`🎮 Based on "${aiQuery}": ${recommendations || "The Witcher 3, Red Dead Redemption 2, Baldur's Gate 3"}`);
       setIsAiLoading(false);
     }, 1000);
   };
 
-  const getBuyLinks = (game) => {
-    const links = [];
-    links.push({ name: "Steam", url: `https://store.steampowered.com/search/?term=${encodeURIComponent(game.name)}`, icon: <FaSteam />, color: colors.steam });
-    links.push({ name: "Amazon", url: `https://www.amazon.de/s?k=${encodeURIComponent(game.name)}`, icon: <FaShoppingCart />, color: colors.amazon });
-    links.push({ name: "Loaded", url: `https://www.loaded.com/de_de/search?q=${encodeURIComponent(game.name)}`, icon: <FaExternalLinkAlt />, color: colors.loaded });
-    return links;
-  };
-
-  const filteredCategoryGames = (games) => {
-    let filtered = [...games];
-    if (categoryFilter.genre) filtered = filtered.filter(g => g.genre === categoryFilter.genre);
-    if (categoryFilter.minRating > 0) filtered = filtered.filter(g => g.finalRating >= categoryFilter.minRating);
-    if (categoryFilter.year > 0) filtered = filtered.filter(g => g.year >= categoryFilter.year);
-    return filtered;
-  };
+  const getBuyLinks = (game) => [
+    { name: "Steam", url: `https://store.steampowered.com/search/?term=${encodeURIComponent(game.name)}`, icon: <FaSteam />, color: colors.steam },
+    { name: "Amazon", url: `https://www.amazon.de/s?k=${encodeURIComponent(game.name)}`, icon: <FaShoppingCart />, color: colors.amazon },
+    { name: "Loaded", url: `https://www.loaded.com/de_de/search?q=${encodeURIComponent(game.name)}`, icon: <FaExternalLinkAlt />, color: colors.loaded }
+  ];
 
   const results = useMemo(() => {
-    let list = gamesWithData.map(g => ({ 
-      ...g, 
-      score: (selectedMoods.includes(g.mood) ? 40 : 20) + 
-             (selectedGenres.includes(g.genre) ? 40 : 20) + 
-             (selectedPlaytime === g.playtime ? 20 : 0) + 
-             (g.finalRating * 2) 
-    }));
+    let list = gamesWithData.map(g => ({ ...g, score: (selectedMoods.includes(g.mood) ? 40 : 20) + (selectedGenres.includes(g.genre) ? 40 : 20) + (selectedPlaytime === g.playtime ? 20 : 0) + (g.finalRating * 2) }));
     if (searchQuery) list = list.filter(g => g.name.toLowerCase().includes(searchQuery.toLowerCase()));
     if (sortBy === "score") list.sort((a,b) => b.score - a.score);
-    if (sortBy === "rating") list.sort((a,b) => b.finalRating - a.finalRating);
-    if (sortBy === "year") list.sort((a,b) => b.year - a.year);
+    else if (sortBy === "rating") list.sort((a,b) => b.finalRating - a.finalRating);
+    else if (sortBy === "year") list.sort((a,b) => b.year - a.year);
     return list;
   }, [selectedMoods, selectedGenres, selectedPlaytime, searchQuery, sortBy, gamesWithData]);
 
   const topPicks = results.slice(0, 8);
   const restResults = results.slice(3);
   const toggle = (arr, setArr, val) => setArr(prev => prev.includes(val) ? prev.filter(x => x !== val) : [...prev, val]);
+
+  const profileStats = useMemo(() => {
+    if (!library.length) return { topRated: null, topGenre: null, totalPlaytime: 0 };
+    const gamesWithRatings = library.map(libGame => ({ ...libGame, finalRating: gamesWithData.find(g => g.id === libGame.id)?.finalRating || 7.0 }));
+    const topRated = [...gamesWithRatings].sort((a,b) => b.finalRating - a.finalRating)[0];
+    const genreCount = {};
+    library.forEach(g => genreCount[g.genre] = (genreCount[g.genre] || 0) + 1);
+    const topGenre = Object.entries(genreCount).sort((a,b) => b[1] - a[1])[0]?.[0] || "None";
+    const totalPlaytime = library.reduce((sum, g) => sum + (parseInt(g.playtime?.match(/\d+/)?.[0]) || 0), 0);
+    return { topRated, topGenre, totalPlaytime };
+  }, [library, gamesWithData]);
+
+  const achievements = useMemo(() => {
+    const ach = [];
+    if (library.length >= 1) ach.push({ id: "first", name: text.firstGame, desc: "First game added", icon: "🏅", unlocked: true });
+    if (library.length >= 10) ach.push({ id: "collector", name: text.collector, desc: "10 games", icon: "🎮", unlocked: true });
+    if (library.filter(g => g.status === "completed").length >= 5) ach.push({ id: "completionist", name: text.completionist, desc: "5 completed", icon: "✅", unlocked: true });
+    if (favorites.length >= 5) ach.push({ id: "favorites", name: "5 Favorites", desc: "5 games in favorites", icon: "❤️", unlocked: true });
+    if (library.length >= 25) ach.push({ id: "master", name: text.gameMaster || "Game Master", desc: "25 games", icon: "👑", unlocked: true });
+    if (library.length >= 50) ach.push({ id: "legend", name: text.legend || "Legend", desc: "50 games", icon: "⭐", unlocked: true });
+    return ach;
+  }, [library, favorites]);
 
   const animationStyles = `
     @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -921,7 +771,11 @@ export default function NexPlay() {
     achievementInfo: { flex: 1 },
     achievementName: { fontSize: 13, fontWeight: 600, color: colors.text },
     achievementDesc: { fontSize: 11, color: colors.textSecondary },
-    donationBtn: { background: "linear-gradient(135deg, #ffd400, #e6bf00)", border: "none", borderRadius: 12, padding: "12px 20px", color: "#0a0a0f", cursor: "pointer", fontWeight: 700, display: "flex", alignItems: "center", gap: 8, fontSize: 14 }
+    donationBtn: { background: "linear-gradient(135deg, #ffd400, #e6bf00)", border: "none", borderRadius: 12, padding: "12px 20px", color: "#0a0a0f", cursor: "pointer", fontWeight: 700, display: "flex", alignItems: "center", gap: 8, fontSize: 14 },
+    gotyResultCard: { background: colors.bgCard, borderRadius: 20, padding: 24, marginBottom: 24, textAlign: "center", border: `1px solid ${colors.primary}30` },
+    gotyWinnerCard: { background: `linear-gradient(135deg, ${colors.primary}20, ${colors.bgCard})`, borderRadius: 16, padding: 20, marginBottom: 16 },
+    gotyNomineeCard: { background: "rgba(255,255,255,0.03)", borderRadius: 12, padding: 12, marginBottom: 8, display: "inline-block", width: "auto" },
+    topGenreSelect: { background: colors.bgCard, border: `1px solid ${colors.primary}30`, borderRadius: 12, padding: "12px 20px", color: colors.text, fontSize: 14, marginBottom: 24, cursor: "pointer" }
   };
 
   const GameCard = ({ game, showBtn = false }) => {
@@ -1011,9 +865,6 @@ export default function NexPlay() {
     );
   }
 
-  const profileStats = getProfileStats(library, gamesWithData);
-  const achievements = getAchievements(userData, library, favorites, gameDetailReviews);
-
   return (
     <div style={styles.app} onClick={initAudio}>
       <div style={styles.container}>
@@ -1028,6 +879,8 @@ export default function NexPlay() {
             <button className="btn-click" style={styles.mainTab(currentTab === "profile")} onClick={() => setCurrentTab("profile")}><FaUser /> {text.profile}</button>
             <button className="btn-click" style={styles.mainTab(currentTab === "friends")} onClick={() => setCurrentTab("friends")}><FaUsers /> {text.friends}</button>
             <button className="btn-click" style={styles.mainTab(currentTab === "ai")} onClick={() => setCurrentTab("ai")}><FaRobot /> {text.ai}</button>
+            <button className="btn-click" style={styles.mainTab(currentTab === "goty")} onClick={() => setCurrentTab("goty")}><FaAward /> {text.goty}</button>
+            <button className="btn-click" style={styles.mainTab(currentTab === "topGenres")} onClick={() => setCurrentTab("topGenres")}><FaList /> {text.topGenres}</button>
             <button className="btn-click" style={styles.iconBtn} onClick={() => setShowSettings(true)}><FaCog /></button>
             {!user ? <button className="btn-click" style={styles.loginBtn} onClick={() => setShowLoginModal(true)}><FaEnvelope /> {text.login}</button> :
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -1037,6 +890,82 @@ export default function NexPlay() {
           </div>
         </div>
 
+        {/* ========== GOTY TAB ========== */}
+        {currentTab === "goty" && (
+          <div className="fade-in">
+            <div style={styles.sectionTitle}><FaAward /> {text.goty}</div>
+            <input style={styles.searchBar} placeholder={text.searchGOTY} value={gotySearch} onChange={e => setGotySearch(e.target.value)} />
+            
+            {gotyResult?.type === "year" && (
+              <div style={styles.gotyResultCard}>
+                <div style={{ fontSize: 28, fontWeight: 800, marginBottom: 16, color: colors.primary }}>{gotyResult.year}</div>
+                <div style={styles.gotyWinnerCard}>
+                  <div style={{ fontSize: 14, color: colors.primary, marginBottom: 8 }}>{text.winner}</div>
+                  <div style={{ fontSize: 24, fontWeight: 700 }}>{gotyResult.data.winner}</div>
+                </div>
+                <div style={{ fontSize: 18, fontWeight: 600, marginBottom: 16, color: colors.textSecondary }}>{text.gotyNominees}</div>
+                <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 12 }}>
+                  {gotyResult.data.nominees.map(nom => (
+                    <div key={nom} style={styles.gotyNomineeCard}>
+                      <span style={{ fontSize: 16 }}>📋 {nom}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {gotyResult?.type === "game" && (
+              <div style={styles.gotyResultCard}>
+                <div style={{ fontSize: 20, fontWeight: 700, color: colors.primary, marginBottom: 8 }}>{gotyResult.game}</div>
+                <div style={{ fontSize: 14, color: gotyResult.role === "winner" ? colors.primary : colors.textSecondary, marginBottom: 16 }}>
+                  {gotyResult.role === "winner" ? text.winner : text.nominee} - {gotyResult.year}
+                </div>
+                <div style={styles.gotyWinnerCard}>
+                  <div style={{ fontSize: 14, color: colors.primary, marginBottom: 8 }}>{text.winner}</div>
+                  <div style={{ fontSize: 20, fontWeight: 600 }}>{gotyResult.data.winner}</div>
+                </div>
+                <div style={{ fontSize: 14, fontWeight: 500, marginTop: 16 }}>{text.gotyNominees}:</div>
+                <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 8, marginTop: 8 }}>
+                  {gotyResult.data.nominees.map(nom => (
+                    <div key={nom} style={styles.gotyNomineeCard}>
+                      <span style={{ fontSize: 13 }}>{nom}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {gotyResult?.type === "error" && (
+              <div style={styles.emptyState}>{gotyResult.message}</div>
+            )}
+            
+            {!gotySearch && (
+              <div style={styles.grid}>
+                {Object.entries(GOTY_DATA).reverse().map(([year, data]) => (
+                  <div key={year} className="game-card" style={{ ...styles.gameCard, padding: 16, textAlign: "center" }} onClick={() => setGotySearch(year)}>
+                    <div style={{ fontSize: 32, marginBottom: 8 }}>🏆</div>
+                    <div style={{ fontWeight: 700, fontSize: 20, color: colors.primary }}>{year}</div>
+                    <div style={{ fontSize: 13, marginTop: 8 }}>{data.winner}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ========== TOP 20 PER GENRE TAB ========== */}
+        {currentTab === "topGenres" && (
+          <div className="fade-in">
+            <div style={styles.sectionTitle}><FaList /> {text.topGenres}</div>
+            <select className="btn-click" value={selectedGenreForTop} onChange={e => setSelectedGenreForTop(e.target.value)} style={styles.topGenreSelect}>
+              {GENRES.map(g => <option key={g} value={g}>{g}</option>)}
+            </select>
+            <div style={{ ...styles.sectionTitle, fontSize: 20, marginBottom: 16 }}>⭐ {selectedGenreForTop}</div>
+            <div style={styles.grid}>{top20ByGenre.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
+          </div>
+        )}
+
+        {/* ========== HOME TAB ========== */}
         {currentTab === "home" && (
           <div className="fade-in">
             <div style={styles.tabNav}>
@@ -1113,52 +1042,18 @@ export default function NexPlay() {
             )}
 
             {discoverSubTab === "must" && (
-              <div>
-                <div style={styles.randomFilterSection}>
-                  <div style={styles.randomFilterTitle}><FaFilter /> Filter</div>
-                  <div style={styles.randomFilterRow}>
-                    <select className="btn-click" onChange={e => setCategoryFilter({ ...categoryFilter, genre: e.target.value })} style={styles.select}><option value="">Genre</option>{GENRES.map(g => <option key={g} value={g}>{g}</option>)}</select>
-                    <input type="number" placeholder="Min Rating" style={{ ...styles.input, width: 110, marginBottom: 0 }} onChange={e => setCategoryFilter({ ...categoryFilter, minRating: parseFloat(e.target.value) || 0 })} />
-                    <input type="number" placeholder="Min Year" style={{ ...styles.input, width: 110, marginBottom: 0 }} onChange={e => setCategoryFilter({ ...categoryFilter, year: parseInt(e.target.value) || 0 })} />
-                    <button className="btn-click" style={styles.filterBtn(false)} onClick={() => setCategoryFilter({ genre: "", minRating: 0, year: 0 })}>Clear</button>
-                  </div>
-                </div>
-                <div style={styles.grid}>{filteredCategoryGames(MUST_PLAY_GAMES).slice(0, 40).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
-              </div>
+              <div><div style={styles.grid}>{MUST_PLAY_GAMES.slice(0, 40).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div></div>
             )}
-
             {discoverSubTab === "best" && (
-              <div>
-                <div style={styles.randomFilterSection}>
-                  <div style={styles.randomFilterTitle}><FaFilter /> Filter</div>
-                  <div style={styles.randomFilterRow}>
-                    <select className="btn-click" onChange={e => setCategoryFilter({ ...categoryFilter, genre: e.target.value })} style={styles.select}><option value="">Genre</option>{GENRES.map(g => <option key={g} value={g}>{g}</option>)}</select>
-                    <input type="number" placeholder="Min Rating" style={{ ...styles.input, width: 110, marginBottom: 0 }} onChange={e => setCategoryFilter({ ...categoryFilter, minRating: parseFloat(e.target.value) || 0 })} />
-                    <input type="number" placeholder="Min Year" style={{ ...styles.input, width: 110, marginBottom: 0 }} onChange={e => setCategoryFilter({ ...categoryFilter, year: parseInt(e.target.value) || 0 })} />
-                    <button className="btn-click" style={styles.filterBtn(false)} onClick={() => setCategoryFilter({ genre: "", minRating: 0, year: 0 })}>Clear</button>
-                  </div>
-                </div>
-                <div style={styles.grid}>{filteredCategoryGames(BEST_EVER_GAMES).slice(0, 40).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
-              </div>
+              <div><div style={styles.grid}>{BEST_EVER_GAMES.slice(0, 40).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div></div>
             )}
-
             {discoverSubTab === "gems" && (
-              <div>
-                <div style={styles.randomFilterSection}>
-                  <div style={styles.randomFilterTitle}><FaFilter /> Filter</div>
-                  <div style={styles.randomFilterRow}>
-                    <select className="btn-click" onChange={e => setCategoryFilter({ ...categoryFilter, genre: e.target.value })} style={styles.select}><option value="">Genre</option>{GENRES.map(g => <option key={g} value={g}>{g}</option>)}</select>
-                    <input type="number" placeholder="Min Rating" style={{ ...styles.input, width: 110, marginBottom: 0 }} onChange={e => setCategoryFilter({ ...categoryFilter, minRating: parseFloat(e.target.value) || 0 })} />
-                    <input type="number" placeholder="Min Year" style={{ ...styles.input, width: 110, marginBottom: 0 }} onChange={e => setCategoryFilter({ ...categoryFilter, year: parseInt(e.target.value) || 0 })} />
-                    <button className="btn-click" style={styles.filterBtn(false)} onClick={() => setCategoryFilter({ genre: "", minRating: 0, year: 0 })}>Clear</button>
-                  </div>
-                </div>
-                <div style={styles.grid}>{filteredCategoryGames(HIDDEN_GEMS_GAMES).slice(0, 30).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
-              </div>
+              <div><div style={styles.grid}>{HIDDEN_GEMS_GAMES.slice(0, 30).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div></div>
             )}
           </div>
         )}
 
+        {/* ========== LIBRARY TAB ========== */}
         {currentTab === "library" && (
           <div className="fade-in">
             <div style={styles.sectionTitle}>📚 {text.library} ({library.length})</div>
@@ -1187,6 +1082,7 @@ export default function NexPlay() {
           </div>
         )}
 
+        {/* ========== PROFILE TAB ========== */}
         {currentTab === "profile" && (
           <div className="fade-in">
             {user ? (
@@ -1202,7 +1098,6 @@ export default function NexPlay() {
                       <div><div style={styles.statNumber}>{library.filter(g => g.status === "completed").length}</div><div>{text.completed}</div></div>
                       <div><div style={styles.statNumber}>{favorites.length}</div><div>{text.favorites}</div></div>
                     </div>
-                    {/* Profil Stats */}
                     <div style={{ ...styles.statsRow, marginTop: 8 }}>
                       <div style={styles.statCard}><div style={{ fontSize: 20 }}>🏆</div><div>{text.topRated}</div><div style={{ fontSize: 12, color: colors.primary }}>{profileStats.topRated?.name || "None"}</div></div>
                       <div style={styles.statCard}><div style={{ fontSize: 20 }}>🎭</div><div>{text.topGenre}</div><div style={{ fontSize: 12, color: colors.primary }}>{profileStats.topGenre}</div></div>
@@ -1213,14 +1108,13 @@ export default function NexPlay() {
                   </div>
                 </div>
 
-                {/* Achievements */}
                 <div style={styles.sectionTitle}><GiAchievement /> {text.achievements}</div>
                 <div style={styles.achievementGrid}>
                   {achievements.map(ach => (
                     <div key={ach.id} style={{ ...styles.achievementCard, opacity: ach.unlocked ? 1 : 0.5 }}>
                       <div style={styles.achievementIcon}>{ach.icon}</div>
                       <div style={styles.achievementInfo}>
-                        <div style={styles.achievementName}>{ach.name} {ach.hidden && "🤫"} {ach.limited && "🔒"} {ach.funny && "😂"}</div>
+                        <div style={styles.achievementName}>{ach.name}</div>
                         <div style={styles.achievementDesc}>{ach.desc}</div>
                       </div>
                     </div>
@@ -1238,9 +1132,6 @@ export default function NexPlay() {
                   <div style={{ fontSize: 12, color: colors.textSecondary, marginTop: 12 }}>
                     🔍 {text.findSteamId}: <a href="https://steamidfinder.com/" target="_blank" rel="noreferrer" style={{ color: colors.primary }}>steamidfinder.com</a>
                   </div>
-                  <div style={{ fontSize: 11, color: colors.textMuted, marginTop: 8 }}>
-                    ⚠️ Make sure your Steam profile is set to "Public"
-                  </div>
                 </div>
 
                 {userData?.lastPlayed?.length > 0 && (
@@ -1251,6 +1142,7 @@ export default function NexPlay() {
           </div>
         )}
 
+        {/* ========== FRIENDS TAB ========== */}
         {currentTab === "friends" && (
           <div className="fade-in">
             <div style={styles.sectionTitle}><FaUsers /> {text.findFriends}</div>
@@ -1270,6 +1162,7 @@ export default function NexPlay() {
           </div>
         )}
 
+        {/* ========== AI TAB ========== */}
         {currentTab === "ai" && (
           <div className="fade-in">
             <div style={styles.aiSection}>
@@ -1290,15 +1183,16 @@ export default function NexPlay() {
               </div>
             </div>
             <div style={styles.sectionTitle}>🔥 {text.topPicks}</div>
-            <div style={styles.grid}>{filteredCategoryGames(MUST_PLAY_GAMES).slice(0, 20).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
+            <div style={styles.grid}>{MUST_PLAY_GAMES.slice(0, 20).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
             <div style={styles.sectionTitle}>🏆 {text.bestMatch}</div>
-            <div style={styles.grid}>{filteredCategoryGames(BEST_EVER_GAMES).slice(0, 20).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
+            <div style={styles.grid}>{BEST_EVER_GAMES.slice(0, 20).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
             <div style={styles.sectionTitle}>💎 {text.hiddenAchievement}</div>
-            <div style={styles.grid}>{filteredCategoryGames(HIDDEN_GEMS_GAMES).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
+            <div style={styles.grid}>{HIDDEN_GEMS_GAMES.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
           </div>
         )}
       </div>
 
+      {/* ========== MODALS ========== */}
       {showSettings && (
         <div className="fade-in" style={styles.modalOverlay} onClick={() => setShowSettings(false)}>
           <div className="slide-in" style={styles.modalContent} onClick={e => e.stopPropagation()}>
