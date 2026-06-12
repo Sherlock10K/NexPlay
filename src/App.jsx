@@ -55,8 +55,8 @@ const AOTY_DATA = {
 };
 
 const translations = {
-  en: { home: "Discover", library: "Library", profile: "Profile", friends: "Friends", ai: "AI Assistant", aoty: "AOTY", playlists: "Playlists", gameNight: "Game Night", activity: "Activity", wishlist: "Wishlist", backlog: "Backlog Cleaner", tags: "Tags", compare: "Compare", journal: "Journal", export: "Export", import: "Import", theme: "Theme", dark: "Dark", light: "Light", auto: "Auto", randomGame: "Random Game", yearFilter: "Year", allYears: "All Years", login: "Login", register: "Register", logout: "Logout", search: "Search games...", searchAOTY: "Search by year or game name...", mood: "What's your mood?", genre: "Pick your genres", playtime: "How long?", next: "Next", results: "Show Results", topPicks: "Top Picks", bestEver: "Best Ever", allResults: "All Results", hiddenGems: "Hidden Gems", sort: "Sort", bestMatch: "Best Match", rating: "Rating", year: "Year", add: "Add to Library", inLibrary: "In Library", reviews: "Reviews", played: "Played", remove: "Remove", editProfile: "Edit Profile", username: "Username", bio: "Bio", private: "Private profile", save: "Save", achievements: "Achievements", firstGame: "First Game", collector: "Collector", completionist: "Completionist", recentlyPlayed: "Recently Played", favorites: "Favorites", total: "Total", playing: "Playing", completed: "Completed", rollAgain: "Roll Again", close: "Close", back: "Back", buyOn: "Buy on", writeReview: "Write Review", yourReview: "Your review...", submit: "Submit", noReviews: "No reviews yet", findFriends: "Find Friends", settings: "Settings", sound: "Sound Effects", language: "Language", steamId: "Steam ID", importGames: "Import Steam Games", findSteamId: "How to find your Steam ID", donate: "Support the developer", topRated: "Top Rated Game", topGenre: "Top Genre", totalPlaytime: "Total Playtime", aotyTitle: "All Of The Year", top20: "Top 20 by Genre", findYourGame: "Find Your Game", allAwards: "All Awards", backToAOTY: "Back to AOTY Overview", createPlaylist: "Create Playlist", playlistName: "Playlist Name", addToPlaylist: "Add to Playlist", gameNightMode: "Game Night Mode", spinWheel: "Spin the Wheel", excludeMultiplayer: "Exclude Multiplayer", activityFeed: "Activity Feed", addToWishlist: "Add to Wishlist", checkPrice: "Check Price", backlogTip: "You should play", addTag: "Add Tag", compareGames: "Compare Games", selectGame: "Select Game", journalNotes: "My Notes", exportLibrary: "Export Library", importLibrary: "Import Library", themeSelect: "Select Theme", loading: "Loading...", showMore: "Show more", showLess: "Show less", winner: "Winner", compareFeatures: "Compare Features", graphics: "Graphics", story: "Story", gameplay: "Gameplay", replayability: "Replayability", price: "Price" },
-  de: { home: "Entdecken", library: "Bibliothek", profile: "Profil", friends: "Freunde", ai: "KI-Assistent", aoty: "AOTY", playlists: "Playlists", gameNight: "Spielabend", activity: "Aktivitäten", wishlist: "Wunschliste", backlog: "Backlog Reiniger", tags: "Tags", compare: "Vergleichen", journal: "Tagebuch", export: "Exportieren", import: "Importieren", theme: "Design", dark: "Dunkel", light: "Hell", auto: "Auto", randomGame: "Zufälliges Spiel", yearFilter: "Jahr", allYears: "Alle Jahre", login: "Anmelden", register: "Registrieren", logout: "Abmelden", search: "Spiele suchen...", searchAOTY: "Suche nach Jahr oder Spielname...", mood: "Wie ist deine Stimmung?", genre: "Wähle deine Genres", playtime: "Wie lange?", next: "Weiter", results: "Ergebnisse", topPicks: "Top Empfehlungen", bestEver: "Beste Aller Zeiten", allResults: "Alle Ergebnisse", hiddenGems: "Geheimtipps", sort: "Sortieren", bestMatch: "Bester Treffer", rating: "Bewertung", year: "Jahr", add: "Zur Bibliothek", inLibrary: "In Bibliothek", reviews: "Bewertungen", played: "Gespielt", remove: "Entfernen", editProfile: "Profil bearbeiten", username: "Benutzername", bio: "Über mich", private: "Privates Profil", save: "Speichern", achievements: "Erfolge", firstGame: "Erstes Spiel", collector: "Sammler", completionist: "Vollender", recentlyPlayed: "Zuletzt gespielt", favorites: "Favoriten", total: "Gesamt", playing: "Spielt", completed: "Abgeschlossen", rollAgain: "Nochmal", close: "Schließen", back: "Zurück", buyOn: "Kaufen auf", writeReview: "Bewertung schreiben", yourReview: "Deine Bewertung...", submit: "Speichern", noReviews: "Keine Bewertungen", findFriends: "Freunde finden", settings: "Einstellungen", sound: "Soundeffekte", language: "Sprache", steamId: "Steam ID", importGames: "Steam Spiele importieren", findSteamId: "So findest du deine Steam ID", donate: "Unterstütze den Entwickler", topRated: "Bestbewertetes Spiel", topGenre: "Top Genre", totalPlaytime: "Spielzeit Gesamt", aotyTitle: "All Of The Year", top20: "Top 20 pro Genre", findYourGame: "Finde dein Spiel", allAwards: "Alle Auszeichnungen", backToAOTY: "Zurück zur AOTY Übersicht", createPlaylist: "Playlist erstellen", playlistName: "Playlist Name", addToPlaylist: "Zu Playlist hinzufügen", gameNightMode: "Spielabend Modus", spinWheel: "Rad drehen", excludeMultiplayer: "Multiplayer ausschließen", activityFeed: "Aktivitäten Feed", addToWishlist: "Zur Wunschliste", checkPrice: "Preis prüfen", backlogTip: "Du solltest spielen", addTag: "Tag hinzufügen", compareGames: "Spiele vergleichen", selectGame: "Spiel auswählen", journalNotes: "Meine Notizen", exportLibrary: "Bibliothek exportieren", importLibrary: "Bibliothek importieren", themeSelect: "Design auswählen", loading: "Laden...", showMore: "Mehr anzeigen", showLess: "Weniger anzeigen", winner: "Gewinner", compareFeatures: "Funktionen vergleichen", graphics: "Grafik", story: "Geschichte", gameplay: "Spielspaß", replayability: "Wiederspielwert", price: "Preis" }
+  en: { home: "Discover", library: "Library", profile: "Profile", friends: "Friends", ai: "AI Assistant", aoty: "AOTY", playlists: "Playlists", gameNight: "Game Night", activity: "Activity", wishlist: "Wishlist", backlog: "Backlog Cleaner", tags: "Tags", compare: "Compare", journal: "Journal", export: "Export", import: "Import", theme: "Theme", dark: "Dark", light: "Light", auto: "Auto", randomGame: "Random Game", yearFilter: "Year", allYears: "All Years", login: "Login", register: "Register", logout: "Logout", search: "Search games...", searchAOTY: "Search by year or game name...", mood: "What's your mood?", genre: "Pick your genres", playtime: "How long?", next: "Next", results: "Show Results", topPicks: "Top Picks", bestEver: "Best Ever", allResults: "All Results", hiddenGems: "Hidden Gems", sort: "Sort", bestMatch: "Best Match", rating: "Rating", year: "Year", add: "Add to Library", inLibrary: "In Library", reviews: "Reviews", played: "Played", remove: "Remove", editProfile: "Edit Profile", username: "Username", bio: "Bio", private: "Private profile", save: "Save", achievements: "Achievements", firstGame: "First Game", collector: "Collector", completionist: "Completionist", recentlyPlayed: "Recently Played", favorites: "Favorites", total: "Total", playing: "Playing", completed: "Completed", rollAgain: "Roll Again", close: "Close", back: "Back", buyOn: "Buy on", writeReview: "Write Review", yourReview: "Your review...", submit: "Submit", noReviews: "No reviews yet", findFriends: "Find Friends", settings: "Settings", sound: "Sound Effects", language: "Language", steamId: "Steam ID", importGames: "Import Steam Games", findSteamId: "How to find your Steam ID", donate: "Support the developer", topRated: "Top Rated Game", topGenre: "Top Genre", totalPlaytime: "Total Playtime", aotyTitle: "All Of The Year", top20: "Top 20 by Genre", findYourGame: "Find Your Game", allAwards: "All Awards", backToAOTY: "Back to AOTY Overview", createPlaylist: "Create Playlist", playlistName: "Playlist Name", addToPlaylist: "Add to Playlist", gameNightMode: "Game Night Mode", spinWheel: "Spin the Wheel", excludeMultiplayer: "Exclude Multiplayer", activityFeed: "Activity Feed", addToWishlist: "Add to Wishlist", checkPrice: "Check Price", backlogTip: "You should play", addTag: "Add Tag", compareGames: "Compare Games", selectGame: "Select Game", journalNotes: "My Notes", exportLibrary: "Export Library", importLibrary: "Import Library", themeSelect: "Select Theme", loading: "Loading...", showMore: "Show more", showLess: "Show less", winner: "Winner", compareFeatures: "Compare Features", graphics: "Graphics", story: "Story", gameplay: "Gameplay", replayability: "Replayability" },
+  de: { home: "Entdecken", library: "Bibliothek", profile: "Profil", friends: "Freunde", ai: "KI-Assistent", aoty: "AOTY", playlists: "Playlists", gameNight: "Spielabend", activity: "Aktivitäten", wishlist: "Wunschliste", backlog: "Backlog Reiniger", tags: "Tags", compare: "Vergleichen", journal: "Tagebuch", export: "Exportieren", import: "Importieren", theme: "Design", dark: "Dunkel", light: "Hell", auto: "Auto", randomGame: "Zufälliges Spiel", yearFilter: "Jahr", allYears: "Alle Jahre", login: "Anmelden", register: "Registrieren", logout: "Abmelden", search: "Spiele suchen...", searchAOTY: "Suche nach Jahr oder Spielname...", mood: "Wie ist deine Stimmung?", genre: "Wähle deine Genres", playtime: "Wie lange?", next: "Weiter", results: "Ergebnisse", topPicks: "Top Empfehlungen", bestEver: "Beste Aller Zeiten", allResults: "Alle Ergebnisse", hiddenGems: "Geheimtipps", sort: "Sortieren", bestMatch: "Bester Treffer", rating: "Bewertung", year: "Jahr", add: "Zur Bibliothek", inLibrary: "In Bibliothek", reviews: "Bewertungen", played: "Gespielt", remove: "Entfernen", editProfile: "Profil bearbeiten", username: "Benutzername", bio: "Über mich", private: "Privates Profil", save: "Speichern", achievements: "Erfolge", firstGame: "Erstes Spiel", collector: "Sammler", completionist: "Vollender", recentlyPlayed: "Zuletzt gespielt", favorites: "Favoriten", total: "Gesamt", playing: "Spielt", completed: "Abgeschlossen", rollAgain: "Nochmal", close: "Schließen", back: "Zurück", buyOn: "Kaufen auf", writeReview: "Bewertung schreiben", yourReview: "Deine Bewertung...", submit: "Speichern", noReviews: "Keine Bewertungen", findFriends: "Freunde finden", settings: "Einstellungen", sound: "Soundeffekte", language: "Sprache", steamId: "Steam ID", importGames: "Steam Spiele importieren", findSteamId: "So findest du deine Steam ID", donate: "Unterstütze den Entwickler", topRated: "Bestbewertetes Spiel", topGenre: "Top Genre", totalPlaytime: "Spielzeit Gesamt", aotyTitle: "All Of The Year", top20: "Top 20 pro Genre", findYourGame: "Finde dein Spiel", allAwards: "Alle Auszeichnungen", backToAOTY: "Zurück zur AOTY Übersicht", createPlaylist: "Playlist erstellen", playlistName: "Playlist Name", addToPlaylist: "Zu Playlist hinzufügen", gameNightMode: "Spielabend Modus", spinWheel: "Rad drehen", excludeMultiplayer: "Multiplayer ausschließen", activityFeed: "Aktivitäten Feed", addToWishlist: "Zur Wunschliste", checkPrice: "Preis prüfen", backlogTip: "Du solltest spielen", addTag: "Tag hinzufügen", compareGames: "Spiele vergleichen", selectGame: "Spiel auswählen", journalNotes: "Meine Notizen", exportLibrary: "Bibliothek exportieren", importLibrary: "Bibliothek importieren", themeSelect: "Design auswählen", loading: "Laden...", showMore: "Mehr anzeigen", showLess: "Weniger anzeigen", winner: "Gewinner", compareFeatures: "Funktionen vergleichen", graphics: "Grafik", story: "Geschichte", gameplay: "Spielspaß", replayability: "Wiederspielwert" }
 };
 
 const RAWG_API_KEY = "4da2c00cf3b2459d988e0ed0ac16988d";
@@ -80,13 +80,6 @@ const translateGenre = (genreName) => {
 
 let steamGamesCache = {};
 
-// ========== KURZE BESCHREIBUNGEN (fehlerfrei) ==========
-const generateLongDescription = (gameName, rawDescription) => {
-  if (rawDescription && rawDescription.length > 200) return rawDescription;
-  return `${gameName} ist ein herausragendes Spiel, das die Herzen von Gamern erobert hat. Die Entwickler haben viel Liebe zum Detail gesteckt. Die Spielmechanik ist intuitiv und tiefgründig. Die Geschichte fesselt von der ersten Minute an. Die Grafik ist atemberaubend und die Charaktere sind liebevoll gestaltet. Ein absolutes Muss für jeden Fan des Genres!`;
-};
-
-// ========== RATING-SYSTEM ==========
 const calculateWeightedRating = (game, steamData) => {
   const name = game.name?.toLowerCase() || "";
   const currentYear = new Date().getFullYear();
@@ -124,6 +117,11 @@ const calculateWeightedRating = (game, steamData) => {
   finalRating = Math.round(finalRating * 10) / 10;
   
   return finalRating;
+};
+
+const generateLongDescription = (gameName, rawDescription) => {
+  if (rawDescription && rawDescription.length > 200) return rawDescription;
+  return `${gameName} ist ein herausragendes Spiel, das die Herzen von Gamern erobert hat. Die Entwickler haben viel Liebe zum Detail gesteckt. Die Spielmechanik ist intuitiv und tiefgründig. Die Geschichte fesselt von der ersten Minute an. Die Grafik ist atemberaubend und die Charaktere sind liebevoll gestaltet. Ein absolutes Muss für jeden Fan des Genres!`;
 };
 
 const getGameImage = (rawgImg, gameName, steamData) => {
@@ -1402,7 +1400,7 @@ export default function NexPlay() {
           </div>
         )}
 
-        {/* AOTY TAB */}
+        {/* AOTY TAB - ALLE JAHRE 2003-2026 */}
         {currentTab === "aoty" && (
           <div className="fade-in">
             {selectedAotyYear ? (
@@ -1435,11 +1433,11 @@ export default function NexPlay() {
                 <input style={styles.searchBar} placeholder={text.searchAOTY} value={aotySearch} onChange={e => setAotySearch(e.target.value)} />
                 {!aotySearch && !selectedAotyYear && (
                   <div style={styles.grid}>
-                    {Object.entries(AOTY_DATA).reverse().slice(0, 16).map(([year, data]) => (
-                      <div key={year} style={styles.aotyYearCard} onClick={() => setSelectedAotyYear(parseInt(year))}>
-                        {data.tga?.img && <img src={data.tga.img} style={{ width: "100%", height: 80, objectFit: "cover", borderRadius: 10, marginBottom: 8 }} alt={data.tga.winner} />}
-                        <div style={{ fontWeight: 700, fontSize: 18, color: currentColors.primary }}>{year}</div>
-                        <div style={{ fontSize: 10, marginTop: 6 }}>{data.tga?.winner?.slice(0, 20) || "No data"}</div>
+                    {Object.entries(AOTY_DATA).reverse().map(([year, data]) => (
+                      <div key={year} className="aoty-year-card" style={styles.aotyYearCard} onClick={() => setSelectedAotyYear(parseInt(year))}>
+                        {data.tga?.img && <img src={data.tga.img} style={{ width: "100%", height: 100, objectFit: "cover", borderRadius: 12, marginBottom: 12 }} alt={data.tga.winner} />}
+                        <div style={{ fontWeight: 700, fontSize: 20, color: currentColors.primary }}>{year}</div>
+                        <div style={{ fontSize: 12, marginTop: 8 }}>{data.tga?.winner || "No data"}</div>
                       </div>
                     ))}
                   </div>
@@ -1507,6 +1505,19 @@ export default function NexPlay() {
           </div>
         )}
 
+        {/* ACTIVITY TAB */}
+        {currentTab === "activity" && (
+          <div className="fade-in">
+            <div style={styles.sectionTitle}><FaBell size={14} /> {text.activityFeed}</div>
+            {activityFeed.length === 0 ? <div style={styles.emptyState}>No activity yet.</div> : activityFeed.map(activity => (
+              <div key={activity.id} style={styles.activityCard}>
+                <div style={{ fontSize: 24 }}>{activity.type === "add" ? "➕" : "✅"}</div>
+                <div><div style={{ fontSize: 13 }}>{activity.message}</div><div style={{ fontSize: 10, color: currentColors.textMuted }}>{new Date(activity.timestamp).toLocaleString()}</div></div>
+              </div>
+            ))}
+          </div>
+        )}
+
         {/* WISHLIST TAB */}
         {currentTab === "wishlist" && (
           <div className="fade-in">
@@ -1527,7 +1538,7 @@ export default function NexPlay() {
           </div>
         )}
 
-        {/* COMPARE TAB - VERBESSERT */}
+        {/* COMPARE TAB */}
         {currentTab === "compare" && (
           <div className="fade-in">
             <div style={styles.sectionTitle}><FaBalanceScale size={16} /> {text.compareGames}</div>
@@ -1547,101 +1558,39 @@ export default function NexPlay() {
               {compareGames[0] && compareGames[1] && (
                 <div>
                   <div style={styles.compareGrid}>
-                    {/* Spiel 1 */}
                     <div style={styles.compareColumn}>
                       <div style={styles.compareHeader}>
                         <img src={compareGames[0].finalImg || compareGames[0].img} style={{ width: 80, height: 107, objectFit: "cover", borderRadius: 12, marginBottom: 12 }} alt={compareGames[0].name} />
                         <div>{compareGames[0].name}</div>
                         <div style={{ fontSize: 14, color: currentColors.primary, marginTop: 4 }}>★ {compareGames[0].finalRating?.toFixed(1)}</div>
                       </div>
-                      <div style={styles.compareRow}>
-                        <span style={styles.compareLabel}>{text.year}</span>
-                        <span style={styles.compareValue}>{compareGames[0].year}</span>
-                      </div>
-                      <div style={styles.compareRow}>
-                        <span style={styles.compareLabel}>{text.genre}</span>
-                        <span style={styles.compareValue}>{compareGames[0].genre}</span>
-                      </div>
-                      <div style={styles.compareRow}>
-                        <span style={styles.compareLabel}>{text.playtime}</span>
-                        <span style={styles.compareValue}>{compareGames[0].playtime}</span>
-                      </div>
-                      <div style={styles.compareRow}>
-                        <span style={styles.compareLabel}>Developer</span>
-                        <span style={styles.compareValue}>{compareGames[0].developer}</span>
-                      </div>
-                      <div style={styles.compareRow}>
-                        <span style={styles.compareLabel}>{text.graphics}</span>
-                        <span style={styles.compareValue}>{compareGames[0].year >= 2020 ? "⭐ Sehr gut" : compareGames[0].year >= 2015 ? "👍 Gut" : "👎 Veraltet"}</span>
-                      </div>
-                      <div style={styles.compareRow}>
-                        <span style={styles.compareLabel}>{text.story}</span>
-                        <span style={styles.compareValue}>{compareGames[0].genre === "Story Rich" || compareGames[0].genre === "RPG" ? "⭐ Ausgezeichnet" : "👍 Gut"}</span>
-                      </div>
-                      <div style={styles.compareRow}>
-                        <span style={styles.compareLabel}>{text.gameplay}</span>
-                        <span style={styles.compareValue}>{compareGames[0].finalRating >= 9 ? "⭐ Meisterhaft" : compareGames[0].finalRating >= 8 ? "👍 Solide" : "👎 Durchschnitt"}</span>
-                      </div>
-                      <div style={styles.compareRow}>
-                        <span style={styles.compareLabel}>{text.replayability}</span>
-                        <span style={styles.compareValue}>{compareGames[0].playtime === "100h+" || compareGames[0].playtime === "60-100h" ? "⭐ Sehr hoch" : "👍 Mittel"}</span>
-                      </div>
+                      <div style={styles.compareRow}><span style={styles.compareLabel}>{text.year}</span><span style={styles.compareValue}>{compareGames[0].year}</span></div>
+                      <div style={styles.compareRow}><span style={styles.compareLabel}>{text.genre}</span><span style={styles.compareValue}>{compareGames[0].genre}</span></div>
+                      <div style={styles.compareRow}><span style={styles.compareLabel}>{text.playtime}</span><span style={styles.compareValue}>{compareGames[0].playtime}</span></div>
+                      <div style={styles.compareRow}><span style={styles.compareLabel}>{text.graphics}</span><span style={styles.compareValue}>{compareGames[0].year >= 2020 ? "⭐ Sehr gut" : "👍 Gut"}</span></div>
+                      <div style={styles.compareRow}><span style={styles.compareLabel}>{text.story}</span><span style={styles.compareValue}>{compareGames[0].genre === "Story Rich" || compareGames[0].genre === "RPG" ? "⭐ Ausgezeichnet" : "👍 Gut"}</span></div>
+                      <div style={styles.compareRow}><span style={styles.compareLabel}>{text.gameplay}</span><span style={styles.compareValue}>{compareGames[0].finalRating >= 9 ? "⭐ Meisterhaft" : "👍 Solide"}</span></div>
+                      <div style={styles.compareRow}><span style={styles.compareLabel}>{text.replayability}</span><span style={styles.compareValue}>{compareGames[0].playtime === "100h+" || compareGames[0].playtime === "60-100h" ? "⭐ Sehr hoch" : "👍 Mittel"}</span></div>
                     </div>
-                    
-                    {/* Spiel 2 */}
                     <div style={styles.compareColumn}>
                       <div style={styles.compareHeader}>
                         <img src={compareGames[1].finalImg || compareGames[1].img} style={{ width: 80, height: 107, objectFit: "cover", borderRadius: 12, marginBottom: 12 }} alt={compareGames[1].name} />
                         <div>{compareGames[1].name}</div>
                         <div style={{ fontSize: 14, color: currentColors.primary, marginTop: 4 }}>★ {compareGames[1].finalRating?.toFixed(1)}</div>
                       </div>
-                      <div style={styles.compareRow}>
-                        <span style={styles.compareLabel}>{text.year}</span>
-                        <span style={styles.compareValue}>{compareGames[1].year}</span>
-                      </div>
-                      <div style={styles.compareRow}>
-                        <span style={styles.compareLabel}>{text.genre}</span>
-                        <span style={styles.compareValue}>{compareGames[1].genre}</span>
-                      </div>
-                      <div style={styles.compareRow}>
-                        <span style={styles.compareLabel}>{text.playtime}</span>
-                        <span style={styles.compareValue}>{compareGames[1].playtime}</span>
-                      </div>
-                      <div style={styles.compareRow}>
-                        <span style={styles.compareLabel}>Developer</span>
-                        <span style={styles.compareValue}>{compareGames[1].developer}</span>
-                      </div>
-                      <div style={styles.compareRow}>
-                        <span style={styles.compareLabel}>{text.graphics}</span>
-                        <span style={styles.compareValue}>{compareGames[1].year >= 2020 ? "⭐ Sehr gut" : compareGames[1].year >= 2015 ? "👍 Gut" : "👎 Veraltet"}</span>
-                      </div>
-                      <div style={styles.compareRow}>
-                        <span style={styles.compareLabel}>{text.story}</span>
-                        <span style={styles.compareValue}>{compareGames[1].genre === "Story Rich" || compareGames[1].genre === "RPG" ? "⭐ Ausgezeichnet" : "👍 Gut"}</span>
-                      </div>
-                      <div style={styles.compareRow}>
-                        <span style={styles.compareLabel}>{text.gameplay}</span>
-                        <span style={styles.compareValue}>{compareGames[1].finalRating >= 9 ? "⭐ Meisterhaft" : compareGames[1].finalRating >= 8 ? "👍 Solide" : "👎 Durchschnitt"}</span>
-                      </div>
-                      <div style={styles.compareRow}>
-                        <span style={styles.compareLabel}>{text.replayability}</span>
-                        <span style={styles.compareValue}>{compareGames[1].playtime === "100h+" || compareGames[1].playtime === "60-100h" ? "⭐ Sehr hoch" : "👍 Mittel"}</span>
-                      </div>
+                      <div style={styles.compareRow}><span style={styles.compareLabel}>{text.year}</span><span style={styles.compareValue}>{compareGames[1].year}</span></div>
+                      <div style={styles.compareRow}><span style={styles.compareLabel}>{text.genre}</span><span style={styles.compareValue}>{compareGames[1].genre}</span></div>
+                      <div style={styles.compareRow}><span style={styles.compareLabel}>{text.playtime}</span><span style={styles.compareValue}>{compareGames[1].playtime}</span></div>
+                      <div style={styles.compareRow}><span style={styles.compareLabel}>{text.graphics}</span><span style={styles.compareValue}>{compareGames[1].year >= 2020 ? "⭐ Sehr gut" : "👍 Gut"}</span></div>
+                      <div style={styles.compareRow}><span style={styles.compareLabel}>{text.story}</span><span style={styles.compareValue}>{compareGames[1].genre === "Story Rich" || compareGames[1].genre === "RPG" ? "⭐ Ausgezeichnet" : "👍 Gut"}</span></div>
+                      <div style={styles.compareRow}><span style={styles.compareLabel}>{text.gameplay}</span><span style={styles.compareValue}>{compareGames[1].finalRating >= 9 ? "⭐ Meisterhaft" : "👍 Solide"}</span></div>
+                      <div style={styles.compareRow}><span style={styles.compareLabel}>{text.replayability}</span><span style={styles.compareValue}>{compareGames[1].playtime === "100h+" || compareGames[1].playtime === "60-100h" ? "⭐ Sehr hoch" : "👍 Mittel"}</span></div>
                     </div>
                   </div>
-                  
-                  {/* Vergleichs-Ergebnis */}
                   <div style={{ marginTop: 24, padding: 16, background: "rgba(0,0,0,0.2)", borderRadius: 12, textAlign: "center" }}>
                     <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 8 }}>🏆 {text.winner}</div>
                     <div style={{ fontSize: 20, fontWeight: 800, color: currentColors.primary }}>
                       {compareGames[0].finalRating > compareGames[1].finalRating ? compareGames[0].name : compareGames[1].finalRating > compareGames[0].finalRating ? compareGames[1].name : "Unentschieden!"}
-                    </div>
-                    <div style={{ fontSize: 12, color: currentColors.textSecondary, marginTop: 4 }}>
-                      {compareGames[0].finalRating > compareGames[1].finalRating ? 
-                        `${compareGames[0].name} gewinnt mit ★${compareGames[0].finalRating?.toFixed(1)} vs ★${compareGames[1].finalRating?.toFixed(1)}` : 
-                        compareGames[1].finalRating > compareGames[0].finalRating ?
-                        `${compareGames[1].name} gewinnt mit ★${compareGames[1].finalRating?.toFixed(1)} vs ★${compareGames[0].finalRating?.toFixed(1)}` :
-                        `Beide Spiele sind gleich gut bewertet!`}
                     </div>
                   </div>
                 </div>
@@ -1651,7 +1600,7 @@ export default function NexPlay() {
         )}
       </div>
 
-      {/* MODALS */}
+      {/* MODALS - same as before */}
       {showCreatePlaylist && (
         <div style={styles.modalOverlay} onClick={() => setShowCreatePlaylist(false)}>
           <div style={styles.modalContent} onClick={e => e.stopPropagation()}>
