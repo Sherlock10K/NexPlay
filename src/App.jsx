@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { FaHome, FaUser, FaFire, FaSearch, FaHeart, FaStar, FaTrash, FaSignOutAlt, FaPlus, FaCheck, FaEnvelope, FaEye, FaEyeSlash, FaEdit, FaUsers, FaClock, FaRandom, FaThumbsUp, FaThumbsDown, FaArrowLeft, FaCog, FaVolumeUp, FaVolumeMute, FaLanguage, FaSteam, FaPlaystation, FaGamepad, FaTrophy, FaGem, FaShoppingCart, FaRobot, FaFilter, FaLink, FaExternalLinkAlt, FaDonate, FaAward, FaList, FaMedal, FaGamepad as FaGamepadIcon, FaDiceD6, FaGlobe, FaStarHalfAlt, FaTv, FaMicrophone, FaVideo, FaDesktop, FaPlusCircle, FaTrashAlt, FaUsers as FaUsersIcon, FaBell, FaCalendarAlt, FaChartLine, FaBook, FaTags, FaBalanceScale, FaFileExport, FaFileImport, FaMoon, FaSun, FaAdjust, FaBars, FaTimes } from "react-icons/fa";
+import { FaHome, FaUser, FaFire, FaSearch, FaHeart, FaStar, FaTrash, FaSignOutAlt, FaPlus, FaCheck, FaEnvelope, FaEye, FaEyeSlash, FaEdit, FaUsers, FaClock, FaRandom, FaThumbsUp, FaThumbsDown, FaArrowLeft, FaCog, FaVolumeUp, FaVolumeMute, FaLanguage, FaSteam, FaPlaystation, FaGamepad, FaTrophy, FaGem, FaShoppingCart, FaRobot, FaFilter, FaLink, FaExternalLinkAlt, FaDonate, FaAward, FaList, FaMedal, FaGamepad as FaGamepadIcon, FaDiceD6, FaGlobe, FaStarHalfAlt, FaTv, FaMicrophone, FaVideo, FaDesktop, FaPlusCircle, FaTrashAlt, FaUsers as FaUsersIcon, FaBell, FaCalendarAlt, FaChartLine, FaBook, FaTags, FaBalanceScale, FaFileExport, FaFileImport, FaMoon, FaSun, FaAdjust, FaBars, FaTimes, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { GiConsoleController, GiAchievement, GiSwordman, GiPuzzle, GiMusicalNotes, GiBrain, GiShield, GiMagicSwirl, GiTrophy, GiLaurels, GiSpinningWheel, GiNotebook, GiTwoCoins } from "react-icons/gi";
 import { BsFillCollectionFill, BsFillHeartFill, BsFillStarFill, BsFillAwardFill, BsFillPlayFill } from "react-icons/bs";
 import { auth, loginWithEmail, registerWithEmail, logout, loadLibraryFromFirestore, saveLibraryToFirestore, loadProfileFromFirestore, saveProfileToFirestore, updateUsername, updateBio, togglePrivacy, searchUsers, resetPassword, addGameReview, getGameReviews, updateLastPlayed, likeReview, dislikeReview } from "./firebase";
@@ -55,17 +55,38 @@ const AOTY_DATA = {
 };
 
 const translations = {
-  en: { home: "Discover", library: "Library", profile: "Profile", friends: "Friends", ai: "AI Assistant", aoty: "AOTY", playlists: "Playlists", gameNight: "Game Night", activity: "Activity", wishlist: "Wishlist", backlog: "Backlog Cleaner", tags: "Tags", compare: "Compare", journal: "Journal", export: "Export", import: "Import", theme: "Theme", dark: "Dark", light: "Light", auto: "Auto", randomGame: "Random Game", yearFilter: "Year", allYears: "All Years", login: "Login", register: "Register", logout: "Logout", search: "Search games...", searchAOTY: "Search by year or game name...", mood: "What's your mood?", genre: "Pick your genres", playtime: "How long?", next: "Next", results: "Show Results", topPicks: "Top Picks", bestEver: "Best Ever", allResults: "All Results", hiddenGems: "Hidden Gems", sort: "Sort", bestMatch: "Best Match", rating: "Rating", year: "Year", add: "Add to Library", inLibrary: "In Library", reviews: "Reviews", played: "Played", remove: "Remove", editProfile: "Edit Profile", username: "Username", bio: "Bio", private: "Private profile", save: "Save", achievements: "Achievements", firstGame: "First Game", collector: "Collector", completionist: "Completionist", recentlyPlayed: "Recently Played", favorites: "Favorites", total: "Total", playing: "Playing", completed: "Completed", rollAgain: "Roll Again", close: "Close", back: "Back", buyOn: "Buy on", writeReview: "Write Review", yourReview: "Your review...", submit: "Submit", noReviews: "No reviews yet", findFriends: "Find Friends", settings: "Settings", sound: "Sound Effects", language: "Language", steamId: "Steam ID", importGames: "Import Steam Games", findSteamId: "How to find your Steam ID", donate: "Support the developer", topRated: "Top Rated Game", topGenre: "Top Genre", totalPlaytime: "Total Playtime", aotyTitle: "All Of The Year", top20: "Top 20 by Genre", findYourGame: "Find Your Game", allAwards: "All Awards", backToAOTY: "Back to AOTY Overview", createPlaylist: "Create Playlist", playlistName: "Playlist Name", addToPlaylist: "Add to Playlist", gameNightMode: "Game Night Mode", spinWheel: "Spin the Wheel", excludeMultiplayer: "Exclude Multiplayer", activityFeed: "Activity Feed", addToWishlist: "Add to Wishlist", checkPrice: "Check Price", backlogTip: "You should play", addTag: "Add Tag", compareGames: "Compare Games", selectGame: "Select Game", journalNotes: "My Notes", exportLibrary: "Export Library", importLibrary: "Import Library", themeSelect: "Select Theme", loading: "Loading..." },
-  de: { home: "Entdecken", library: "Bibliothek", profile: "Profil", friends: "Freunde", ai: "KI-Assistent", aoty: "AOTY", playlists: "Playlists", gameNight: "Spielabend", activity: "Aktivitäten", wishlist: "Wunschliste", backlog: "Backlog Reiniger", tags: "Tags", compare: "Vergleichen", journal: "Tagebuch", export: "Exportieren", import: "Importieren", theme: "Design", dark: "Dunkel", light: "Hell", auto: "Auto", randomGame: "Zufälliges Spiel", yearFilter: "Jahr", allYears: "Alle Jahre", login: "Anmelden", register: "Registrieren", logout: "Abmelden", search: "Spiele suchen...", searchAOTY: "Suche nach Jahr oder Spielname...", mood: "Wie ist deine Stimmung?", genre: "Wähle deine Genres", playtime: "Wie lange?", next: "Weiter", results: "Ergebnisse", topPicks: "Top Empfehlungen", bestEver: "Beste Aller Zeiten", allResults: "Alle Ergebnisse", hiddenGems: "Geheimtipps", sort: "Sortieren", bestMatch: "Bester Treffer", rating: "Bewertung", year: "Jahr", add: "Zur Bibliothek", inLibrary: "In Bibliothek", reviews: "Bewertungen", played: "Gespielt", remove: "Entfernen", editProfile: "Profil bearbeiten", username: "Benutzername", bio: "Über mich", private: "Privates Profil", save: "Speichern", achievements: "Erfolge", firstGame: "Erstes Spiel", collector: "Sammler", completionist: "Vollender", recentlyPlayed: "Zuletzt gespielt", favorites: "Favoriten", total: "Gesamt", playing: "Spielt", completed: "Abgeschlossen", rollAgain: "Nochmal", close: "Schließen", back: "Zurück", buyOn: "Kaufen auf", writeReview: "Bewertung schreiben", yourReview: "Deine Bewertung...", submit: "Speichern", noReviews: "Keine Bewertungen", findFriends: "Freunde finden", settings: "Einstellungen", sound: "Soundeffekte", language: "Sprache", steamId: "Steam ID", importGames: "Steam Spiele importieren", findSteamId: "So findest du deine Steam ID", donate: "Unterstütze den Entwickler", topRated: "Bestbewertetes Spiel", topGenre: "Top Genre", totalPlaytime: "Spielzeit Gesamt", aotyTitle: "All Of The Year", top20: "Top 20 pro Genre", findYourGame: "Finde dein Spiel", allAwards: "Alle Auszeichnungen", backToAOTY: "Zurück zur AOTY Übersicht", createPlaylist: "Playlist erstellen", playlistName: "Playlist Name", addToPlaylist: "Zu Playlist hinzufügen", gameNightMode: "Spielabend Modus", spinWheel: "Rad drehen", excludeMultiplayer: "Multiplayer ausschließen", activityFeed: "Aktivitäten Feed", addToWishlist: "Zur Wunschliste", checkPrice: "Preis prüfen", backlogTip: "Du solltest spielen", addTag: "Tag hinzufügen", compareGames: "Spiele vergleichen", selectGame: "Spiel auswählen", journalNotes: "Meine Notizen", exportLibrary: "Bibliothek exportieren", importLibrary: "Bibliothek importieren", themeSelect: "Design auswählen", loading: "Laden..." }
+  en: { home: "Discover", library: "Library", profile: "Profile", friends: "Friends", ai: "AI Assistant", aoty: "AOTY", playlists: "Playlists", gameNight: "Game Night", activity: "Activity", wishlist: "Wishlist", backlog: "Backlog Cleaner", tags: "Tags", compare: "Compare", journal: "Journal", export: "Export", import: "Import", theme: "Theme", dark: "Dark", light: "Light", auto: "Auto", randomGame: "Random Game", yearFilter: "Year", allYears: "All Years", login: "Login", register: "Register", logout: "Logout", search: "Search games...", searchAOTY: "Search by year or game name...", mood: "What's your mood?", genre: "Pick your genres", playtime: "How long?", next: "Next", results: "Show Results", topPicks: "Top Picks", bestEver: "Best Ever", allResults: "All Results", hiddenGems: "Hidden Gems", sort: "Sort", bestMatch: "Best Match", rating: "Rating", year: "Year", add: "Add to Library", inLibrary: "In Library", reviews: "Reviews", played: "Played", remove: "Remove", editProfile: "Edit Profile", username: "Username", bio: "Bio", private: "Private profile", save: "Save", achievements: "Achievements", firstGame: "First Game", collector: "Collector", completionist: "Completionist", recentlyPlayed: "Recently Played", favorites: "Favorites", total: "Total", playing: "Playing", completed: "Completed", rollAgain: "Roll Again", close: "Close", back: "Back", buyOn: "Buy on", writeReview: "Write Review", yourReview: "Your review...", submit: "Submit", noReviews: "No reviews yet", findFriends: "Find Friends", settings: "Settings", sound: "Sound Effects", language: "Language", steamId: "Steam ID", importGames: "Import Steam Games", findSteamId: "How to find your Steam ID", donate: "Support the developer", topRated: "Top Rated Game", topGenre: "Top Genre", totalPlaytime: "Total Playtime", aotyTitle: "All Of The Year", top20: "Top 20 by Genre", findYourGame: "Find Your Game", allAwards: "All Awards", backToAOTY: "Back to AOTY Overview", createPlaylist: "Create Playlist", playlistName: "Playlist Name", addToPlaylist: "Add to Playlist", gameNightMode: "Game Night Mode", spinWheel: "Spin the Wheel", excludeMultiplayer: "Exclude Multiplayer", activityFeed: "Activity Feed", addToWishlist: "Add to Wishlist", checkPrice: "Check Price", backlogTip: "You should play", addTag: "Add Tag", compareGames: "Compare Games", selectGame: "Select Game", journalNotes: "My Notes", exportLibrary: "Export Library", importLibrary: "Import Library", themeSelect: "Select Theme", loading: "Loading...", showMore: "Show more", showLess: "Show less", winner: "Winner", compareFeatures: "Compare Features", graphics: "Graphics", story: "Story", gameplay: "Gameplay", replayability: "Replayability", price: "Price" },
+  de: { home: "Entdecken", library: "Bibliothek", profile: "Profil", friends: "Freunde", ai: "KI-Assistent", aoty: "AOTY", playlists: "Playlists", gameNight: "Spielabend", activity: "Aktivitäten", wishlist: "Wunschliste", backlog: "Backlog Reiniger", tags: "Tags", compare: "Vergleichen", journal: "Tagebuch", export: "Exportieren", import: "Importieren", theme: "Design", dark: "Dunkel", light: "Hell", auto: "Auto", randomGame: "Zufälliges Spiel", yearFilter: "Jahr", allYears: "Alle Jahre", login: "Anmelden", register: "Registrieren", logout: "Abmelden", search: "Spiele suchen...", searchAOTY: "Suche nach Jahr oder Spielname...", mood: "Wie ist deine Stimmung?", genre: "Wähle deine Genres", playtime: "Wie lange?", next: "Weiter", results: "Ergebnisse", topPicks: "Top Empfehlungen", bestEver: "Beste Aller Zeiten", allResults: "Alle Ergebnisse", hiddenGems: "Geheimtipps", sort: "Sortieren", bestMatch: "Bester Treffer", rating: "Bewertung", year: "Jahr", add: "Zur Bibliothek", inLibrary: "In Bibliothek", reviews: "Bewertungen", played: "Gespielt", remove: "Entfernen", editProfile: "Profil bearbeiten", username: "Benutzername", bio: "Über mich", private: "Privates Profil", save: "Speichern", achievements: "Erfolge", firstGame: "Erstes Spiel", collector: "Sammler", completionist: "Vollender", recentlyPlayed: "Zuletzt gespielt", favorites: "Favoriten", total: "Gesamt", playing: "Spielt", completed: "Abgeschlossen", rollAgain: "Nochmal", close: "Schließen", back: "Zurück", buyOn: "Kaufen auf", writeReview: "Bewertung schreiben", yourReview: "Deine Bewertung...", submit: "Speichern", noReviews: "Keine Bewertungen", findFriends: "Freunde finden", settings: "Einstellungen", sound: "Soundeffekte", language: "Sprache", steamId: "Steam ID", importGames: "Steam Spiele importieren", findSteamId: "So findest du deine Steam ID", donate: "Unterstütze den Entwickler", topRated: "Bestbewertetes Spiel", topGenre: "Top Genre", totalPlaytime: "Spielzeit Gesamt", aotyTitle: "All Of The Year", top20: "Top 20 pro Genre", findYourGame: "Finde dein Spiel", allAwards: "Alle Auszeichnungen", backToAOTY: "Zurück zur AOTY Übersicht", createPlaylist: "Playlist erstellen", playlistName: "Playlist Name", addToPlaylist: "Zu Playlist hinzufügen", gameNightMode: "Spielabend Modus", spinWheel: "Rad drehen", excludeMultiplayer: "Multiplayer ausschließen", activityFeed: "Aktivitäten Feed", addToWishlist: "Zur Wunschliste", checkPrice: "Preis prüfen", backlogTip: "Du solltest spielen", addTag: "Tag hinzufügen", compareGames: "Spiele vergleichen", selectGame: "Spiel auswählen", journalNotes: "Meine Notizen", exportLibrary: "Bibliothek exportieren", importLibrary: "Bibliothek importieren", themeSelect: "Design auswählen", loading: "Laden...", showMore: "Mehr anzeigen", showLess: "Weniger anzeigen", winner: "Gewinner", compareFeatures: "Funktionen vergleichen", graphics: "Grafik", story: "Geschichte", gameplay: "Spielspaß", replayability: "Wiederspielwert", price: "Preis" }
 };
 
 const RAWG_API_KEY = "4da2c00cf3b2459d988e0ed0ac16988d";
 const MANUAL_HIDDEN_GEMS = [
-  { id: 9001, name: "CrossCode", rating: 9.1, genre: "Indie", playtime: "40-60h", year: 2018, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/368340/header.jpg", developer: "Radical Fish Games", mood: "Action", description: "CrossCode ist ein Action-RPG im Retro-Stil.", platforms: ["PC", "Switch", "PS4", "Xbox One"], steamId: 368340 },
-  { id: 9002, name: "Outer Wilds", rating: 9.3, genre: "Adventure", playtime: "20-40h", year: 2019, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/753640/header.jpg", developer: "Mobius Digital", mood: "Mystery", description: "Outer Wilds ist ein Open-World-Mystery-Spiel.", platforms: ["PC", "PS4", "Xbox One", "Switch"], steamId: 753640 },
-  { id: 9003, name: "Return of the Obra Dinn", rating: 9.2, genre: "Puzzle", playtime: "10-20h", year: 2018, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/653530/header.jpg", developer: "Lucas Pope", mood: "Mystery", description: "Ein Detektivspiel in 1-Bit-Grafik.", platforms: ["PC", "Switch", "PS4", "Xbox One"], steamId: 653530 },
-  { id: 9004, name: "Hades", rating: 9.3, genre: "Indie", playtime: "40-60h", year: 2020, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1145360/header.jpg", developer: "Supergiant Games", mood: "Action", description: "Ein Roguelite-Actionspiel.", platforms: ["PC", "Switch", "PS4", "Xbox"], steamId: 1145360 }
+  { id: 9001, name: "CrossCode", rating: 9.1, genre: "Indie", playtime: "40-60h", year: 2018, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/368340/header.jpg", developer: "Radical Fish Games", mood: "Action", platforms: ["PC", "Switch", "PS4", "Xbox One"], steamId: 368340 },
+  { id: 9002, name: "Outer Wilds", rating: 9.3, genre: "Adventure", playtime: "20-40h", year: 2019, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/753640/header.jpg", developer: "Mobius Digital", mood: "Mystery", platforms: ["PC", "PS4", "Xbox One", "Switch"], steamId: 753640 },
+  { id: 9003, name: "Return of the Obra Dinn", rating: 9.2, genre: "Puzzle", playtime: "10-20h", year: 2018, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/653530/header.jpg", developer: "Lucas Pope", mood: "Mystery", platforms: ["PC", "Switch", "PS4", "Xbox One"], steamId: 653530 },
+  { id: 9004, name: "Hades", rating: 9.3, genre: "Indie", playtime: "40-60h", year: 2020, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1145360/header.jpg", developer: "Supergiant Games", mood: "Action", platforms: ["PC", "Switch", "PS4", "Xbox"], steamId: 1145360 }
 ];
+
+// ========== LANGE BESCHREIBUNGEN (5+ Sätze) ==========
+const generateLongDescription = (gameName, rawDescription) => {
+  if (rawDescription && rawDescription.length > 500) return rawDescription;
+  
+  const descriptions = {
+    default: `${gameName} ist ein herausragendes Spiel, das die Herzen von Gamern auf der ganzen Welt erobert hat. Die Entwickler haben unglaubliche Arbeit in jedes Detail gesteckt, von der flüssigen Animation bis zum packenden Soundtrack. Die Spielmechanik ist intuitiv und dennoch tiefgründig genug, um auch erfahrene Spieler herauszufordern. Die Geschichte fesselt von der ersten Minute an und lässt dich nicht mehr los, mit unerwarteten Wendungen und emotionalen Momenten. Die Grafik ist atemberaubend und schafft eine immersive Welt, in die du stundenlang eintauchen kannst. Die Charaktere sind liebevoll gestaltet und bleiben dir lange im Gedächtnis. Die Steuerung ist präzise und reagiert sofort auf deine Eingaben. Der Wiederspielwert ist enorm, da es immer neue Geheimnisse zu entdecken gibt. Die Entwickler haben außerdem regelmäßige Updates und Erweiterungen versprochen. Ein absolutes Muss für jeden Fan des Genres!`,
+    
+    "elden ring": "Elden Ring ist das Meisterwerk von FromSoftware und George R.R. Martin, das die Open-World-Formel neu definiert. Die riesige Welt namens 'The Lands Between' ist voller Geheimnisse, versteckter Dungeons und herausfordernder Bosse. Das Kampfsystem ist tiefgründig und bietet unzählige Build-Möglichkeiten mit Waffen, Magie und Fähigkeiten. Die düstere, faszinierende Story wird durch Umgebungsstorytelling und rätselhafte NPC-Dialoge erzählt. Die Grafik ist atmosphärisch und die Musik untermalt perfekt die epischen Momente. Jeder Sieg gegen einen Boss fühlt sich wie eine echte Errungenschaft an. Das Spiel bestraft Fehler hart, belohnt aber Geduld und Lernbereitschaft. Mit über 100 Stunden Spielzeit und New Game Plus bietet es enormen Wiederspielwert. Die Community ist riesig und teilt ständig neue Entdeckungen. Elden Ring ist nicht nur ein Spiel, sondern ein Erlebnis, das dich für immer prägen wird.",
+
+    "baldur's gate 3": "Baldur's Gate 3 ist das lang erwartete Rollenspiel von Larian Studios, das die D&D-Erfahrung perfekt einfängt. Die Entscheidungsfreiheit ist atemberaubend - fast jede Handlung hat Konsequenzen, die den Verlauf der Geschichte verändern. Das rundenbasierte Kampfsystem ist taktisch und bietet unzählige Möglichkeiten, Gegner zu besiegen. Die Charaktere sind unglaublich gut geschrieben, mit eigenen Persönlichkeiten, Motivationen und Romanzen. Die Grafik ist wunderschön, mit detaillierten Umgebungen und beeindruckenden Effekten. Der Koop-Modus erlaubt es dir, die ganze Kampagne mit Freunden zu erleben. Jede Entscheidung fühlt sich bedeutsam an und beeinflusst deine Beziehung zu den Begleitern. Die Sprachausgabe ist erstklassig und bringt die Charaktere zum Leben. Das Spiel bietet hunderte Stunden Content, da man nie alles in einem Durchlauf sehen kann. Baldur's Gate 3 setzt einen neuen Standard für CRPGs und ist ein Muss für jeden Rollenspiel-Fan."
+  };
+  
+  for (const [key, desc] of Object.entries(descriptions)) {
+    if (gameName.toLowerCase().includes(key)) {
+      return desc;
+    }
+  }
+  
+  return descriptions.default;
+};
 
 const translateGenre = (genreName) => {
   const map = {
@@ -108,7 +129,6 @@ const calculateWeightedRating = (game, steamData) => {
   
   let finalRating = (baseRating * 0.5) + (steamRating * 0.3) + popularityBonus + agePenalty;
   
-  // Spezialfälle
   if (name === "tekken 3" || name.includes("tekken 3")) finalRating = 7.6;
   if (name.includes("elden ring")) finalRating = 9.5;
   if (name.includes("baldur's gate 3")) finalRating = 9.6;
@@ -119,11 +139,6 @@ const calculateWeightedRating = (game, steamData) => {
   finalRating = Math.round(finalRating * 10) / 10;
   
   return finalRating;
-};
-
-const generateLongDescription = (gameName, rawDescription) => {
-  if (rawDescription && rawDescription.length > 200) return rawDescription;
-  return `${gameName} ist ein Spiel, das Spieler auf der ganzen Welt begeistert. Die Entwickler haben viel Liebe zum Detail gesteckt. Die Spielmechanik ist durchdacht und macht süchtig. Die Atmosphäre ist einzigartig und fesselnd. Ein Erlebnis, das man nicht verpassen sollte!`;
 };
 
 const getGameImage = (rawgImg, gameName, steamData) => {
@@ -211,8 +226,13 @@ export default function NexPlay() {
   const [steamIdInput, setSteamIdInput] = useState("");
   const [platformLinks, setPlatformLinks] = useState({ steam: false, epic: false, playstation: false });
   const [syncingPlatform, setSyncingPlatform] = useState(null);
+  const [expandedDescriptions, setExpandedDescriptions] = useState({});
 
   const text = translations[lang];
+
+  const toggleDescription = (gameId) => {
+    setExpandedDescriptions(prev => ({ ...prev, [gameId]: !prev[gameId] }));
+  };
 
   const closeReviews = () => {
     setShowReviews(false);
@@ -460,7 +480,7 @@ export default function NexPlay() {
 
   const HIDDEN_GEMS_GAMES = useMemo(() => {
     const rawgGems = gamesWithData.filter(g => g.finalRating >= 8.5 && g.reviewCount < 20000 && g.genre === "Indie").slice(0, 10);
-    const manualGemsWithRating = MANUAL_HIDDEN_GEMS.map(g => ({ ...g, finalRating: calculateWeightedRating(g, null), finalImg: g.img, finalDescription: g.description }));
+    const manualGemsWithRating = MANUAL_HIDDEN_GEMS.map(g => ({ ...g, finalRating: calculateWeightedRating(g, null), finalImg: g.img, finalDescription: generateLongDescription(g.name, "") }));
     const allGems = [...rawgGems, ...manualGemsWithRating];
     return allGems.filter((g, index, self) => index === self.findIndex(g2 => g2.name === g.name)).sort((a, b) => b.finalRating - a.finalRating).slice(0, 30);
   }, [gamesWithData]);
@@ -811,17 +831,26 @@ export default function NexPlay() {
     @keyframes spin { to { transform: rotate(360deg); } }
     .fade-in { animation: fadeIn 0.4s ease-out; }
     .slide-in { animation: slideIn 0.3s ease-out; }
-    .game-card { transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1); cursor: pointer; }
-    .game-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 20px 30px -12px rgba(0,0,0,0.5); }
+    .game-card { transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1); cursor: pointer; background: ${currentColors.bgCard}; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); }
+    .game-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 20px 30px -12px rgba(0,0,0,0.5); border-color: ${currentColors.primary}40; }
     .btn-click:active { transform: scale(0.96); }
     .spinning-wheel { animation: spin 0.5s ease-out; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .text-wrap { word-wrap: break-word; overflow-wrap: break-word; white-space: normal; }
+    .expandable-text { transition: all 0.3s ease; }
+    .compare-card { background: ${currentColors.bgCard}; border-radius: 20px; padding: 20px; margin-bottom: 20px; }
+    .compare-column { background: rgba(0,0,0,0.2); border-radius: 16px; padding: 16px; height: 100%; }
+    .compare-header { font-size: 18px; font-weight: 700; margin-bottom: 16px; text-align: center; padding-bottom: 12px; border-bottom: 2px solid ${currentColors.primary}40; }
+    .compare-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .compare-label { font-weight: 600; color: ${currentColors.textSecondary}; }
+    .compare-value { font-weight: 500; color: ${currentColors.text}; }
+    .compare-winner { color: ${currentColors.primary}; font-weight: 700; }
     @media (max-width: 768px) {
       .desktop-only { display: none !important; }
       .hamburger-btn { display: flex !important; }
       .main-tabs-desktop { display: none !important; }
+      .compare-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
     }
     @media (min-width: 769px) {
       .hamburger-btn { display: none !important; }
@@ -834,7 +863,7 @@ export default function NexPlay() {
     const style = document.createElement("style");
     style.textContent = animationStyles;
     document.head.appendChild(style);
-  }, []);
+  }, [currentColors]);
 
   const styles = {
     app: { background: currentColors.bg, minHeight: "100vh", width: "100%", color: currentColors.text, fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif" },
@@ -856,11 +885,11 @@ export default function NexPlay() {
     mobileMenuItem: { display: "flex", alignItems: "center", gap: 12, padding: "14px 0", borderBottom: "1px solid rgba(255,255,255,0.05)", width: "100%", background: "none", border: "none", color: currentColors.text, fontSize: 16, cursor: "pointer" },
     tabNav: { display: "flex", gap: 4, borderBottom: `1px solid rgba(255,255,255,0.08)`, marginTop: 20, marginBottom: 20, overflowX: "auto", flexWrap: "nowrap" },
     tabNavBtn: (active) => ({ background: "none", border: "none", borderBottom: active ? `2px solid ${currentColors.primary}` : "2px solid transparent", color: active ? currentColors.primary : currentColors.textSecondary, padding: "10px 16px", cursor: "pointer", fontSize: 12, fontWeight: active ? 600 : 400, whiteSpace: "nowrap" }),
-    grid: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: 16 },
-    gameCard: { background: currentColors.bgCard, borderRadius: 14, overflow: "hidden", cursor: "pointer", border: "1px solid rgba(255,255,255,0.06)", position: "relative" },
+    grid: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 20 },
+    gameCard: { background: currentColors.bgCard, borderRadius: 16, overflow: "hidden", cursor: "pointer", border: "1px solid rgba(255,255,255,0.08)", transition: "all 0.3s ease", position: "relative" },
     gameImg: { width: "100%", aspectRatio: "3/4", objectFit: "cover" },
-    gameInfo: { padding: "10px" },
-    gameName: { fontSize: 13, fontWeight: 700, marginBottom: 4, color: currentColors.text, wordWrap: "break-word", whiteSpace: "normal", lineHeight: 1.3 },
+    gameInfo: { padding: "12px" },
+    gameName: { fontSize: 14, fontWeight: 700, marginBottom: 4, color: currentColors.text, wordWrap: "break-word", whiteSpace: "normal", lineHeight: 1.3 },
     rating: { display: "flex", alignItems: "center", gap: 4, color: currentColors.primary, fontSize: 12, fontWeight: 600, marginBottom: 6 },
     addBtn: { background: currentColors.primary, border: "none", borderRadius: 10, padding: "8px 10px", fontSize: 12, fontWeight: 600, cursor: "pointer", width: "100%", marginTop: 8, color: currentColors.bg, display: "flex", alignItems: "center", justifyContent: "center", gap: 6 },
     searchBar: { background: currentColors.bgCard, border: `1px solid rgba(255,255,255,0.08)`, borderRadius: 12, padding: "12px 16px", color: currentColors.text, fontSize: 14, width: "100%", marginBottom: 20, outline: "none" },
@@ -936,6 +965,7 @@ export default function NexPlay() {
     gameDetailDeveloper: { fontSize: 13, color: currentColors.textSecondary, marginBottom: 6 },
     gameDetailRating: { fontSize: 14, color: currentColors.primary, marginBottom: 10 },
     gameDetailDescription: { fontSize: 14, color: currentColors.textSecondary, lineHeight: 1.5, marginBottom: 14, wordWrap: "break-word" },
+    showMoreBtn: { background: "none", border: "none", color: currentColors.primary, cursor: "pointer", fontSize: 12, marginTop: 8, display: "flex", alignItems: "center", gap: 4 },
     gameDetailPlatforms: { display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 16 },
     platformBadge: { background: "rgba(255,255,255,0.1)", borderRadius: 20, padding: "4px 10px", fontSize: 11, color: currentColors.text },
     buyButtonsRow: { display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 16 },
@@ -961,7 +991,14 @@ export default function NexPlay() {
     playlistCard: { background: currentColors.bgCard, borderRadius: 14, padding: 14, marginBottom: 14, border: `1px solid ${currentColors.primary}20` },
     gameNightCard: { background: currentColors.bgCard, borderRadius: 14, padding: 16, marginBottom: 20, textAlign: "center" },
     activityCard: { background: currentColors.bgCard, borderRadius: 10, padding: 10, marginBottom: 10, display: "flex", alignItems: "center", gap: 10 },
-    compareCard: { background: currentColors.bgCard, borderRadius: 14, padding: 16, marginBottom: 20 },
+    compareCard: { background: currentColors.bgCard, borderRadius: 20, padding: 20, marginBottom: 24 },
+    compareGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 },
+    compareColumn: { background: "rgba(0,0,0,0.2)", borderRadius: 16, padding: 20 },
+    compareHeader: { fontSize: 18, fontWeight: 700, marginBottom: 16, textAlign: "center", paddingBottom: 12, borderBottom: `2px solid ${currentColors.primary}40` },
+    compareRow: { display: "flex", justifyContent: "space-between", padding: "10px 0", borderBottom: "1px solid rgba(255,255,255,0.05)" },
+    compareLabel: { fontWeight: 600, color: currentColors.textSecondary, fontSize: 13 },
+    compareValue: { fontWeight: 500, color: currentColors.text, fontSize: 13 },
+    compareWinner: { color: currentColors.primary, fontWeight: 700 },
     journalCard: { background: currentColors.bgCard, borderRadius: 14, padding: 14, marginBottom: 16 },
     tag: { background: "rgba(255,212,0,0.15)", borderRadius: 14, padding: "3px 8px", fontSize: 10, color: currentColors.primary, display: "inline-flex", alignItems: "center", gap: 4 }
   };
@@ -975,8 +1012,8 @@ export default function NexPlay() {
     return (
       <div className="game-card" style={styles.gameCard} onClick={() => openGameDetail(game)}>
         <img src={img} style={styles.gameImg} alt={game.name} onError={(e) => { e.target.src = `https://placehold.co/300x400/14141f/ffd400?text=${encodeURIComponent(game.name?.slice(0, 8) || "Game")}`; }} />
-        <div style={{ position: "absolute", top: 8, right: 8, background: "rgba(0,0,0,0.7)", borderRadius: 16, padding: "2px 8px", fontSize: 11, fontWeight: 700, color: currentColors.primary }}>★ {rating?.toFixed(1)}</div>
-        <button className="btn-click" style={{ position: "absolute", top: 8, left: 8, background: "rgba(0,0,0,0.7)", border: "none", borderRadius: 16, padding: "4px 6px", cursor: "pointer" }} onClick={(e) => { e.stopPropagation(); toggleFavorite(game.id); }}>
+        <div style={{ position: "absolute", top: 8, right: 8, background: "rgba(0,0,0,0.7)", borderRadius: 20, padding: "2px 8px", fontSize: 11, fontWeight: 700, color: currentColors.primary }}>★ {rating?.toFixed(1)}</div>
+        <button className="btn-click" style={{ position: "absolute", top: 8, left: 8, background: "rgba(0,0,0,0.7)", border: "none", borderRadius: 20, padding: "4px 6px", cursor: "pointer" }} onClick={(e) => { e.stopPropagation(); toggleFavorite(game.id); }}>
           {isFavorite ? <BsFillHeartFill color={currentColors.primary} size={10} /> : <FaHeart color="#fff" size={10} />}
         </button>
         <div style={styles.gameInfo}>
@@ -1012,6 +1049,10 @@ export default function NexPlay() {
     const [newTag, setNewTag] = useState("");
     const [journalText, setJournalText] = useState(journalNote);
     const isOnWishlist = wishlist.some(g => g.id === selectedGameDetail.id);
+    const fullDescription = selectedGameDetail.finalDescription || generateLongDescription(selectedGameDetail.name, "");
+    const isExpanded = expandedDescriptions[selectedGameDetail.id] || false;
+    const shortDescription = fullDescription.length > 300 ? fullDescription.substring(0, 300) + "..." : fullDescription;
+    
     return (
       <div style={styles.app}>
         <div style={styles.container}>
@@ -1039,7 +1080,14 @@ export default function NexPlay() {
               <div style={styles.gameDetailName}>{selectedGameDetail.name}</div>
               <div style={styles.gameDetailDeveloper}>{selectedGameDetail.developer}</div>
               <div style={styles.gameDetailRating}>★ {(selectedGameDetail.finalRating || selectedGameDetail.rating)?.toFixed(1)} · {selectedGameDetail.year} · {selectedGameDetail.playtime}</div>
-              <div style={styles.gameDetailDescription}>{selectedGameDetail.finalDescription || generateLongDescription(selectedGameDetail.name, "")}</div>
+              <div style={styles.gameDetailDescription}>
+                {isExpanded ? fullDescription : shortDescription}
+                {fullDescription.length > 300 && (
+                  <button className="btn-click" style={styles.showMoreBtn} onClick={() => toggleDescription(selectedGameDetail.id)}>
+                    {isExpanded ? <><FaChevronUp size={10} /> {text.showLess}</> : <><FaChevronDown size={10} /> {text.showMore}</>}
+                  </button>
+                )}
+              </div>
               <div style={styles.gameDetailPlatforms}>{selectedGameDetail.platforms?.slice(0, 4).map(p => <span key={p} style={styles.platformBadge}>{p}</span>)}</div>
               <div style={styles.buyButtonsRow}>{buyLinks.map(link => <button key={link.name} className="btn-click" style={styles.buyBtn(link.color)} onClick={() => window.open(link.url, "_blank")}>{link.icon} {link.name}</button>)}</div>
               <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 14 }}>
@@ -1127,17 +1175,16 @@ export default function NexPlay() {
             <span style={styles.logoText}>NexPlay</span>
           </div>
           
-          {/* HAMBURGER MENU BUTTON - NUR AUF MOBILE SICHTBAR */}
           <button className="btn-click hamburger-btn" style={styles.hamburgerBtn} onClick={toggleMobileMenu}>
             <FaBars size={20} />
           </button>
           
-          {/* DESKTOP MENU - NUR AUF DESKTOP SICHTBAR */}
           <div className="main-tabs-desktop" style={styles.mainTabs}>
             <button className="btn-click" style={styles.mainTab(currentTab === "home")} onClick={() => setCurrentTab("home")}><FaHome size={14} /> {text.home}</button>
             <button className="btn-click" style={styles.mainTab(currentTab === "library")} onClick={() => setCurrentTab("library")}><BsFillCollectionFill size={14} /> {text.library}</button>
             <button className="btn-click" style={styles.mainTab(currentTab === "profile")} onClick={() => setCurrentTab("profile")}><FaUser size={14} /> {text.profile}</button>
             <button className="btn-click" style={styles.mainTab(currentTab === "ai")} onClick={() => setCurrentTab("ai")}><FaRobot size={14} /> {text.ai}</button>
+            <button className="btn-click" style={styles.mainTab(currentTab === "compare")} onClick={() => setCurrentTab("compare")}><FaBalanceScale size={14} /> {text.compare}</button>
             <button className="btn-click" style={styles.iconBtn} onClick={() => setShowSettings(true)}><FaCog size={14} /></button>
             {!user ? <button className="btn-click" style={styles.loginBtn} onClick={() => setShowLoginModal(true)}><FaEnvelope size={14} /> {text.login}</button> :
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -1503,20 +1550,122 @@ export default function NexPlay() {
           </div>
         )}
 
-        {/* COMPARE TAB */}
+        {/* COMPARE TAB - VERBESSERT */}
         {currentTab === "compare" && (
           <div className="fade-in">
-            <div style={styles.sectionTitle}><FaBalanceScale size={14} /> {text.compareGames}</div>
+            <div style={styles.sectionTitle}><FaBalanceScale size={16} /> {text.compareGames}</div>
             <div style={styles.compareCard}>
-              <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 12 }}>
-                <select className="btn-click" style={{ ...styles.select, flex: 1 }} value={compareGames[0]?.id || ""} onChange={e => { const game = [...gamesWithData, ...MANUAL_HIDDEN_GEMS].find(g => g.id === parseInt(e.target.value)); setCompareGames([game, compareGames[1]]); }}>
+              <div style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 24 }}>
+                <select className="btn-click" style={{ ...styles.select, flex: 1, padding: "12px", fontSize: 14 }} value={compareGames[0]?.id || ""} onChange={e => { const game = [...gamesWithData, ...MANUAL_HIDDEN_GEMS].find(g => g.id === parseInt(e.target.value)); setCompareGames([game, compareGames[1]]); }}>
                   <option value="">{text.selectGame} 1</option>
-                  {[...gamesWithData, ...MANUAL_HIDDEN_GEMS].slice(0, 30).map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
+                  {[...gamesWithData, ...MANUAL_HIDDEN_GEMS].slice(0, 50).map(g => <option key={g.id} value={g.id}>{g.name} ({g.year}) - ★{g.finalRating?.toFixed(1)}</option>)}
                 </select>
-                <select className="btn-click" style={{ ...styles.select, flex: 1 }} value={compareGames[1]?.id || ""} onChange={e => { const game = [...gamesWithData, ...MANUAL_HIDDEN_GEMS].find(g => g.id === parseInt(e.target.value)); setCompareGames([compareGames[0], game]); }}>
+                <div style={{ fontSize: 24, color: currentColors.primary, alignSelf: "center" }}>VS</div>
+                <select className="btn-click" style={{ ...styles.select, flex: 1, padding: "12px", fontSize: 14 }} value={compareGames[1]?.id || ""} onChange={e => { const game = [...gamesWithData, ...MANUAL_HIDDEN_GEMS].find(g => g.id === parseInt(e.target.value)); setCompareGames([compareGames[0], game]); }}>
                   <option value="">{text.selectGame} 2</option>
-                  {[...gamesWithData, ...MANUAL_HIDDEN_GEMS].slice(0, 30).map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
+                  {[...gamesWithData, ...MANUAL_HIDDEN_GEMS].slice(0, 50).map(g => <option key={g.id} value={g.id}>{g.name} ({g.year}) - ★{g.finalRating?.toFixed(1)}</option>)}
                 </select>
+              </div>
+              
+              {compareGames[0] && compareGames[1] && (
+                <div style={styles.compareGrid}>
+                  {/* Spiel 1 */}
+                  <div style={styles.compareColumn}>
+                    <div style={styles.compareHeader}>
+                      <img src={compareGames[0].finalImg || compareGames[0].img} style={{ width: 80, height: 107, objectFit: "cover", borderRadius: 12, marginBottom: 12 }} alt={compareGames[0].name} />
+                      <div>{compareGames[0].name}</div>
+                      <div style={{ fontSize: 14, color: currentColors.primary, marginTop: 4 }}>★ {compareGames[0].finalRating?.toFixed(1)}</div>
+                    </div>
+                    <div style={styles.compareRow}>
+                      <span style={styles.compareLabel}>{text.year}</span>
+                      <span style={styles.compareValue}>{compareGames[0].year}</span>
+                    </div>
+                    <div style={styles.compareRow}>
+                      <span style={styles.compareLabel}>{text.genre}</span>
+                      <span style={styles.compareValue}>{compareGames[0].genre}</span>
+                    </div>
+                    <div style={styles.compareRow}>
+                      <span style={styles.compareLabel}>{text.playtime}</span>
+                      <span style={styles.compareValue}>{compareGames[0].playtime}</span>
+                    </div>
+                    <div style={styles.compareRow}>
+                      <span style={styles.compareLabel}>Developer</span>
+                      <span style={styles.compareValue}>{compareGames[0].developer}</span>
+                    </div>
+                    <div style={styles.compareRow}>
+                      <span style={styles.compareLabel}>{text.graphics}</span>
+                      <span style={styles.compareValue}>{compareGames[0].year >= 2020 ? "⭐ Sehr gut" : compareGames[0].year >= 2015 ? "👍 Gut" : "👎 Veraltet"}</span>
+                    </div>
+                    <div style={styles.compareRow}>
+                      <span style={styles.compareLabel}>{text.story}</span>
+                      <span style={styles.compareValue}>{compareGames[0].genre === "Story Rich" || compareGames[0].genre === "RPG" ? "⭐ Ausgezeichnet" : "👍 Gut"}</span>
+                    </div>
+                    <div style={styles.compareRow}>
+                      <span style={styles.compareLabel}>{text.gameplay}</span>
+                      <span style={styles.compareValue}>{compareGames[0].finalRating >= 9 ? "⭐ Meisterhaft" : compareGames[0].finalRating >= 8 ? "👍 Solide" : "👎 Durchschnitt"}</span>
+                    </div>
+                    <div style={styles.compareRow}>
+                      <span style={styles.compareLabel}>{text.replayability}</span>
+                      <span style={styles.compareValue}>{compareGames[0].playtime === "100h+" || compareGames[0].playtime === "60-100h" ? "⭐ Sehr hoch" : "👍 Mittel"}</span>
+                    </div>
+                  </div>
+                  
+                  {/* Spiel 2 */}
+                  <div style={styles.compareColumn}>
+                    <div style={styles.compareHeader}>
+                      <img src={compareGames[1].finalImg || compareGames[1].img} style={{ width: 80, height: 107, objectFit: "cover", borderRadius: 12, marginBottom: 12 }} alt={compareGames[1].name} />
+                      <div>{compareGames[1].name}</div>
+                      <div style={{ fontSize: 14, color: currentColors.primary, marginTop: 4 }}>★ {compareGames[1].finalRating?.toFixed(1)}</div>
+                    </div>
+                    <div style={styles.compareRow}>
+                      <span style={styles.compareLabel}>{text.year}</span>
+                      <span style={styles.compareValue}>{compareGames[1].year}</span>
+                    </div>
+                    <div style={styles.compareRow}>
+                      <span style={styles.compareLabel}>{text.genre}</span>
+                      <span style={styles.compareValue}>{compareGames[1].genre}</span>
+                    </div>
+                    <div style={styles.compareRow}>
+                      <span style={styles.compareLabel}>{text.playtime}</span>
+                      <span style={styles.compareValue}>{compareGames[1].playtime}</span>
+                    </div>
+                    <div style={styles.compareRow}>
+                      <span style={styles.compareLabel}>Developer</span>
+                      <span style={styles.compareValue}>{compareGames[1].developer}</span>
+                    </div>
+                    <div style={styles.compareRow}>
+                      <span style={styles.compareLabel}>{text.graphics}</span>
+                      <span style={styles.compareValue}>{compareGames[1].year >= 2020 ? "⭐ Sehr gut" : compareGames[1].year >= 2015 ? "👍 Gut" : "👎 Veraltet"}</span>
+                    </div>
+                    <div style={styles.compareRow}>
+                      <span style={styles.compareLabel}>{text.story}</span>
+                      <span style={styles.compareValue}>{compareGames[1].genre === "Story Rich" || compareGames[1].genre === "RPG" ? "⭐ Ausgezeichnet" : "👍 Gut"}</span>
+                    </div>
+                    <div style={styles.compareRow}>
+                      <span style={styles.compareLabel}>{text.gameplay}</span>
+                      <span style={styles.compareValue}>{compareGames[1].finalRating >= 9 ? "⭐ Meisterhaft" : compareGames[1].finalRating >= 8 ? "👍 Solide" : "👎 Durchschnitt"}</span>
+                    </div>
+                    <div style={styles.compareRow}>
+                      <span style={styles.compareLabel}>{text.replayability}</span>
+                      <span style={styles.compareValue}>{compareGames[1].playtime === "100h+" || compareGames[1].playtime === "60-100h" ? "⭐ Sehr hoch" : "👍 Mittel"}</span>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Vergleichs-Ergebnis */}
+                <div style={{ marginTop: 24, padding: 16, background: "rgba(0,0,0,0.2)", borderRadius: 12, textAlign: "center" }}>
+                  <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 8 }}>🏆 {text.winner}</div>
+                  <div style={{ fontSize: 20, fontWeight: 800, color: currentColors.primary }}>
+                    {compareGames[0].finalRating > compareGames[1].finalRating ? compareGames[0].name : compareGames[1].finalRating > compareGames[0].finalRating ? compareGames[1].name : "Unentschieden!"}
+                  </div>
+                  <div style={{ fontSize: 12, color: currentColors.textSecondary, marginTop: 4 }}>
+                    {compareGames[0].finalRating > compareGames[1].finalRating ? 
+                      `${compareGames[0].name} gewinnt mit ★${compareGames[0].finalRating?.toFixed(1)} vs ★${compareGames[1].finalRating?.toFixed(1)}` : 
+                      compareGames[1].finalRating > compareGames[0].finalRating ?
+                      `${compareGames[1].name} gewinnt mit ★${compareGames[1].finalRating?.toFixed(1)} vs ★${compareGames[0].finalRating?.toFixed(1)}` :
+                      `Beide Spiele sind gleich gut bewertet!`}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
