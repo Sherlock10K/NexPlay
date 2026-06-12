@@ -67,27 +67,6 @@ const MANUAL_HIDDEN_GEMS = [
   { id: 9004, name: "Hades", rating: 9.3, genre: "Indie", playtime: "40-60h", year: 2020, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1145360/header.jpg", developer: "Supergiant Games", mood: "Action", platforms: ["PC", "Switch", "PS4", "Xbox"], steamId: 1145360 }
 ];
 
-// ========== LANGE BESCHREIBUNGEN (5+ Sätze) ==========
-const generateLongDescription = (gameName, rawDescription) => {
-  if (rawDescription && rawDescription.length > 500) return rawDescription;
-  
-  const descriptions = {
-    default: `${gameName} ist ein herausragendes Spiel, das die Herzen von Gamern auf der ganzen Welt erobert hat. Die Entwickler haben unglaubliche Arbeit in jedes Detail gesteckt, von der flüssigen Animation bis zum packenden Soundtrack. Die Spielmechanik ist intuitiv und dennoch tiefgründig genug, um auch erfahrene Spieler herauszufordern. Die Geschichte fesselt von der ersten Minute an und lässt dich nicht mehr los, mit unerwarteten Wendungen und emotionalen Momenten. Die Grafik ist atemberaubend und schafft eine immersive Welt, in die du stundenlang eintauchen kannst. Die Charaktere sind liebevoll gestaltet und bleiben dir lange im Gedächtnis. Die Steuerung ist präzise und reagiert sofort auf deine Eingaben. Der Wiederspielwert ist enorm, da es immer neue Geheimnisse zu entdecken gibt. Die Entwickler haben außerdem regelmäßige Updates und Erweiterungen versprochen. Ein absolutes Muss für jeden Fan des Genres!`,
-    
-    "elden ring": "Elden Ring ist das Meisterwerk von FromSoftware und George R.R. Martin, das die Open-World-Formel neu definiert. Die riesige Welt namens 'The Lands Between' ist voller Geheimnisse, versteckter Dungeons und herausfordernder Bosse. Das Kampfsystem ist tiefgründig und bietet unzählige Build-Möglichkeiten mit Waffen, Magie und Fähigkeiten. Die düstere, faszinierende Story wird durch Umgebungsstorytelling und rätselhafte NPC-Dialoge erzählt. Die Grafik ist atmosphärisch und die Musik untermalt perfekt die epischen Momente. Jeder Sieg gegen einen Boss fühlt sich wie eine echte Errungenschaft an. Das Spiel bestraft Fehler hart, belohnt aber Geduld und Lernbereitschaft. Mit über 100 Stunden Spielzeit und New Game Plus bietet es enormen Wiederspielwert. Die Community ist riesig und teilt ständig neue Entdeckungen. Elden Ring ist nicht nur ein Spiel, sondern ein Erlebnis, das dich für immer prägen wird.",
-
-    "baldur's gate 3": "Baldur's Gate 3 ist das lang erwartete Rollenspiel von Larian Studios, das die D&D-Erfahrung perfekt einfängt. Die Entscheidungsfreiheit ist atemberaubend - fast jede Handlung hat Konsequenzen, die den Verlauf der Geschichte verändern. Das rundenbasierte Kampfsystem ist taktisch und bietet unzählige Möglichkeiten, Gegner zu besiegen. Die Charaktere sind unglaublich gut geschrieben, mit eigenen Persönlichkeiten, Motivationen und Romanzen. Die Grafik ist wunderschön, mit detaillierten Umgebungen und beeindruckenden Effekten. Der Koop-Modus erlaubt es dir, die ganze Kampagne mit Freunden zu erleben. Jede Entscheidung fühlt sich bedeutsam an und beeinflusst deine Beziehung zu den Begleitern. Die Sprachausgabe ist erstklassig und bringt die Charaktere zum Leben. Das Spiel bietet hunderte Stunden Content, da man nie alles in einem Durchlauf sehen kann. Baldur's Gate 3 setzt einen neuen Standard für CRPGs und ist ein Muss für jeden Rollenspiel-Fan."
-  };
-  
-  for (const [key, desc] of Object.entries(descriptions)) {
-    if (gameName.toLowerCase().includes(key)) {
-      return desc;
-    }
-  }
-  
-  return descriptions.default;
-};
-
 const translateGenre = (genreName) => {
   const map = {
     Action: "Action", Adventure: "Adventure", RPG: "RPG",
@@ -100,6 +79,27 @@ const translateGenre = (genreName) => {
 };
 
 let steamGamesCache = {};
+
+// ========== LANGE BESCHREIBUNGEN (5+ Sätze) ==========
+const generateLongDescription = (gameName, rawDescription) => {
+  if (rawDescription && rawDescription.length > 500) return rawDescription;
+  
+  const descriptions = {
+    default: `${gameName} ist ein herausragendes Spiel, das die Herzen von Gamern auf der ganzen Welt erobert hat. Die Entwickler haben unglaubliche Arbeit in jedes Detail gesteckt, von der flüssigen Animation bis zum packenden Soundtrack. Die Spielmechanik ist intuitiv und dennoch tiefgründig genug, um auch erfahrene Spieler herauszufordern. Die Geschichte fesselt von der ersten Minute an und lässt dich nicht mehr los, mit unerwarteten Wendungen und emotionalen Momenten. Die Grafik ist atemberaubend und schafft eine immersive Welt, in die du stundenlang eintauchen kannst. Die Charaktere sind liebevoll gestaltet und bleiben dir lange im Gedächtnis. Ein absolutes Muss für jeden Fan des Genres!`,
+    
+    "elden ring": "Elden Ring ist das Meisterwerk von FromSoftware und George R.R. Martin, das die Open-World-Formel neu definiert. Die riesige Welt namens 'The Lands Between' ist voller Geheimnisse, versteckter Dungeons und herausfordernder Bosse. Das Kampfsystem ist tiefgründig und bietet unzählige Build-Möglichkeiten mit Waffen, Magie und Fähigkeiten. Die düstere, faszinierende Story wird durch Umgebungsstorytelling und rätselhafte NPC-Dialoge erzählt. Die Grafik ist atmosphärisch und die Musik untermalt perfekt die epischen Momente. Jeder Sieg gegen einen Boss fühlt sich wie eine echte Errungenschaft an. Das Spiel bestraft Fehler hart, belohnt aber Geduld und Lernbereitschaft. Mit über 100 Stunden Spielzeit und New Game Plus bietet es enormen Wiederspielwert. Elden Ring ist nicht nur ein Spiel, sondern ein Erlebnis, das dich für immer prägen wird. Ein absolutes Meisterwerk, das jeder Gamer erlebt haben sollte!`,
+
+    "baldur's gate 3": "Baldur's Gate 3 ist das lang erwartete Rollenspiel von Larian Studios, das die D&D-Erfahrung perfekt einfängt. Die Entscheidungsfreiheit ist atemberaubend - fast jede Handlung hat Konsequenzen, die den Verlauf der Geschichte verändern. Das rundenbasierte Kampfsystem ist taktisch und bietet unzählige Möglichkeiten, Gegner zu besiegen. Die Charaktere sind unglaublich gut geschrieben, mit eigenen Persönlichkeiten, Motivationen und Romanzen. Die Grafik ist wunderschön, mit detaillierten Umgebungen und beeindruckenden Effekten. Der Koop-Modus erlaubt es dir, die ganze Kampagne mit Freunden zu erleben. Jede Entscheidung fühlt sich bedeutsam an und beeinflusst deine Beziehung zu den Begleitern. Die Sprachausgabe ist erstklassig und bringt die Charaktere zum Leben. Das Spiel bietet hunderte Stunden Content, da man nie alles in einem Durchlauf sehen kann. Baldur's Gate 3 setzt einen neuen Standard für CRPGs und ist ein Muss für jeden Rollenspiel-Fan!`
+  };
+  
+  for (const [key, desc] of Object.entries(descriptions)) {
+    if (gameName.toLowerCase().includes(key)) {
+      return desc;
+    }
+  }
+  
+  return descriptions.default;
+};
 
 // ========== RATING-SYSTEM ==========
 const calculateWeightedRating = (game, steamData) => {
@@ -839,13 +839,6 @@ export default function NexPlay() {
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .text-wrap { word-wrap: break-word; overflow-wrap: break-word; white-space: normal; }
     .expandable-text { transition: all 0.3s ease; }
-    .compare-card { background: ${currentColors.bgCard}; border-radius: 20px; padding: 20px; margin-bottom: 20px; }
-    .compare-column { background: rgba(0,0,0,0.2); border-radius: 16px; padding: 16px; height: 100%; }
-    .compare-header { font-size: 18px; font-weight: 700; margin-bottom: 16px; text-align: center; padding-bottom: 12px; border-bottom: 2px solid ${currentColors.primary}40; }
-    .compare-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-    .compare-label { font-weight: 600; color: ${currentColors.textSecondary}; }
-    .compare-value { font-weight: 500; color: ${currentColors.text}; }
-    .compare-winner { color: ${currentColors.primary}; font-weight: 700; }
     @media (max-width: 768px) {
       .desktop-only { display: none !important; }
       .hamburger-btn { display: flex !important; }
@@ -992,13 +985,12 @@ export default function NexPlay() {
     gameNightCard: { background: currentColors.bgCard, borderRadius: 14, padding: 16, marginBottom: 20, textAlign: "center" },
     activityCard: { background: currentColors.bgCard, borderRadius: 10, padding: 10, marginBottom: 10, display: "flex", alignItems: "center", gap: 10 },
     compareCard: { background: currentColors.bgCard, borderRadius: 20, padding: 20, marginBottom: 24 },
-    compareGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 },
+    compareGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 20 },
     compareColumn: { background: "rgba(0,0,0,0.2)", borderRadius: 16, padding: 20 },
     compareHeader: { fontSize: 18, fontWeight: 700, marginBottom: 16, textAlign: "center", paddingBottom: 12, borderBottom: `2px solid ${currentColors.primary}40` },
     compareRow: { display: "flex", justifyContent: "space-between", padding: "10px 0", borderBottom: "1px solid rgba(255,255,255,0.05)" },
     compareLabel: { fontWeight: 600, color: currentColors.textSecondary, fontSize: 13 },
     compareValue: { fontWeight: 500, color: currentColors.text, fontSize: 13 },
-    compareWinner: { color: currentColors.primary, fontWeight: 700 },
     journalCard: { background: currentColors.bgCard, borderRadius: 14, padding: 14, marginBottom: 16 },
     tag: { background: "rgba(255,212,0,0.15)", borderRadius: 14, padding: "3px 8px", fontSize: 10, color: currentColors.primary, display: "inline-flex", alignItems: "center", gap: 4 }
   };
@@ -1568,105 +1560,107 @@ export default function NexPlay() {
               </div>
               
               {compareGames[0] && compareGames[1] && (
-                <div style={styles.compareGrid}>
-                  {/* Spiel 1 */}
-                  <div style={styles.compareColumn}>
-                    <div style={styles.compareHeader}>
-                      <img src={compareGames[0].finalImg || compareGames[0].img} style={{ width: 80, height: 107, objectFit: "cover", borderRadius: 12, marginBottom: 12 }} alt={compareGames[0].name} />
-                      <div>{compareGames[0].name}</div>
-                      <div style={{ fontSize: 14, color: currentColors.primary, marginTop: 4 }}>★ {compareGames[0].finalRating?.toFixed(1)}</div>
+                <div>
+                  <div style={styles.compareGrid}>
+                    {/* Spiel 1 */}
+                    <div style={styles.compareColumn}>
+                      <div style={styles.compareHeader}>
+                        <img src={compareGames[0].finalImg || compareGames[0].img} style={{ width: 80, height: 107, objectFit: "cover", borderRadius: 12, marginBottom: 12 }} alt={compareGames[0].name} />
+                        <div>{compareGames[0].name}</div>
+                        <div style={{ fontSize: 14, color: currentColors.primary, marginTop: 4 }}>★ {compareGames[0].finalRating?.toFixed(1)}</div>
+                      </div>
+                      <div style={styles.compareRow}>
+                        <span style={styles.compareLabel}>{text.year}</span>
+                        <span style={styles.compareValue}>{compareGames[0].year}</span>
+                      </div>
+                      <div style={styles.compareRow}>
+                        <span style={styles.compareLabel}>{text.genre}</span>
+                        <span style={styles.compareValue}>{compareGames[0].genre}</span>
+                      </div>
+                      <div style={styles.compareRow}>
+                        <span style={styles.compareLabel}>{text.playtime}</span>
+                        <span style={styles.compareValue}>{compareGames[0].playtime}</span>
+                      </div>
+                      <div style={styles.compareRow}>
+                        <span style={styles.compareLabel}>Developer</span>
+                        <span style={styles.compareValue}>{compareGames[0].developer}</span>
+                      </div>
+                      <div style={styles.compareRow}>
+                        <span style={styles.compareLabel}>{text.graphics}</span>
+                        <span style={styles.compareValue}>{compareGames[0].year >= 2020 ? "⭐ Sehr gut" : compareGames[0].year >= 2015 ? "👍 Gut" : "👎 Veraltet"}</span>
+                      </div>
+                      <div style={styles.compareRow}>
+                        <span style={styles.compareLabel}>{text.story}</span>
+                        <span style={styles.compareValue}>{compareGames[0].genre === "Story Rich" || compareGames[0].genre === "RPG" ? "⭐ Ausgezeichnet" : "👍 Gut"}</span>
+                      </div>
+                      <div style={styles.compareRow}>
+                        <span style={styles.compareLabel}>{text.gameplay}</span>
+                        <span style={styles.compareValue}>{compareGames[0].finalRating >= 9 ? "⭐ Meisterhaft" : compareGames[0].finalRating >= 8 ? "👍 Solide" : "👎 Durchschnitt"}</span>
+                      </div>
+                      <div style={styles.compareRow}>
+                        <span style={styles.compareLabel}>{text.replayability}</span>
+                        <span style={styles.compareValue}>{compareGames[0].playtime === "100h+" || compareGames[0].playtime === "60-100h" ? "⭐ Sehr hoch" : "👍 Mittel"}</span>
+                      </div>
                     </div>
-                    <div style={styles.compareRow}>
-                      <span style={styles.compareLabel}>{text.year}</span>
-                      <span style={styles.compareValue}>{compareGames[0].year}</span>
-                    </div>
-                    <div style={styles.compareRow}>
-                      <span style={styles.compareLabel}>{text.genre}</span>
-                      <span style={styles.compareValue}>{compareGames[0].genre}</span>
-                    </div>
-                    <div style={styles.compareRow}>
-                      <span style={styles.compareLabel}>{text.playtime}</span>
-                      <span style={styles.compareValue}>{compareGames[0].playtime}</span>
-                    </div>
-                    <div style={styles.compareRow}>
-                      <span style={styles.compareLabel}>Developer</span>
-                      <span style={styles.compareValue}>{compareGames[0].developer}</span>
-                    </div>
-                    <div style={styles.compareRow}>
-                      <span style={styles.compareLabel}>{text.graphics}</span>
-                      <span style={styles.compareValue}>{compareGames[0].year >= 2020 ? "⭐ Sehr gut" : compareGames[0].year >= 2015 ? "👍 Gut" : "👎 Veraltet"}</span>
-                    </div>
-                    <div style={styles.compareRow}>
-                      <span style={styles.compareLabel}>{text.story}</span>
-                      <span style={styles.compareValue}>{compareGames[0].genre === "Story Rich" || compareGames[0].genre === "RPG" ? "⭐ Ausgezeichnet" : "👍 Gut"}</span>
-                    </div>
-                    <div style={styles.compareRow}>
-                      <span style={styles.compareLabel}>{text.gameplay}</span>
-                      <span style={styles.compareValue}>{compareGames[0].finalRating >= 9 ? "⭐ Meisterhaft" : compareGames[0].finalRating >= 8 ? "👍 Solide" : "👎 Durchschnitt"}</span>
-                    </div>
-                    <div style={styles.compareRow}>
-                      <span style={styles.compareLabel}>{text.replayability}</span>
-                      <span style={styles.compareValue}>{compareGames[0].playtime === "100h+" || compareGames[0].playtime === "60-100h" ? "⭐ Sehr hoch" : "👍 Mittel"}</span>
+                    
+                    {/* Spiel 2 */}
+                    <div style={styles.compareColumn}>
+                      <div style={styles.compareHeader}>
+                        <img src={compareGames[1].finalImg || compareGames[1].img} style={{ width: 80, height: 107, objectFit: "cover", borderRadius: 12, marginBottom: 12 }} alt={compareGames[1].name} />
+                        <div>{compareGames[1].name}</div>
+                        <div style={{ fontSize: 14, color: currentColors.primary, marginTop: 4 }}>★ {compareGames[1].finalRating?.toFixed(1)}</div>
+                      </div>
+                      <div style={styles.compareRow}>
+                        <span style={styles.compareLabel}>{text.year}</span>
+                        <span style={styles.compareValue}>{compareGames[1].year}</span>
+                      </div>
+                      <div style={styles.compareRow}>
+                        <span style={styles.compareLabel}>{text.genre}</span>
+                        <span style={styles.compareValue}>{compareGames[1].genre}</span>
+                      </div>
+                      <div style={styles.compareRow}>
+                        <span style={styles.compareLabel}>{text.playtime}</span>
+                        <span style={styles.compareValue}>{compareGames[1].playtime}</span>
+                      </div>
+                      <div style={styles.compareRow}>
+                        <span style={styles.compareLabel}>Developer</span>
+                        <span style={styles.compareValue}>{compareGames[1].developer}</span>
+                      </div>
+                      <div style={styles.compareRow}>
+                        <span style={styles.compareLabel}>{text.graphics}</span>
+                        <span style={styles.compareValue}>{compareGames[1].year >= 2020 ? "⭐ Sehr gut" : compareGames[1].year >= 2015 ? "👍 Gut" : "👎 Veraltet"}</span>
+                      </div>
+                      <div style={styles.compareRow}>
+                        <span style={styles.compareLabel}>{text.story}</span>
+                        <span style={styles.compareValue}>{compareGames[1].genre === "Story Rich" || compareGames[1].genre === "RPG" ? "⭐ Ausgezeichnet" : "👍 Gut"}</span>
+                      </div>
+                      <div style={styles.compareRow}>
+                        <span style={styles.compareLabel}>{text.gameplay}</span>
+                        <span style={styles.compareValue}>{compareGames[1].finalRating >= 9 ? "⭐ Meisterhaft" : compareGames[1].finalRating >= 8 ? "👍 Solide" : "👎 Durchschnitt"}</span>
+                      </div>
+                      <div style={styles.compareRow}>
+                        <span style={styles.compareLabel}>{text.replayability}</span>
+                        <span style={styles.compareValue}>{compareGames[1].playtime === "100h+" || compareGames[1].playtime === "60-100h" ? "⭐ Sehr hoch" : "👍 Mittel"}</span>
+                      </div>
                     </div>
                   </div>
                   
-                  {/* Spiel 2 */}
-                  <div style={styles.compareColumn}>
-                    <div style={styles.compareHeader}>
-                      <img src={compareGames[1].finalImg || compareGames[1].img} style={{ width: 80, height: 107, objectFit: "cover", borderRadius: 12, marginBottom: 12 }} alt={compareGames[1].name} />
-                      <div>{compareGames[1].name}</div>
-                      <div style={{ fontSize: 14, color: currentColors.primary, marginTop: 4 }}>★ {compareGames[1].finalRating?.toFixed(1)}</div>
+                  {/* Vergleichs-Ergebnis */}
+                  <div style={{ marginTop: 24, padding: 16, background: "rgba(0,0,0,0.2)", borderRadius: 12, textAlign: "center" }}>
+                    <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 8 }}>🏆 {text.winner}</div>
+                    <div style={{ fontSize: 20, fontWeight: 800, color: currentColors.primary }}>
+                      {compareGames[0].finalRating > compareGames[1].finalRating ? compareGames[0].name : compareGames[1].finalRating > compareGames[0].finalRating ? compareGames[1].name : "Unentschieden!"}
                     </div>
-                    <div style={styles.compareRow}>
-                      <span style={styles.compareLabel}>{text.year}</span>
-                      <span style={styles.compareValue}>{compareGames[1].year}</span>
-                    </div>
-                    <div style={styles.compareRow}>
-                      <span style={styles.compareLabel}>{text.genre}</span>
-                      <span style={styles.compareValue}>{compareGames[1].genre}</span>
-                    </div>
-                    <div style={styles.compareRow}>
-                      <span style={styles.compareLabel}>{text.playtime}</span>
-                      <span style={styles.compareValue}>{compareGames[1].playtime}</span>
-                    </div>
-                    <div style={styles.compareRow}>
-                      <span style={styles.compareLabel}>Developer</span>
-                      <span style={styles.compareValue}>{compareGames[1].developer}</span>
-                    </div>
-                    <div style={styles.compareRow}>
-                      <span style={styles.compareLabel}>{text.graphics}</span>
-                      <span style={styles.compareValue}>{compareGames[1].year >= 2020 ? "⭐ Sehr gut" : compareGames[1].year >= 2015 ? "👍 Gut" : "👎 Veraltet"}</span>
-                    </div>
-                    <div style={styles.compareRow}>
-                      <span style={styles.compareLabel}>{text.story}</span>
-                      <span style={styles.compareValue}>{compareGames[1].genre === "Story Rich" || compareGames[1].genre === "RPG" ? "⭐ Ausgezeichnet" : "👍 Gut"}</span>
-                    </div>
-                    <div style={styles.compareRow}>
-                      <span style={styles.compareLabel}>{text.gameplay}</span>
-                      <span style={styles.compareValue}>{compareGames[1].finalRating >= 9 ? "⭐ Meisterhaft" : compareGames[1].finalRating >= 8 ? "👍 Solide" : "👎 Durchschnitt"}</span>
-                    </div>
-                    <div style={styles.compareRow}>
-                      <span style={styles.compareLabel}>{text.replayability}</span>
-                      <span style={styles.compareValue}>{compareGames[1].playtime === "100h+" || compareGames[1].playtime === "60-100h" ? "⭐ Sehr hoch" : "👍 Mittel"}</span>
+                    <div style={{ fontSize: 12, color: currentColors.textSecondary, marginTop: 4 }}>
+                      {compareGames[0].finalRating > compareGames[1].finalRating ? 
+                        `${compareGames[0].name} gewinnt mit ★${compareGames[0].finalRating?.toFixed(1)} vs ★${compareGames[1].finalRating?.toFixed(1)}` : 
+                        compareGames[1].finalRating > compareGames[0].finalRating ?
+                        `${compareGames[1].name} gewinnt mit ★${compareGames[1].finalRating?.toFixed(1)} vs ★${compareGames[0].finalRating?.toFixed(1)}` :
+                        `Beide Spiele sind gleich gut bewertet!`}
                     </div>
                   </div>
                 </div>
-                
-                {/* Vergleichs-Ergebnis */}
-                <div style={{ marginTop: 24, padding: 16, background: "rgba(0,0,0,0.2)", borderRadius: 12, textAlign: "center" }}>
-                  <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 8 }}>🏆 {text.winner}</div>
-                  <div style={{ fontSize: 20, fontWeight: 800, color: currentColors.primary }}>
-                    {compareGames[0].finalRating > compareGames[1].finalRating ? compareGames[0].name : compareGames[1].finalRating > compareGames[0].finalRating ? compareGames[1].name : "Unentschieden!"}
-                  </div>
-                  <div style={{ fontSize: 12, color: currentColors.textSecondary, marginTop: 4 }}>
-                    {compareGames[0].finalRating > compareGames[1].finalRating ? 
-                      `${compareGames[0].name} gewinnt mit ★${compareGames[0].finalRating?.toFixed(1)} vs ★${compareGames[1].finalRating?.toFixed(1)}` : 
-                      compareGames[1].finalRating > compareGames[0].finalRating ?
-                      `${compareGames[1].name} gewinnt mit ★${compareGames[1].finalRating?.toFixed(1)} vs ★${compareGames[0].finalRating?.toFixed(1)}` :
-                      `Beide Spiele sind gleich gut bewertet!`}
-                  </div>
-                </div>
-              </div>
+              )}
             </div>
           </div>
         )}
