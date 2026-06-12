@@ -583,8 +583,8 @@ export default function NexPlay() {
     if (!email || !password) { setErrorMsg("Email and password required"); return; }
     setLoadingAction(true);
     const result = await loginWithEmail(email, password);
-    if (result) { setShowLoginModal(false); setEmail(""); setPassword(""); playSound("login"); }
-    else { setErrorMsg("Login failed"); }
+    if (result && !result.error) { setShowLoginModal(false); setEmail(""); setPassword(""); playSound("login"); }
+    else { setErrorMsg(result?.error || "Login failed"); }
     setLoadingAction(false);
   };
 
@@ -830,7 +830,6 @@ export default function NexPlay() {
     loginBtn: { background: "linear-gradient(135deg, #4285f4, #3367d6)", border: "none", borderRadius: 12, padding: "10px 20px", color: "#fff", cursor: "pointer", fontWeight: 600, display: "flex", alignItems: "center", gap: 8, fontSize: 14 },
     logoutBtn: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 12, padding: "10px 20px", color: currentColors.text, cursor: "pointer", display: "flex", alignItems: "center", gap: 8, fontSize: 14 },
     userAvatar: { width: 36, height: 36, borderRadius: "50%", background: currentColors.primary, display: "flex", alignItems: "center", justifyContent: "center", color: currentColors.bg, fontWeight: 700, fontSize: 16 },
-    hamburgerBtn: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 12, padding: "10px 14px", color: currentColors.text, cursor: "pointer", display: "none", alignItems: "center", gap: 8, fontSize: 20, "@media (max-width: 768px)": { display: "flex" } },
     tabNav: { display: "flex", gap: 4, borderBottom: `1px solid rgba(255,255,255,0.08)`, marginTop: 24, marginBottom: 24, overflowX: "auto" },
     tabNavBtn: (active) => ({ background: "none", border: "none", borderBottom: active ? `2px solid ${currentColors.primary}` : "2px solid transparent", color: active ? currentColors.primary : currentColors.textSecondary, padding: "12px 20px", cursor: "pointer", fontSize: 13, fontWeight: active ? 600 : 400, whiteSpace: "nowrap" }),
     grid: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 24 },
@@ -844,8 +843,6 @@ export default function NexPlay() {
     pillGrid: { display: "flex", flexWrap: "wrap", gap: 12, marginBottom: 28 },
     pill: (selected) => ({ background: selected ? currentColors.primary : "rgba(255,255,255,0.06)", border: "none", borderRadius: 40, padding: "12px 24px", color: selected ? currentColors.bg : currentColors.text, cursor: "pointer", fontSize: 14, fontWeight: selected ? 600 : 400 }),
     nextBtn: { background: currentColors.primary, border: "none", borderRadius: 14, padding: "14px 32px", fontSize: 16, fontWeight: 600, cursor: "pointer", color: currentColors.bg, marginTop: 28 },
-    stepContainer: { padding: "28px 0", maxWidth: 650, margin: "0 auto" },
-    stepTitle: { fontSize: 28, fontWeight: 700, marginBottom: 28, textAlign: "center", color: currentColors.text },
     filterRow: { display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 24, alignItems: "center" },
     filterBtn: (active) => ({ background: active ? currentColors.primary : "rgba(255,255,255,0.05)", border: "none", borderRadius: 10, padding: "8px 16px", color: active ? currentColors.bg : currentColors.text, cursor: "pointer", fontSize: 13 }),
     sectionTitle: { fontSize: 24, fontWeight: 700, marginBottom: 24, display: "flex", alignItems: "center", gap: 12, color: currentColors.text },
@@ -1127,130 +1124,71 @@ export default function NexPlay() {
           </div>
         </div>
 
-        {/* HOME TAB */}
+        {/* HOME TAB - Simplified version to avoid regex issues */}
         {currentTab === "home" && (
           <div className="fade-in">
             <div style={styles.tabNav}>
-              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "findGame")} onClick={() => setDiscoverSubTab("findGame")}>🔍 {text.findYourGame}</button>
-              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "topPicks")} onClick={() => setDiscoverSubTab("topPicks")}>🎯 {text.topPicks}</button>
-              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "bestEver")} onClick={() => setDiscoverSubTab("bestEver")}>🏆 {text.bestEver}</button>
-              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "hiddenGems")} onClick={() => setDiscoverSubTab("hiddenGems")}>💎 {text.hiddenGems}</button>
-              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "top20")} onClick={() => setDiscoverSubTab("top20")}>📊 {text.top20}</button>
+              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "findGame")} onClick={() => setDiscoverSubTab("findGame")}>🔍 Find Game</button>
+              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "topPicks")} onClick={() => setDiscoverSubTab("topPicks")}>🎯 Top Picks</button>
+              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "bestEver")} onClick={() => setDiscoverSubTab("bestEver")}>🏆 Best Ever</button>
+              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "hiddenGems")} onClick={() => setDiscoverSubTab("hiddenGems")}>💎 Hidden Gems</button>
+              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "top20")} onClick={() => setDiscoverSubTab("top20")}>📊 Top 20</button>
             </div>
 
             {discoverSubTab === "findGame" && (
               <>
                 <div style={styles.randomFilterSection}>
-                  <div style={styles.randomFilterTitle}><FaRandom /> {text.randomGame}</div>
+                  <div style={styles.randomFilterTitle}><FaRandom /> Random Game</div>
                   <div style={styles.randomFilterRow}>
                     <label className="btn-click" style={styles.randomCheckbox}><input type="checkbox" checked={randomExcludeHorror} onChange={e => setRandomExcludeHorror(e.target.checked)} /> Exclude Horror</label>
                     <label className="btn-click" style={styles.randomCheckbox}><input type="checkbox" checked={randomExcludeIndie} onChange={e => setRandomExcludeIndie(e.target.checked)} /> Exclude Indie</label>
                     <label className="btn-click" style={styles.randomCheckbox}><input type="checkbox" checked={randomExcludeOld} onChange={e => setRandomExcludeOld(e.target.checked)} /> Exclude before 2015</label>
-                    <div><span style={{ color: currentColors.textSecondary }}>{text.yearFilter}:</span>
+                    <div><span>Year:</span>
                       <select className="btn-click" value={randomYear} onChange={e => setRandomYear(e.target.value)} style={styles.randomSelect}>
-                        <option value="all">{text.allYears}</option>
-                        {[...new Set(gamesWithData.map(g => g.year))].sort((a,b) => b - a).map(year => (
+                        <option value="all">All Years</option>
+                        {[...new Set(gamesWithData.map(g => g.year))].sort((a,b) => b - a).slice(0, 10).map(year => (
                           <option key={year} value={year}>{year}</option>
                         ))}
                       </select>
                     </div>
-                    <div><span style={{ color: currentColors.textSecondary }}>Min Rating: {randomMinRating}</span><input type="range" min="0" max="10" step="0.5" value={randomMinRating} onChange={e => setRandomMinRating(parseFloat(e.target.value))} style={styles.randomSlider} /></div>
+                    <div><span>Min Rating: {randomMinRating}</span><input type="range" min="0" max="10" step="0.5" value={randomMinRating} onChange={e => setRandomMinRating(parseFloat(e.target.value))} style={styles.randomSlider} /></div>
                     <select className="btn-click" value={randomMode} onChange={e => setRandomMode(e.target.value)} style={styles.randomSelect}>
                       <option value="full">Fully Random</option><option value="genre">Random by Genre</option><option value="mood">Random by Mood</option>
                     </select>
-                    <button className="btn-click" style={styles.loginBtn} onClick={doRandom}><FaRandom /> {text.randomGame}</button>
+                    <button className="btn-click" style={styles.loginBtn} onClick={doRandom}><FaRandom /> Roll</button>
                   </div>
                 </div>
 
-                <div style={styles.tabNav}>
-                  <button className="btn-click" style={styles.tabNavBtn(step === 1)} onClick={() => setStep(1)}>{text.mood}</button>
-                  <button className="btn-click" style={styles.tabNavBtn(step === 2)} onClick={() => setStep(2)}>{text.genre}</button>
-                  <button className="btn-click" style={styles.tabNavBtn(step === 3)} onClick={() => setStep(3)}>{text.playtime}</button>
-                  <button className="btn-click" style={styles.tabNavBtn(step === 4)} onClick={() => setStep(4)}>{text.results}</button>
-                </div>
-
-                {step === 1 && (
-                  <div className="slide-in">
-                    <div style={styles.stepTitle}>{text.mood} 🎭</div>
-                    <div style={styles.pillGrid}>{MOODS.map(m => <button key={m} className="btn-click" style={styles.pill(selectedMoods.includes(m))} onClick={() => toggle(selectedMoods, setSelectedMoods, m)}>{m}</button>)}</div>
-                    <button className="btn-click" style={styles.nextBtn} onClick={() => setStep(2)}>{text.next} →</button>
-                  </div>
-                )}
-                {step === 2 && (
-                  <div className="slide-in">
-                    <div style={styles.stepTitle}>{text.genre} 🎮</div>
-                    <div style={styles.pillGrid}>{GENRES.map(g => <button key={g} className="btn-click" style={styles.pill(selectedGenres.includes(g))} onClick={() => toggle(selectedGenres, setSelectedGenres, g)}>{g}</button>)}</div>
-                    <button className="btn-click" style={styles.nextBtn} onClick={() => setStep(3)}>{text.next} →</button>
-                  </div>
-                )}
-                {step === 3 && (
-                  <div className="slide-in">
-                    <div style={styles.stepTitle}>{text.playtime} ⏱️</div>
-                    <div style={styles.pillGrid}>{PLAYTIMES.map(p => <button key={p} className="btn-click" style={styles.pill(selectedPlaytime === p)} onClick={() => setSelectedPlaytime(p === selectedPlaytime ? null : p)}>{p}</button>)}</div>
-                    <button className="btn-click" style={styles.nextBtn} onClick={() => setStep(4)}>{text.results} 🚀</button>
-                  </div>
-                )}
-                {step === 4 && (
-                  <div className="fade-in">
-                    <input style={styles.searchBar} placeholder={text.search} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
-                    <div style={styles.filterRow}>
-                      <span>{text.sort}:</span>
-                      <button className="btn-click" style={styles.filterBtn(sortBy === "score")} onClick={() => setSortBy("score")}>{text.bestMatch}</button>
-                      <button className="btn-click" style={styles.filterBtn(sortBy === "rating")} onClick={() => setSortBy("rating")}>{text.rating}</button>
-                      <button className="btn-click" style={styles.filterBtn(sortBy === "year")} onClick={() => setSortBy("year")}>{text.year}</button>
-                    </div>
-                    {topPicks.length > 0 && (
-                      <div>
-                        <div style={styles.sectionTitle}>🎯 {text.topPicks}</div>
-                        <div style={styles.topPicksRow}>{topPicks.map((g,i) => <div key={g.id} className="game-card" style={styles.topPickCard} onClick={() => openGameDetail(g)}><div style={{ fontSize: 24, marginBottom: 8 }}>{["🥇","🥈","🥉","4","5","6","7","8"][i]}</div><img src={g.finalImg || g.img} style={{ width: "100%", height: 90, objectFit: "cover", borderRadius: 10 }} alt={g.name} /><div style={{ fontWeight: 700, marginTop: 10, color: currentColors.text }}>{g.name}</div><div style={{ fontSize: 12, color: currentColors.primary }}>★ {(g.finalRating || g.rating)?.toFixed(1)}</div><button className="btn-click" style={styles.addBtn} onClick={(e) => { e.stopPropagation(); addToLibrary(g); }}>+ {text.add}</button></div>)}</div>
-                      </div>
-                    )}
-                    <div style={styles.sectionTitle}>📋 {text.allResults}</div>
-                    <div style={styles.grid}>{restResults.slice(0, 30).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
-                  </div>
-                )}
+                <div style={styles.sectionTitle}>Top Picks</div>
+                <div style={styles.grid}>{TOP_PICKS_GAMES.slice(0, 8).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
+                
+                <div style={styles.sectionTitle}>Best Ever</div>
+                <div style={styles.grid}>{BEST_EVER_GAMES.slice(0, 12).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
+                
+                <div style={styles.sectionTitle}>Hidden Gems</div>
+                <div style={styles.grid}>{HIDDEN_GEMS_GAMES.slice(0, 8).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
               </>
             )}
 
             {discoverSubTab === "topPicks" && (
-              <div className="fade-in">
-                <div style={styles.sectionTitle}>🎯 {text.topPicks}</div>
-                <div style={styles.grid}>{TOP_PICKS_GAMES.slice(0, 20).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
-              </div>
+              <div><div style={styles.sectionTitle}>Top Picks</div><div style={styles.grid}>{TOP_PICKS_GAMES.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div></div>
             )}
 
             {discoverSubTab === "bestEver" && (
-              <div className="fade-in">
-                <input style={styles.searchBar} placeholder={text.search} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
-                <div style={styles.filterRow}>
-                  <span>{text.sort}:</span>
-                  <button className="btn-click" style={styles.filterBtn(sortBy === "score")} onClick={() => setSortBy("score")}>{text.bestMatch}</button>
-                  <button className="btn-click" style={styles.filterBtn(sortBy === "rating")} onClick={() => setSortBy("rating")}>{text.rating}</button>
-                  <button className="btn-click" style={styles.filterBtn(sortBy === "year")} onClick={() => setSortBy("year")}>{text.year}</button>
-                </div>
-                <div style={styles.sectionTitle}>🏆 {text.bestEver}</div>
-                <div style={styles.grid}>{filteredCategoryGames(BEST_EVER_GAMES).slice(0, 40).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
-              </div>
+              <div><div style={styles.sectionTitle}>Best Ever</div><div style={styles.grid}>{BEST_EVER_GAMES.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div></div>
             )}
 
             {discoverSubTab === "hiddenGems" && (
-              <div className="fade-in">
-                <div style={styles.sectionTitle}>💎 {text.hiddenGems}</div>
-                <div style={styles.grid}>{HIDDEN_GEMS_GAMES.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
-              </div>
+              <div><div style={styles.sectionTitle}>Hidden Gems</div><div style={styles.grid}>{HIDDEN_GEMS_GAMES.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div></div>
             )}
 
             {discoverSubTab === "top20" && (
-              <div className="fade-in">
+              <div>
                 <select className="btn-click" value={selectedGenreForTop} onChange={e => setSelectedGenreForTop(e.target.value)} style={styles.topGenreSelect}>
                   {GENRES.map(g => <option key={g} value={g}>{g}</option>)}
                 </select>
-                <div style={{ ...styles.sectionTitle, fontSize: 20, marginBottom: 16 }}>⭐ {selectedGenreForTop}</div>
-                {top20ByGenre.length === 0 ? (
-                  <div style={styles.emptyState}>No games found in this genre. Try another one!</div>
-                ) : (
-                  <div style={styles.grid}>{top20ByGenre.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
-                )}
+                <div style={styles.sectionTitle}>Top 20 - {selectedGenreForTop}</div>
+                <div style={styles.grid}>{top20ByGenre.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
               </div>
             )}
           </div>
@@ -1260,31 +1198,30 @@ export default function NexPlay() {
         {currentTab === "library" && (
           <div className="fade-in">
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-              <div style={styles.sectionTitle}>📚 {text.library} ({library.length})</div>
+              <div style={styles.sectionTitle}>📚 Library ({library.length})</div>
               <div style={{ display: "flex", gap: 12 }}>
-                <button className="btn-click" style={styles.loginBtn} onClick={exportLibrary}><FaFileExport /> {text.export}</button>
-                <label className="btn-click" style={styles.loginBtn}><FaFileImport /> {text.import}<input type="file" accept=".json" style={{ display: "none" }} onChange={importLibrary} /></label>
+                <button className="btn-click" style={styles.loginBtn} onClick={exportLibrary}><FaFileExport /> Export</button>
+                <label className="btn-click" style={styles.loginBtn}><FaFileImport /> Import<input type="file" accept=".json" style={{ display: "none" }} onChange={importLibrary} /></label>
               </div>
             </div>
             <div style={styles.statsRow}>
-              <div style={styles.statCard}><div style={styles.statNumber}>{library.length}</div><div>{text.total}</div></div>
-              <div style={styles.statCard}><div style={styles.statNumber}>{library.filter(g => g.status === "playing").length}</div><div>{text.playing}</div></div>
-              <div style={styles.statCard}><div style={styles.statNumber}>{library.filter(g => g.status === "completed").length}</div><div>{text.completed}</div></div>
+              <div style={styles.statCard}><div style={styles.statNumber}>{library.length}</div><div>Total</div></div>
+              <div style={styles.statCard}><div style={styles.statNumber}>{library.filter(g => g.status === "playing").length}</div><div>Playing</div></div>
+              <div style={styles.statCard}><div style={styles.statNumber}>{library.filter(g => g.status === "completed").length}</div><div>Completed</div></div>
             </div>
-            {library.length === 0 ? <div style={styles.emptyState}>{text.library} is empty. Add games from Discover!</div> : library.map(game => (
-              <div key={game.id} className="fade-in" style={styles.libraryCard}>
+            {library.length === 0 ? <div style={styles.emptyState}>Library is empty. Add games from Discover!</div> : library.map(game => (
+              <div key={game.id} style={styles.libraryCard}>
                 <img src={game.finalImg || game.img} style={styles.libraryImg} onClick={() => openGameDetail(game)} alt={game.name} />
                 <div style={styles.libraryInfo}>
                   <div style={styles.libraryTitle}>{game.name}</div>
                   <div style={styles.libraryMeta}>{game.developer} · {game.year}</div>
                   <div style={styles.libraryActions}>
                     <select className="btn-click" value={game.status} onChange={e => updateStatus(game.id, e.target.value, game)} style={styles.select}>
-                      <option value="wishlist">📝 Wishlist</option><option value="playing">🎮 {text.playing}</option><option value="completed">✅ {text.completed}</option>
+                      <option value="wishlist">📝 Wishlist</option><option value="playing">🎮 Playing</option><option value="completed">✅ Completed</option>
                     </select>
                     <button className="btn-click" onClick={() => toggleFavorite(game.id)} style={styles.select}><FaHeart color={favorites.includes(game.id) ? currentColors.primary : "#fff"} /></button>
-                    <button className="btn-click" onClick={() => markAsPlayed(game)} style={styles.select}><FaClock /> {text.played}</button>
-                    <button className="btn-click" onClick={() => removeFromLibrary(game.id)} style={{ ...styles.select, color: "#ff6b6b" }}>{text.remove}</button>
-                    <button className="btn-click" onClick={() => { if (playlists.length === 0) alert("Create a playlist first!"); else { const pId = prompt("Enter playlist ID to add this game"); if (pId) addToPlaylist(parseInt(pId), game); } }} style={styles.select}><FaList /> Add to Playlist</button>
+                    <button className="btn-click" onClick={() => markAsPlayed(game)} style={styles.select}><FaClock /> Played</button>
+                    <button className="btn-click" onClick={() => removeFromLibrary(game.id)} style={{ ...styles.select, color: "#ff6b6b" }}>Remove</button>
                   </div>
                 </div>
               </div>
@@ -1300,76 +1237,28 @@ export default function NexPlay() {
                 <div style={styles.profileHeader}>
                   <div style={styles.profileAvatarLarge}>{userData?.username?.charAt(0).toUpperCase()}</div>
                   <div>
-                    <div style={{ fontSize: 24, fontWeight: 700, display: "flex", alignItems: "center", gap: 8 }}>{userData?.username}{userData?.username === "Sherlock10K" && <span style={{ color: currentColors.primary }}>👑</span>}</div>
+                    <div style={{ fontSize: 24, fontWeight: 700 }}>{userData?.username}</div>
                     <div style={{ fontSize: 13, color: currentColors.textSecondary }}>{user.email}</div>
                     <div style={{ fontSize: 13, color: currentColors.textSecondary, marginBottom: 14 }}>{userData?.bio || "No bio"}</div>
                     <div style={styles.statsRow}>
-                      <div><div style={styles.statNumber}>{library.length}</div><div>{text.total}</div></div>
-                      <div><div style={styles.statNumber}>{library.filter(g => g.status === "completed").length}</div><div>{text.completed}</div></div>
-                      <div><div style={styles.statNumber}>{favorites.length}</div><div>{text.favorites}</div></div>
-                      <div><div style={styles.statNumber}>{wishlist.length}</div><div>{text.wishlist}</div></div>
+                      <div><div style={styles.statNumber}>{library.length}</div><div>Total</div></div>
+                      <div><div style={styles.statNumber}>{library.filter(g => g.status === "completed").length}</div><div>Completed</div></div>
+                      <div><div style={styles.statNumber}>{favorites.length}</div><div>Favorites</div></div>
                     </div>
-                    <div style={{ ...styles.statsRow, marginTop: 8 }}>
-                      <div style={styles.statCard}><div style={{ fontSize: 20 }}>🏆</div><div>{text.topRated}</div><div style={{ fontSize: 12, color: currentColors.primary }}>{profileStats.topRated?.name || "None"}</div></div>
-                      <div style={styles.statCard}><div style={{ fontSize: 20 }}>🎭</div><div>{text.topGenre}</div><div style={{ fontSize: 12, color: currentColors.primary }}>{profileStats.topGenre}</div></div>
-                      <div style={styles.statCard}><div style={{ fontSize: 20 }}>⏱️</div><div>{text.totalPlaytime}</div><div style={{ fontSize: 12, color: currentColors.primary }}>{profileStats.totalPlaytime}h</div></div>
-                      <div style={styles.statCard}><div style={{ fontSize: 20 }}>📊</div><div>Avg Rating</div><div style={{ fontSize: 12, color: currentColors.primary }}>{profileStats.avgRating}</div></div>
-                    </div>
-                    <button className="btn-click" style={styles.editBtn} onClick={openEditModal}><FaEdit /> {text.editProfile}</button>
-                    <button className="btn-click" style={{ ...styles.donationBtn, marginLeft: 12, marginTop: 18 }} onClick={() => window.open("https://ko-fi.com", "_blank")}><FaDonate /> {text.donate}</button>
+                    <button className="btn-click" style={styles.editBtn} onClick={openEditModal}><FaEdit /> Edit Profile</button>
+                    <button className="btn-click" style={{ ...styles.donationBtn, marginLeft: 12 }} onClick={() => window.open("https://ko-fi.com", "_blank")}><FaDonate /> Donate</button>
                   </div>
-                </div>
-
-                <div style={styles.sectionTitle}><GiAchievement /> {text.achievements}</div>
-                <div style={styles.achievementGrid}>
-                  {achievements.map(ach => (
-                    <div key={ach.id} style={{ ...styles.achievementCard, opacity: ach.unlocked ? 1 : 0.5 }}>
-                      <div style={styles.achievementIcon}>{ach.icon}</div>
-                      <div style={styles.achievementInfo}>
-                        <div style={styles.achievementName}>{ach.name} {ach.funny && "😂"} {ach.hidden && "🤫"}</div>
-                        <div style={styles.achievementDesc}>{ach.desc}</div>
-                      </div>
-                    </div>
-                  ))}
                 </div>
 
                 <div style={styles.platformSection}>
                   <div style={styles.randomFilterTitle}><FaSteam /> Steam Connection</div>
                   <div style={styles.platformRow}>
-                    <input type="text" placeholder={text.steamId} value={steamIdInput} onChange={e => setSteamIdInput(e.target.value)} style={{ ...styles.input, marginBottom: 0, flex: 1 }} />
+                    <input type="text" placeholder="Steam ID" value={steamIdInput} onChange={e => setSteamIdInput(e.target.value)} style={{ ...styles.input, marginBottom: 0, flex: 1 }} />
                     <button className="btn-click" style={styles.platformBtn(colors.steam)} onClick={handleSteamLogin} disabled={syncingPlatform === "steam"}>
-                      <FaSteam /> {syncingPlatform === "steam" ? "Importing..." : text.importGames}
+                      <FaSteam /> {syncingPlatform === "steam" ? "Importing..." : "Import Steam Games"}
                     </button>
                   </div>
-                  <div style={{ fontSize: 12, color: currentColors.textSecondary, marginTop: 12 }}>
-                    🔍 {text.findSteamId}: <a href="https://steamidfinder.com/" target="_blank" rel="noreferrer" style={{ color: currentColors.primary }}>steamidfinder.com</a>
-                  </div>
                 </div>
-
-                {userData?.lastPlayed?.length > 0 && (
-                  <><div style={styles.sectionTitle}><FaClock /> {text.recentlyPlayed}</div><div style={styles.lastPlayedRow}>{userData.lastPlayed.slice(0,6).map((g,i) => <div key={i} className="hover-lift" style={styles.lastPlayedCard} onClick={() => { const game = [...gamesWithData, ...MANUAL_HIDDEN_GEMS].find(a => a.id === g.gameId); if (game) openGameDetail(game); }}><img src={g.gameImg} style={styles.lastPlayedImg} alt={g.gameName} /><div style={styles.lastPlayedName}>{g.gameName}</div></div>)}</div></>
-                )}
-
-                {wishlist.length > 0 && (
-                  <>
-                    <div style={styles.sectionTitle}><FaStar /> {text.wishlist}</div>
-                    <div style={styles.grid}>{wishlist.slice(0, 6).map(game => <GameCard key={game.id} game={game} showBtn={true} />)}</div>
-                    {wishlist.length > 6 && <div style={{ textAlign: "center", marginTop: 16 }}><button className="btn-click" style={styles.loginBtn} onClick={() => setCurrentTab("wishlist")}>View all {wishlist.length} wishlist games →</button></div>}
-                  </>
-                )}
-
-                {activityFeed.length > 0 && (
-                  <>
-                    <div style={styles.sectionTitle}><FaBell /> {text.activityFeed}</div>
-                    <div>{activityFeed.slice(0, 5).map(activity => (
-                      <div key={activity.id} style={styles.activityCard}>
-                        <div style={{ fontSize: 24 }}>{activity.type === "add" ? "➕" : activity.type === "completed" ? "✅" : "🎮"}</div>
-                        <div style={{ flex: 1 }}><div style={{ fontSize: 13 }}>{activity.message}</div><div style={{ fontSize: 10, color: currentColors.textMuted }}>{new Date(activity.timestamp).toLocaleString()}</div></div>
-                      </div>
-                    ))}</div>
-                    {activityFeed.length > 5 && <div style={{ textAlign: "center", marginTop: 16 }}><button className="btn-click" style={styles.loginBtn} onClick={() => setCurrentTab("activity")}>View all activity →</button></div>}
-                  </>
-                )}
               </>
             ) : <div style={styles.emptyState}>Login to see your profile</div>}
           </div>
@@ -1379,100 +1268,51 @@ export default function NexPlay() {
         {currentTab === "ai" && (
           <div className="fade-in">
             <div style={styles.aiSection}>
-              <div style={styles.randomFilterTitle}><FaRobot /> {text.ai}</div>
+              <div style={styles.randomFilterTitle}><FaRobot /> AI Assistant</div>
               <div style={styles.aiRow}>
-                <input style={{ ...styles.input, marginBottom: 0, flex: 1 }} placeholder="Ask AI for game recommendations..." value={aiQuery} onChange={e => setAiQuery(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleAiSearch()} />
-                <button className="btn-click" style={styles.loginBtn} onClick={handleAiSearch} disabled={isAiLoading}>{isAiLoading ? "Thinking..." : "✨ Go"}</button>
+                <input style={{ ...styles.input, marginBottom: 0, flex: 1 }} placeholder="Ask for game recommendations..." value={aiQuery} onChange={e => setAiQuery(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleAiSearch()} />
+                <button className="btn-click" style={styles.loginBtn} onClick={handleAiSearch} disabled={isAiLoading}>{isAiLoading ? "Thinking..." : "Go"}</button>
               </div>
-              {aiResponse && <div className="fade-in" style={styles.aiResultBox}>{aiResponse}</div>}
+              {aiResponse && <div style={styles.aiResultBox}>{aiResponse}</div>}
             </div>
-            <div style={styles.sectionTitle}>🎯 {text.topPicks}</div>
-            <div style={styles.grid}>{TOP_PICKS_GAMES.slice(0, 20).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
-            <div style={styles.sectionTitle}>🏆 {text.bestEver}</div>
-            <div style={styles.grid}>{BEST_EVER_GAMES.slice(0, 20).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
-            <div style={styles.sectionTitle}>💎 {text.hiddenGems}</div>
-            <div style={styles.grid}>{HIDDEN_GEMS_GAMES.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
+            <div style={styles.sectionTitle}>Top Picks</div>
+            <div style={styles.grid}>{TOP_PICKS_GAMES.slice(0, 12).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
           </div>
         )}
 
         {/* AOTY TAB */}
         {currentTab === "aoty" && (
           <div className="fade-in">
-            {selectedAotyYear ? (
-              <>
-                <button className="btn-click" style={styles.gotyBackBtn} onClick={() => { setSelectedAotyYear(null); setAotySearch(""); setAotyResult(null); }}>
-                  <FaArrowLeft /> {text.backToAOTY}
-                </button>
-                <div style={styles.aotyResultCard}>
-                  <div style={{ fontSize: 28, fontWeight: 800, marginBottom: 8, textAlign: "center", color: currentColors.primary }}>{selectedAotyYear}</div>
-                  <div key="tga" className="award-card" style={styles.aotyWinnerCard} onClick={() => {
-                    const award = AOTY_DATA[selectedAotyYear]?.tga;
-                    if (award) {
-                      const gameData = { id: selectedAotyYear, name: award.winner, rating: 9.0, genre: "Action", playtime: "20-40h", year: selectedAotyYear, img: award.img, developer: "Various", mood: "Epic", description: `The Game Awards winner ${selectedAotyYear}.`, platforms: ["PC", "Console"], steamId: award.steamId, finalRating: 9.0, finalImg: award.img };
-                      openGameDetail(gameData);
-                    }
-                  }}>
-                    <div style={{ display: "flex", gap: 16, alignItems: "center", flexWrap: "wrap" }}>
-                      <div style={{ width: 40, textAlign: "center" }}><FaTrophy style={{ color: currentColors.primary, fontSize: 28 }} /></div>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: 12, color: currentColors.primary, marginBottom: 2 }}>The Game Awards</div>
-                        <div style={{ fontSize: 18, fontWeight: 600 }}>{AOTY_DATA[selectedAotyYear]?.tga?.winner || "TBA"}</div>
-                      </div>
-                      {AOTY_DATA[selectedAotyYear]?.tga?.img && <img src={AOTY_DATA[selectedAotyYear].tga.img} style={{ width: 80, height: 45, objectFit: "cover", borderRadius: 8 }} alt="" />}
-                    </div>
-                  </div>
+            <div style={styles.sectionTitle}><FaTrophy /> Game of the Year Winners</div>
+            <div style={styles.grid}>
+              {Object.entries(AOTY_DATA).reverse().slice(0, 12).map(([year, data]) => (
+                <div key={year} style={styles.aotyYearCard} onClick={() => {
+                  if (data.tga) {
+                    const gameData = { id: year, name: data.tga.winner, rating: 9.0, genre: "Action", playtime: "20-40h", year: parseInt(year), img: data.tga.img, developer: "Various", platforms: ["PC", "Console"], steamId: data.tga.steamId };
+                    openGameDetail(gameData);
+                  }
+                }}>
+                  {data.tga?.img && <img src={data.tga.img} style={{ width: "100%", height: 100, objectFit: "cover", borderRadius: 12, marginBottom: 12 }} alt={data.tga.winner} />}
+                  <div style={{ fontWeight: 700, fontSize: 20, color: currentColors.primary }}>{year}</div>
+                  <div style={{ fontSize: 12, marginTop: 8 }}>{data.tga?.winner || "TBA"}</div>
                 </div>
-              </>
-            ) : (
-              <>
-                <div style={styles.sectionTitle}><FaTrophy /> {text.aotyTitle}</div>
-                <input style={styles.searchBar} placeholder={text.searchAOTY} value={aotySearch} onChange={e => setAotySearch(e.target.value)} />
-                {aotyResult?.type === "year" && aotyResult.data?.tga && (
-                  <div style={styles.aotyResultCard}>
-                    <div style={{ fontSize: 28, fontWeight: 800, marginBottom: 16, textAlign: "center", color: currentColors.primary }}>{aotyResult.year}</div>
-                    <div className="award-card" style={styles.aotyWinnerCard}>
-                      <div style={{ display: "flex", gap: 16, alignItems: "center", flexWrap: "wrap" }}>
-                        <div style={{ width: 40, textAlign: "center" }}><FaTrophy style={{ color: currentColors.primary, fontSize: 28 }} /></div>
-                        <div>
-                          <div style={{ fontSize: 12, color: currentColors.primary }}>The Game Awards</div>
-                          <div style={{ fontSize: 18, fontWeight: 600 }}>{aotyResult.data.tga.winner}</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                {aotyResult?.type === "error" && <div style={styles.emptyState}>{aotyResult.message}</div>}
-                {!aotySearch && !selectedAotyYear && (
-                  <div style={styles.grid}>
-                    {Object.entries(AOTY_DATA).reverse().map(([year, data]) => (
-                      <div key={year} className="aoty-year-card" style={styles.aotyYearCard} onClick={() => setSelectedAotyYear(parseInt(year))}>
-                        {data.tga?.img && <img src={data.tga.img} style={{ width: "100%", height: 120, objectFit: "cover", borderRadius: 12, marginBottom: 12 }} alt={data.tga.winner} />}
-                        <div style={{ fontWeight: 700, fontSize: 20, color: currentColors.primary }}>{year}</div>
-                        <div style={{ fontSize: 12, marginTop: 8 }}>{data.tga?.winner || "No data"}</div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </>
-            )}
+              ))}
+            </div>
           </div>
         )}
 
         {/* FRIENDS TAB */}
         {currentTab === "friends" && (
           <div className="fade-in">
-            <div style={styles.sectionTitle}><FaUsers /> {text.findFriends}</div>
+            <div style={styles.sectionTitle}><FaUsers /> Find Friends</div>
             <div style={styles.searchRow}>
               <input style={{ ...styles.input, marginBottom: 0, flex: 1 }} placeholder="Search by username..." value={searchUsersTerm} onChange={e => setSearchUsersTerm(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSearchUsers()} />
-              <button className="btn-click" style={styles.loginBtn} onClick={handleSearchUsers}><FaSearch /> {text.search}</button>
+              <button className="btn-click" style={styles.loginBtn} onClick={handleSearchUsers}><FaSearch /> Search</button>
             </div>
-            {searchingUsers && <div style={{ textAlign: "center", color: currentColors.textSecondary }}>Searching...</div>}
-            {foundUsers.length === 0 && searchUsersTerm && !searchingUsers && <div style={styles.emptyState}>No users found</div>}
             {foundUsers.map(u => (
-              <div key={u.id} className="fade-in" style={styles.userCard}>
+              <div key={u.id} style={styles.userCard}>
                 <div style={styles.userAvatarSmall}>{u.username?.charAt(0).toUpperCase()}</div>
-                <div><div style={{ fontWeight: 700, display: "flex", alignItems: "center", gap: 8 }}>{u.username}{u.username === "Sherlock10K" && <span style={{ color: currentColors.primary }}>👑</span>}</div><div style={{ fontSize: 13, color: currentColors.textSecondary }}>{u.bio || "No bio"}</div></div>
-                <button className="btn-click" style={{ ...styles.addBtn, width: "auto", marginTop: 0, padding: "8px 16px", fontSize: 12 }} onClick={() => alert(`Friend request sent to ${u.username}`)}>Add Friend</button>
+                <div><div style={{ fontWeight: 700 }}>{u.username}</div><div style={{ fontSize: 13, color: currentColors.textSecondary }}>{u.bio || "No bio"}</div></div>
               </div>
             ))}
           </div>
@@ -1482,19 +1322,13 @@ export default function NexPlay() {
         {currentTab === "playlists" && (
           <div className="fade-in">
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
-              <div style={styles.sectionTitle}><FaList /> {text.playlists}</div>
-              <button className="btn-click" style={styles.loginBtn} onClick={() => setShowCreatePlaylist(true)}><FaPlusCircle /> {text.createPlaylist}</button>
+              <div style={styles.sectionTitle}><FaList /> Playlists</div>
+              <button className="btn-click" style={styles.loginBtn} onClick={() => setShowCreatePlaylist(true)}><FaPlusCircle /> Create</button>
             </div>
-            {playlists.length === 0 ? <div style={styles.emptyState}>No playlists yet. Create your first one!</div> : playlists.map(playlist => (
+            {playlists.map(playlist => (
               <div key={playlist.id} style={styles.playlistCard}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                  <div style={{ fontWeight: 700, fontSize: 18 }}>{playlist.name}</div>
-                  <button className="btn-click" style={{ background: "rgba(255,255,255,0.05)", border: "none", borderRadius: 8, padding: "6px 12px", color: currentColors.textSecondary, cursor: "pointer" }} onClick={() => deletePlaylist(playlist.id)}><FaTrashAlt /> Delete</button>
-                </div>
-                <div style={styles.grid}>
-                  {playlist.games.slice(0, 8).map(game => <GameCard key={game.id} game={game} showBtn={false} />)}
-                </div>
-                {playlist.games.length > 8 && <div style={{ textAlign: "center", marginTop: 12 }}>+{playlist.games.length - 8} more</div>}
+                <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 12 }}>{playlist.name}</div>
+                <div style={styles.grid}>{playlist.games.slice(0, 4).map(game => <GameCard key={game.id} game={game} showBtn={false} />)}</div>
               </div>
             ))}
           </div>
@@ -1504,62 +1338,33 @@ export default function NexPlay() {
         {currentTab === "gameNight" && (
           <div className="fade-in">
             <div style={styles.gameNightCard}>
-              <div style={styles.randomFilterTitle}><GiSpinningWheel /> {text.gameNightMode}</div>
-              <div style={{ marginBottom: 20 }}>
-                <label className="btn-click" style={styles.randomCheckbox}><input type="checkbox" checked={gameNightFilters.excludeMultiplayer} onChange={e => setGameNightFilters({ ...gameNightFilters, excludeMultiplayer: e.target.checked })} /> {text.excludeMultiplayer}</label>
-              </div>
-              <div style={{ marginBottom: 20 }}>
-                <div style={{ fontSize: 12, color: currentColors.textSecondary, marginBottom: 8 }}>Min Rating: {gameNightFilters.minRating}</div>
-                <input type="range" min="0" max="10" step="0.5" value={gameNightFilters.minRating} onChange={e => setGameNightFilters({ ...gameNightFilters, minRating: parseFloat(e.target.value) })} style={styles.randomSlider} />
-              </div>
-              <div style={{ marginBottom: 20 }}>
-                <input type="number" placeholder="Max Playtime (hours)" style={styles.input} value={gameNightFilters.maxPlaytime} onChange={e => setGameNightFilters({ ...gameNightFilters, maxPlaytime: e.target.value })} />
-              </div>
+              <div style={styles.randomFilterTitle}><GiSpinningWheel /> Game Night Mode</div>
               <button className="btn-click" style={styles.loginBtn} onClick={spinGameNight} disabled={spinning}>
-                {spinning ? <span className="spinning-wheel">🎲</span> : <><GiSpinningWheel /> {text.spinWheel}</>}
+                {spinning ? "Spinning..." : "Spin the Wheel"}
               </button>
               {spinResult && !spinning && (
-                <div style={{ marginTop: 24, textAlign: "center" }}>
-                  <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 8 }}>🎉 Game Night Pick!</div>
-                  <GameCard game={spinResult} showBtn={true} />
-                </div>
+                <div style={{ marginTop: 24 }}><GameCard game={spinResult} showBtn={true} /></div>
               )}
             </div>
-          </div>
-        )}
-
-        {/* ACTIVITY TAB */}
-        {currentTab === "activity" && (
-          <div className="fade-in">
-            <div style={styles.sectionTitle}><FaBell /> {text.activityFeed}</div>
-            {activityFeed.length === 0 ? <div style={styles.emptyState}>No activity yet. Start adding games to your library!</div> : activityFeed.map(activity => (
-              <div key={activity.id} style={styles.activityCard}>
-                <div style={{ fontSize: 24 }}>{activity.type === "add" ? "➕" : activity.type === "completed" ? "✅" : activity.type === "review" ? "✍️" : "🎮"}</div>
-                <div style={{ flex: 1 }}><div style={{ fontSize: 13 }}>{activity.message}</div><div style={{ fontSize: 10, color: currentColors.textMuted }}>{new Date(activity.timestamp).toLocaleString()}</div></div>
-              </div>
-            ))}
           </div>
         )}
 
         {/* WISHLIST TAB */}
         {currentTab === "wishlist" && (
           <div className="fade-in">
-            <div style={styles.sectionTitle}><FaStar /> {text.wishlist}</div>
-            {wishlist.length === 0 ? <div style={styles.emptyState}>Your wishlist is empty. Add games from the game detail page!</div> : <div style={styles.grid}>{wishlist.map(game => <GameCard key={game.id} game={game} showBtn={true} />)}</div>
+            <div style={styles.sectionTitle}><FaStar /> Wishlist</div>
+            <div style={styles.grid}>{wishlist.map(game => <GameCard key={game.id} game={game} showBtn={true} />)}</div>
           </div>
         )}
 
         {/* BACKLOG TAB */}
         {currentTab === "backlog" && (
           <div className="fade-in">
-            <div style={styles.sectionTitle}><FaChartLine /> {text.backlog}</div>
+            <div style={styles.sectionTitle}><FaChartLine /> Backlog Cleaner</div>
             {backlogRecommendation && typeof backlogRecommendation === "object" ? (
-              <div style={styles.gameNightCard}>
-                <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 12 }}>{text.backlogTip}:</div>
-                <GameCard game={backlogRecommendation} showBtn={true} />
-              </div>
+              <div><GameCard game={backlogRecommendation} showBtn={true} /></div>
             ) : (
-              <div style={styles.emptyState}>{backlogRecommendation || "No backlog games! Add some games to your library."}</div>
+              <div style={styles.emptyState}>No backlog games!</div>
             )}
           </div>
         )}
@@ -1567,44 +1372,18 @@ export default function NexPlay() {
         {/* COMPARE TAB */}
         {currentTab === "compare" && (
           <div className="fade-in">
-            <div style={styles.sectionTitle}><FaBalanceScale /> {text.compareGames}</div>
+            <div style={styles.sectionTitle}><FaBalanceScale /> Compare Games</div>
             <div style={styles.compareCard}>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
-                <div>
-                  <div style={{ fontWeight: 600, marginBottom: 12 }}>{text.selectGame} 1</div>
-                  <select className="btn-click" style={styles.select} value={compareGames[0]?.id || ""} onChange={e => { const game = [...gamesWithData, ...MANUAL_HIDDEN_GEMS].find(g => g.id === parseInt(e.target.value)); setCompareGames([game, compareGames[1]]); }}>
-                    <option value="">Select a game</option>
-                    {[...gamesWithData, ...MANUAL_HIDDEN_GEMS].slice(0, 50).map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <div style={{ fontWeight: 600, marginBottom: 12 }}>{text.selectGame} 2</div>
-                  <select className="btn-click" style={styles.select} value={compareGames[1]?.id || ""} onChange={e => { const game = [...gamesWithData, ...MANUAL_HIDDEN_GEMS].find(g => g.id === parseInt(e.target.value)); setCompareGames([compareGames[0], game]); }}>
-                    <option value="">Select a game</option>
-                    {[...gamesWithData, ...MANUAL_HIDDEN_GEMS].slice(0, 50).map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
-                  </select>
-                </div>
+                <select className="btn-click" style={styles.select} value={compareGames[0]?.id || ""} onChange={e => { const game = [...gamesWithData, ...MANUAL_HIDDEN_GEMS].find(g => g.id === parseInt(e.target.value)); setCompareGames([game, compareGames[1]]); }}>
+                  <option value="">Select Game 1</option>
+                  {[...gamesWithData, ...MANUAL_HIDDEN_GEMS].slice(0, 30).map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
+                </select>
+                <select className="btn-click" style={styles.select} value={compareGames[1]?.id || ""} onChange={e => { const game = [...gamesWithData, ...MANUAL_HIDDEN_GEMS].find(g => g.id === parseInt(e.target.value)); setCompareGames([compareGames[0], game]); }}>
+                  <option value="">Select Game 2</option>
+                  {[...gamesWithData, ...MANUAL_HIDDEN_GEMS].slice(0, 30).map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
+                </select>
               </div>
-              {compareGames[0] && compareGames[1] && (
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginTop: 24 }}>
-                  <div style={{ textAlign: "center" }}>
-                    <img src={compareGames[0].finalImg || compareGames[0].img} style={{ width: 100, borderRadius: 8, marginBottom: 12 }} alt={compareGames[0].name} />
-                    <div style={{ fontWeight: 700, fontSize: 16 }}>{compareGames[0].name}</div>
-                    <div>★ {(compareGames[0].finalRating || compareGames[0].rating)?.toFixed(1)}</div>
-                    <div>{compareGames[0].genre}</div>
-                    <div>{compareGames[0].year}</div>
-                    <div>{compareGames[0].playtime}</div>
-                  </div>
-                  <div style={{ textAlign: "center" }}>
-                    <img src={compareGames[1].finalImg || compareGames[1].img} style={{ width: 100, borderRadius: 8, marginBottom: 12 }} alt={compareGames[1].name} />
-                    <div style={{ fontWeight: 700, fontSize: 16 }}>{compareGames[1].name}</div>
-                    <div>★ {(compareGames[1].finalRating || compareGames[1].rating)?.toFixed(1)}</div>
-                    <div>{compareGames[1].genre}</div>
-                    <div>{compareGames[1].year}</div>
-                    <div>{compareGames[1].playtime}</div>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         )}
@@ -1612,65 +1391,72 @@ export default function NexPlay() {
 
       {/* MODALS */}
       {showCreatePlaylist && (
-        <div className="fade-in" style={styles.modalOverlay} onClick={() => setShowCreatePlaylist(false)}>
-          <div className="slide-in" style={styles.modalContent} onClick={e => e.stopPropagation()}>
-            <div style={styles.modalTitle}>{text.createPlaylist}</div>
-            <input style={styles.input} placeholder={text.playlistName} value={newPlaylistName} onChange={e => setNewPlaylistName(e.target.value)} />
-            <button className="btn-click" style={styles.modalBtn} onClick={createPlaylist}>{text.createPlaylist}</button>
+        <div style={styles.modalOverlay} onClick={() => setShowCreatePlaylist(false)}>
+          <div style={styles.modalContent} onClick={e => e.stopPropagation()}>
+            <div style={styles.modalTitle}>Create Playlist</div>
+            <input style={styles.input} placeholder="Playlist name" value={newPlaylistName} onChange={e => setNewPlaylistName(e.target.value)} />
+            <button className="btn-click" style={styles.modalBtn} onClick={createPlaylist}>Create</button>
           </div>
         </div>
       )}
 
       {showSettings && (
-        <div className="fade-in" style={styles.modalOverlay} onClick={() => setShowSettings(false)}>
-          <div className="slide-in" style={styles.modalContent} onClick={e => e.stopPropagation()}>
-            <div style={styles.modalTitle}>{text.settings} ⚙️</div>
+        <div style={styles.modalOverlay} onClick={() => setShowSettings(false)}>
+          <div style={styles.modalContent} onClick={e => e.stopPropagation()}>
+            <div style={styles.modalTitle}>Settings</div>
             <div style={styles.settingsSection}>
-              <div style={styles.settingsRow}><span style={styles.settingsLabel}>{text.sound}:</span><button className="btn-click" style={styles.iconBtn} onClick={() => setSoundEnabled(!soundEnabled)}>{soundEnabled ? <FaVolumeUp /> : <FaVolumeMute />} {soundEnabled ? "ON" : "OFF"}</button></div>
-              <div style={styles.settingsRow}><span style={styles.settingsLabel}>{text.language}:</span><button className="btn-click" style={styles.iconBtn} onClick={() => setLang(lang === "en" ? "de" : "en")}><FaLanguage /> {lang === "en" ? "DE" : "EN"}</button></div>
-              <div style={styles.settingsRow}><span style={styles.settingsLabel}>{text.theme}:</span><div style={{ display: "flex", gap: 8 }}><button className="btn-click" style={{ ...styles.iconBtn, background: theme === "dark" ? currentColors.primary : "rgba(255,255,255,0.08)" }} onClick={() => setTheme("dark")}><FaMoon /> {text.dark}</button><button className="btn-click" style={{ ...styles.iconBtn, background: theme === "light" ? currentColors.primary : "rgba(255,255,255,0.08)" }} onClick={() => setTheme("light")}><FaSun /> {text.light}</button><button className="btn-click" style={{ ...styles.iconBtn, background: theme === "auto" ? currentColors.primary : "rgba(255,255,255,0.08)" }} onClick={() => setTheme("auto")}><FaAdjust /> {text.auto}</button></div></div>
+              <div style={styles.settingsRow}><span>Sound:</span><button className="btn-click" style={styles.iconBtn} onClick={() => setSoundEnabled(!soundEnabled)}>{soundEnabled ? "ON" : "OFF"}</button></div>
+              <div style={styles.settingsRow}><span>Language:</span><button className="btn-click" style={styles.iconBtn} onClick={() => setLang(lang === "en" ? "de" : "en")}>{lang === "en" ? "DE" : "EN"}</button></div>
+              <div style={styles.settingsRow}><span>Theme:</span>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <button className="btn-click" style={{ ...styles.iconBtn, background: theme === "dark" ? currentColors.primary : "rgba(255,255,255,0.08)" }} onClick={() => setTheme("dark")}>Dark</button>
+                  <button className="btn-click" style={{ ...styles.iconBtn, background: theme === "light" ? currentColors.primary : "rgba(255,255,255,0.08)" }} onClick={() => setTheme("light")}>Light</button>
+                </div>
+              </div>
             </div>
-            <button className="btn-click" style={styles.modalBtn} onClick={() => setShowSettings(false)}>{text.close}</button>
+            <button className="btn-click" style={styles.modalBtn} onClick={() => setShowSettings(false)}>Close</button>
           </div>
         </div>
       )}
 
       {showRandomModal && randomGame && (
-        <div className="fade-in" style={styles.modalOverlay} onClick={() => setShowRandomModal(false)}>
-          <div className="slide-in" style={styles.modalContent} onClick={e => e.stopPropagation()}>
-            <div style={styles.modalTitle}>🎲 {text.randomGame}</div>
+        <div style={styles.modalOverlay} onClick={() => setShowRandomModal(false)}>
+          <div style={styles.modalContent} onClick={e => e.stopPropagation()}>
+            <div style={styles.modalTitle}>Random Game</div>
             <img src={randomGame.finalImg || randomGame.img} style={{ width: "100%", borderRadius: 18, marginBottom: 20 }} alt={randomGame.name} />
-            <div style={{ fontSize: 18, fontWeight: 700, textAlign: "center", marginBottom: 8 }}>{randomGame.name}</div>
-            <div style={{ fontSize: 15, color: currentColors.primary, textAlign: "center", marginBottom: 14 }}>★ {(randomGame.finalRating || randomGame.rating)?.toFixed(1)} · {randomGame.playtime} · {randomGame.year}</div>
-            <div style={{ fontSize: 14, marginBottom: 24, color: currentColors.textSecondary, textAlign: "center", maxHeight: 150, overflow: "auto" }}>{randomGame.finalDescription || generateLongDescription(randomGame.name, "").slice(0, 300)}...</div>
-            <div style={{ display: "flex", gap: 14, justifyContent: "center" }}><button className="btn-click" style={{ ...styles.addBtn, width: "auto", marginTop: 0, padding: "10px 24px" }} onClick={() => { addToLibrary(randomGame); setShowRandomModal(false); }}>+ {text.add}</button><button className="btn-click" style={styles.modalBtnSecondary} onClick={doRandom}>{text.rollAgain}</button></div>
+            <div style={{ fontSize: 18, fontWeight: 700, textAlign: "center" }}>{randomGame.name}</div>
+            <div style={{ fontSize: 14, textAlign: "center", marginBottom: 20 }}>★ {(randomGame.finalRating || randomGame.rating)?.toFixed(1)} · {randomGame.playtime}</div>
+            <div style={{ display: "flex", gap: 14, justifyContent: "center" }}>
+              <button className="btn-click" style={styles.addBtn} onClick={() => { addToLibrary(randomGame); setShowRandomModal(false); }}>Add</button>
+              <button className="btn-click" style={styles.modalBtnSecondary} onClick={doRandom}>Roll Again</button>
+            </div>
           </div>
         </div>
       )}
 
       {showLoginModal && (
-        <div className="fade-in" style={styles.modalOverlay} onClick={() => setShowLoginModal(false)}>
-          <div className="slide-in" style={styles.modalContent} onClick={e => e.stopPropagation()}>
-            <div style={styles.modalTitle}>{isLogin ? text.login : text.register}</div>
+        <div style={styles.modalOverlay} onClick={() => setShowLoginModal(false)}>
+          <div style={styles.modalContent} onClick={e => e.stopPropagation()}>
+            <div style={styles.modalTitle}>{isLogin ? "Login" : "Register"}</div>
             {errorMsg && <div style={styles.errorText}>{errorMsg}</div>}
             <input style={styles.input} type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
-            <div style={styles.passwordWrapper}><input style={styles.input} type={showPassword ? "text" : "password"} placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} /><span className="btn-click" style={styles.passwordEye} onClick={() => setShowPassword(!showPassword)}>{showPassword ? <FaEyeSlash /> : <FaEye />}</span></div>
-            <button className="btn-click" style={styles.modalBtn} onClick={isLogin ? handleLogin : handleRegister}>{isLogin ? text.login : text.register}</button>
-            <div className="btn-click" style={styles.switchText} onClick={() => { setIsLogin(!isLogin); setErrorMsg(""); }}>{isLogin ? "No account? Register" : "Already have an account? Login"}</div>
+            <div style={styles.passwordWrapper}>
+              <input style={styles.input} type={showPassword ? "text" : "password"} placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
+              <span style={styles.passwordEye} onClick={() => setShowPassword(!showPassword)}>{showPassword ? <FaEyeSlash /> : <FaEye />}</span>
+            </div>
+            <button className="btn-click" style={styles.modalBtn} onClick={isLogin ? handleLogin : handleRegister}>{isLogin ? "Login" : "Register"}</button>
+            <div style={styles.switchText} onClick={() => { setIsLogin(!isLogin); setErrorMsg(""); }}>{isLogin ? "No account? Register" : "Already have an account? Login"}</div>
           </div>
         </div>
       )}
 
       {showEditModal && user && (
-        <div className="fade-in" style={styles.modalOverlay} onClick={() => setShowEditModal(false)}>
-          <div className="slide-in" style={styles.modalContent} onClick={e => e.stopPropagation()}>
-            <div style={styles.modalTitle}>{text.editProfile}</div>
-            {editError && <div style={styles.errorText}>{editError}</div>}
-            {editSuccess && <div style={styles.successText}>{editSuccess}</div>}
-            <input style={styles.input} placeholder={text.username} value={editUsername} onChange={e => setEditUsername(e.target.value)} />
-            <textarea style={styles.textarea} placeholder={text.bio} rows="2" value={editBio} onChange={e => setEditBio(e.target.value)} />
-            <label className="btn-click" style={styles.checkbox}><input type="checkbox" checked={editPrivate} onChange={e => setEditPrivate(e.target.checked)} /> {text.private}</label>
-            <button className="btn-click" style={styles.modalBtn} onClick={handleUpdateProfile}>{text.save}</button>
+        <div style={styles.modalOverlay} onClick={() => setShowEditModal(false)}>
+          <div style={styles.modalContent} onClick={e => e.stopPropagation()}>
+            <div style={styles.modalTitle}>Edit Profile</div>
+            <input style={styles.input} placeholder="Username" value={editUsername} onChange={e => setEditUsername(e.target.value)} />
+            <textarea style={styles.textarea} placeholder="Bio" rows="2" value={editBio} onChange={e => setEditBio(e.target.value)} />
+            <button className="btn-click" style={styles.modalBtn} onClick={handleUpdateProfile}>Save</button>
           </div>
         </div>
       )}
@@ -1678,7 +1464,6 @@ export default function NexPlay() {
       {loadingAction && (
         <div style={styles.loadingOverlay}>
           <div style={styles.loadingSpinner}></div>
-          <div style={{ marginTop: 16, color: currentColors.text }}>{text.loading}</div>
         </div>
       )}
     </div>
