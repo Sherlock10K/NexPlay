@@ -27,7 +27,6 @@ const MOODS = ["Emotional", "Action", "Dark", "Fantasy", "Horror", "Mystery", "C
 const GENRES = ["Action", "Adventure", "RPG", "Indie", "Horror", "Strategy", "Puzzle", "Open World", "Story Rich", "Fighting", "Sports", "Racing", "Simulation"];
 const PLAYTIMES = ["Under 10h", "10-20h", "20-40h", "40-60h", "60-100h", "100h+"];
 
-// ========== AOTY DATENBANK ==========
 const AOTY_DATA = {
   2026: { tga: { winner: "TBA 2026", img: "https://placehold.co/300x200/14141f/ffd400?text=TBA" } },
   2025: { tga: { winner: "Clair Obscur: Expedition 33", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2358720/header.jpg", steamId: 2358720 } },
@@ -56,48 +55,8 @@ const AOTY_DATA = {
 };
 
 const translations = {
-  en: { 
-    home: "Discover", library: "Library", profile: "Profile", friends: "Friends", ai: "AI Assistant", aoty: "AOTY", playlists: "Playlists", gameNight: "Game Night", activity: "Activity", wishlist: "Wishlist", backlog: "Backlog Cleaner", tags: "Tags", compare: "Compare", journal: "Journal", export: "Export", import: "Import", theme: "Theme", dark: "Dark", light: "Light", auto: "Auto", randomGame: "Random Game", yearFilter: "Year", allYears: "All Years",
-    login: "Login", register: "Register", logout: "Logout", search: "Search games...", searchAOTY: "Search by year or game name...",
-    mood: "What's your mood?", genre: "Pick your genres", playtime: "How long?", 
-    next: "Next", results: "Show Results", topPicks: "Top Picks", bestEver: "Best Ever", allResults: "All Results", hiddenGems: "Hidden Gems",
-    sort: "Sort", bestMatch: "Best Match", rating: "Rating", year: "Year", 
-    add: "Add to Library", inLibrary: "In Library", reviews: "Reviews", played: "Played", 
-    remove: "Remove", editProfile: "Edit Profile", username: "Username", bio: "Bio", 
-    private: "Private profile", save: "Save", achievements: "Achievements", 
-    firstGame: "First Game", collector: "Collector", completionist: "Completionist", 
-    recentlyPlayed: "Recently Played", favorites: "Favorites", total: "Total", 
-    playing: "Playing", completed: "Completed", rollAgain: "Roll Again", close: "Close", back: "Back", buyOn: "Buy on", 
-    writeReview: "Write Review", yourReview: "Your review...", submit: "Submit", 
-    noReviews: "No reviews yet", findFriends: "Find Friends", settings: "Settings", 
-    sound: "Sound Effects", language: "Language", steamId: "Steam ID", 
-    importGames: "Import Steam Games", findSteamId: "How to find your Steam ID",
-    donate: "Support the developer", topRated: "Top Rated Game", topGenre: "Top Genre",
-    totalPlaytime: "Total Playtime", aotyTitle: "All Of The Year", top20: "Top 20 by Genre",
-    findYourGame: "Find Your Game", allAwards: "All Awards",
-    backToAOTY: "Back to AOTY Overview", createPlaylist: "Create Playlist", playlistName: "Playlist Name", addToPlaylist: "Add to Playlist", gameNightMode: "Game Night Mode", spinWheel: "Spin the Wheel", excludeMultiplayer: "Exclude Multiplayer", activityFeed: "Activity Feed", addToWishlist: "Add to Wishlist", wishlistAlert: "Wishlist Alert", checkPrice: "Check Price", backlogTip: "You should play", addTag: "Add Tag", compareGames: "Compare Games", selectGame: "Select Game", journalNotes: "My Notes", exportLibrary: "Export Library", importLibrary: "Import Library", themeSelect: "Select Theme", loading: "Loading..."
-  },
-  de: { 
-    home: "Entdecken", library: "Bibliothek", profile: "Profil", friends: "Freunde", ai: "KI-Assistent", aoty: "AOTY", playlists: "Playlists", gameNight: "Spielabend", activity: "Aktivitäten", wishlist: "Wunschliste", backlog: "Backlog Reiniger", tags: "Tags", compare: "Vergleichen", journal: "Tagebuch", export: "Exportieren", import: "Importieren", theme: "Design", dark: "Dunkel", light: "Hell", auto: "Auto", randomGame: "Zufälliges Spiel", yearFilter: "Jahr", allYears: "Alle Jahre",
-    login: "Anmelden", register: "Registrieren", logout: "Abmelden", search: "Spiele suchen...", searchAOTY: "Suche nach Jahr oder Spielname...",
-    mood: "Wie ist deine Stimmung?", genre: "Wähle deine Genres", playtime: "Wie lange?", 
-    next: "Weiter", results: "Ergebnisse", topPicks: "Top Empfehlungen", bestEver: "Beste Aller Zeiten", allResults: "Alle Ergebnisse", hiddenGems: "Geheimtipps",
-    sort: "Sortieren", bestMatch: "Bester Treffer", rating: "Bewertung", year: "Jahr", 
-    add: "Zur Bibliothek", inLibrary: "In Bibliothek", reviews: "Bewertungen", played: "Gespielt", 
-    remove: "Entfernen", editProfile: "Profil bearbeiten", username: "Benutzername", bio: "Über mich", 
-    private: "Privates Profil", save: "Speichern", achievements: "Erfolge", 
-    firstGame: "Erstes Spiel", collector: "Sammler", completionist: "Vollender", 
-    recentlyPlayed: "Zuletzt gespielt", favorites: "Favoriten", total: "Gesamt", 
-    playing: "Spielt", completed: "Abgeschlossen", rollAgain: "Nochmal", close: "Schließen", back: "Zurück", buyOn: "Kaufen auf", 
-    writeReview: "Bewertung schreiben", yourReview: "Deine Bewertung...", submit: "Speichern", 
-    noReviews: "Keine Bewertungen", findFriends: "Freunde finden", settings: "Einstellungen", 
-    sound: "Soundeffekte", language: "Sprache", steamId: "Steam ID", 
-    importGames: "Steam Spiele importieren", findSteamId: "So findest du deine Steam ID",
-    donate: "Unterstütze den Entwickler", topRated: "Bestbewertetes Spiel", topGenre: "Top Genre",
-    totalPlaytime: "Spielzeit Gesamt", aotyTitle: "All Of The Year", top20: "Top 20 pro Genre",
-    findYourGame: "Finde dein Spiel", allAwards: "Alle Auszeichnungen",
-    backToAOTY: "Zurück zur AOTY Übersicht", createPlaylist: "Playlist erstellen", playlistName: "Playlist Name", addToPlaylist: "Zu Playlist hinzufügen", gameNightMode: "Spielabend Modus", spinWheel: "Rad drehen", excludeMultiplayer: "Multiplayer ausschließen", activityFeed: "Aktivitäten Feed", addToWishlist: "Zur Wunschliste", wishlistAlert: "Wunschlisten Alarm", checkPrice: "Preis prüfen", backlogTip: "Du solltest spielen", addTag: "Tag hinzufügen", compareGames: "Spiele vergleichen", selectGame: "Spiel auswählen", journalNotes: "Meine Notizen", exportLibrary: "Bibliothek exportieren", importLibrary: "Bibliothek importieren", themeSelect: "Design auswählen", loading: "Laden..."
-  }
+  en: { home: "Discover", library: "Library", profile: "Profile", friends: "Friends", ai: "AI Assistant", aoty: "AOTY", playlists: "Playlists", gameNight: "Game Night", activity: "Activity", wishlist: "Wishlist", backlog: "Backlog Cleaner", tags: "Tags", compare: "Compare", journal: "Journal", export: "Export", import: "Import", theme: "Theme", dark: "Dark", light: "Light", auto: "Auto", randomGame: "Random Game", yearFilter: "Year", allYears: "All Years", login: "Login", register: "Register", logout: "Logout", search: "Search games...", searchAOTY: "Search by year or game name...", mood: "What's your mood?", genre: "Pick your genres", playtime: "How long?", next: "Next", results: "Show Results", topPicks: "Top Picks", bestEver: "Best Ever", allResults: "All Results", hiddenGems: "Hidden Gems", sort: "Sort", bestMatch: "Best Match", rating: "Rating", year: "Year", add: "Add to Library", inLibrary: "In Library", reviews: "Reviews", played: "Played", remove: "Remove", editProfile: "Edit Profile", username: "Username", bio: "Bio", private: "Private profile", save: "Save", achievements: "Achievements", firstGame: "First Game", collector: "Collector", completionist: "Completionist", recentlyPlayed: "Recently Played", favorites: "Favorites", total: "Total", playing: "Playing", completed: "Completed", rollAgain: "Roll Again", close: "Close", back: "Back", buyOn: "Buy on", writeReview: "Write Review", yourReview: "Your review...", submit: "Submit", noReviews: "No reviews yet", findFriends: "Find Friends", settings: "Settings", sound: "Sound Effects", language: "Language", steamId: "Steam ID", importGames: "Import Steam Games", findSteamId: "How to find your Steam ID", donate: "Support the developer", topRated: "Top Rated Game", topGenre: "Top Genre", totalPlaytime: "Total Playtime", aotyTitle: "All Of The Year", top20: "Top 20 by Genre", findYourGame: "Find Your Game", allAwards: "All Awards", backToAOTY: "Back to AOTY Overview", createPlaylist: "Create Playlist", playlistName: "Playlist Name", addToPlaylist: "Add to Playlist", gameNightMode: "Game Night Mode", spinWheel: "Spin the Wheel", excludeMultiplayer: "Exclude Multiplayer", activityFeed: "Activity Feed", addToWishlist: "Add to Wishlist", checkPrice: "Check Price", backlogTip: "You should play", addTag: "Add Tag", compareGames: "Compare Games", selectGame: "Select Game", journalNotes: "My Notes", exportLibrary: "Export Library", importLibrary: "Import Library", themeSelect: "Select Theme", loading: "Loading..." },
+  de: { home: "Entdecken", library: "Bibliothek", profile: "Profil", friends: "Freunde", ai: "KI-Assistent", aoty: "AOTY", playlists: "Playlists", gameNight: "Spielabend", activity: "Aktivitäten", wishlist: "Wunschliste", backlog: "Backlog Reiniger", tags: "Tags", compare: "Vergleichen", journal: "Tagebuch", export: "Exportieren", import: "Importieren", theme: "Design", dark: "Dunkel", light: "Hell", auto: "Auto", randomGame: "Zufälliges Spiel", yearFilter: "Jahr", allYears: "Alle Jahre", login: "Anmelden", register: "Registrieren", logout: "Abmelden", search: "Spiele suchen...", searchAOTY: "Suche nach Jahr oder Spielname...", mood: "Wie ist deine Stimmung?", genre: "Wähle deine Genres", playtime: "Wie lange?", next: "Weiter", results: "Ergebnisse", topPicks: "Top Empfehlungen", bestEver: "Beste Aller Zeiten", allResults: "Alle Ergebnisse", hiddenGems: "Geheimtipps", sort: "Sortieren", bestMatch: "Bester Treffer", rating: "Bewertung", year: "Jahr", add: "Zur Bibliothek", inLibrary: "In Bibliothek", reviews: "Bewertungen", played: "Gespielt", remove: "Entfernen", editProfile: "Profil bearbeiten", username: "Benutzername", bio: "Über mich", private: "Privates Profil", save: "Speichern", achievements: "Erfolge", firstGame: "Erstes Spiel", collector: "Sammler", completionist: "Vollender", recentlyPlayed: "Zuletzt gespielt", favorites: "Favoriten", total: "Gesamt", playing: "Spielt", completed: "Abgeschlossen", rollAgain: "Nochmal", close: "Schließen", back: "Zurück", buyOn: "Kaufen auf", writeReview: "Bewertung schreiben", yourReview: "Deine Bewertung...", submit: "Speichern", noReviews: "Keine Bewertungen", findFriends: "Freunde finden", settings: "Einstellungen", sound: "Soundeffekte", language: "Sprache", steamId: "Steam ID", importGames: "Steam Spiele importieren", findSteamId: "So findest du deine Steam ID", donate: "Unterstütze den Entwickler", topRated: "Bestbewertetes Spiel", topGenre: "Top Genre", totalPlaytime: "Spielzeit Gesamt", aotyTitle: "All Of The Year", top20: "Top 20 pro Genre", findYourGame: "Finde dein Spiel", allAwards: "Alle Auszeichnungen", backToAOTY: "Zurück zur AOTY Übersicht", createPlaylist: "Playlist erstellen", playlistName: "Playlist Name", addToPlaylist: "Zu Playlist hinzufügen", gameNightMode: "Spielabend Modus", spinWheel: "Rad drehen", excludeMultiplayer: "Multiplayer ausschließen", activityFeed: "Aktivitäten Feed", addToWishlist: "Zur Wunschliste", checkPrice: "Preis prüfen", backlogTip: "Du solltest spielen", addTag: "Tag hinzufügen", compareGames: "Spiele vergleichen", selectGame: "Spiel auswählen", journalNotes: "Meine Notizen", exportLibrary: "Bibliothek exportieren", importLibrary: "Bibliothek importieren", themeSelect: "Design auswählen", loading: "Laden..." }
 };
 
 const RAWG_API_KEY = '4da2c00cf3b2459d988e0ed0ac16988d';
@@ -246,7 +205,6 @@ export default function NexPlay() {
   const [reviewsGame, setReviewsGame] = useState(null);
   const [audioInitialized, setAudioInitialized] = useState(false);
   
-  // Neue States
   const [playlists, setPlaylists] = useState([]);
   const [showCreatePlaylist, setShowCreatePlaylist] = useState(false);
   const [newPlaylistName, setNewPlaylistName] = useState("");
@@ -265,7 +223,6 @@ export default function NexPlay() {
 
   const text = translations[lang];
 
-  // Theme anwenden
   useEffect(() => {
     localStorage.setItem("nexplay_theme", theme);
     document.body.style.backgroundColor = theme === "dark" ? "#0a0a0f" : theme === "light" ? "#f5f5f5" : window.matchMedia("(prefers-color-scheme: dark)").matches ? "#0a0a0f" : "#f5f5f5";
@@ -274,7 +231,6 @@ export default function NexPlay() {
   useEffect(() => localStorage.setItem("nexplay_lang", lang), [lang]);
   useEffect(() => localStorage.setItem("nexplay_sound", soundEnabled), [soundEnabled]);
 
-  // Load saved data
   useEffect(() => {
     const savedPlaylists = localStorage.getItem("nexplay_playlists");
     if (savedPlaylists) setPlaylists(JSON.parse(savedPlaylists));
@@ -340,7 +296,6 @@ export default function NexPlay() {
     }, 500);
   };
 
-  // Activity Feed
   useEffect(() => {
     if (library.length > 0 && user) {
       const newActivity = {
@@ -353,7 +308,6 @@ export default function NexPlay() {
     }
   }, [library.length, user, userData]);
 
-  // Add activity when adding to library
   const addActivity = (type, gameName) => {
     const newActivity = {
       id: Date.now(),
@@ -541,7 +495,6 @@ export default function NexPlay() {
 
   useEffect(() => { searchAOTY(); }, [aotySearch]);
 
-  // TOP 20 BY GENRE - GEFIXT
   const top20ByGenre = useMemo(() => {
     const filtered = gamesWithData.filter(g => g.genre === selectedGenreForTop);
     let games = [...filtered].sort((a, b) => b.finalRating - a.finalRating);
@@ -549,7 +502,6 @@ export default function NexPlay() {
     return games.slice(0, 20);
   }, [gamesWithData, selectedGenreForTop]);
 
-  // RANDOM GAME mit Jahresfilter
   const doRandom = () => {
     setLoadingAction(true);
     setTimeout(() => {
@@ -594,7 +546,6 @@ export default function NexPlay() {
     }
   };
 
-  // FIREBASE AUTH - Login fix
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setUser(firebaseUser);
@@ -609,46 +560,24 @@ export default function NexPlay() {
           if (profile?.wishlist) setWishlist(profile.wishlist);
           if (profile?.activityFeed) setActivityFeed(profile.activityFeed);
         } catch (err) { console.error(err); }
-      } else { 
-        setUser(null); setUserData(null); setLibrary([]); setFavorites([]); 
-      }
+      } else { setUser(null); setUserData(null); setLibrary([]); setFavorites([]); }
       setLoading(false);
     });
     return () => unsubscribe();
   }, []);
 
-  useEffect(() => { 
-    if (user && library.length) saveLibraryToFirestore(user.uid, library); 
-  }, [library, user]);
-  
-  useEffect(() => { 
-    if (user && favorites) saveProfileToFirestore(user.uid, { favorites }); 
-  }, [favorites, user]);
-  
-  useEffect(() => { 
-    if (user && platformLinks) saveProfileToFirestore(user.uid, { platformLinks }); 
-  }, [platformLinks, user]);
-  
-  useEffect(() => { 
-    if (user && wishlist) saveProfileToFirestore(user.uid, { wishlist }); 
-  }, [wishlist, user]);
-  
-  useEffect(() => { 
-    if (user && activityFeed) saveProfileToFirestore(user.uid, { activityFeed }); 
-  }, [activityFeed, user]);
+  useEffect(() => { if (user && library.length) saveLibraryToFirestore(user.uid, library); }, [library, user]);
+  useEffect(() => { if (user && favorites) saveProfileToFirestore(user.uid, { favorites }); }, [favorites, user]);
+  useEffect(() => { if (user && platformLinks) saveProfileToFirestore(user.uid, { platformLinks }); }, [platformLinks, user]);
+  useEffect(() => { if (user && wishlist) saveProfileToFirestore(user.uid, { wishlist }); }, [wishlist, user]);
+  useEffect(() => { if (user && activityFeed) saveProfileToFirestore(user.uid, { activityFeed }); }, [activityFeed, user]);
 
   const handleLogin = async () => {
     if (!email || !password) { setErrorMsg("Email and password required"); return; }
     setLoadingAction(true);
     const result = await loginWithEmail(email, password);
-    if (result) { 
-      setShowLoginModal(false); 
-      setEmail(""); 
-      setPassword(""); 
-      playSound("login");
-    } else {
-      setErrorMsg("Login failed");
-    }
+    if (result) { setShowLoginModal(false); setEmail(""); setPassword(""); playSound("login"); }
+    else { setErrorMsg("Login failed"); }
     setLoadingAction(false);
   };
 
@@ -658,14 +587,8 @@ export default function NexPlay() {
     setLoadingAction(true);
     const username = email.split("@")[0].replace(/[^a-zA-Z0-9]/g, "");
     const result = await registerWithEmail(email, password, username);
-    if (result.user) { 
-      setShowLoginModal(false); 
-      setEmail(""); 
-      setPassword(""); 
-      playSound("login");
-    } else {
-      setErrorMsg(result.error || "Registration failed");
-    }
+    if (result.user) { setShowLoginModal(false); setEmail(""); setPassword(""); playSound("login"); }
+    else { setErrorMsg(result.error || "Registration failed"); }
     setLoadingAction(false);
   };
 
@@ -1140,10 +1063,7 @@ export default function NexPlay() {
     );
   }
 
-  // Mobile Menu Toggle
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen(!mobileMenuOpen);
-  };
+  const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
 
   const mainTabsContent = (
     <div className="main-tabs" style={{ ...styles.mainTabs, display: mobileMenuOpen ? "flex" : "flex", flexWrap: "wrap" }}>
@@ -1183,7 +1103,6 @@ export default function NexPlay() {
         </div>
         <div style={{ display: window.innerWidth <= 768 && mobileMenuOpen ? "block" : "none" }}>{mainTabsContent}</div>
 
-        {/* ========== HOME TAB ========== */}
         {currentTab === "home" && (
           <div className="fade-in">
             <div style={styles.tabNav}>
@@ -1312,7 +1231,6 @@ export default function NexPlay() {
           </div>
         )}
 
-        {/* ========== AOTY TAB ========== */}
         {currentTab === "aoty" && (
           <div className="fade-in">
             {selectedAotyYear ? (
@@ -1375,7 +1293,6 @@ export default function NexPlay() {
           </div>
         )}
 
-        {/* ========== PLAYLISTS TAB ========== */}
         {currentTab === "playlists" && (
           <div className="fade-in">
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
@@ -1396,7 +1313,6 @@ export default function NexPlay() {
           </div>
         )}
 
-        {/* ========== GAME NIGHT MODE TAB ========== */}
         {currentTab === "gameNight" && (
           <div className="fade-in">
             <div style={styles.gameNightCard}>
@@ -1424,7 +1340,6 @@ export default function NexPlay() {
           </div>
         )}
 
-        {/* ========== ACTIVITY FEED TAB ========== */}
         {currentTab === "activity" && (
           <div className="fade-in">
             <div style={styles.sectionTitle}><FaBell /> {text.activityFeed}</div>
@@ -1437,7 +1352,6 @@ export default function NexPlay() {
           </div>
         )}
 
-        {/* ========== WISHLIST TAB ========== */}
         {currentTab === "wishlist" && (
           <div className="fade-in">
             <div style={styles.sectionTitle}><FaStar /> {text.wishlist}</div>
@@ -1445,7 +1359,6 @@ export default function NexPlay() {
           </div>
         )}
 
-        {/* ========== BACKLOG CLEANER TAB ========== */}
         {currentTab === "backlog" && (
           <div className="fade-in">
             <div style={styles.sectionTitle}><FaChartLine /> {text.backlog}</div>
@@ -1460,7 +1373,6 @@ export default function NexPlay() {
           </div>
         )}
 
-        {/* ========== COMPARE TAB ========== */}
         {currentTab === "compare" && (
           <div className="fade-in">
             <div style={styles.sectionTitle}><FaBalanceScale /> {text.compareGames}</div>
@@ -1505,7 +1417,6 @@ export default function NexPlay() {
           </div>
         )}
 
-        {/* ========== LIBRARY TAB ========== */}
         {currentTab === "library" && (
           <div className="fade-in">
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
@@ -1541,7 +1452,6 @@ export default function NexPlay() {
           </div>
         )}
 
-        {/* ========== PROFILE TAB (mit Wishlist & Activity integriert) ========== */}
         {currentTab === "profile" && (
           <div className="fade-in">
             {user ? (
@@ -1599,7 +1509,6 @@ export default function NexPlay() {
                   <><div style={styles.sectionTitle}><FaClock /> {text.recentlyPlayed}</div><div style={styles.lastPlayedRow}>{userData.lastPlayed.slice(0,6).map((g,i) => <div key={i} className="hover-lift" style={styles.lastPlayedCard} onClick={() => { const game = [...gamesWithData, ...MANUAL_HIDDEN_GEMS].find(a => a.id === g.gameId); if (game) openGameDetail(game); }}><img src={g.gameImg} style={styles.lastPlayedImg} alt={g.gameName} /><div style={styles.lastPlayedName}>{g.gameName}</div></div>)}</div></>
                 )}
 
-                {/* Wishlist Section im Profil */}
                 {wishlist.length > 0 && (
                   <>
                     <div style={styles.sectionTitle}><FaStar /> {text.wishlist}</div>
@@ -1608,7 +1517,6 @@ export default function NexPlay() {
                   </>
                 )}
 
-                {/* Activity Feed Section im Profil */}
                 {activityFeed.length > 0 && (
                   <>
                     <div style={styles.sectionTitle}><FaBell /> {text.activityFeed}</div>
@@ -1626,7 +1534,6 @@ export default function NexPlay() {
           </div>
         )}
 
-        {/* ========== FRIENDS TAB ========== */}
         {currentTab === "friends" && (
           <div className="fade-in">
             <div style={styles.sectionTitle}><FaUsers /> {text.findFriends}</div>
@@ -1646,7 +1553,6 @@ export default function NexPlay() {
           </div>
         )}
 
-        {/* ========== AI TAB ========== */}
         {currentTab === "ai" && (
           <div className="fade-in">
             <div style={styles.aiSection}>
@@ -1667,7 +1573,6 @@ export default function NexPlay() {
         )}
       </div>
 
-      {/* Create Playlist Modal */}
       {showCreatePlaylist && (
         <div className="fade-in" style={styles.modalOverlay} onClick={() => setShowCreatePlaylist(false)}>
           <div className="slide-in" style={styles.modalContent} onClick={e => e.stopPropagation()}>
@@ -1751,7 +1656,6 @@ export default function NexPlay() {
         </div>
       )}
 
-      {/* Loading Overlay */}
       {loadingAction && (
         <div style={styles.loadingOverlay}>
           <div style={styles.loadingSpinner}></div>
