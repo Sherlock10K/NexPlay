@@ -38,12 +38,12 @@ const FIXED_GAMES = [
 ];
 
 const AOTY_GAMES = {
-  2025: { name: "Clair Obscur: Expedition 33", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2358720/header.jpg", genre: "RPG", developer: "Kepler Interactive", description: "Ein episches RPG in einer düsteren Fantasy-Welt. Entdecke eine atemberaubende offene Welt und erlebe eine emotionale Geschichte." },
-  2024: { name: "Astro Bot", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2357570/header.jpg", genre: "Platformer", developer: "Team Asobi", description: "Ein charmantes 3D-Platformer-Abenteuer. Begleite Astro auf einer Reise durch bunte Welten." },
-  2023: { name: "Baldur's Gate 3", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1086940/header.jpg", genre: "RPG", developer: "Larian Studios", description: "Das ultimative D&D-Rollenspielerlebnis. Ein Meisterwerk, das alle Erwartungen übertrifft." },
-  2022: { name: "Elden Ring", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg", genre: "Open World", developer: "FromSoftware", description: "Ein Meisterwerk des Open-World-Action-RPGs. Ein Spiel, das eine ganze Generation geprägt hat." },
-  2021: { name: "It Takes Two", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1426210/header.jpg", genre: "Adventure", developer: "Hazelight Studios", description: "Ein einzigartiges Koop-Abenteuer über eine zerstrittene Familie. Ein emotionales Meisterwerk." },
-  2020: { name: "The Last of Us Part II", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1888930/header.jpg", genre: "Action", developer: "Naughty Dog", description: "Ein emotionales Meisterwerk über Rache und Vergebung. Eine Geschichte, die unter die Haut geht." }
+  2025: { name: "Clair Obscur: Expedition 33", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2358720/header.jpg", genre: "RPG", developer: "Kepler Interactive", description: "Ein episches RPG in einer düsteren Fantasy-Welt." },
+  2024: { name: "Astro Bot", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2357570/header.jpg", genre: "Platformer", developer: "Team Asobi", description: "Ein charmantes 3D-Platformer-Abenteuer." },
+  2023: { name: "Baldur's Gate 3", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1086940/header.jpg", genre: "RPG", developer: "Larian Studios", description: "Das ultimative D&D-Rollenspielerlebnis." },
+  2022: { name: "Elden Ring", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg", genre: "Open World", developer: "FromSoftware", description: "Ein Meisterwerk des Open-World-Action-RPGs." },
+  2021: { name: "It Takes Two", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1426210/header.jpg", genre: "Adventure", developer: "Hazelight Studios", description: "Ein einzigartiges Koop-Abenteuer." },
+  2020: { name: "The Last of Us Part II", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1888930/header.jpg", genre: "Action", developer: "Naughty Dog", description: "Ein emotionales Meisterwerk über Rache und Vergebung." }
 };
 
 export default function NexPlay() {
@@ -57,7 +57,6 @@ export default function NexPlay() {
   
   // ========== UI STATE ==========
   const [theme, setTheme] = useState(() => localStorage.getItem("nexplay_theme") || "dark");
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentTab, setCurrentTab] = useState("home");
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
@@ -77,7 +76,6 @@ export default function NexPlay() {
   const [favorites, setFavorites] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [activityFeed, setActivityFeed] = useState([]);
-  const [playlists, setPlaylists] = useState([]);
   const [selectedGameDetail, setSelectedGameDetail] = useState(null);
   const [gameDetailReviews, setGameDetailReviews] = useState([]);
   const [reviewRating, setReviewRating] = useState(0);
@@ -95,7 +93,7 @@ export default function NexPlay() {
   
   // ========== AI CHAT STATE ==========
   const [aiMessages, setAiMessages] = useState([
-    { role: "assistant", content: "Hi! Ich bin dein Gaming-Assistent. Frag mich nach Spielempfehlungen, Tipps oder was du sonst wissen möchtest! 🎮" }
+    { role: "assistant", content: "🎮 Hallo! Ich bin dein persönlicher Gaming-Assistent! Ich kann dir: \n• Spiele empfehlen basierend auf deinem Geschmack\n• Fragen zu Spielen beantworten\n• Tipps und Tricks geben\n• Den besten Gaming-News auf dem Laufenden halten\n\nWas möchtest du heute wissen?" }
   ]);
   const [aiInput, setAiInput] = useState("");
   const [isAiLoading, setIsAiLoading] = useState(false);
@@ -137,7 +135,7 @@ export default function NexPlay() {
     audio.play().catch(() => {});
   };
 
-  // ========== AI CHAT FUNCTION ==========
+  // ========== AI CHAT FUNCTION (VERBESSERT) ==========
   const sendAiMessage = async () => {
     if (!aiInput.trim()) return;
     
@@ -146,7 +144,30 @@ export default function NexPlay() {
     setAiInput("");
     setIsAiLoading(true);
     
+    // Simuliere KI-Antworten für bessere UX (Fallback falls API nicht geht)
+    const getLocalResponse = (message) => {
+      const msg = message.toLowerCase();
+      if (msg.includes("empfehl") || msg.includes("vorschlag") || msg.includes("was soll ich spielen")) {
+        const randomGame = FIXED_GAMES[Math.floor(Math.random() * FIXED_GAMES.length)];
+        return `🎮 Basierend auf deiner Anfrage empfehle ich dir: **${randomGame.name}**!\n\n📊 Bewertung: ${randomGame.rating}/10\n🎭 Genre: ${randomGame.genre}\n⏱️ Spielzeit: ${randomGame.playtime}\n\n${randomGame.description.substring(0, 150)}...\n\nMöchtest du mehr über dieses Spiel wissen?`;
+      }
+      if (msg.includes("witcher") || msg.includes("the witcher")) {
+        return "🐺 **The Witcher 3: Wild Hunt** ist ein Meisterwerk! Hier sind einige Tipps:\n• Nimm dir Zeit für die Nebenquests - viele sind besser als die Hauptstory\n• Lerne Gwent - das Kartenspiel ist fantastisch\n• Experimentiere mit verschiedenen Builds\n• Die DLCs (Hearts of Stone & Blood and Wine) sind ein Muss!";
+      }
+      if (msg.includes("elden ring")) {
+        return "🗡️ **Elden Ring** Tipps für Anfänger:\n• Level deine Lebenspunkte zuerst\n• Erkunde Limgrave gründlich vor dem ersten Hauptboss\n• Nutze Geisterbeschwörungen - sie helfen enorm\n• Waffe auf +3 oder höher vor Margit\n• Scheue nicht davor zurück, zu leveln und später zurückzukommen!";
+      }
+      if (msg.includes("rpg")) {
+        return "🎲 **Top RPG-Empfehlungen** auf NexPlay:\n1. Baldur's Gate 3 - 9.6/10\n2. The Witcher 3 - 9.5/10  \n3. Disco Elysium - 9.4/10\n4. Cyberpunk 2077 - 8.5/10\n\nWelches RPG interessiert dich besonders?";
+      }
+      if (msg.includes("action")) {
+        return "⚔️ **Top Action-Spiele** auf NexPlay:\n1. God of War - 9.4/10\n2. Hades - 9.3/10\n3. Hollow Knight - 9.3/10\n\nDiese Spiele bieten intensive Kämpfe und tolle Geschichten!";
+      }
+      return `Danke für deine Frage zu "${message.substring(0, 50)}"! 🎮\n\nIch kann dir helfen mit:\n• Spielempfehlungen (z.B. "Empfehle mir ein RPG")\n• Spiel-Tipps (z.B. "Tipps für Elden Ring")\n• Genre-Fragen (z.B. "Beste Action-Spiele")\n\nWas möchtest du genau wissen?`;
+    };
+    
     try {
+      // Versuche DeepSeek API
       const response = await fetch("https://api.deepseek.com/v1/chat/completions", {
         method: "POST",
         headers: {
@@ -156,21 +177,27 @@ export default function NexPlay() {
         body: JSON.stringify({
           model: "deepseek-chat",
           messages: [
-            { role: "system", content: "Du bist ein Gaming-Assistent. Du hilfst bei Spielempfehlungen, beantwortest Fragen zu Spielen und gibst Tipps. Sei freundlich und enthusiastisch. Antworte auf Deutsch." },
+            { role: "system", content: "Du bist ein begeisterter Gaming-Assistent für NexPlay. Du gibst detaillierte, hilfreiche Antworten zu Spielen, Empfehlungen und Gaming-Tipps. Antworte immer auf Deutsch, sei freundlich und nutze Emojis. Gib konkrete Empfehlungen aus diesen Spielen: The Witcher 3, Elden Ring, Baldur's Gate 3, Red Dead Redemption 2, God of War, Hades, Hollow Knight, Stardew Valley, Portal 2, Disco Elysium." },
             ...aiMessages.slice(-5).map(m => ({ role: m.role, content: m.content })),
             { role: "user", content: userMessage }
           ],
-          temperature: 0.7,
-          max_tokens: 500
+          temperature: 0.8,
+          max_tokens: 600
         })
       });
       
-      const data = await response.json();
-      const assistantReply = data.choices?.[0]?.message?.content || "Entschuldigung, ich konnte keine Antwort generieren. Bitte versuche es später erneut.";
-      setAiMessages(prev => [...prev, { role: "assistant", content: assistantReply }]);
+      if (response.ok) {
+        const data = await response.json();
+        const assistantReply = data.choices?.[0]?.message?.content || getLocalResponse(userMessage);
+        setAiMessages(prev => [...prev, { role: "assistant", content: assistantReply }]);
+      } else {
+        // Fallback zu lokalen Antworten
+        setAiMessages(prev => [...prev, { role: "assistant", content: getLocalResponse(userMessage) }]);
+      }
     } catch (error) {
       console.error("AI Error:", error);
-      setAiMessages(prev => [...prev, { role: "assistant", content: "Entschuldigung, es gab einen Fehler bei der Verbindung zur KI. Bitte versuche es später erneut." }]);
+      // Fallback zu lokalen Antworten bei Netzwerkfehlern
+      setAiMessages(prev => [...prev, { role: "assistant", content: getLocalResponse(userMessage) }]);
     } finally {
       setIsAiLoading(false);
     }
@@ -210,7 +237,7 @@ export default function NexPlay() {
   const addToLibrary = (game) => {
     if (library.find(g => g.id === game.id)) return;
     setLibrary([...library, { ...game, status: "wishlist", dateAdded: new Date().toISOString() }]);
-    setActivityFeed(prev => [{ id: Date.now(), type: "add", message: `${userData?.username} hat ${game.name} hinzugefügt`, timestamp: new Date().toISOString() }, ...prev].slice(0, 20));
+    setActivityFeed(prev => [{ id: Date.now(), type: "add", message: `${userData?.username || "User"} hat ${game.name} hinzugefügt`, timestamp: new Date().toISOString() }, ...prev].slice(0, 20));
     playSound();
   };
 
@@ -222,7 +249,7 @@ export default function NexPlay() {
   const updateStatus = (id, status, game) => {
     setLibrary(library.map(g => g.id === id ? { ...g, status } : g));
     if (status === "completed") {
-      setActivityFeed(prev => [{ id: Date.now(), type: "completed", message: `${userData?.username} hat ${game.name} abgeschlossen`, timestamp: new Date().toISOString() }, ...prev].slice(0, 20));
+      setActivityFeed(prev => [{ id: Date.now(), type: "completed", message: `${userData?.username || "User"} hat ${game.name} abgeschlossen`, timestamp: new Date().toISOString() }, ...prev].slice(0, 20));
     }
     playSound();
   };
@@ -257,8 +284,24 @@ export default function NexPlay() {
 
   const submitReview = async () => {
     if (reviewRating === 0) return;
-    await addGameReview(user.uid, selectedGameDetail.id, selectedGameDetail.name, reviewRating, reviewComment);
-    setGameDetailReviews(await getGameReviews(selectedGameDetail.id));
+    if (user) {
+      await addGameReview(user.uid, selectedGameDetail.id, selectedGameDetail.name, reviewRating, reviewComment);
+      setGameDetailReviews(await getGameReviews(selectedGameDetail.id));
+    } else {
+      // Demo-Review ohne Login
+      const newReview = {
+        id: Date.now(),
+        userId: "demo",
+        gameId: selectedGameDetail.id,
+        gameName: selectedGameDetail.name,
+        rating: reviewRating,
+        comment: reviewComment,
+        likes: [],
+        dislikes: [],
+        createdAt: new Date().toISOString()
+      };
+      setGameDetailReviews(prev => [newReview, ...prev]);
+    }
     setReviewRating(0);
     setReviewComment("");
     playSound();
@@ -294,7 +337,6 @@ export default function NexPlay() {
     { id: "completionist", name: "Vollender", desc: "5 Spiele abgeschlossen", icon: "✅", unlocked: library.filter(g => g.status === "completed").length >= 5 },
     { id: "favorites", name: "Herzensbrecher", desc: "5 Favoriten markiert", icon: "❤️", unlocked: favorites.length >= 5 },
     { id: "master", name: "Spielemeister", desc: "25 Spiele in der Bibliothek", icon: "👑", unlocked: library.length >= 25 },
-    { id: "critic", name: "Kritiker", desc: "10 Bewertungen geschrieben", icon: "✍️", unlocked: gameDetailReviews.length >= 10 },
     { id: "grinder", name: "Grinder", desc: "3 Spiele mit 100+ Stunden", icon: "🕰️", unlocked: library.filter(g => g.playtime === "100h+").length >= 3 }
   ];
 
@@ -350,7 +392,6 @@ export default function NexPlay() {
         if (profile?.wishlist) setWishlist(profile.wishlist);
         if (profile?.activityFeed) setActivityFeed(profile.activityFeed);
         if (profile?.profilePic) setProfilePic(profile.profilePic);
-        if (profile?.playlists) setPlaylists(profile.playlists);
         if (profile?.customTags) setCustomTags(profile.customTags);
         if (profile?.gameJournal) setGameJournal(profile.gameJournal);
       }
@@ -371,9 +412,6 @@ export default function NexPlay() {
   useEffect(() => {
     if (user && activityFeed) saveProfileToFirestore(user.uid, { activityFeed });
   }, [activityFeed, user]);
-  useEffect(() => {
-    if (user && playlists) saveProfileToFirestore(user.uid, { playlists });
-  }, [playlists, user]);
   useEffect(() => {
     if (user && customTags) saveProfileToFirestore(user.uid, { customTags });
   }, [customTags, user]);
@@ -427,7 +465,7 @@ export default function NexPlay() {
     navTab: (active) => ({ background: active ? currentColors.primary : "rgba(255,255,255,0.08)", border: "none", borderRadius: 12, padding: "10px 20px", color: active ? currentColors.bg : currentColors.text, cursor: "pointer", fontWeight: 600, fontSize: 14, display: "flex", alignItems: "center", gap: 8 }),
     avatar: { width: 40, height: 40, borderRadius: "50%", background: currentColors.primary, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 18, objectFit: "cover" },
     grid: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 24 },
-    gameCard: { background: currentColors.bgCard, borderRadius: 20, overflow: "hidden", cursor: "pointer", border: "1px solid rgba(255,255,255,0.08)", transition: "all 0.3s ease", position: "relative" },
+    gameCard: { background: currentColors.bgCard, borderRadius: 20, overflow: "hidden", cursor: "pointer", border: "1px solid rgba(255,255,255,0.08)", transition: "all 0.3s ease", position: "relative", "&:hover": { transform: "translateY(-4px)", boxShadow: "0 8px 24px rgba(0,0,0,0.2)" } },
     gameImg: { width: "100%", aspectRatio: "3/4", objectFit: "cover" },
     gameInfo: { padding: "14px" },
     gameName: { fontSize: 14, fontWeight: 700, marginBottom: 4, wordWrap: "break-word" },
@@ -452,9 +490,9 @@ export default function NexPlay() {
     cameraIcon: { position: "absolute", bottom: 0, right: 0, background: currentColors.bg, borderRadius: "50%", padding: "8px", cursor: "pointer", boxShadow: "0 2px 8px rgba(0,0,0,0.3)" },
     achievementGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 12, marginTop: 16 },
     achievementCard: { background: "rgba(0,0,0,0.3)", borderRadius: 12, padding: 12, display: "flex", alignItems: "center", gap: 12 },
-    aiChatContainer: { height: 500, display: "flex", flexDirection: "column", background: currentColors.bgCard, borderRadius: 24, overflow: "hidden" },
+    aiChatContainer: { height: 550, display: "flex", flexDirection: "column", background: currentColors.bgCard, borderRadius: 24, overflow: "hidden" },
     aiMessages: { flex: 1, overflowY: "auto", padding: 20, display: "flex", flexDirection: "column", gap: 12 },
-    aiMessage: (isUser) => ({ background: isUser ? currentColors.primary : "rgba(255,255,255,0.08)", color: isUser ? currentColors.bg : currentColors.text, padding: "12px 16px", borderRadius: 18, borderBottomRightRadius: isUser ? 4 : 18, borderBottomLeftRadius: isUser ? 18 : 4, maxWidth: "80%", alignSelf: isUser ? "flex-end" : "flex-start" }),
+    aiMessage: (isUser) => ({ background: isUser ? currentColors.primary : "rgba(255,255,255,0.08)", color: isUser ? currentColors.bg : currentColors.text, padding: "12px 16px", borderRadius: 18, borderBottomRightRadius: isUser ? 4 : 18, borderBottomLeftRadius: isUser ? 18 : 4, maxWidth: "80%", alignSelf: isUser ? "flex-end" : "flex-start", whiteSpace: "pre-wrap" }),
     aiInputRow: { display: "flex", gap: 12, padding: 16, background: "rgba(0,0,0,0.3)", borderTop: `1px solid rgba(255,255,255,0.08)` },
     wheel: { width: 200, height: 200, borderRadius: "50%", background: `conic-gradient(${currentColors.primary} 0deg 72deg, #4caf50 72deg 144deg, #f44336 144deg 216deg, #1b2838 216deg 288deg, #ffd400 288deg 360deg)`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "transform 0.1s", boxShadow: "0 10px 30px rgba(0,0,0,0.3)" },
     wheelInner: { width: 60, height: 60, borderRadius: "50%", background: currentColors.bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24 }
@@ -473,10 +511,10 @@ export default function NexPlay() {
   // ========== GAME DETAIL VIEW ==========
   if (currentTab === "gameDetail" && selectedGameDetail) {
     const tags = customTags[selectedGameDetail.id] || [];
+    const isOnLibrary = library.some(g => g.id === selectedGameDetail.id);
     const isOnWishlist = wishlist.some(g => g.id === selectedGameDetail.id);
     const fullDesc = selectedGameDetail.description;
     const isExpanded = expandedDescriptions[selectedGameDetail.id];
-    const shortDesc = fullDesc.length > 200 ? fullDesc.substring(0, 200) + "..." : fullDesc;
     
     return (
       <div style={styles.app}>
@@ -505,7 +543,7 @@ export default function NexPlay() {
               <div style={{ fontSize: 15, color: currentColors.textSecondary, marginBottom: 8 }}>{selectedGameDetail.developer}</div>
               <div style={{ fontSize: 18, color: currentColors.primary, marginBottom: 16 }}>★ {selectedGameDetail.rating} · {selectedGameDetail.year} · {selectedGameDetail.playtime}</div>
               <div style={{ fontSize: 15, color: currentColors.textSecondary, lineHeight: 1.6, marginBottom: 20 }}>
-                {isExpanded ? fullDesc : shortDesc}
+                {isExpanded ? fullDesc : (fullDesc.length > 200 ? fullDesc.substring(0, 200) + "..." : fullDesc)}
                 {fullDesc.length > 200 && (
                   <button style={{ background: "none", border: "none", color: currentColors.primary, cursor: "pointer", marginTop: 8, display: "flex", alignItems: "center", gap: 4 }} onClick={() => setExpandedDescriptions(prev => ({ ...prev, [selectedGameDetail.id]: !prev[selectedGameDetail.id] }))}>
                     {isExpanded ? <><FaChevronUp /> Weniger anzeigen</> : <><FaChevronDown /> Mehr anzeigen</>}
@@ -513,7 +551,8 @@ export default function NexPlay() {
                 )}
               </div>
               <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 20 }}>
-                <button style={{ ...styles.addBtn, width: "auto", padding: "10px 20px" }} onClick={() => addToLibrary(selectedGameDetail)}>+ Zur Bibliothek</button>
+                {!isOnLibrary && <button style={{ ...styles.addBtn, width: "auto", padding: "10px 20px" }} onClick={() => addToLibrary(selectedGameDetail)}>+ Zur Bibliothek</button>}
+                {isOnLibrary && <button style={{ ...styles.addBtn, width: "auto", padding: "10px 20px", background: colors.success }} onClick={() => alert("Bereits in der Bibliothek")}>✅ Bereits in Bibliothek</button>}
                 <button style={{ ...styles.addBtn, width: "auto", padding: "10px 20px", background: isOnWishlist ? colors.success : currentColors.primary }} onClick={() => addToWishlist(selectedGameDetail)}>⭐ Wunschliste</button>
               </div>
               <div style={{ marginBottom: 20 }}>
@@ -568,7 +607,7 @@ export default function NexPlay() {
               <button style={styles.navTab(currentTab === "home")} onClick={() => setCurrentTab("home")}><FaHome /> Entdecken</button>
               <button style={styles.navTab(currentTab === "library")} onClick={() => setCurrentTab("library")}><BsFillCollectionFill /> Bibliothek</button>
               <button style={styles.navTab(currentTab === "profile")} onClick={() => setCurrentTab("profile")}><FaUser /> Profil</button>
-              <button style={styles.navTab(currentTab === "ai")} onClick={() => setCurrentTab("ai")}><FaRobot /> KI</button>
+              <button style={styles.navTab(currentTab === "ai")} onClick={() => setCurrentTab("ai")}><FaRobot /> KI-Assistent</button>
               <button style={styles.navTab(currentTab === "aoty")} onClick={() => setCurrentTab("aoty")}><FaTrophy /> AOTY</button>
               <button style={styles.navTab(currentTab === "random")} onClick={() => setCurrentTab("random")}><FaRandom /> Zufall</button>
               {!user && <button style={styles.navTab(false)} onClick={() => setShowLoginModal(true)}>Login</button>}
@@ -613,7 +652,7 @@ export default function NexPlay() {
         {currentTab === "library" && (
           <div>
             <div style={styles.sectionTitle}>📚 Meine Bibliothek ({library.length})</div>
-            <div style={styles.statsRow} className="stats-row">
+            <div style={{ display: "flex", gap: 16, marginBottom: 28, flexWrap: "wrap" }}>
               <div style={styles.statCard}><div style={styles.statNumber}>{library.length}</div><div>Gesamt</div></div>
               <div style={styles.statCard}><div style={styles.statNumber}>{library.filter(g => g.status === "playing").length}</div><div>Spiele ich</div></div>
               <div style={styles.statCard}><div style={styles.statNumber}>{library.filter(g => g.status === "completed").length}</div><div>Abgeschlossen</div></div>
@@ -663,7 +702,7 @@ export default function NexPlay() {
                   </div>
                 </div>
 
-                {/* ACHIEVEMENTS SICHTBAR */}
+                {/* ACHIEVEMENTS */}
                 <div style={styles.sectionTitle}><GiAchievement /> Erfolge</div>
                 <div style={styles.achievementGrid}>
                   {achievements.map(ach => (
@@ -711,7 +750,7 @@ export default function NexPlay() {
           </div>
         )}
 
-        {/* AI TAB - MIT CHAT UI */}
+        {/* AI TAB - VERBESSERTER CHAT */}
         {currentTab === "ai" && (
           <div>
             <div style={styles.sectionTitle}><FaRobot /> KI-Assistent mit DeepSeek</div>
@@ -719,8 +758,8 @@ export default function NexPlay() {
               <div style={styles.aiMessages}>
                 {aiMessages.map((msg, idx) => (
                   <div key={idx} style={styles.aiMessage(msg.role === "user")}>
-                    <div style={{ fontWeight: 600, marginBottom: 4, fontSize: 12, opacity: 0.7 }}>{msg.role === "user" ? "Du" : "NexPlay AI"}</div>
-                    <div style={{ fontSize: 14, lineHeight: 1.5 }}>{msg.content}</div>
+                    <div style={{ fontWeight: 600, marginBottom: 4, fontSize: 12, opacity: 0.7 }}>{msg.role === "user" ? "Du" : "🎮 NexPlay AI"}</div>
+                    <div style={{ fontSize: 14, lineHeight: 1.5, whiteSpace: "pre-wrap" }}>{msg.content}</div>
                   </div>
                 ))}
                 {isAiLoading && (
@@ -735,8 +774,8 @@ export default function NexPlay() {
                 <div ref={aiChatEndRef} />
               </div>
               <div style={styles.aiInputRow}>
-                <input style={{ flex: 1, background: "rgba(255,255,255,0.05)", border: "none", borderRadius: 24, padding: "12px 18px", color: currentColors.text, fontSize: 14, outline: "none" }} placeholder="Frag mich nach Spielen..." value={aiInput} onChange={e => setAiInput(e.target.value)} onKeyPress={e => e.key === "Enter" && sendAiMessage()} />
-                <button style={styles.addBtn} onClick={sendAiMessage} disabled={isAiLoading}>Senden</button>
+                <input style={{ flex: 1, background: "rgba(255,255,255,0.05)", border: "none", borderRadius: 24, padding: "12px 18px", color: currentColors.text, fontSize: 14, outline: "none" }} placeholder="Frag mich nach Spielen, Tipps oder Empfehlungen..." value={aiInput} onChange={e => setAiInput(e.target.value)} onKeyPress={e => e.key === "Enter" && sendAiMessage()} />
+                <button style={styles.addBtn} onClick={sendAiMessage} disabled={isAiLoading}>{isAiLoading ? "..." : "Senden"}</button>
               </div>
             </div>
           </div>
@@ -764,7 +803,7 @@ export default function NexPlay() {
         {/* RANDOM TAB */}
         {currentTab === "random" && (
           <div>
-            <div style={styles.randomFilterSection}>
+            <div style={{ background: currentColors.bgCard, borderRadius: 24, padding: 24, marginBottom: 28 }}>
               <div style={styles.sectionTitle}><FaRandom /> Zufälliges Spiel</div>
               <div style={styles.filterRow}>
                 <select style={styles.select} value={randomGenre} onChange={e => setRandomGenre(e.target.value)}>
@@ -775,9 +814,9 @@ export default function NexPlay() {
               </div>
             </div>
             
-            <div style={styles.gameNightCard}>
+            <div style={{ background: currentColors.bgCard, borderRadius: 28, padding: 32, textAlign: "center" }}>
               <div style={styles.sectionTitle}><GiSpinningWheel /> Game Night Mode</div>
-              <div style={styles.wheelContainer}>
+              <div style={{ margin: "28px 0", display: "flex", justifyContent: "center" }}>
                 <div className={spinning ? "spinning-wheel" : ""} style={styles.wheel} onClick={spinWheel}>
                   <div style={styles.wheelInner}><GiSpinningWheel size={28} /></div>
                 </div>
