@@ -223,6 +223,12 @@ export default function NexPlay() {
 
   const text = translations[lang];
 
+  // Hilfsfunktionen
+  const closeReviews = () => {
+    setShowReviews(false);
+    setReviewsGame(null);
+  };
+
   useEffect(() => {
     localStorage.setItem("nexplay_theme", theme);
     document.body.style.backgroundColor = theme === "dark" ? "#0a0a0f" : theme === "light" ? "#f5f5f5" : window.matchMedia("(prefers-color-scheme: dark)").matches ? "#0a0a0f" : "#f5f5f5";
@@ -970,7 +976,7 @@ export default function NexPlay() {
 
   if (loading || gamesLoading) {
     return (
-      <div style={{ background: currentColors.bg, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ background: currentColors.bg, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
         <div style={styles.loadingSpinner}></div>
         <div style={{ marginTop: 20, color: currentColors.text }}>{text.loading}</div>
       </div>
