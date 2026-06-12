@@ -80,109 +80,62 @@ const translateGenre = (genreName) => {
 
 let steamGamesCache = {};
 
-// ========== NEUES RATING-SYSTEM MIT ALTERS-ABZUG ==========
+// ========== KORRIGIERTES RATING-SYSTEM (KEINE 5.0 MEHR!) ==========
 const calculateWeightedRating = (game, steamData) => {
   const name = game.name?.toLowerCase() || "";
   const currentYear = new Date().getFullYear();
   const gameYear = game.year || 2020;
   const age = currentYear - gameYear;
   
-  // 1. BASIS RATING von RAWG/Metacritic (0-10)
-  let baseRating = game.rawgRating || 7.0;
+  // 1. BASIS RATING (RAWG/Metacritic) - normalerweise zwischen 7-9
+  let baseRating = game.rawgRating || 7.5;
   
   // 2. STEAM USER RATING (wenn vorhanden)
   let steamRating = 0;
   if (steamData?.steamRating) {
     steamRating = steamData.steamRating;
+  } else {
+    steamRating = baseRating * 0.9;
   }
   
-  // 3. POPULARITÄT (basierend auf Review-Anzahl)
-  let popularityBonus = 0;
-  const reviewCount = steamData?.reviewCount || game.popularity || 0;
-  if (reviewCount > 500000) popularityBonus = 0.8;      // Mega-Hit
-  else if (reviewCount > 200000) popularityBonus = 0.5;  // Sehr beliebt
-  else if (reviewCount > 100000) popularityBonus = 0.3;  // Beliebt
-  else if (reviewCount > 50000) popularityBonus = 0.1;   // Nischenhit
-  else if (reviewCount < 5000 && reviewCount > 0) popularityBonus = -0.5; // Unbekannt
-  else popularityBonus = 0;
-  
-  // 4. ALTERS-ABZUG (ältere Spiele werden schlechter bewertet)
+  // 3. ALTERS-ABZUG (sanft, nicht zu hart)
   let agePenalty = 0;
-  if (age >= 25) agePenalty = -1.8;      // 1999 und älter
-  else if (age >= 20) agePenalty = -1.4;  // 2000-2005
-  else if (age >= 15) agePenalty = -1.0;  // 2006-2010
-  else if (age >= 10) agePenalty = -0.6;  // 2011-2015
-  else if (age >= 5) agePenalty = -0.2;   // 2016-2020
-  else if (age <= 1) agePenalty = 0.3;    // Neues Spiel (2024-2025)
+  if (age >= 25) agePenalty = -0.8;
+  else if (age >= 20) agePenalty = -0.6;
+  else if (age >= 15) agePenalty = -0.4;
+  else if (age >= 10) agePenalty = -0.2;
+  else if (age >= 5) agePenalty = -0.1;
+  else if (age <= 1) agePenalty = 0.2;
   else agePenalty = 0;
   
-  // 5. TECHNIK-BONUS (neuere Spiele haben bessere Grafik/Technik)
-  let techBonus = 0;
-  if (age <= 2) techBonus = 0.5;       // 2023-2025
-  else if (age <= 5) techBonus = 0.2;  // 2020-2022
-  else if (age >= 15) techBonus = -0.6; // Sehr alte Technik
-  else if (age >= 20) techBonus = -0.9;
+  // 4. POPULARITÄTS-BONUS
+  let popularityBonus = 0;
+  const reviewCount = steamData?.reviewCount || game.popularity || 0;
+  if (reviewCount > 500000) popularityBonus = 0.5;
+  else if (reviewCount > 200000) popularityBonus = 0.3;
+  else if (reviewCount > 100000) popularityBonus = 0.2;
+  else if (reviewCount > 50000) popularityBonus = 0.1;
+  else if (reviewCount < 1000 && reviewCount > 0) popularityBonus = -0.2;
   
-  // 6. GENRE-BONUS (bestimmte Genres sind beliebter)
-  let genreBonus = 0;
-  const popularGenres = ["Action", "RPG", "Open World", "Story Rich"];
-  const unpopularGenres = ["Puzzle", "Simulation", "Strategy"];
-  if (popularGenres.includes(game.genre)) genreBonus = 0.2;
-  if (unpopularGenres.includes(game.genre)) genreBonus = -0.1;
-  
-  // 7. FINALE BERECHNUNG
-  let finalRating = (baseRating * 0.4) + (steamRating * 0.3) + popularityBonus + agePenalty + techBonus + genreBonus;
+  // 5. FINALE BERECHNUNG
+  let finalRating = (baseRating * 0.5) + (steamRating * 0.3) + popularityBonus + agePenalty;
   
   // ========== SPEZIALFÄLLE ==========
-  // Tekken 3 (1997) - fairer Wert
-  if (name === "tekken 3" || name.includes("tekken 3")) {
-    finalRating = 7.4;
-  }
-  // Tekken allgemein (alt)
-  if ((name.includes("tekken") || name.includes("Tekken")) && age > 15) {
-    finalRating = Math.min(finalRating, 7.6);
-  }
-  // Street Fighter II (1991)
-  if (name.includes("street fighter ii") || name.includes("street fighter 2")) {
-    finalRating = 7.5;
-  }
-  // Super Mario 64 (1996)
-  if (name === "super mario 64" || name.includes("super mario 64")) {
-    finalRating = 7.8;
-  }
-  // GoldenEye 007 (1997)
-  if (name.includes("goldeneye")) {
-    finalRating = 7.3;
-  }
-  // Half-Life (1998)
-  if (name === "half-life" && !name.includes("2")) {
-    finalRating = 8.0;
-  }
-  // Ocarina of Time (1998) - zeitloser Klassiker, aber technisch alt
-  if (name.includes("ocarina of time")) {
-    finalRating = 8.2;
-  }
-  // PS1/PS2 Ära Spiele max 8.2
-  if (age >= 20) {
-    finalRating = Math.min(finalRating, 8.2);
-  }
-  // PS3/Xbox360 Ära max 8.6
-  if (age >= 12 && age < 20) {
-    finalRating = Math.min(finalRating, 8.6);
-  }
-  // Moderne Spiele (2020+) können höher sein
-  if (age <= 3) {
-    finalRating = Math.min(finalRating, 9.7);
-  }
+  if (name === "tekken 3" || name.includes("tekken 3")) finalRating = 7.6;
+  if (name.includes("tekken 7")) finalRating = 8.4;
+  if (name.includes("elden ring")) finalRating = 9.5;
+  if (name.includes("baldur's gate 3")) finalRating = 9.6;
+  if (name.includes("witcher 3")) finalRating = 9.4;
+  if (name.includes("red dead redemption 2")) finalRating = 9.4;
+  if (name.includes("god of war") && !name.includes("ragnarok")) finalRating = 9.2;
+  if (name.includes("the last of us")) finalRating = 9.3;
+  if (name.includes("cyberpunk")) finalRating = 8.2;
+  if (name.includes("starfield")) finalRating = 7.8;
+  if (name.includes("hogwarts legacy")) finalRating = 8.0;
   
-  // Untergrenze für sehr alte Spiele
-  if (age >= 25 && finalRating > 7.5) {
-    finalRating = Math.min(finalRating, 7.5);
-  }
-  
-  // Begrenzungen
+  // Begrenzungen - REALISTISCH!
   finalRating = Math.min(finalRating, 9.7);
-  finalRating = Math.max(finalRating, 5.0);
+  finalRating = Math.max(finalRating, 6.5); // Minimum 6.5, NICHT 5.0!
   finalRating = Math.round(finalRating * 10) / 10;
   
   return finalRating;
@@ -569,15 +522,12 @@ export default function NexPlay() {
 
   useEffect(() => { searchAOTY(); }, [aotySearch]);
 
-  // FIXED: Top 20 by Genre - zeigt nur Spiele des ausgewählten Genres
   const top20ByGenre = useMemo(() => {
-    // Exakte Genre-Filterung
     let filtered = gamesWithData.filter(g => {
       if (!g.genre) return false;
       return g.genre.toLowerCase() === selectedGenreForTop.toLowerCase();
     });
     
-    // Nach Rating sortieren (höchstes zuerst)
     const sorted = [...filtered].sort((a, b) => {
       if (b.finalRating !== a.finalRating) return b.finalRating - a.finalRating;
       return b.year - a.year;
