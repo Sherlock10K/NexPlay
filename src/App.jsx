@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { FaHome, FaUser, FaFire, FaSearch, FaHeart, FaStar, FaTrash, FaSignOutAlt, FaPlus, FaCheck, FaEnvelope, FaEye, FaEyeSlash, FaEdit, FaUsers, FaClock, FaRandom, FaThumbsUp, FaThumbsDown, FaArrowLeft, FaCog, FaVolumeUp, FaVolumeMute, FaLanguage, FaSteam, FaPlaystation, FaGamepad, FaTrophy, FaGem, FaShoppingCart, FaRobot, FaFilter, FaLink, FaExternalLinkAlt, FaDonate, FaAward, FaList, FaMedal, FaGamepad as FaGamepadIcon, FaDiceD6, FaGlobe, FaStarHalfAlt, FaTv, FaMicrophone, FaVideo, FaDesktop, FaPlusCircle, FaTrashAlt, FaUsers as FaUsersIcon, FaBell, FaCalendarAlt, FaChartLine, FaBook, FaTags, FaBalanceScale, FaFileExport, FaFileImport, FaMoon, FaSun, FaAdjust, FaBars, FaTimes, FaChevronDown, FaChevronUp, FaSoccerBallO, FaFutbol } from "react-icons/fa";
+import { FaHome, FaUser, FaFire, FaSearch, FaHeart, FaStar, FaTrash, FaSignOutAlt, FaPlus, FaCheck, FaEnvelope, FaEye, FaEyeSlash, FaEdit, FaUsers, FaClock, FaRandom, FaThumbsUp, FaThumbsDown, FaArrowLeft, FaCog, FaVolumeUp, FaVolumeMute, FaLanguage, FaSteam, FaPlaystation, FaGamepad, FaTrophy, FaGem, FaShoppingCart, FaRobot, FaFilter, FaLink, FaExternalLinkAlt, FaDonate, FaAward, FaList, FaMedal, FaGamepad as FaGamepadIcon, FaDiceD6, FaGlobe, FaStarHalfAlt, FaTv, FaMicrophone, FaVideo, FaDesktop, FaPlusCircle, FaTrashAlt, FaUsers as FaUsersIcon, FaBell, FaCalendarAlt, FaChartLine, FaBook, FaTags, FaBalanceScale, FaFileExport, FaFileImport, FaMoon, FaSun, FaAdjust, FaBars, FaTimes, FaChevronDown, FaChevronUp, FaFutbol } from "react-icons/fa";
 import { GiConsoleController, GiAchievement, GiSwordman, GiPuzzle, GiMusicalNotes, GiBrain, GiShield, GiMagicSwirl, GiTrophy, GiLaurels, GiSpinningWheel, GiNotebook, GiTwoCoins } from "react-icons/gi";
 import { BsFillCollectionFill, BsFillHeartFill, BsFillStarFill, BsFillAwardFill, BsFillPlayFill } from "react-icons/bs";
 import { auth, loginWithEmail, registerWithEmail, logout, loadLibraryFromFirestore, saveLibraryToFirestore, loadProfileFromFirestore, saveProfileToFirestore, updateUsername, updateBio, togglePrivacy, searchUsers, resetPassword, addGameReview, getGameReviews, updateLastPlayed, likeReview, dislikeReview } from "./firebase";
@@ -27,7 +27,7 @@ const MOODS = ["Emotional", "Action", "Dark", "Fantasy", "Horror", "Mystery", "C
 const GENRES = ["Action", "Adventure", "RPG", "Indie", "Horror", "Strategy", "Puzzle", "Open World", "Story Rich", "Fighting", "Sports", "Racing", "Simulation"];
 const PLAYTIMES = ["Under 10h", "10-20h", "20-40h", "40-60h", "60-100h", "100h+"];
 
-// ========== VOLLSTÄNDIGE AOTY DATEN (mit Nominierungen) ==========
+// ========== VOLLSTÄNDIGE AOTY DATEN (mit Nominierungen und verschiedenen Award-Typen) ==========
 const AOTY_DATA = {
   2024: {
     tga: { 
@@ -54,17 +54,17 @@ const AOTY_DATA = {
       img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1086940/header.jpg",
       steamId: 1086940
     },
-    ballonDor: {
-      winner: "Elden Ring",
-      nominees: ["Baldur's Gate 3", "Elden Ring", "The Legend of Zelda: Tears of the Kingdom", "Alan Wake 2"],
+    gameDevelopersChoice: {
+      winner: "Baldur's Gate 3",
+      nominees: ["Alan Wake 2", "Baldur's Gate 3", "Cocoon", "Marvel's Spider-Man 2", "The Legend of Zelda: Tears of the Kingdom"],
+      img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1086940/header.jpg",
+      steamId: 1086940
+    },
+    japanGameAwards: {
+      winner: "The Legend of Zelda: Tears of the Kingdom",
+      nominees: ["Armored Core VI", "Baldur's Gate 3", "Final Fantasy XVI", "Street Fighter 6", "The Legend of Zelda: Tears of the Kingdom"],
       img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg",
       steamId: 1245620
-    },
-    saudi: {
-      winner: "EA Sports FC 24",
-      nominees: ["EA Sports FC 24", "F1 23", "eFootball 2024", "UFC 5"],
-      img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2195250/header.jpg",
-      steamId: 2195250
     }
   },
   2023: {
@@ -92,17 +92,17 @@ const AOTY_DATA = {
       img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1086940/header.jpg",
       steamId: 1086940
     },
-    ballonDor: {
+    gameDevelopersChoice: {
       winner: "Baldur's Gate 3",
-      nominees: ["Baldur's Gate 3", "Alan Wake 2", "The Legend of Zelda: Tears of the Kingdom", "Resident Evil 4"],
+      nominees: ["Alan Wake 2", "Baldur's Gate 3", "Cocoon", "Marvel's Spider-Man 2", "The Legend of Zelda: Tears of the Kingdom"],
       img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1086940/header.jpg",
       steamId: 1086940
     },
-    saudi: {
-      winner: "EA Sports FC 24",
-      nominees: ["EA Sports FC 24", "F1 23", "eFootball 2024", "UFC 5"],
-      img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2195250/header.jpg",
-      steamId: 2195250
+    japanGameAwards: {
+      winner: "The Legend of Zelda: Tears of the Kingdom",
+      nominees: ["Armored Core VI", "Baldur's Gate 3", "Final Fantasy XVI", "Street Fighter 6", "The Legend of Zelda: Tears of the Kingdom"],
+      img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg",
+      steamId: 1245620
     }
   },
   2022: {
@@ -130,17 +130,11 @@ const AOTY_DATA = {
       img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg",
       steamId: 1245620
     },
-    ballonDor: {
-      winner: "God of War Ragnarök",
-      nominees: ["Elden Ring", "God of War Ragnarök", "Horizon Forbidden West", "Stray"],
-      img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1593500/header.jpg",
-      steamId: 1593500
-    },
-    saudi: {
-      winner: "FIFA 23",
-      nominees: ["FIFA 23", "F1 22", "eFootball 2023", "UFC 4"],
-      img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1811260/header.jpg",
-      steamId: 1811260
+    gameDevelopersChoice: {
+      winner: "Elden Ring",
+      nominees: ["Elden Ring", "God of War Ragnarök", "Horizon Forbidden West", "Stray", "Vampire Survivors"],
+      img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg",
+      steamId: 1245620
     }
   },
   2021: {
@@ -161,12 +155,6 @@ const AOTY_DATA = {
       nominees: ["Deathloop", "Forza Horizon 5", "It Takes Two", "Metroid Dread", "Resident Evil Village"],
       img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1196590/header.jpg",
       steamId: 1196590
-    },
-    ballonDor: {
-      winner: "It Takes Two",
-      nominees: ["It Takes Two", "Deathloop", "Resident Evil Village", "Forza Horizon 5"],
-      img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1426210/header.jpg",
-      steamId: 1426210
     }
   },
   2020: {
@@ -181,12 +169,6 @@ const AOTY_DATA = {
       nominees: ["Animal Crossing: New Horizons", "Cyberpunk 2077", "Fall Guys", "Final Fantasy VII Remake", "Hades", "The Last of Us Part II"],
       img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1888930/header.jpg",
       steamId: 1888930
-    },
-    ballonDor: {
-      winner: "Hades",
-      nominees: ["Hades", "The Last of Us Part II", "Ghost of Tsushima", "Final Fantasy VII Remake"],
-      img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1145360/header.jpg",
-      steamId: 1145360
     }
   }
 };
@@ -206,12 +188,15 @@ const MANUAL_HIDDEN_GEMS = [
   { id: 9012, name: "Dead Cells", rating: 9.0, genre: "Action", playtime: "40-60h", year: 2018, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/588650/header.jpg", developer: "Motion Twin", mood: "Action", platforms: ["PC", "Switch", "PS4", "Xbox One", "Mobile"], steamId: 588650 },
   { id: 9013, name: "Into the Breach", rating: 8.9, genre: "Strategy", playtime: "20-40h", year: 2018, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/590380/header.jpg", developer: "Subset Games", mood: "Strategy", platforms: ["PC", "Switch", "Mobile"], steamId: 590380 },
   { id: 9014, name: "What Remains of Edith Finch", rating: 9.0, genre: "Adventure", playtime: "Under 10h", year: 2017, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/501300/header.jpg", developer: "Giant Sparrow", mood: "Emotional", platforms: ["PC", "PS4", "Xbox One", "Switch"], steamId: 501300 },
-  { id: 9015, name: "Firewatch", rating: 8.8, genre: "Adventure", playtime: "Under 10h", year: 2016, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/383870/header.jpg", developer: "Campo Santo", mood: "Mystery", platforms: ["PC", "PS4", "Xbox One", "Switch"], steamId: 383870 }
+  { id: 9015, name: "Firewatch", rating: 8.8, genre: "Adventure", playtime: "Under 10h", year: 2016, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/383870/header.jpg", developer: "Campo Santo", mood: "Mystery", platforms: ["PC", "PS4", "Xbox One", "Switch"], steamId: 383870 },
+  { id: 9016, name: "Cuphead", rating: 8.9, genre: "Action", playtime: "10-20h", year: 2017, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/268910/header.jpg", developer: "Studio MDHR", mood: "Challenging", platforms: ["PC", "Switch", "PS4", "Xbox One"], steamId: 268910 },
+  { id: 9017, name: "Ori and the Blind Forest", rating: 9.0, genre: "Platformer", playtime: "10-20h", year: 2015, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/261570/header.jpg", developer: "Moon Studios", mood: "Emotional", platforms: ["PC", "Switch", "Xbox One"], steamId: 261570 },
+  { id: 9018, name: "The Witness", rating: 8.7, genre: "Puzzle", playtime: "20-40h", year: 2016, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/210970/header.jpg", developer: "Thekla Inc", mood: "Puzzle", platforms: ["PC", "PS4", "Xbox One", "iOS"], steamId: 210970 }
 ];
 
 const translations = {
-  en: { home: "Discover", library: "Library", profile: "Profile", friends: "Friends", ai: "AI Assistant", aoty: "AOTY", playlists: "Playlists", gameNight: "Game Night", activity: "Activity", wishlist: "Wishlist", backlog: "Backlog Cleaner", tags: "Tags", compare: "Compare", journal: "Journal", export: "Export", import: "Import", theme: "Theme", dark: "Dark", light: "Light", auto: "Auto", randomGame: "Random Game", yearFilter: "Year", allYears: "All Years", login: "Login", register: "Register", logout: "Logout", search: "Search games...", searchAOTY: "Search by year or game name...", mood: "What's your mood?", genre: "Pick your genres", playtime: "How long?", next: "Next", results: "Show Results", topPicks: "Top Picks", bestEver: "Best Ever", allResults: "All Results", hiddenGems: "Hidden Gems", sort: "Sort", bestMatch: "Best Match", rating: "Rating", year: "Year", add: "Add to Library", inLibrary: "In Library", reviews: "Reviews", played: "Played", remove: "Remove", editProfile: "Edit Profile", username: "Username", bio: "Bio", private: "Private profile", save: "Save", achievements: "Achievements", firstGame: "First Game", collector: "Collector", completionist: "Completionist", recentlyPlayed: "Recently Played", favorites: "Favorites", total: "Total", playing: "Playing", completed: "Completed", rollAgain: "Roll Again", close: "Close", back: "Back", buyOn: "Buy on", writeReview: "Write Review", yourReview: "Your review...", submit: "Submit", noReviews: "No reviews yet", findFriends: "Find Friends", settings: "Settings", sound: "Sound Effects", language: "Language", steamId: "Steam ID", importGames: "Import Steam Games", findSteamId: "How to find your Steam ID", donate: "Support the developer", topRated: "Top Rated Game", topGenre: "Top Genre", totalPlaytime: "Total Playtime", aotyTitle: "Game of the Year", top10: "Top 10 by Genre", findYourGame: "Find Your Game", allAwards: "All Awards", backToAOTY: "Back to AOTY Overview", createPlaylist: "Create Playlist", playlistName: "Playlist Name", addToPlaylist: "Add to Playlist", gameNightMode: "Game Night Mode", spinWheel: "Spin the Wheel", excludeMultiplayer: "Exclude Multiplayer", activityFeed: "Activity Feed", addToWishlist: "Add to Wishlist", checkPrice: "Check Price", backlogTip: "You should play", addTag: "Add Tag", compareGames: "Compare Games", selectGame: "Select Game", journalNotes: "My Notes", exportLibrary: "Export Library", importLibrary: "Import Library", themeSelect: "Select Theme", loading: "Loading...", showMore: "Show more", showLess: "Show less", winner: "Winner", compareFeatures: "Compare Features", graphics: "Graphics", story: "Story", gameplay: "Gameplay", replayability: "Replayability", nominees: "Nominees", tga: "The Game Awards", bafta: "BAFTA Games", goldenJoystick: "Golden Joystick", dice: "D.I.C.E. Awards", ballonDor: "Ballon d'Or Gaming", saudi: "Saudi Esports Awards" },
-  de: { home: "Entdecken", library: "Bibliothek", profile: "Profil", friends: "Freunde", ai: "KI-Assistent", aoty: "AOTY", playlists: "Playlists", gameNight: "Spielabend", activity: "Aktivitäten", wishlist: "Wunschliste", backlog: "Backlog Reiniger", tags: "Tags", compare: "Vergleichen", journal: "Tagebuch", export: "Exportieren", import: "Importieren", theme: "Design", dark: "Dunkel", light: "Hell", auto: "Auto", randomGame: "Zufälliges Spiel", yearFilter: "Jahr", allYears: "Alle Jahre", login: "Anmelden", register: "Registrieren", logout: "Abmelden", search: "Spiele suchen...", searchAOTY: "Suche nach Jahr oder Spielname...", mood: "Wie ist deine Stimmung?", genre: "Wähle deine Genres", playtime: "Wie lange?", next: "Weiter", results: "Ergebnisse", topPicks: "Top Empfehlungen", bestEver: "Beste Aller Zeiten", allResults: "Alle Ergebnisse", hiddenGems: "Geheimtipps", sort: "Sortieren", bestMatch: "Bester Treffer", rating: "Bewertung", year: "Jahr", add: "Zur Bibliothek", inLibrary: "In Bibliothek", reviews: "Bewertungen", played: "Gespielt", remove: "Entfernen", editProfile: "Profil bearbeiten", username: "Benutzername", bio: "Über mich", private: "Privates Profil", save: "Speichern", achievements: "Erfolge", firstGame: "Erstes Spiel", collector: "Sammler", completionist: "Vollender", recentlyPlayed: "Zuletzt gespielt", favorites: "Favoriten", total: "Gesamt", playing: "Spielt", completed: "Abgeschlossen", rollAgain: "Nochmal", close: "Schließen", back: "Zurück", buyOn: "Kaufen auf", writeReview: "Bewertung schreiben", yourReview: "Deine Bewertung...", submit: "Speichern", noReviews: "Keine Bewertungen", findFriends: "Freunde finden", settings: "Einstellungen", sound: "Soundeffekte", language: "Sprache", steamId: "Steam ID", importGames: "Steam Spiele importieren", findSteamId: "So findest du deine Steam ID", donate: "Unterstütze den Entwickler", topRated: "Bestbewertetes Spiel", topGenre: "Top Genre", totalPlaytime: "Spielzeit Gesamt", aotyTitle: "Spiel des Jahres", top10: "Top 10 pro Genre", findYourGame: "Finde dein Spiel", allAwards: "Alle Auszeichnungen", backToAOTY: "Zurück zur AOTY Übersicht", createPlaylist: "Playlist erstellen", playlistName: "Playlist Name", addToPlaylist: "Zu Playlist hinzufügen", gameNightMode: "Spielabend Modus", spinWheel: "Rad drehen", excludeMultiplayer: "Multiplayer ausschließen", activityFeed: "Aktivitäten Feed", addToWishlist: "Zur Wunschliste", checkPrice: "Preis prüfen", backlogTip: "Du solltest spielen", addTag: "Tag hinzufügen", compareGames: "Spiele vergleichen", selectGame: "Spiel auswählen", journalNotes: "Meine Notizen", exportLibrary: "Bibliothek exportieren", importLibrary: "Bibliothek importieren", themeSelect: "Design auswählen", loading: "Laden...", showMore: "Mehr anzeigen", showLess: "Weniger anzeigen", winner: "Gewinner", compareFeatures: "Funktionen vergleichen", graphics: "Grafik", story: "Geschichte", gameplay: "Spielspaß", replayability: "Wiederspielwert", nominees: "Nominiert", tga: "The Game Awards", bafta: "BAFTA Games", goldenJoystick: "Golden Joystick", dice: "D.I.C.E. Awards", ballonDor: "Ballon d'Or Gaming", saudi: "Saudi Esports Awards" }
+  en: { home: "Discover", library: "Library", profile: "Profile", friends: "Friends", ai: "AI Assistant", aoty: "AOTY", playlists: "Playlists", gameNight: "Game Night", activity: "Activity", wishlist: "Wishlist", backlog: "Backlog Cleaner", tags: "Tags", compare: "Compare", journal: "Journal", export: "Export", import: "Import", theme: "Theme", dark: "Dark", light: "Light", auto: "Auto", randomGame: "Random Game", yearFilter: "Year", allYears: "All Years", login: "Login", register: "Register", logout: "Logout", search: "Search games...", searchAOTY: "Search by year, game or award...", mood: "What's your mood?", genre: "Pick your genres", playtime: "How long?", next: "Next", results: "Show Results", topPicks: "Top Picks", bestEver: "Best Ever", allResults: "All Results", hiddenGems: "Hidden Gems", sort: "Sort", bestMatch: "Best Match", rating: "Rating", year: "Year", add: "Add to Library", inLibrary: "In Library", reviews: "Reviews", played: "Played", remove: "Remove", editProfile: "Edit Profile", username: "Username", bio: "Bio", private: "Private profile", save: "Save", achievements: "Achievements", firstGame: "First Game", collector: "Collector", completionist: "Completionist", recentlyPlayed: "Recently Played", favorites: "Favorites", total: "Total", playing: "Playing", completed: "Completed", rollAgain: "Roll Again", close: "Close", back: "Back", buyOn: "Buy on", writeReview: "Write Review", yourReview: "Your review...", submit: "Submit", noReviews: "No reviews yet", findFriends: "Find Friends", settings: "Settings", sound: "Sound Effects", language: "Language", steamId: "Steam ID", importGames: "Import Steam Games", findSteamId: "How to find your Steam ID", donate: "Support the developer", topRated: "Top Rated Game", topGenre: "Top Genre", totalPlaytime: "Total Playtime", aotyTitle: "Game of the Year", top10: "Top 10 by Genre", findYourGame: "Find Your Game", allAwards: "All Awards", backToAOTY: "Back to AOTY Overview", createPlaylist: "Create Playlist", playlistName: "Playlist Name", addToPlaylist: "Add to Playlist", gameNightMode: "Game Night Mode", spinWheel: "Spin the Wheel", excludeMultiplayer: "Exclude Multiplayer", activityFeed: "Activity Feed", addToWishlist: "Add to Wishlist", checkPrice: "Check Price", backlogTip: "You should play", addTag: "Add Tag", compareGames: "Compare Games", selectGame: "Select Game", journalNotes: "My Notes", exportLibrary: "Export Library", importLibrary: "Import Library", themeSelect: "Select Theme", loading: "Loading...", showMore: "Show more", showLess: "Show less", winner: "Winner", compareFeatures: "Compare Features", graphics: "Graphics", story: "Story", gameplay: "Gameplay", replayability: "Replayability", nominees: "Nominees", tga: "The Game Awards", bafta: "BAFTA Games", goldenJoystick: "Golden Joystick", dice: "D.I.C.E. Awards", gameDevelopersChoice: "Game Developers Choice", japanGameAwards: "Japan Game Awards" },
+  de: { home: "Entdecken", library: "Bibliothek", profile: "Profil", friends: "Freunde", ai: "KI-Assistent", aoty: "AOTY", playlists: "Playlists", gameNight: "Spielabend", activity: "Aktivitäten", wishlist: "Wunschliste", backlog: "Backlog Reiniger", tags: "Tags", compare: "Vergleichen", journal: "Tagebuch", export: "Exportieren", import: "Importieren", theme: "Design", dark: "Dunkel", light: "Hell", auto: "Auto", randomGame: "Zufälliges Spiel", yearFilter: "Jahr", allYears: "Alle Jahre", login: "Anmelden", register: "Registrieren", logout: "Abmelden", search: "Spiele suchen...", searchAOTY: "Suche nach Jahr, Spiel oder Award...", mood: "Wie ist deine Stimmung?", genre: "Wähle deine Genres", playtime: "Wie lange?", next: "Weiter", results: "Ergebnisse", topPicks: "Top Empfehlungen", bestEver: "Beste Aller Zeiten", allResults: "Alle Ergebnisse", hiddenGems: "Geheimtipps", sort: "Sortieren", bestMatch: "Bester Treffer", rating: "Bewertung", year: "Jahr", add: "Zur Bibliothek", inLibrary: "In Bibliothek", reviews: "Bewertungen", played: "Gespielt", remove: "Entfernen", editProfile: "Profil bearbeiten", username: "Benutzername", bio: "Über mich", private: "Privates Profil", save: "Speichern", achievements: "Erfolge", firstGame: "Erstes Spiel", collector: "Sammler", completionist: "Vollender", recentlyPlayed: "Zuletzt gespielt", favorites: "Favoriten", total: "Gesamt", playing: "Spielt", completed: "Abgeschlossen", rollAgain: "Nochmal", close: "Schließen", back: "Zurück", buyOn: "Kaufen auf", writeReview: "Bewertung schreiben", yourReview: "Deine Bewertung...", submit: "Speichern", noReviews: "Keine Bewertungen", findFriends: "Freunde finden", settings: "Einstellungen", sound: "Soundeffekte", language: "Sprache", steamId: "Steam ID", importGames: "Steam Spiele importieren", findSteamId: "So findest du deine Steam ID", donate: "Unterstütze den Entwickler", topRated: "Bestbewertetes Spiel", topGenre: "Top Genre", totalPlaytime: "Spielzeit Gesamt", aotyTitle: "Spiel des Jahres", top10: "Top 10 pro Genre", findYourGame: "Finde dein Spiel", allAwards: "Alle Auszeichnungen", backToAOTY: "Zurück zur AOTY Übersicht", createPlaylist: "Playlist erstellen", playlistName: "Playlist Name", addToPlaylist: "Zu Playlist hinzufügen", gameNightMode: "Spielabend Modus", spinWheel: "Rad drehen", excludeMultiplayer: "Multiplayer ausschließen", activityFeed: "Aktivitäten Feed", addToWishlist: "Zur Wunschliste", checkPrice: "Preis prüfen", backlogTip: "Du solltest spielen", addTag: "Tag hinzufügen", compareGames: "Spiele vergleichen", selectGame: "Spiel auswählen", journalNotes: "Meine Notizen", exportLibrary: "Bibliothek exportieren", importLibrary: "Bibliothek importieren", themeSelect: "Design auswählen", loading: "Laden...", showMore: "Mehr anzeigen", showLess: "Weniger anzeigen", winner: "Gewinner", compareFeatures: "Funktionen vergleichen", graphics: "Grafik", story: "Geschichte", gameplay: "Spielspaß", replayability: "Wiederspielwert", nominees: "Nominiert", tga: "The Game Awards", bafta: "BAFTA Games", goldenJoystick: "Golden Joystick", dice: "D.I.C.E. Awards", gameDevelopersChoice: "Game Developers Choice", japanGameAwards: "Japan Game Awards" }
 };
 
 const RAWG_API_KEY = "4da2c00cf3b2459d988e0ed0ac16988d";
@@ -990,6 +975,8 @@ export default function NexPlay() {
       .main-tabs-desktop { display: none !important; }
       .compare-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
       .mobile-stack { flex-direction: column; align-items: stretch; }
+      .tab-nav { overflow-x: auto; white-space: nowrap; }
+      .tab-nav button { flex-shrink: 0; }
     }
     @media (min-width: 769px) {
       .hamburger-btn { display: none !important; }
@@ -1604,13 +1591,13 @@ export default function NexPlay() {
           </div>
         )}
 
-        {/* AOTY TAB - VOLLSTÄNDIG MIT NOMINIERUNGEN */}
+        {/* AOTY TAB - VOLLSTÄNDIG MIT ALLEN AWARDS UND NOMINEES */}
         {currentTab === "aoty" && (
           <div className="fade-in">
             {selectedAotyYear && selectedAotyCategory ? (
               <>
-                <button className="btn-click" style={styles.gotyBackBtn} onClick={() => { setSelectedAotyYear(null); setSelectedAotyCategory(null); setAotySearch(""); setAotyResult(null); }}>
-                  <FaArrowLeft size={12} /> {text.backToAOTY}
+                <button className="btn-click" style={styles.gotyBackBtn} onClick={() => { setSelectedAotyYear(selectedAotyYear); setSelectedAotyCategory(null); }}>
+                  <FaArrowLeft size={12} /> Back to {selectedAotyYear} Awards
                 </button>
                 <div style={styles.aotyResultCard}>
                   <div style={{ fontSize: 24, fontWeight: 800, marginBottom: 8, textAlign: "center", color: currentColors.primary }}>{selectedAotyYear}</div>
@@ -1620,16 +1607,16 @@ export default function NexPlay() {
                       {selectedAotyCategory === "bafta" && <FaAward style={{ color: currentColors.primary, fontSize: 24 }} />}
                       {selectedAotyCategory === "goldenJoystick" && <FaMedal style={{ color: currentColors.primary, fontSize: 24 }} />}
                       {selectedAotyCategory === "dice" && <FaDiceD6 style={{ color: currentColors.primary, fontSize: 24 }} />}
-                      {selectedAotyCategory === "ballonDor" && <FaFutbol style={{ color: currentColors.primary, fontSize: 24 }} />}
-                      {selectedAotyCategory === "saudi" && <FaGlobe style={{ color: currentColors.primary, fontSize: 24 }} />}
+                      {selectedAotyCategory === "gameDevelopersChoice" && <FaGem style={{ color: currentColors.primary, fontSize: 24 }} />}
+                      {selectedAotyCategory === "japanGameAwards" && <FaGlobe style={{ color: currentColors.primary, fontSize: 24 }} />}
                       <div>
                         <div style={{ fontSize: 12, color: currentColors.primary }}>
                           {selectedAotyCategory === "tga" && text.tga}
                           {selectedAotyCategory === "bafta" && text.bafta}
                           {selectedAotyCategory === "goldenJoystick" && text.goldenJoystick}
                           {selectedAotyCategory === "dice" && text.dice}
-                          {selectedAotyCategory === "ballonDor" && text.ballonDor}
-                          {selectedAotyCategory === "saudi" && text.saudi}
+                          {selectedAotyCategory === "gameDevelopersChoice" && text.gameDevelopersChoice}
+                          {selectedAotyCategory === "japanGameAwards" && text.japanGameAwards}
                         </div>
                         <div style={{ fontSize: 20, fontWeight: 700 }}>{AOTY_DATA[selectedAotyYear]?.[selectedAotyCategory]?.winner}</div>
                       </div>
@@ -1660,16 +1647,16 @@ export default function NexPlay() {
                           {category === "bafta" && <FaAward style={{ color: currentColors.primary, fontSize: 20 }} />}
                           {category === "goldenJoystick" && <FaMedal style={{ color: currentColors.primary, fontSize: 20 }} />}
                           {category === "dice" && <FaDiceD6 style={{ color: currentColors.primary, fontSize: 20 }} />}
-                          {category === "ballonDor" && <FaFutbol style={{ color: currentColors.primary, fontSize: 20 }} />}
-                          {category === "saudi" && <FaGlobe style={{ color: currentColors.primary, fontSize: 20 }} />}
+                          {category === "gameDevelopersChoice" && <FaGem style={{ color: currentColors.primary, fontSize: 20 }} />}
+                          {category === "japanGameAwards" && <FaGlobe style={{ color: currentColors.primary, fontSize: 20 }} />}
                           <div>
                             <div style={{ fontSize: 11, color: currentColors.primary }}>
                               {category === "tga" && text.tga}
                               {category === "bafta" && text.bafta}
                               {category === "goldenJoystick" && text.goldenJoystick}
                               {category === "dice" && text.dice}
-                              {category === "ballonDor" && text.ballonDor}
-                              {category === "saudi" && text.saudi}
+                              {category === "gameDevelopersChoice" && text.gameDevelopersChoice}
+                              {category === "japanGameAwards" && text.japanGameAwards}
                             </div>
                             <div style={{ fontSize: 16, fontWeight: 600 }}>{award.winner}</div>
                           </div>
@@ -1694,16 +1681,16 @@ export default function NexPlay() {
                             {category === "bafta" && <FaAward style={{ color: currentColors.primary, fontSize: 20 }} />}
                             {category === "goldenJoystick" && <FaMedal style={{ color: currentColors.primary, fontSize: 20 }} />}
                             {category === "dice" && <FaDiceD6 style={{ color: currentColors.primary, fontSize: 20 }} />}
-                            {category === "ballonDor" && <FaFutbol style={{ color: currentColors.primary, fontSize: 20 }} />}
-                            {category === "saudi" && <FaGlobe style={{ color: currentColors.primary, fontSize: 20 }} />}
+                            {category === "gameDevelopersChoice" && <FaGem style={{ color: currentColors.primary, fontSize: 20 }} />}
+                            {category === "japanGameAwards" && <FaGlobe style={{ color: currentColors.primary, fontSize: 20 }} />}
                             <div>
                               <div style={{ fontSize: 11, color: currentColors.primary }}>
                                 {category === "tga" && text.tga}
                                 {category === "bafta" && text.bafta}
                                 {category === "goldenJoystick" && text.goldenJoystick}
                                 {category === "dice" && text.dice}
-                                {category === "ballonDor" && text.ballonDor}
-                                {category === "saudi" && text.saudi}
+                                {category === "gameDevelopersChoice" && text.gameDevelopersChoice}
+                                {category === "japanGameAwards" && text.japanGameAwards}
                               </div>
                               <div style={{ fontSize: 16, fontWeight: 600 }}>{award.winner}</div>
                             </div>
@@ -1771,7 +1758,7 @@ export default function NexPlay() {
           </div>
         )}
 
-        {/* GAME NIGHT TAB - VERBESSERTE UI */}
+        {/* GAME NIGHT TAB */}
         {currentTab === "gameNight" && (
           <div className="fade-in">
             <div style={styles.gameNightCard}>
