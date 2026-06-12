@@ -80,25 +80,10 @@ const translateGenre = (genreName) => {
 
 let steamGamesCache = {};
 
-// ========== LANGE BESCHREIBUNGEN (5+ Sätze) ==========
+// ========== KURZE BESCHREIBUNGEN (fehlerfrei) ==========
 const generateLongDescription = (gameName, rawDescription) => {
-  if (rawDescription && rawDescription.length > 500) return rawDescription;
-  
-  const descriptions = {
-    default: `${gameName} ist ein herausragendes Spiel, das die Herzen von Gamern auf der ganzen Welt erobert hat. Die Entwickler haben unglaubliche Arbeit in jedes Detail gesteckt, von der flüssigen Animation bis zum packenden Soundtrack. Die Spielmechanik ist intuitiv und dennoch tiefgründig genug, um auch erfahrene Spieler herauszufordern. Die Geschichte fesselt von der ersten Minute an und lässt dich nicht mehr los, mit unerwarteten Wendungen und emotionalen Momenten. Die Grafik ist atemberaubend und schafft eine immersive Welt, in die du stundenlang eintauchen kannst. Die Charaktere sind liebevoll gestaltet und bleiben dir lange im Gedächtnis. Ein absolutes Muss für jeden Fan des Genres!`,
-    
-    "elden ring": "Elden Ring ist das Meisterwerk von FromSoftware und George R.R. Martin, das die Open-World-Formel neu definiert. Die riesige Welt namens 'The Lands Between' ist voller Geheimnisse, versteckter Dungeons und herausfordernder Bosse. Das Kampfsystem ist tiefgründig und bietet unzählige Build-Möglichkeiten mit Waffen, Magie und Fähigkeiten. Die düstere, faszinierende Story wird durch Umgebungsstorytelling und rätselhafte NPC-Dialoge erzählt. Die Grafik ist atmosphärisch und die Musik untermalt perfekt die epischen Momente. Jeder Sieg gegen einen Boss fühlt sich wie eine echte Errungenschaft an. Das Spiel bestraft Fehler hart, belohnt aber Geduld und Lernbereitschaft. Mit über 100 Stunden Spielzeit und New Game Plus bietet es enormen Wiederspielwert. Elden Ring ist nicht nur ein Spiel, sondern ein Erlebnis, das dich für immer prägen wird. Ein absolutes Meisterwerk, das jeder Gamer erlebt haben sollte!`,
-
-    "baldur's gate 3": "Baldur's Gate 3 ist das lang erwartete Rollenspiel von Larian Studios, das die D&D-Erfahrung perfekt einfängt. Die Entscheidungsfreiheit ist atemberaubend - fast jede Handlung hat Konsequenzen, die den Verlauf der Geschichte verändern. Das rundenbasierte Kampfsystem ist taktisch und bietet unzählige Möglichkeiten, Gegner zu besiegen. Die Charaktere sind unglaublich gut geschrieben, mit eigenen Persönlichkeiten, Motivationen und Romanzen. Die Grafik ist wunderschön, mit detaillierten Umgebungen und beeindruckenden Effekten. Der Koop-Modus erlaubt es dir, die ganze Kampagne mit Freunden zu erleben. Jede Entscheidung fühlt sich bedeutsam an und beeinflusst deine Beziehung zu den Begleitern. Die Sprachausgabe ist erstklassig und bringt die Charaktere zum Leben. Das Spiel bietet hunderte Stunden Content, da man nie alles in einem Durchlauf sehen kann. Baldur's Gate 3 setzt einen neuen Standard für CRPGs und ist ein Muss für jeden Rollenspiel-Fan!`
-  };
-  
-  for (const [key, desc] of Object.entries(descriptions)) {
-    if (gameName.toLowerCase().includes(key)) {
-      return desc;
-    }
-  }
-  
-  return descriptions.default;
+  if (rawDescription && rawDescription.length > 200) return rawDescription;
+  return `${gameName} ist ein herausragendes Spiel, das die Herzen von Gamern erobert hat. Die Entwickler haben viel Liebe zum Detail gesteckt. Die Spielmechanik ist intuitiv und tiefgründig. Die Geschichte fesselt von der ersten Minute an. Die Grafik ist atemberaubend und die Charaktere sind liebevoll gestaltet. Ein absolutes Muss für jeden Fan des Genres!`;
 };
 
 // ========== RATING-SYSTEM ==========
@@ -1043,7 +1028,7 @@ export default function NexPlay() {
     const isOnWishlist = wishlist.some(g => g.id === selectedGameDetail.id);
     const fullDescription = selectedGameDetail.finalDescription || generateLongDescription(selectedGameDetail.name, "");
     const isExpanded = expandedDescriptions[selectedGameDetail.id] || false;
-    const shortDescription = fullDescription.length > 300 ? fullDescription.substring(0, 300) + "..." : fullDescription;
+    const shortDescription = fullDescription.length > 200 ? fullDescription.substring(0, 200) + "..." : fullDescription;
     
     return (
       <div style={styles.app}>
@@ -1074,7 +1059,7 @@ export default function NexPlay() {
               <div style={styles.gameDetailRating}>★ {(selectedGameDetail.finalRating || selectedGameDetail.rating)?.toFixed(1)} · {selectedGameDetail.year} · {selectedGameDetail.playtime}</div>
               <div style={styles.gameDetailDescription}>
                 {isExpanded ? fullDescription : shortDescription}
-                {fullDescription.length > 300 && (
+                {fullDescription.length > 200 && (
                   <button className="btn-click" style={styles.showMoreBtn} onClick={() => toggleDescription(selectedGameDetail.id)}>
                     {isExpanded ? <><FaChevronUp size={10} /> {text.showLess}</> : <><FaChevronDown size={10} /> {text.showMore}</>}
                   </button>
