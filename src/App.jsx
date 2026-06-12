@@ -223,7 +223,6 @@ export default function NexPlay() {
 
   const text = translations[lang];
 
-  // Hilfsfunktionen
   const closeReviews = () => {
     setShowReviews(false);
     setReviewsGame(null);
