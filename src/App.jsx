@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { FaHome, FaUser, FaFire, FaSearch, FaHeart, FaStar, FaTrash, FaSignOutAlt, FaPlus, FaCheck, FaEnvelope, FaEye, FaEyeSlash, FaEdit, FaUsers, FaClock, FaRandom, FaThumbsUp, FaThumbsDown, FaArrowLeft, FaCog, FaVolumeUp, FaVolumeMute, FaLanguage, FaSteam, FaPlaystation, FaGamepad, FaTrophy, FaGem, FaShoppingCart, FaRobot, FaFilter, FaLink, FaExternalLinkAlt, FaDonate, FaAward, FaList, FaMedal, FaGamepad as FaGamepadIcon, FaDiceD6, FaGlobe, FaStarHalfAlt, FaTv, FaMicrophone, FaVideo, FaDesktop, FaPlusCircle, FaTrashAlt, FaUsers as FaUsersIcon, FaBell, FaCalendarAlt, FaChartLine, FaBook, FaTags, FaBalanceScale, FaFileExport, FaFileImport, FaMoon, FaSun, FaAdjust, FaBars } from "react-icons/fa";
+import { FaHome, FaUser, FaFire, FaSearch, FaHeart, FaStar, FaTrash, FaSignOutAlt, FaPlus, FaCheck, FaEnvelope, FaEye, FaEyeSlash, FaEdit, FaUsers, FaClock, FaRandom, FaThumbsUp, FaThumbsDown, FaArrowLeft, FaCog, FaVolumeUp, FaVolumeMute, FaLanguage, FaSteam, FaPlaystation, FaGamepad, FaTrophy, FaGem, FaShoppingCart, FaRobot, FaFilter, FaLink, FaExternalLinkAlt, FaDonate, FaAward, FaList, FaMedal, FaGamepad as FaGamepadIcon, FaDiceD6, FaGlobe, FaStarHalfAlt, FaTv, FaMicrophone, FaVideo, FaDesktop, FaPlusCircle, FaTrashAlt, FaUsers as FaUsersIcon, FaBell, FaCalendarAlt, FaChartLine, FaBook, FaTags, FaBalanceScale, FaFileExport, FaFileImport, FaMoon, FaSun, FaAdjust, FaBars, FaTimes } from "react-icons/fa";
 import { GiConsoleController, GiAchievement, GiSwordman, GiPuzzle, GiMusicalNotes, GiBrain, GiShield, GiMagicSwirl, GiTrophy, GiLaurels, GiSpinningWheel, GiNotebook, GiTwoCoins } from "react-icons/gi";
 import { BsFillCollectionFill, BsFillHeartFill, BsFillStarFill, BsFillAwardFill, BsFillPlayFill } from "react-icons/bs";
 import { auth, loginWithEmail, registerWithEmail, logout, loadLibraryFromFirestore, saveLibraryToFirestore, loadProfileFromFirestore, saveProfileToFirestore, updateUsername, updateBio, togglePrivacy, searchUsers, resetPassword, addGameReview, getGameReviews, updateLastPlayed, likeReview, dislikeReview } from "./firebase";
@@ -59,21 +59,21 @@ const translations = {
   de: { home: "Entdecken", library: "Bibliothek", profile: "Profil", friends: "Freunde", ai: "KI-Assistent", aoty: "AOTY", playlists: "Playlists", gameNight: "Spielabend", activity: "Aktivitäten", wishlist: "Wunschliste", backlog: "Backlog Reiniger", tags: "Tags", compare: "Vergleichen", journal: "Tagebuch", export: "Exportieren", import: "Importieren", theme: "Design", dark: "Dunkel", light: "Hell", auto: "Auto", randomGame: "Zufälliges Spiel", yearFilter: "Jahr", allYears: "Alle Jahre", login: "Anmelden", register: "Registrieren", logout: "Abmelden", search: "Spiele suchen...", searchAOTY: "Suche nach Jahr oder Spielname...", mood: "Wie ist deine Stimmung?", genre: "Wähle deine Genres", playtime: "Wie lange?", next: "Weiter", results: "Ergebnisse", topPicks: "Top Empfehlungen", bestEver: "Beste Aller Zeiten", allResults: "Alle Ergebnisse", hiddenGems: "Geheimtipps", sort: "Sortieren", bestMatch: "Bester Treffer", rating: "Bewertung", year: "Jahr", add: "Zur Bibliothek", inLibrary: "In Bibliothek", reviews: "Bewertungen", played: "Gespielt", remove: "Entfernen", editProfile: "Profil bearbeiten", username: "Benutzername", bio: "Über mich", private: "Privates Profil", save: "Speichern", achievements: "Erfolge", firstGame: "Erstes Spiel", collector: "Sammler", completionist: "Vollender", recentlyPlayed: "Zuletzt gespielt", favorites: "Favoriten", total: "Gesamt", playing: "Spielt", completed: "Abgeschlossen", rollAgain: "Nochmal", close: "Schließen", back: "Zurück", buyOn: "Kaufen auf", writeReview: "Bewertung schreiben", yourReview: "Deine Bewertung...", submit: "Speichern", noReviews: "Keine Bewertungen", findFriends: "Freunde finden", settings: "Einstellungen", sound: "Soundeffekte", language: "Sprache", steamId: "Steam ID", importGames: "Steam Spiele importieren", findSteamId: "So findest du deine Steam ID", donate: "Unterstütze den Entwickler", topRated: "Bestbewertetes Spiel", topGenre: "Top Genre", totalPlaytime: "Spielzeit Gesamt", aotyTitle: "All Of The Year", top20: "Top 20 pro Genre", findYourGame: "Finde dein Spiel", allAwards: "Alle Auszeichnungen", backToAOTY: "Zurück zur AOTY Übersicht", createPlaylist: "Playlist erstellen", playlistName: "Playlist Name", addToPlaylist: "Zu Playlist hinzufügen", gameNightMode: "Spielabend Modus", spinWheel: "Rad drehen", excludeMultiplayer: "Multiplayer ausschließen", activityFeed: "Aktivitäten Feed", addToWishlist: "Zur Wunschliste", checkPrice: "Preis prüfen", backlogTip: "Du solltest spielen", addTag: "Tag hinzufügen", compareGames: "Spiele vergleichen", selectGame: "Spiel auswählen", journalNotes: "Meine Notizen", exportLibrary: "Bibliothek exportieren", importLibrary: "Bibliothek importieren", themeSelect: "Design auswählen", loading: "Laden..." }
 };
 
-const RAWG_API_KEY = '4da2c00cf3b2459d988e0ed0ac16988d';
+const RAWG_API_KEY = "4da2c00cf3b2459d988e0ed0ac16988d";
 const MANUAL_HIDDEN_GEMS = [
-  { id: 9001, name: "CrossCode", rating: 9.1, genre: "Indie", playtime: "40-60h", year: 2018, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/368340/header.jpg", developer: "Radical Fish Games", mood: "Action", description: "CrossCode ist ein Action-RPG im Retro-Stil, das in einem fiktiven MMORPG spielt.", platforms: ["PC", "Switch", "PS4", "Xbox One"], steamId: 368340, finalRating: 9.1 },
-  { id: 9002, name: "Outer Wilds", rating: 9.3, genre: "Adventure", playtime: "20-40h", year: 2019, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/753640/header.jpg", developer: "Mobius Digital", mood: "Mystery", description: "Outer Wilds ist ein Open-World-Mystery-Spiel über ein Sonnensystem in einer Zeitschleife.", platforms: ["PC", "PS4", "Xbox One", "Switch"], steamId: 753640, finalRating: 9.3 },
-  { id: 9003, name: "Return of the Obra Dinn", rating: 9.2, genre: "Puzzle", playtime: "10-20h", year: 2018, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/653530/header.jpg", developer: "Lucas Pope", mood: "Mystery", description: "Ein Detektivspiel in 1-Bit-Grafik.", platforms: ["PC", "Switch", "PS4", "Xbox One"], steamId: 653530, finalRating: 9.2 },
-  { id: 9004, name: "Hades", rating: 9.3, genre: "Indie", playtime: "40-60h", year: 2020, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1145360/header.jpg", developer: "Supergiant Games", mood: "Action", description: "Ein Roguelite-Actionspiel, in dem du versuchst, die Unterwelt zu entkommen.", platforms: ["PC", "Switch", "PS4", "Xbox"], steamId: 1145360, finalRating: 9.3 }
+  { id: 9001, name: "CrossCode", rating: 9.1, genre: "Indie", playtime: "40-60h", year: 2018, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/368340/header.jpg", developer: "Radical Fish Games", mood: "Action", description: "CrossCode ist ein Action-RPG im Retro-Stil.", platforms: ["PC", "Switch", "PS4", "Xbox One"], steamId: 368340 },
+  { id: 9002, name: "Outer Wilds", rating: 9.3, genre: "Adventure", playtime: "20-40h", year: 2019, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/753640/header.jpg", developer: "Mobius Digital", mood: "Mystery", description: "Outer Wilds ist ein Open-World-Mystery-Spiel.", platforms: ["PC", "PS4", "Xbox One", "Switch"], steamId: 753640 },
+  { id: 9003, name: "Return of the Obra Dinn", rating: 9.2, genre: "Puzzle", playtime: "10-20h", year: 2018, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/653530/header.jpg", developer: "Lucas Pope", mood: "Mystery", description: "Ein Detektivspiel in 1-Bit-Grafik.", platforms: ["PC", "Switch", "PS4", "Xbox One"], steamId: 653530 },
+  { id: 9004, name: "Hades", rating: 9.3, genre: "Indie", playtime: "40-60h", year: 2020, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1145360/header.jpg", developer: "Supergiant Games", mood: "Action", description: "Ein Roguelite-Actionspiel.", platforms: ["PC", "Switch", "PS4", "Xbox"], steamId: 1145360 }
 ];
 
 const translateGenre = (genreName) => {
   const map = {
-    "Action": "Action", "Adventure": "Adventure", "RPG": "RPG",
-    "Indie": "Indie", "Strategy": "Strategy", "Shooter": "Shooter",
-    "Horror": "Horror", "Puzzle": "Puzzle", "Simulation": "Simulation",
-    "Platformer": "Platformer", "Open World": "Open World", "Story Rich": "Story Rich",
-    "Racing": "Racing", "Fighting": "Fighting", "Sports": "Sports"
+    Action: "Action", Adventure: "Adventure", RPG: "RPG",
+    Indie: "Indie", Strategy: "Strategy", Shooter: "Shooter",
+    Horror: "Horror", Puzzle: "Puzzle", Simulation: "Simulation",
+    Platformer: "Platformer", "Open World": "Open World", "Story Rich": "Story Rich",
+    Racing: "Racing", Fighting: "Fighting", Sports: "Sports"
   };
   return map[genreName] || genreName;
 };
@@ -90,20 +90,15 @@ const checkAndFixRatings = (game, steamData) => {
 };
 
 const calculateWeightedRating = (game, steamData) => {
-  let rating = checkAndFixRatings(game, steamData);
-  const name = game.name?.toLowerCase() || "";
-  const metacriticScore = rating;
-  let userRating = 7.0;
-  if (steamData?.steamRating) userRating = steamData.steamRating;
-  else userRating = metacriticScore * 0.9;
+  const metacriticScore = game.rawgRating || 7.0;
+  let userRating = steamData?.steamRating || metacriticScore * 0.9;
   let popularity = 7.0;
-  const reviewCount = steamData?.reviewCount || game.popularity || 50;
+  const reviewCount = steamData?.reviewCount || 5000;
   if (reviewCount > 500000) popularity = 9.5;
   else if (reviewCount > 200000) popularity = 9.0;
   else if (reviewCount > 100000) popularity = 8.5;
   else if (reviewCount > 50000) popularity = 8.0;
   else if (reviewCount > 10000) popularity = 7.5;
-  else popularity = 7.0;
   let relevance = 7.0;
   const currentYear = new Date().getFullYear();
   const gameAge = currentYear - (game.year || 2020);
@@ -112,18 +107,7 @@ const calculateWeightedRating = (game, steamData) => {
   else if (gameAge <= 3) relevance = 8.5;
   else if (gameAge <= 5) relevance = 8.0;
   else if (gameAge <= 8) relevance = 7.5;
-  else relevance = 7.0;
   let weightedRating = (metacriticScore * 0.3) + (userRating * 0.4) + (popularity * 0.2) + (relevance * 0.1);
-  if (name.includes("soulcalibur") || (name.includes("tekken") && !name.includes("8"))) weightedRating = Math.min(weightedRating, 8.2);
-  if (name.includes("fifa") || name.includes("pes") || name.includes("efootball")) weightedRating = Math.min(weightedRating, 7.5);
-  if (weightedRating >= 8.5 && weightedRating < 9.0) weightedRating += 0.2;
-  if (weightedRating >= 9.0 && weightedRating < 9.3) weightedRating += 0.15;
-  if (name.includes("witcher 3") || name.includes("baldur's gate 3") || name.includes("elden ring") || name.includes("red dead redemption 2")) {
-    weightedRating = Math.max(weightedRating, 9.3);
-    weightedRating = Math.min(weightedRating, 9.7);
-  } else {
-    weightedRating = Math.min(weightedRating, 9.2);
-  }
   weightedRating = Math.round(weightedRating * 10) / 10;
   weightedRating = Math.max(weightedRating, 6.0);
   return weightedRating;
@@ -131,7 +115,7 @@ const calculateWeightedRating = (game, steamData) => {
 
 const generateLongDescription = (gameName, rawDescription) => {
   if (rawDescription && rawDescription.length > 200) return rawDescription;
-  return `${gameName} ist ein Meisterwerk der Videospielgeschichte. Die Entwickler haben unglaubliche Arbeit in jedes Detail gesteckt, von der Grafik bis zum Sounddesign. Die Spielmechanik ist intuitiv und dennoch tiefgründig. Die Geschichte fesselt von der ersten Minute an und lässt dich nicht mehr los. Ein absolutes Muss für jeden Fan des Genres!`;
+  return `${gameName} ist ein Meisterwerk der Videospielgeschichte. Die Entwickler haben unglaubliche Arbeit in jedes Detail gesteckt. Die Spielmechanik ist intuitiv und dennoch tiefgründig. Die Geschichte fesselt von der ersten Minute an. Ein absolutes Muss für jeden Fan des Genres!`;
 };
 
 const getGameImage = (rawgImg, gameName, steamData) => {
@@ -204,7 +188,6 @@ export default function NexPlay() {
   const [showReviews, setShowReviews] = useState(false);
   const [reviewsGame, setReviewsGame] = useState(null);
   const [audioInitialized, setAudioInitialized] = useState(false);
-  
   const [playlists, setPlaylists] = useState([]);
   const [showCreatePlaylist, setShowCreatePlaylist] = useState(false);
   const [newPlaylistName, setNewPlaylistName] = useState("");
@@ -229,6 +212,7 @@ export default function NexPlay() {
   };
 
   const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
+  const closeMobileMenu = () => setMobileMenuOpen(false);
 
   useEffect(() => {
     localStorage.setItem("nexplay_theme", theme);
@@ -455,7 +439,7 @@ export default function NexPlay() {
   };
 
   const gamesWithData = useMemo(() => {
-    const steamAppIds = allGames.map(g => g.steamId).filter(id => id && typeof id === 'number');
+    const steamAppIds = allGames.map(g => g.steamId).filter(id => id && typeof id === "number");
     if (steamAppIds.length > 0) fetchSteamRatings(steamAppIds);
     return allGames.map(game => {
       const steamData = game.steamId ? steamGamesCache[game.steamId] : null;
@@ -474,17 +458,19 @@ export default function NexPlay() {
   }, [gamesWithData]);
 
   const TOP_PICKS_GAMES = useMemo(() => {
-    const rawgPicks = gamesWithData.filter(g => g.finalRating >= 9.0 && g.reviewCount >= 50000).slice(0, 20);
-    if (rawgPicks.length >= 10) return rawgPicks;
-    return gamesWithData.filter(g => g.finalRating >= 8.8).slice(0, 20);
+    const rawgPicks = gamesWithData.filter(g => g.finalRating >= 9.0 && g.reviewCount >= 50000);
+    if (rawgPicks.length >= 12) return rawgPicks.slice(0, 20);
+    const fallback = gamesWithData.filter(g => g.finalRating >= 8.8);
+    return [...rawgPicks, ...fallback].slice(0, 20);
   }, [gamesWithData]);
 
-  const BEST_EVER_GAMES = useMemo(() => gamesWithData.sort((a,b) => b.finalRating - a.finalRating).slice(0, 40), [gamesWithData]);
+  const BEST_EVER_GAMES = useMemo(() => [...gamesWithData].sort((a,b) => b.finalRating - a.finalRating).slice(0, 40), [gamesWithData]);
 
   const searchAOTY = () => {
     const search = aotySearch.trim().toLowerCase();
     if (!search) { setAotyResult(null); setSelectedAotyYear(null); return; }
-    if (/^\d{4}$/.test(search)) {
+    const yearMatch = search.match(/^\d{4}$/);
+    if (yearMatch) {
       const year = parseInt(search);
       if (AOTY_DATA[year]) { setAotyResult({ type: "year", year, data: AOTY_DATA[year] }); setSelectedAotyYear(year); }
       else setAotyResult({ type: "error", message: `No data for ${year}` });
@@ -502,11 +488,18 @@ export default function NexPlay() {
 
   useEffect(() => { searchAOTY(); }, [aotySearch]);
 
+  // FIX: Top 20 by Genre - unterschiedliche Games für jedes Genre
   const top20ByGenre = useMemo(() => {
     const filtered = gamesWithData.filter(g => g.genre === selectedGenreForTop);
-    let games = [...filtered].sort((a, b) => b.finalRating - a.finalRating);
-    if (games.length < 10) return gamesWithData.filter(g => g.finalRating >= 8.5).slice(0, 20);
-    return games.slice(0, 20);
+    if (filtered.length === 0) {
+      return gamesWithData.filter(g => g.finalRating >= 8.5).slice(0, 20);
+    }
+    const shuffled = [...filtered];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled.sort((a, b) => b.finalRating - a.finalRating).slice(0, 20);
   }, [gamesWithData, selectedGenreForTop]);
 
   const doRandom = () => {
@@ -539,7 +532,10 @@ export default function NexPlay() {
   const playSound = (type) => {
     if (!soundEnabled || !audioInitialized) return;
     const audio = new Audio();
-    audio.src = type === "click" ? "https://www.soundjay.com/misc/sounds/button-click-1.mp3" : type === "add" ? "https://www.soundjay.com/misc/sounds/notification-1.mp3" : "https://www.soundjay.com/misc/sounds/bell-ringing-1.mp3";
+    const soundUrl = type === "click" 
+      ? "https://www.soundjay.com/misc/sounds/button-click-1.mp3" 
+      : "https://www.soundjay.com/misc/sounds/notification-1.mp3";
+    audio.src = soundUrl;
     audio.volume = 0.2;
     audio.play().catch(() => {});
   };
@@ -713,6 +709,7 @@ export default function NexPlay() {
   };
 
   const removeFromLibrary = (id) => setLibrary(library.filter(g => g.id !== id));
+  
   const updateStatus = async (id, status, game) => {
     setLoadingAction(true);
     setLibrary(library.map(g => g.id === id ? { ...g, status } : g));
@@ -724,6 +721,7 @@ export default function NexPlay() {
     playSound("click");
     setLoadingAction(false);
   };
+  
   const toggleFavorite = (id) => setFavorites(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
 
   const handleAiSearch = async () => {
@@ -797,149 +795,155 @@ export default function NexPlay() {
     @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes slideIn { from { opacity: 0; transform: translateY(-50px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes spin { to { transform: rotate(360deg); } }
-    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-    @keyframes wheelSpin { 0% { transform: rotate(0deg); } 100% { transform: rotate(1440deg); } }
     .fade-in { animation: fadeIn 0.4s ease-out; }
     .slide-in { animation: slideIn 0.3s ease-out; }
     .game-card { transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1); cursor: pointer; }
     .game-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 20px 30px -12px rgba(0,0,0,0.5); }
     .btn-click:active { transform: scale(0.96); }
-    .spinning-wheel { animation: wheelSpin 0.5s ease-out; }
+    .spinning-wheel { animation: spin 0.5s ease-out; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .text-wrap { word-wrap: break-word; overflow-wrap: break-word; white-space: normal; }
     @media (max-width: 768px) {
-      .main-tabs { position: fixed; top: 70px; left: 0; right: 0; background: ${currentColors.bgCard}; flex-direction: column; padding: 16px; gap: 8px; z-index: 1000; border-radius: 0 0 16px 16px; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
-      .main-tabs button { width: 100%; justify-content: center; }
+      .mobile-full-width { width: 100%; }
+      .mobile-stack { flex-direction: column; align-items: stretch; }
     }
   `;
 
   useEffect(() => {
-    const style = document.createElement('style');
+    const style = document.createElement("style");
     style.textContent = animationStyles;
     document.head.appendChild(style);
   }, []);
 
   const styles = {
     app: { background: currentColors.bg, minHeight: "100vh", width: "100%", color: currentColors.text, fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif" },
-    container: { maxWidth: 1200, margin: "0 auto", padding: "0 24px" },
-    header: { padding: "20px 0", borderBottom: `1px solid rgba(255,212,0,0.15)`, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 },
-    logo: { fontSize: 26, fontWeight: 800, display: "flex", alignItems: "center", gap: 10, cursor: "pointer" },
-    logoIcon: { background: `linear-gradient(135deg, ${currentColors.primary} 0%, ${currentColors.primaryDark} 100%)`, borderRadius: "14px", padding: "8px 12px", color: currentColors.bg },
-    logoText: { background: `linear-gradient(135deg, ${currentColors.primary} 0%, ${currentColors.primaryDark} 100%)`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" },
-    mainTabs: { display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" },
-    mainTab: (active) => ({ background: active ? currentColors.primary : "rgba(255,255,255,0.06)", border: "none", borderRadius: 14, padding: "10px 22px", color: active ? currentColors.bg : currentColors.text, cursor: "pointer", fontWeight: 600, fontSize: 15, display: "flex", alignItems: "center", gap: 8 }),
+    container: { maxWidth: 1200, margin: "0 auto", padding: "0 16px" },
+    header: { padding: "16px 0", borderBottom: `1px solid rgba(255,212,0,0.15)`, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 },
+    logo: { fontSize: 22, fontWeight: 800, display: "flex", alignItems: "center", gap: 10, cursor: "pointer" },
+    logoIcon: { background: `linear-gradient(135deg, ${currentColors.primary} 0%, ${currentColors.primaryDark} 100%)`, borderRadius: "12px", padding: "8px 10px", color: currentColors.bg, display: "flex", alignItems: "center", gap: 6 },
+    logoIconText: { fontSize: 18 },
+    logoText: { background: `linear-gradient(135deg, ${currentColors.primary} 0%, ${currentColors.primaryDark} 100%)`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", fontSize: 20 },
+    mainTabs: { display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" },
+    mainTab: (active) => ({ background: active ? currentColors.primary : "rgba(255,255,255,0.06)", border: "none", borderRadius: 12, padding: "10px 18px", color: active ? currentColors.bg : currentColors.text, cursor: "pointer", fontWeight: 600, fontSize: 14, display: "flex", alignItems: "center", gap: 8 }),
     iconBtn: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 12, padding: "10px 14px", color: currentColors.text, cursor: "pointer", display: "flex", alignItems: "center", gap: 8, fontSize: 14 },
-    loginBtn: { background: "linear-gradient(135deg, #4285f4, #3367d6)", border: "none", borderRadius: 12, padding: "10px 20px", color: "#fff", cursor: "pointer", fontWeight: 600, display: "flex", alignItems: "center", gap: 8, fontSize: 14 },
-    logoutBtn: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 12, padding: "10px 20px", color: currentColors.text, cursor: "pointer", display: "flex", alignItems: "center", gap: 8, fontSize: 14 },
+    loginBtn: { background: "linear-gradient(135deg, #4285f4, #3367d6)", border: "none", borderRadius: 12, padding: "10px 18px", color: "#fff", cursor: "pointer", fontWeight: 600, display: "flex", alignItems: "center", gap: 8, fontSize: 14 },
+    logoutBtn: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 12, padding: "10px 18px", color: currentColors.text, cursor: "pointer", display: "flex", alignItems: "center", gap: 8, fontSize: 14 },
     userAvatar: { width: 36, height: 36, borderRadius: "50%", background: currentColors.primary, display: "flex", alignItems: "center", justifyContent: "center", color: currentColors.bg, fontWeight: 700, fontSize: 16 },
-    tabNav: { display: "flex", gap: 4, borderBottom: `1px solid rgba(255,255,255,0.08)`, marginTop: 24, marginBottom: 24, overflowX: "auto" },
-    tabNavBtn: (active) => ({ background: "none", border: "none", borderBottom: active ? `2px solid ${currentColors.primary}` : "2px solid transparent", color: active ? currentColors.primary : currentColors.textSecondary, padding: "12px 20px", cursor: "pointer", fontSize: 13, fontWeight: active ? 600 : 400, whiteSpace: "nowrap" }),
-    grid: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 24 },
-    gameCard: { background: currentColors.bgCard, borderRadius: 16, overflow: "hidden", cursor: "pointer", border: "1px solid rgba(255,255,255,0.06)", position: "relative" },
+    hamburgerBtn: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 12, padding: "10px 14px", color: currentColors.text, cursor: "pointer", display: "none", alignItems: "center", gap: 8, fontSize: 20, "@media (max-width: 768px)": { display: "flex" } },
+    mobileMenu: { position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: currentColors.bg, zIndex: 1000, padding: "20px", overflowY: "auto", transform: mobileMenuOpen ? "translateX(0)" : "translateX(-100%)", transition: "transform 0.3s ease" },
+    mobileMenuClose: { position: "absolute", top: 16, right: 16, background: "rgba(255,255,255,0.1)", border: "none", borderRadius: "50%", padding: "10px", cursor: "pointer", color: currentColors.text },
+    mobileMenuItem: { display: "flex", alignItems: "center", gap: 12, padding: "14px 0", borderBottom: "1px solid rgba(255,255,255,0.05)", width: "100%", background: "none", border: "none", color: currentColors.text, fontSize: 16, cursor: "pointer" },
+    tabNav: { display: "flex", gap: 4, borderBottom: `1px solid rgba(255,255,255,0.08)`, marginTop: 20, marginBottom: 20, overflowX: "auto", flexWrap: "nowrap" },
+    tabNavBtn: (active) => ({ background: "none", border: "none", borderBottom: active ? `2px solid ${currentColors.primary}` : "2px solid transparent", color: active ? currentColors.primary : currentColors.textSecondary, padding: "10px 16px", cursor: "pointer", fontSize: 12, fontWeight: active ? 600 : 400, whiteSpace: "nowrap" }),
+    grid: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: 16 },
+    gameCard: { background: currentColors.bgCard, borderRadius: 14, overflow: "hidden", cursor: "pointer", border: "1px solid rgba(255,255,255,0.06)", position: "relative" },
     gameImg: { width: "100%", aspectRatio: "3/4", objectFit: "cover" },
-    gameInfo: { padding: "14px" },
-    gameName: { fontSize: 15, fontWeight: 700, marginBottom: 4, color: currentColors.text, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" },
-    rating: { display: "flex", alignItems: "center", gap: 4, color: currentColors.primary, fontSize: 13, fontWeight: 600, marginBottom: 8 },
-    addBtn: { background: currentColors.primary, border: "none", borderRadius: 10, padding: "10px 12px", fontSize: 13, fontWeight: 600, cursor: "pointer", width: "100%", marginTop: 10, color: currentColors.bg, display: "flex", alignItems: "center", justifyContent: "center", gap: 8 },
-    searchBar: { background: currentColors.bgCard, border: `1px solid rgba(255,255,255,0.08)`, borderRadius: 14, padding: "14px 18px", color: currentColors.text, fontSize: 15, width: "100%", marginBottom: 24, outline: "none" },
-    pillGrid: { display: "flex", flexWrap: "wrap", gap: 12, marginBottom: 28 },
-    pill: (selected) => ({ background: selected ? currentColors.primary : "rgba(255,255,255,0.06)", border: "none", borderRadius: 40, padding: "12px 24px", color: selected ? currentColors.bg : currentColors.text, cursor: "pointer", fontSize: 14, fontWeight: selected ? 600 : 400 }),
-    nextBtn: { background: currentColors.primary, border: "none", borderRadius: 14, padding: "14px 32px", fontSize: 16, fontWeight: 600, cursor: "pointer", color: currentColors.bg, marginTop: 28 },
-    filterRow: { display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 24, alignItems: "center" },
-    filterBtn: (active) => ({ background: active ? currentColors.primary : "rgba(255,255,255,0.05)", border: "none", borderRadius: 10, padding: "8px 16px", color: active ? currentColors.bg : currentColors.text, cursor: "pointer", fontSize: 13 }),
-    sectionTitle: { fontSize: 24, fontWeight: 700, marginBottom: 24, display: "flex", alignItems: "center", gap: 12, color: currentColors.text },
-    topPicksRow: { display: "flex", gap: 20, overflowX: "auto", marginBottom: 32, paddingBottom: 12 },
-    topPickCard: { minWidth: 220, background: currentColors.bgCard, borderRadius: 14, padding: 14, cursor: "pointer", position: "relative" },
-    libraryCard: { background: currentColors.bgCard, borderRadius: 14, display: "flex", gap: 16, padding: 16, marginBottom: 14, alignItems: "center", flexWrap: "wrap" },
-    libraryImg: { width: 65, height: 87, objectFit: "cover", borderRadius: 10 },
-    libraryInfo: { flex: 1 },
-    libraryTitle: { fontWeight: 700, fontSize: 16, color: currentColors.text, marginBottom: 4 },
-    libraryMeta: { fontSize: 12, color: currentColors.textSecondary, marginBottom: 8 },
-    libraryActions: { display: "flex", gap: 10, flexWrap: "wrap" },
-    select: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 10, padding: "8px 14px", color: currentColors.text, fontSize: 13, cursor: "pointer" },
-    statCard: { background: currentColors.bgCard, borderRadius: 14, padding: "16px", textAlign: "center", minWidth: 100 },
-    statNumber: { fontSize: 32, fontWeight: 800, color: currentColors.primary },
-    statLabel: { fontSize: 12, color: currentColors.textSecondary, marginTop: 4 },
-    statsRow: { display: "flex", gap: 16, marginBottom: 28, flexWrap: "wrap" },
-    profileHeader: { display: "flex", gap: 24, alignItems: "center", background: currentColors.bgCard, borderRadius: 24, padding: 28, marginBottom: 28, flexWrap: "wrap", justifyContent: "center", textAlign: "center" },
-    profileAvatarLarge: { width: 90, height: 90, borderRadius: "50%", background: currentColors.primary, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 38, fontWeight: 700, color: currentColors.bg },
-    editBtn: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 10, padding: "10px 20px", color: currentColors.text, cursor: "pointer", fontSize: 13, marginTop: 18, display: "inline-flex", alignItems: "center", gap: 8 },
-    lastPlayedRow: { display: "flex", gap: 16, overflowX: "auto", marginBottom: 28, paddingBottom: 10 },
-    lastPlayedCard: { minWidth: 90, background: currentColors.bgCard, borderRadius: 12, padding: 10, textAlign: "center", cursor: "pointer" },
-    lastPlayedImg: { width: 70, height: 70, objectFit: "cover", borderRadius: 10, marginBottom: 6 },
-    lastPlayedName: { fontSize: 11, color: currentColors.text, fontWeight: 500 },
-    randomFilterSection: { background: currentColors.bgCard, borderRadius: 16, padding: 20, marginBottom: 24 },
-    randomFilterTitle: { fontSize: 16, fontWeight: 600, color: currentColors.text, marginBottom: 16, display: "flex", alignItems: "center", gap: 10 },
-    randomFilterRow: { display: "flex", gap: 20, flexWrap: "wrap", alignItems: "center" },
-    randomCheckbox: { display: "flex", alignItems: "center", gap: 8, cursor: "pointer", fontSize: 13, color: currentColors.textSecondary },
-    randomSlider: { width: 220, accentColor: currentColors.primary },
-    randomSelect: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 10, padding: "8px 14px", color: currentColors.text, fontSize: 13, cursor: "pointer" },
-    aiSection: { background: currentColors.bgCard, borderRadius: 16, padding: 24, marginBottom: 24 },
-    aiRow: { display: "flex", gap: 14, marginBottom: 20, flexWrap: "wrap" },
-    aiResultBox: { background: "rgba(0,0,0,0.3)", borderRadius: 14, padding: 18, marginTop: 18, fontSize: 14, color: currentColors.textSecondary, lineHeight: 1.6 },
-    platformSection: { background: currentColors.bgCard, borderRadius: 16, padding: 20, marginBottom: 24 },
-    platformRow: { display: "flex", gap: 16, flexWrap: "wrap", alignItems: "center", marginBottom: 16 },
-    platformBtn: (bgColor) => ({ background: bgColor, border: "none", borderRadius: 12, padding: "10px 18px", color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", gap: 10, fontSize: 13, fontWeight: 500 }),
-    modalOverlay: { position: "fixed", inset: 0, background: "rgba(0,0,0,0.96)", zIndex: 2000, display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" },
-    modalContent: { background: currentColors.bgCard, borderRadius: 28, padding: 32, width: "90%", maxWidth: 520, border: `1px solid ${currentColors.primary}30` },
-    modalTitle: { fontSize: 26, fontWeight: 700, marginBottom: 24, textAlign: "center", color: currentColors.text },
-    input: { width: "100%", background: "rgba(255,255,255,0.08)", border: `1px solid rgba(255,255,255,0.1)`, borderRadius: 12, padding: "14px 18px", color: currentColors.text, fontSize: 15, marginBottom: 16, outline: "none" },
-    textarea: { width: "100%", background: "rgba(255,255,255,0.08)", border: `1px solid rgba(255,255,255,0.1)`, borderRadius: 12, padding: "14px 18px", color: currentColors.text, fontSize: 15, marginBottom: 16, outline: "none", resize: "vertical", fontFamily: "inherit" },
+    gameInfo: { padding: "10px" },
+    gameName: { fontSize: 13, fontWeight: 700, marginBottom: 4, color: currentColors.text, wordWrap: "break-word", whiteSpace: "normal", lineHeight: 1.3 },
+    rating: { display: "flex", alignItems: "center", gap: 4, color: currentColors.primary, fontSize: 12, fontWeight: 600, marginBottom: 6 },
+    addBtn: { background: currentColors.primary, border: "none", borderRadius: 10, padding: "8px 10px", fontSize: 12, fontWeight: 600, cursor: "pointer", width: "100%", marginTop: 8, color: currentColors.bg, display: "flex", alignItems: "center", justifyContent: "center", gap: 6 },
+    searchBar: { background: currentColors.bgCard, border: `1px solid rgba(255,255,255,0.08)`, borderRadius: 12, padding: "12px 16px", color: currentColors.text, fontSize: 14, width: "100%", marginBottom: 20, outline: "none" },
+    pillGrid: { display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 24 },
+    pill: (selected) => ({ background: selected ? currentColors.primary : "rgba(255,255,255,0.06)", border: "none", borderRadius: 30, padding: "10px 18px", color: selected ? currentColors.bg : currentColors.text, cursor: "pointer", fontSize: 13, fontWeight: selected ? 600 : 400 }),
+    nextBtn: { background: currentColors.primary, border: "none", borderRadius: 12, padding: "12px 24px", fontSize: 15, fontWeight: 600, cursor: "pointer", color: currentColors.bg, marginTop: 24, width: "100%" },
+    filterRow: { display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 20, alignItems: "center" },
+    filterBtn: (active) => ({ background: active ? currentColors.primary : "rgba(255,255,255,0.05)", border: "none", borderRadius: 8, padding: "6px 12px", color: active ? currentColors.bg : currentColors.text, cursor: "pointer", fontSize: 12 }),
+    sectionTitle: { fontSize: 20, fontWeight: 700, marginBottom: 16, display: "flex", alignItems: "center", gap: 10, color: currentColors.text },
+    topPicksRow: { display: "flex", gap: 12, overflowX: "auto", marginBottom: 24, paddingBottom: 8 },
+    topPickCard: { minWidth: 160, background: currentColors.bgCard, borderRadius: 12, padding: 10, cursor: "pointer", position: "relative" },
+    libraryCard: { background: currentColors.bgCard, borderRadius: 12, display: "flex", gap: 12, padding: 12, marginBottom: 12, alignItems: "center", flexWrap: "wrap" },
+    libraryImg: { width: 50, height: 67, objectFit: "cover", borderRadius: 8 },
+    libraryInfo: { flex: 1, minWidth: 150 },
+    libraryTitle: { fontWeight: 700, fontSize: 14, color: currentColors.text, marginBottom: 4, wordWrap: "break-word" },
+    libraryMeta: { fontSize: 11, color: currentColors.textSecondary, marginBottom: 6 },
+    libraryActions: { display: "flex", gap: 8, flexWrap: "wrap" },
+    select: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 8, padding: "6px 10px", color: currentColors.text, fontSize: 12, cursor: "pointer" },
+    statCard: { background: currentColors.bgCard, borderRadius: 12, padding: "12px", textAlign: "center", minWidth: 80, flex: 1 },
+    statNumber: { fontSize: 24, fontWeight: 800, color: currentColors.primary },
+    statLabel: { fontSize: 10, color: currentColors.textSecondary, marginTop: 4 },
+    statsRow: { display: "flex", gap: 12, marginBottom: 20, flexWrap: "wrap" },
+    profileHeader: { display: "flex", gap: 16, alignItems: "center", background: currentColors.bgCard, borderRadius: 20, padding: 20, marginBottom: 24, flexWrap: "wrap", justifyContent: "center", textAlign: "center" },
+    profileAvatarLarge: { width: 70, height: 70, borderRadius: "50%", background: currentColors.primary, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 30, fontWeight: 700, color: currentColors.bg },
+    editBtn: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 8, padding: "8px 16px", color: currentColors.text, cursor: "pointer", fontSize: 12, marginTop: 12, display: "inline-flex", alignItems: "center", gap: 6 },
+    lastPlayedRow: { display: "flex", gap: 12, overflowX: "auto", marginBottom: 20, paddingBottom: 8 },
+    lastPlayedCard: { minWidth: 70, background: currentColors.bgCard, borderRadius: 10, padding: 8, textAlign: "center", cursor: "pointer" },
+    lastPlayedImg: { width: 54, height: 54, objectFit: "cover", borderRadius: 8, marginBottom: 4 },
+    lastPlayedName: { fontSize: 9, color: currentColors.text, fontWeight: 500, wordWrap: "break-word" },
+    randomFilterSection: { background: currentColors.bgCard, borderRadius: 14, padding: 16, marginBottom: 20 },
+    randomFilterTitle: { fontSize: 14, fontWeight: 600, color: currentColors.text, marginBottom: 12, display: "flex", alignItems: "center", gap: 8 },
+    randomFilterRow: { display: "flex", gap: 12, flexWrap: "wrap", alignItems: "center" },
+    randomCheckbox: { display: "flex", alignItems: "center", gap: 6, cursor: "pointer", fontSize: 12, color: currentColors.textSecondary },
+    randomSlider: { width: 180, accentColor: currentColors.primary },
+    randomSelect: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 8, padding: "6px 10px", color: currentColors.text, fontSize: 12, cursor: "pointer" },
+    aiSection: { background: currentColors.bgCard, borderRadius: 14, padding: 16, marginBottom: 20 },
+    aiRow: { display: "flex", gap: 10, marginBottom: 16, flexWrap: "wrap" },
+    aiResultBox: { background: "rgba(0,0,0,0.3)", borderRadius: 12, padding: 14, marginTop: 14, fontSize: 13, color: currentColors.textSecondary, lineHeight: 1.5 },
+    platformSection: { background: currentColors.bgCard, borderRadius: 14, padding: 16, marginBottom: 20 },
+    platformRow: { display: "flex", gap: 12, flexWrap: "wrap", alignItems: "center", marginBottom: 12 },
+    platformBtn: (bgColor) => ({ background: bgColor, border: "none", borderRadius: 10, padding: "8px 14px", color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", gap: 8, fontSize: 12, fontWeight: 500 }),
+    modalOverlay: { position: "fixed", inset: 0, background: "rgba(0,0,0,0.96)", zIndex: 2000, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" },
+    modalContent: { background: currentColors.bgCard, borderRadius: 24, padding: 24, width: "95%", maxWidth: 480, border: `1px solid ${currentColors.primary}30`, maxHeight: "90vh", overflowY: "auto" },
+    modalTitle: { fontSize: 22, fontWeight: 700, marginBottom: 20, textAlign: "center", color: currentColors.text },
+    input: { width: "100%", background: "rgba(255,255,255,0.08)", border: `1px solid rgba(255,255,255,0.1)`, borderRadius: 10, padding: "12px 14px", color: currentColors.text, fontSize: 14, marginBottom: 14, outline: "none" },
+    textarea: { width: "100%", background: "rgba(255,255,255,0.08)", border: `1px solid rgba(255,255,255,0.1)`, borderRadius: 10, padding: "12px 14px", color: currentColors.text, fontSize: 14, marginBottom: 14, outline: "none", resize: "vertical", fontFamily: "inherit" },
     passwordWrapper: { position: "relative", width: "100%" },
-    passwordEye: { position: "absolute", right: 16, top: "50%", transform: "translateY(-50%)", cursor: "pointer", color: currentColors.textSecondary },
-    modalBtn: { background: currentColors.primary, border: "none", borderRadius: 14, padding: "14px", fontSize: 16, fontWeight: 600, cursor: "pointer", width: "100%", marginTop: 12, color: currentColors.bg },
-    modalBtnSecondary: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 14, padding: "14px", fontSize: 16, fontWeight: 600, cursor: "pointer", width: "auto", color: currentColors.text },
-    switchText: { textAlign: "center", marginTop: 16, color: currentColors.textSecondary, fontSize: 14, cursor: "pointer" },
-    errorText: { color: colors.error, fontSize: 13, textAlign: "center", marginBottom: 14 },
-    successText: { color: colors.success, fontSize: 13, textAlign: "center", marginBottom: 14 },
-    loadingSpinner: { width: 48, height: 48, border: `3px solid ${currentColors.primary}20`, borderTop: `3px solid ${currentColors.primary}`, borderRadius: "50%", animation: "spin 1s linear infinite" },
-    loadingOverlay: { position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.8)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center" },
-    emptyState: { textAlign: "center", padding: 60, background: currentColors.bgCard, borderRadius: 24, color: currentColors.textSecondary },
-    reviewStars: { display: "flex", gap: 12, justifyContent: "center", marginBottom: 24 },
-    reviewStar: { fontSize: 36, cursor: "pointer", color: currentColors.textSecondary },
-    reviewCard: { background: currentColors.bgCard, borderRadius: 14, padding: 16, marginBottom: 14 },
-    reviewHeader: { display: "flex", justifyContent: "space-between", marginBottom: 10 },
-    reviewUsername: { fontWeight: 700, fontSize: 14, color: currentColors.text },
-    reviewRating: { color: currentColors.primary, fontSize: 13 },
-    reviewComment: { fontSize: 14, color: currentColors.textSecondary, lineHeight: 1.4 },
-    reviewActions: { display: "flex", gap: 16, marginTop: 12 },
-    likeBtn: { display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: currentColors.textSecondary, cursor: "pointer", background: "none", border: "none" },
-    userCard: { background: currentColors.bgCard, borderRadius: 14, padding: 16, marginBottom: 14, display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" },
-    userAvatarSmall: { width: 48, height: 48, borderRadius: "50%", background: currentColors.primary, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, fontWeight: 700, color: currentColors.bg },
-    searchRow: { display: "flex", gap: 14, marginBottom: 24 },
-    gameDetailHeader: { display: "flex", gap: 28, flexWrap: "wrap", marginBottom: 28 },
-    gameDetailImg: { width: 240, borderRadius: 18, objectFit: "cover" },
+    passwordEye: { position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", cursor: "pointer", color: currentColors.textSecondary },
+    modalBtn: { background: currentColors.primary, border: "none", borderRadius: 12, padding: "12px", fontSize: 15, fontWeight: 600, cursor: "pointer", width: "100%", marginTop: 10, color: currentColors.bg },
+    modalBtnSecondary: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 12, padding: "12px", fontSize: 15, fontWeight: 600, cursor: "pointer", width: "auto", color: currentColors.text },
+    switchText: { textAlign: "center", marginTop: 14, color: currentColors.textSecondary, fontSize: 13, cursor: "pointer" },
+    errorText: { color: colors.error, fontSize: 12, textAlign: "center", marginBottom: 12 },
+    successText: { color: colors.success, fontSize: 12, textAlign: "center", marginBottom: 12 },
+    loadingSpinner: { width: 40, height: 40, border: `3px solid ${currentColors.primary}20`, borderTop: `3px solid ${currentColors.primary}`, borderRadius: "50%", animation: "spin 1s linear infinite" },
+    loadingOverlay: { position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.8)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" },
+    emptyState: { textAlign: "center", padding: 40, background: currentColors.bgCard, borderRadius: 20, color: currentColors.textSecondary, fontSize: 14 },
+    reviewStars: { display: "flex", gap: 10, justifyContent: "center", marginBottom: 20 },
+    reviewStar: { fontSize: 28, cursor: "pointer", color: currentColors.textSecondary },
+    reviewCard: { background: currentColors.bgCard, borderRadius: 12, padding: 14, marginBottom: 12 },
+    reviewHeader: { display: "flex", justifyContent: "space-between", marginBottom: 8, flexWrap: "wrap", gap: 6 },
+    reviewUsername: { fontWeight: 700, fontSize: 13, color: currentColors.text },
+    reviewRating: { color: currentColors.primary, fontSize: 12 },
+    reviewComment: { fontSize: 13, color: currentColors.textSecondary, lineHeight: 1.4, wordWrap: "break-word" },
+    reviewActions: { display: "flex", gap: 14, marginTop: 10 },
+    likeBtn: { display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: currentColors.textSecondary, cursor: "pointer", background: "none", border: "none" },
+    userCard: { background: currentColors.bgCard, borderRadius: 12, padding: 12, marginBottom: 12, display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" },
+    userAvatarSmall: { width: 40, height: 40, borderRadius: "50%", background: currentColors.primary, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, fontWeight: 700, color: currentColors.bg },
+    searchRow: { display: "flex", gap: 10, marginBottom: 20 },
+    gameDetailHeader: { display: "flex", gap: 20, flexWrap: "wrap", marginBottom: 24, flexDirection: window.innerWidth <= 768 ? "column" : "row", alignItems: window.innerWidth <= 768 ? "center" : "flex-start" },
+    gameDetailImg: { width: window.innerWidth <= 768 ? "100%" : 200, maxWidth: 200, borderRadius: 16, objectFit: "cover" },
     gameDetailInfo: { flex: 1 },
-    gameDetailName: { fontSize: 32, fontWeight: 700, marginBottom: 10, color: currentColors.text },
-    gameDetailDeveloper: { fontSize: 14, color: currentColors.textSecondary, marginBottom: 8 },
-    gameDetailRating: { fontSize: 16, color: currentColors.primary, marginBottom: 12 },
-    gameDetailDescription: { fontSize: 15, color: currentColors.textSecondary, lineHeight: 1.6, marginBottom: 16 },
-    gameDetailPlatforms: { display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 20 },
-    platformBadge: { background: "rgba(255,255,255,0.1)", borderRadius: 24, padding: "6px 14px", fontSize: 12, color: currentColors.text },
-    buyButtonsRow: { display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 20 },
-    buyBtn: (bgColor) => ({ background: bgColor, border: "none", borderRadius: 10, padding: "10px 18px", color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", gap: 10, fontSize: 13, fontWeight: 500 }),
-    backBtn: { display: "flex", alignItems: "center", gap: 10, background: "rgba(255,255,255,0.05)", border: "none", borderRadius: 12, padding: "10px 20px", color: currentColors.text, cursor: "pointer", marginBottom: 24, fontSize: 14 },
-    trailerFrame: { width: "100%", height: 350, borderRadius: 18, marginBottom: 24, border: "none", background: "#000" },
-    settingsSection: { background: currentColors.bgCard, borderRadius: 16, padding: 24, marginBottom: 24 },
-    settingsRow: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18, flexWrap: "wrap", gap: 14 },
-    settingsLabel: { fontSize: 15, color: currentColors.text },
-    checkbox: { display: "flex", alignItems: "center", gap: 12, marginBottom: 16, cursor: "pointer", fontSize: 14, color: currentColors.textSecondary },
-    achievementGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 12, marginTop: 16 },
-    achievementCard: { background: "rgba(0,0,0,0.3)", borderRadius: 12, padding: 12, display: "flex", alignItems: "center", gap: 12 },
-    achievementIcon: { fontSize: 28 },
+    gameDetailName: { fontSize: 24, fontWeight: 700, marginBottom: 8, color: currentColors.text, wordWrap: "break-word" },
+    gameDetailDeveloper: { fontSize: 13, color: currentColors.textSecondary, marginBottom: 6 },
+    gameDetailRating: { fontSize: 14, color: currentColors.primary, marginBottom: 10 },
+    gameDetailDescription: { fontSize: 14, color: currentColors.textSecondary, lineHeight: 1.5, marginBottom: 14, wordWrap: "break-word" },
+    gameDetailPlatforms: { display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 16 },
+    platformBadge: { background: "rgba(255,255,255,0.1)", borderRadius: 20, padding: "4px 10px", fontSize: 11, color: currentColors.text },
+    buyButtonsRow: { display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 16 },
+    buyBtn: (bgColor) => ({ background: bgColor, border: "none", borderRadius: 8, padding: "8px 14px", color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", gap: 8, fontSize: 12, fontWeight: 500 }),
+    backBtn: { display: "flex", alignItems: "center", gap: 8, background: "rgba(255,255,255,0.05)", border: "none", borderRadius: 10, padding: "8px 16px", color: currentColors.text, cursor: "pointer", marginBottom: 20, fontSize: 13 },
+    trailerFrame: { width: "100%", height: 220, borderRadius: 14, marginBottom: 20, border: "none", background: "#000" },
+    settingsSection: { background: currentColors.bgCard, borderRadius: 14, padding: 16, marginBottom: 20 },
+    settingsRow: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14, flexWrap: "wrap", gap: 10 },
+    settingsLabel: { fontSize: 14, color: currentColors.text },
+    checkbox: { display: "flex", alignItems: "center", gap: 10, marginBottom: 14, cursor: "pointer", fontSize: 13, color: currentColors.textSecondary },
+    achievementGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(170px, 1fr))", gap: 10, marginTop: 14 },
+    achievementCard: { background: "rgba(0,0,0,0.3)", borderRadius: 10, padding: 10, display: "flex", alignItems: "center", gap: 10 },
+    achievementIcon: { fontSize: 24 },
     achievementInfo: { flex: 1 },
-    achievementName: { fontSize: 13, fontWeight: 600, color: currentColors.text },
-    achievementDesc: { fontSize: 11, color: currentColors.textSecondary },
-    donationBtn: { background: "linear-gradient(135deg, #ffd400, #e6bf00)", border: "none", borderRadius: 12, padding: "12px 20px", color: "#0a0a0f", cursor: "pointer", fontWeight: 700, display: "flex", alignItems: "center", gap: 8, fontSize: 14 },
-    aotyResultCard: { background: currentColors.bgCard, borderRadius: 24, padding: 28, marginBottom: 24, border: `1px solid ${currentColors.primary}30`, transition: "all 0.3s ease" },
-    aotyWinnerCard: { background: `linear-gradient(135deg, ${currentColors.primary}10, ${currentColors.bgCard})`, borderRadius: 16, padding: 16, marginBottom: 12, cursor: "pointer", transition: "transform 0.2s", display: "flex", gap: 16, alignItems: "center", flexWrap: "wrap" },
-    gotyBackBtn: { background: "rgba(255,255,255,0.05)", border: "none", borderRadius: 12, padding: "10px 20px", color: currentColors.text, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 20, fontSize: 14 },
-    topGenreSelect: { background: currentColors.bgCard, border: `1px solid ${currentColors.primary}30`, borderRadius: 12, padding: "12px 20px", color: currentColors.text, fontSize: 14, marginBottom: 24, cursor: "pointer" },
-    aotyYearCard: { background: currentColors.bgCard, borderRadius: 16, padding: 16, textAlign: "center", cursor: "pointer", transition: "all 0.3s ease", border: "1px solid rgba(255,255,255,0.05)" },
-    playlistCard: { background: currentColors.bgCard, borderRadius: 16, padding: 16, marginBottom: 16, border: `1px solid ${currentColors.primary}20` },
-    gameNightCard: { background: currentColors.bgCard, borderRadius: 16, padding: 20, marginBottom: 24, textAlign: "center" },
-    activityCard: { background: currentColors.bgCard, borderRadius: 12, padding: 12, marginBottom: 12, display: "flex", alignItems: "center", gap: 12 },
-    compareCard: { background: currentColors.bgCard, borderRadius: 16, padding: 20, marginBottom: 24 },
-    journalCard: { background: currentColors.bgCard, borderRadius: 16, padding: 16, marginBottom: 16 },
-    tag: { background: "rgba(255,212,0,0.15)", borderRadius: 16, padding: "4px 10px", fontSize: 11, color: currentColors.primary, display: "inline-flex", alignItems: "center", gap: 6 }
+    achievementName: { fontSize: 12, fontWeight: 600, color: currentColors.text },
+    achievementDesc: { fontSize: 10, color: currentColors.textSecondary },
+    donationBtn: { background: "linear-gradient(135deg, #ffd400, #e6bf00)", border: "none", borderRadius: 10, padding: "10px 16px", color: "#0a0a0f", cursor: "pointer", fontWeight: 700, display: "flex", alignItems: "center", gap: 6, fontSize: 13 },
+    aotyResultCard: { background: currentColors.bgCard, borderRadius: 20, padding: 20, marginBottom: 20, border: `1px solid ${currentColors.primary}30` },
+    aotyWinnerCard: { background: `linear-gradient(135deg, ${currentColors.primary}10, ${currentColors.bgCard})`, borderRadius: 14, padding: 14, marginBottom: 10, cursor: "pointer", display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" },
+    gotyBackBtn: { background: "rgba(255,255,255,0.05)", border: "none", borderRadius: 10, padding: "8px 16px", color: currentColors.text, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6, marginBottom: 16, fontSize: 13 },
+    topGenreSelect: { background: currentColors.bgCard, border: `1px solid ${currentColors.primary}30`, borderRadius: 10, padding: "10px 16px", color: currentColors.text, fontSize: 14, marginBottom: 20, cursor: "pointer", width: "100%" },
+    aotyYearCard: { background: currentColors.bgCard, borderRadius: 14, padding: 12, textAlign: "center", cursor: "pointer", border: "1px solid rgba(255,255,255,0.05)" },
+    playlistCard: { background: currentColors.bgCard, borderRadius: 14, padding: 14, marginBottom: 14, border: `1px solid ${currentColors.primary}20` },
+    gameNightCard: { background: currentColors.bgCard, borderRadius: 14, padding: 16, marginBottom: 20, textAlign: "center" },
+    activityCard: { background: currentColors.bgCard, borderRadius: 10, padding: 10, marginBottom: 10, display: "flex", alignItems: "center", gap: 10 },
+    compareCard: { background: currentColors.bgCard, borderRadius: 14, padding: 16, marginBottom: 20 },
+    journalCard: { background: currentColors.bgCard, borderRadius: 14, padding: 14, marginBottom: 16 },
+    tag: { background: "rgba(255,212,0,0.15)", borderRadius: 14, padding: "3px 8px", fontSize: 10, color: currentColors.primary, display: "inline-flex", alignItems: "center", gap: 4 }
   };
 
   const GameCard = ({ game, showBtn = false }) => {
@@ -951,20 +955,20 @@ export default function NexPlay() {
     return (
       <div className="game-card" style={styles.gameCard} onClick={() => openGameDetail(game)}>
         <img src={img} style={styles.gameImg} alt={game.name} onError={(e) => { e.target.src = `https://placehold.co/300x400/14141f/ffd400?text=${encodeURIComponent(game.name?.slice(0, 8) || "Game")}`; }} />
-        <div style={{ position: "absolute", top: 10, right: 10, background: "rgba(0,0,0,0.7)", borderRadius: 20, padding: "3px 10px", fontSize: 12, fontWeight: 700, color: currentColors.primary }}>★ {rating?.toFixed(1)}</div>
-        <button className="btn-click" style={{ position: "absolute", top: 10, left: 10, background: "rgba(0,0,0,0.7)", border: "none", borderRadius: 20, padding: "6px 8px", cursor: "pointer" }} onClick={(e) => { e.stopPropagation(); toggleFavorite(game.id); }}>
-          {isFavorite ? <BsFillHeartFill color={currentColors.primary} size={12} /> : <FaHeart color="#fff" size={12} />}
+        <div style={{ position: "absolute", top: 8, right: 8, background: "rgba(0,0,0,0.7)", borderRadius: 16, padding: "2px 8px", fontSize: 11, fontWeight: 700, color: currentColors.primary }}>★ {rating?.toFixed(1)}</div>
+        <button className="btn-click" style={{ position: "absolute", top: 8, left: 8, background: "rgba(0,0,0,0.7)", border: "none", borderRadius: 16, padding: "4px 6px", cursor: "pointer" }} onClick={(e) => { e.stopPropagation(); toggleFavorite(game.id); }}>
+          {isFavorite ? <BsFillHeartFill color={currentColors.primary} size={10} /> : <FaHeart color="#fff" size={10} />}
         </button>
         <div style={styles.gameInfo}>
           <div style={styles.gameName}>{game.name}</div>
-          <div style={styles.rating}><FaStar size={11} /> {rating?.toFixed(1)}</div>
-          <div style={{ fontSize: 11, color: currentColors.textSecondary, marginBottom: 8 }}>{game.playtime}</div>
+          <div style={styles.rating}><FaStar size={10} /> {rating?.toFixed(1)}</div>
+          <div style={{ fontSize: 10, color: currentColors.textSecondary, marginBottom: 6 }}>{game.playtime}</div>
           {tags.length > 0 && (
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginBottom: 8 }}>
-              {tags.map((tag, i) => <span key={i} style={styles.tag}>{tag}</span>)}
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 3, marginBottom: 6 }}>
+              {tags.slice(0, 2).map((tag, i) => <span key={i} style={styles.tag}>{tag}</span>)}
             </div>
           )}
-          {showBtn && <button className="btn-click" style={styles.addBtn} onClick={(e) => { e.stopPropagation(); addToLibrary(game); }}>{inLibrary ? <FaCheck size={12} /> : <FaPlus size={12} />} {inLibrary ? text.inLibrary : text.add}</button>}
+          {showBtn && <button className="btn-click" style={styles.addBtn} onClick={(e) => { e.stopPropagation(); addToLibrary(game); }}>{inLibrary ? <FaCheck size={10} /> : <FaPlus size={10} />} {inLibrary ? text.inLibrary : text.add}</button>}
         </div>
       </div>
     );
@@ -976,7 +980,7 @@ export default function NexPlay() {
     return (
       <div style={{ background: currentColors.bg, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
         <div style={styles.loadingSpinner}></div>
-        <div style={{ marginTop: 20, color: currentColors.text }}>{text.loading}</div>
+        <div style={{ marginTop: 16, color: currentColors.text }}>{text.loading}</div>
       </div>
     );
   }
@@ -993,19 +997,22 @@ export default function NexPlay() {
         <div style={styles.container}>
           <div style={styles.header}>
             <div style={styles.logo} onClick={() => setCurrentTab("home")}>
-              <span style={styles.logoIcon}>NX</span>
+              <div style={styles.logoIcon}>
+                <GiConsoleController size={18} />
+                <span style={styles.logoIconText}>NX</span>
+              </div>
               <span style={styles.logoText}>NexPlay</span>
             </div>
             <div style={styles.mainTabs}>
-              <button className="btn-click" style={styles.iconBtn} onClick={() => setShowSettings(true)}><FaCog /> {text.settings}</button>
-              {!user ? <button className="btn-click" style={styles.loginBtn} onClick={() => setShowLoginModal(true)}><FaEnvelope /> {text.login}</button> :
-                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <button className="btn-click" style={styles.iconBtn} onClick={() => setShowSettings(true)}><FaCog size={14} /> <span style={{ display: window.innerWidth <= 768 ? "none" : "inline" }}>{text.settings}</span></button>
+              {!user ? <button className="btn-click" style={styles.loginBtn} onClick={() => setShowLoginModal(true)}><FaEnvelope size={14} /> <span style={{ display: window.innerWidth <= 768 ? "none" : "inline" }}>{text.login}</span></button> :
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                   <div style={styles.userAvatar}>{userData?.username?.charAt(0).toUpperCase()}</div>
-                  <button className="btn-click" style={styles.logoutBtn} onClick={logout}>{text.logout}</button>
+                  <button className="btn-click" style={styles.logoutBtn} onClick={logout}><FaSignOutAlt size={14} /> <span style={{ display: window.innerWidth <= 768 ? "none" : "inline" }}>{text.logout}</span></button>
                 </div>}
             </div>
           </div>
-          <button className="btn-click" style={styles.backBtn} onClick={closeGameDetail}><FaArrowLeft /> {text.back}</button>
+          <button className="btn-click" style={styles.backBtn} onClick={closeGameDetail}><FaArrowLeft size={12} /> {text.back}</button>
           <div className="fade-in" style={styles.gameDetailHeader}>
             <img src={selectedGameDetail.finalImg || selectedGameDetail.img} style={styles.gameDetailImg} alt={selectedGameDetail.name} />
             <div style={styles.gameDetailInfo}>
@@ -1013,26 +1020,25 @@ export default function NexPlay() {
               <div style={styles.gameDetailDeveloper}>{selectedGameDetail.developer}</div>
               <div style={styles.gameDetailRating}>★ {(selectedGameDetail.finalRating || selectedGameDetail.rating)?.toFixed(1)} · {selectedGameDetail.year} · {selectedGameDetail.playtime}</div>
               <div style={styles.gameDetailDescription}>{selectedGameDetail.finalDescription || generateLongDescription(selectedGameDetail.name, "")}</div>
-              <div style={styles.gameDetailPlatforms}>{selectedGameDetail.platforms?.map(p => <span key={p} style={styles.platformBadge}>{p}</span>)}</div>
-              <div style={styles.buyButtonsRow}>{buyLinks.map(link => <button key={link.name} className="btn-click" style={styles.buyBtn(link.color)} onClick={() => window.open(link.url, "_blank")}>{link.icon} {text.buyOn} {link.name}</button>)}</div>
-              <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 16 }}>
-                <button className="btn-click" style={{ ...styles.addBtn, width: "auto", display: "inline-flex" }} onClick={() => addToLibrary(selectedGameDetail)}>+ {text.add}</button>
-                <button className="btn-click" style={{ ...styles.addBtn, width: "auto", display: "inline-flex", background: isOnWishlist ? colors.success : currentColors.primary }} onClick={() => { if (!isOnWishlist) addToWishlist(selectedGameDetail); else alert("Already on wishlist!"); }}>⭐ {text.addToWishlist}</button>
-                <button className="btn-click" style={{ ...styles.addBtn, width: "auto", display: "inline-flex", background: "#444" }} onClick={() => alert("Price check would be implemented with a real API")}>{text.checkPrice}</button>
+              <div style={styles.gameDetailPlatforms}>{selectedGameDetail.platforms?.slice(0, 4).map(p => <span key={p} style={styles.platformBadge}>{p}</span>)}</div>
+              <div style={styles.buyButtonsRow}>{buyLinks.map(link => <button key={link.name} className="btn-click" style={styles.buyBtn(link.color)} onClick={() => window.open(link.url, "_blank")}>{link.icon} {link.name}</button>)}</div>
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 14 }}>
+                <button className="btn-click" style={{ ...styles.addBtn, width: "auto", padding: "8px 14px" }} onClick={() => addToLibrary(selectedGameDetail)}>+ {text.add}</button>
+                <button className="btn-click" style={{ ...styles.addBtn, width: "auto", padding: "8px 14px", background: isOnWishlist ? colors.success : currentColors.primary }} onClick={() => { if (!isOnWishlist) addToWishlist(selectedGameDetail); }}>⭐ {text.addToWishlist}</button>
               </div>
-              <div style={{ marginBottom: 16 }}>
-                <div style={{ fontWeight: 600, marginBottom: 8 }}>{text.tags}:</div>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 8 }}>
-                  {tags.map((tag, i) => <span key={i} style={styles.tag}>{tag} <button onClick={() => removeTag(selectedGameDetail.id, i)} style={{ background: "none", border: "none", color: "inherit", cursor: "pointer", marginLeft: 4 }}>✕</button></span>)}
+              <div style={{ marginBottom: 14 }}>
+                <div style={{ fontWeight: 600, marginBottom: 6, fontSize: 13 }}>{text.tags}:</div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 6 }}>
+                  {tags.map((tag, i) => <span key={i} style={styles.tag}>{tag} <button onClick={() => removeTag(selectedGameDetail.id, i)} style={{ background: "none", border: "none", color: "inherit", cursor: "pointer", marginLeft: 2 }}>✕</button></span>)}
                 </div>
                 <div style={{ display: "flex", gap: 8 }}>
-                  <input style={{ ...styles.input, marginBottom: 0, flex: 1 }} placeholder={text.addTag} value={newTag} onChange={e => setNewTag(e.target.value)} onKeyPress={e => e.key === 'Enter' && addTag(selectedGameDetail.id, newTag)} />
-                  <button className="btn-click" style={styles.addBtn} onClick={() => addTag(selectedGameDetail.id, newTag)}>+</button>
+                  <input style={{ ...styles.input, marginBottom: 0, padding: "8px 10px", fontSize: 12 }} placeholder={text.addTag} value={newTag} onChange={e => setNewTag(e.target.value)} onKeyDown={(e) => e.key === "Enter" && addTag(selectedGameDetail.id, newTag)} />
+                  <button className="btn-click" style={{ ...styles.addBtn, width: "auto", padding: "8px 12px" }} onClick={() => addTag(selectedGameDetail.id, newTag)}>+</button>
                 </div>
               </div>
               <div style={styles.journalCard}>
-                <div style={{ fontWeight: 600, marginBottom: 8 }}><GiNotebook /> {text.journalNotes}</div>
-                <textarea style={styles.textarea} rows="3" placeholder="Write your thoughts about this game..." value={journalText} onChange={e => setJournalText(e.target.value)} onBlur={() => saveJournalNote(selectedGameDetail.id, journalText)} />
+                <div style={{ fontWeight: 600, marginBottom: 6, fontSize: 13, display: "flex", alignItems: "center", gap: 6 }}><GiNotebook /> {text.journalNotes}</div>
+                <textarea style={{ ...styles.textarea, fontSize: 12, padding: "10px" }} rows="3" placeholder="Write your thoughts..." value={journalText} onChange={e => setJournalText(e.target.value)} onBlur={() => saveJournalNote(selectedGameDetail.id, journalText)} />
               </div>
             </div>
           </div>
@@ -1043,10 +1049,10 @@ export default function NexPlay() {
             <textarea style={styles.textarea} placeholder={text.yourReview} rows="2" value={reviewComment} onChange={e => setReviewComment(e.target.value)} />
             <button className="btn-click" style={styles.modalBtn} onClick={submitGameDetailReview}>{text.submit}</button>
           </div>
-          <div className="fade-in" style={{ marginTop: 28 }}>
+          <div className="fade-in" style={{ marginTop: 24 }}>
             <div style={styles.sectionTitle}>{text.reviews} ({gameDetailReviews.length})</div>
             {gameDetailReviews.length === 0 ? <div style={styles.emptyState}>{text.noReviews}</div> :
-              gameDetailReviews.map(review => (
+              gameDetailReviews.slice(0, 5).map(review => (
                 <div key={review.id} style={styles.reviewCard}>
                   <div style={styles.reviewHeader}>
                     <span style={styles.reviewUsername}>{review.username}</span>
@@ -1055,8 +1061,8 @@ export default function NexPlay() {
                   <div style={styles.reviewComment}>{review.comment || "No comment"}</div>
                   {user && (
                     <div style={styles.reviewActions}>
-                      <button className="btn-click" style={styles.likeBtn} onClick={() => handleLikeReview(review.id)}><FaThumbsUp /> {review.likes?.length || 0}</button>
-                      <button className="btn-click" style={styles.likeBtn} onClick={() => handleDislikeReview(review.id)}><FaThumbsDown /> {review.dislikes?.length || 0}</button>
+                      <button className="btn-click" style={styles.likeBtn} onClick={() => handleLikeReview(review.id)}><FaThumbsUp size={11} /> {review.likes?.length || 0}</button>
+                      <button className="btn-click" style={styles.likeBtn} onClick={() => handleDislikeReview(review.id)}><FaThumbsDown size={11} /> {review.dislikes?.length || 0}</button>
                     </div>
                   )}
                 </div>
@@ -1069,126 +1075,179 @@ export default function NexPlay() {
 
   return (
     <div style={styles.app} onClick={initAudio}>
+      {/* Mobile Menu Overlay */}
+      <div style={styles.mobileMenu}>
+        <button className="btn-click" style={styles.mobileMenuClose} onClick={closeMobileMenu}><FaTimes size={20} /></button>
+        <div style={{ marginTop: 40 }}>
+          <button className="btn-click" style={styles.mobileMenuItem} onClick={() => { setCurrentTab("home"); closeMobileMenu(); }}><FaHome /> {text.home}</button>
+          <button className="btn-click" style={styles.mobileMenuItem} onClick={() => { setCurrentTab("library"); closeMobileMenu(); }}><BsFillCollectionFill /> {text.library}</button>
+          <button className="btn-click" style={styles.mobileMenuItem} onClick={() => { setCurrentTab("profile"); closeMobileMenu(); }}><FaUser /> {text.profile}</button>
+          <button className="btn-click" style={styles.mobileMenuItem} onClick={() => { setCurrentTab("friends"); closeMobileMenu(); }}><FaUsers /> {text.friends}</button>
+          <button className="btn-click" style={styles.mobileMenuItem} onClick={() => { setCurrentTab("ai"); closeMobileMenu(); }}><FaRobot /> {text.ai}</button>
+          <button className="btn-click" style={styles.mobileMenuItem} onClick={() => { setCurrentTab("aoty"); closeMobileMenu(); }}><FaTrophy /> {text.aoty}</button>
+          <button className="btn-click" style={styles.mobileMenuItem} onClick={() => { setCurrentTab("playlists"); closeMobileMenu(); }}><FaList /> {text.playlists}</button>
+          <button className="btn-click" style={styles.mobileMenuItem} onClick={() => { setCurrentTab("gameNight"); closeMobileMenu(); }}><GiSpinningWheel /> {text.gameNight}</button>
+          <button className="btn-click" style={styles.mobileMenuItem} onClick={() => { setCurrentTab("activity"); closeMobileMenu(); }}><FaBell /> {text.activity}</button>
+          <button className="btn-click" style={styles.mobileMenuItem} onClick={() => { setCurrentTab("wishlist"); closeMobileMenu(); }}><FaStar /> {text.wishlist}</button>
+          <button className="btn-click" style={styles.mobileMenuItem} onClick={() => { setCurrentTab("backlog"); closeMobileMenu(); }}><FaChartLine /> {text.backlog}</button>
+          <button className="btn-click" style={styles.mobileMenuItem} onClick={() => { setCurrentTab("compare"); closeMobileMenu(); }}><FaBalanceScale /> {text.compare}</button>
+          <button className="btn-click" style={styles.mobileMenuItem} onClick={() => { setShowSettings(true); closeMobileMenu(); }}><FaCog /> {text.settings}</button>
+          {!user ? <button className="btn-click" style={{ ...styles.mobileMenuItem, background: "linear-gradient(135deg, #4285f4, #3367d6)", marginTop: 16, borderRadius: 12, justifyContent: "center" }} onClick={() => { setShowLoginModal(true); closeMobileMenu(); }}><FaEnvelope /> {text.login}</button> :
+            <button className="btn-click" style={{ ...styles.mobileMenuItem, background: "rgba(255,255,255,0.08)", marginTop: 16, borderRadius: 12, justifyContent: "center" }} onClick={() => { logout(); closeMobileMenu(); }}><FaSignOutAlt /> {text.logout}</button>}
+        </div>
+      </div>
+
       <div style={styles.container}>
         <div style={styles.header}>
           <div style={styles.logo} onClick={() => setCurrentTab("home")}>
-            <span style={styles.logoIcon}>NX</span>
+            <div style={styles.logoIcon}>
+              <GiConsoleController size={18} />
+              <span style={styles.logoIconText}>NX</span>
+            </div>
             <span style={styles.logoText}>NexPlay</span>
           </div>
-          <button className="btn-click" style={{ ...styles.iconBtn, display: window.innerWidth <= 768 ? "flex" : "none" }} onClick={toggleMobileMenu}>
-            <FaBars />
+          <button className="btn-click" style={styles.hamburgerBtn} onClick={toggleMobileMenu}>
+            <FaBars size={18} />
           </button>
           <div style={{ display: window.innerWidth > 768 ? "block" : "none" }}>
             <div className="main-tabs" style={styles.mainTabs}>
-              <button className="btn-click" style={styles.mainTab(currentTab === "home")} onClick={() => { setCurrentTab("home"); setMobileMenuOpen(false); }}><FaHome /> {text.home}</button>
-              <button className="btn-click" style={styles.mainTab(currentTab === "library")} onClick={() => { setCurrentTab("library"); setMobileMenuOpen(false); }}><BsFillCollectionFill /> {text.library}</button>
-              <button className="btn-click" style={styles.mainTab(currentTab === "profile")} onClick={() => { setCurrentTab("profile"); setMobileMenuOpen(false); }}><FaUser /> {text.profile}</button>
-              <button className="btn-click" style={styles.mainTab(currentTab === "friends")} onClick={() => { setCurrentTab("friends"); setMobileMenuOpen(false); }}><FaUsers /> {text.friends}</button>
-              <button className="btn-click" style={styles.mainTab(currentTab === "ai")} onClick={() => { setCurrentTab("ai"); setMobileMenuOpen(false); }}><FaRobot /> {text.ai}</button>
-              <button className="btn-click" style={styles.mainTab(currentTab === "aoty")} onClick={() => { setCurrentTab("aoty"); setMobileMenuOpen(false); }}><FaTrophy /> {text.aoty}</button>
-              <button className="btn-click" style={styles.mainTab(currentTab === "playlists")} onClick={() => { setCurrentTab("playlists"); setMobileMenuOpen(false); }}><FaList /> {text.playlists}</button>
-              <button className="btn-click" style={styles.mainTab(currentTab === "gameNight")} onClick={() => { setCurrentTab("gameNight"); setMobileMenuOpen(false); }}><GiSpinningWheel /> {text.gameNight}</button>
-              <button className="btn-click" style={styles.mainTab(currentTab === "activity")} onClick={() => { setCurrentTab("activity"); setMobileMenuOpen(false); }}><FaBell /> {text.activity}</button>
-              <button className="btn-click" style={styles.mainTab(currentTab === "wishlist")} onClick={() => { setCurrentTab("wishlist"); setMobileMenuOpen(false); }}><FaStar /> {text.wishlist}</button>
-              <button className="btn-click" style={styles.mainTab(currentTab === "backlog")} onClick={() => { setCurrentTab("backlog"); setMobileMenuOpen(false); }}><FaChartLine /> {text.backlog}</button>
-              <button className="btn-click" style={styles.mainTab(currentTab === "compare")} onClick={() => { setCurrentTab("compare"); setMobileMenuOpen(false); }}><FaBalanceScale /> {text.compare}</button>
-              <button className="btn-click" style={styles.iconBtn} onClick={() => setShowSettings(true)}><FaCog /></button>
-              {!user ? <button className="btn-click" style={styles.loginBtn} onClick={() => setShowLoginModal(true)}><FaEnvelope /> {text.login}</button> :
-                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <button className="btn-click" style={styles.mainTab(currentTab === "home")} onClick={() => setCurrentTab("home")}><FaHome size={14} /> {text.home}</button>
+              <button className="btn-click" style={styles.mainTab(currentTab === "library")} onClick={() => setCurrentTab("library")}><BsFillCollectionFill size={14} /> {text.library}</button>
+              <button className="btn-click" style={styles.mainTab(currentTab === "profile")} onClick={() => setCurrentTab("profile")}><FaUser size={14} /> {text.profile}</button>
+              <button className="btn-click" style={styles.mainTab(currentTab === "ai")} onClick={() => setCurrentTab("ai")}><FaRobot size={14} /> {text.ai}</button>
+              <button className="btn-click" style={styles.iconBtn} onClick={() => setShowSettings(true)}><FaCog size={14} /></button>
+              {!user ? <button className="btn-click" style={styles.loginBtn} onClick={() => setShowLoginModal(true)}><FaEnvelope size={14} /> {text.login}</button> :
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                   <div style={styles.userAvatar}>{userData?.username?.charAt(0).toUpperCase()}</div>
-                  <button className="btn-click" style={styles.logoutBtn} onClick={logout}>{text.logout}</button>
+                  <button className="btn-click" style={styles.logoutBtn} onClick={logout}><FaSignOutAlt size={14} /></button>
                 </div>}
             </div>
           </div>
         </div>
-        <div style={{ display: window.innerWidth <= 768 && mobileMenuOpen ? "block" : "none" }}>
-          <div className="main-tabs" style={{ ...styles.mainTabs, flexDirection: "column", width: "100%" }}>
-            <button className="btn-click" style={styles.mainTab(currentTab === "home")} onClick={() => { setCurrentTab("home"); setMobileMenuOpen(false); }}><FaHome /> {text.home}</button>
-            <button className="btn-click" style={styles.mainTab(currentTab === "library")} onClick={() => { setCurrentTab("library"); setMobileMenuOpen(false); }}><BsFillCollectionFill /> {text.library}</button>
-            <button className="btn-click" style={styles.mainTab(currentTab === "profile")} onClick={() => { setCurrentTab("profile"); setMobileMenuOpen(false); }}><FaUser /> {text.profile}</button>
-            <button className="btn-click" style={styles.mainTab(currentTab === "friends")} onClick={() => { setCurrentTab("friends"); setMobileMenuOpen(false); }}><FaUsers /> {text.friends}</button>
-            <button className="btn-click" style={styles.mainTab(currentTab === "ai")} onClick={() => { setCurrentTab("ai"); setMobileMenuOpen(false); }}><FaRobot /> {text.ai}</button>
-            <button className="btn-click" style={styles.mainTab(currentTab === "aoty")} onClick={() => { setCurrentTab("aoty"); setMobileMenuOpen(false); }}><FaTrophy /> {text.aoty}</button>
-            <button className="btn-click" style={styles.mainTab(currentTab === "playlists")} onClick={() => { setCurrentTab("playlists"); setMobileMenuOpen(false); }}><FaList /> {text.playlists}</button>
-            <button className="btn-click" style={styles.mainTab(currentTab === "gameNight")} onClick={() => { setCurrentTab("gameNight"); setMobileMenuOpen(false); }}><GiSpinningWheel /> {text.gameNight}</button>
-            <button className="btn-click" style={styles.mainTab(currentTab === "activity")} onClick={() => { setCurrentTab("activity"); setMobileMenuOpen(false); }}><FaBell /> {text.activity}</button>
-            <button className="btn-click" style={styles.mainTab(currentTab === "wishlist")} onClick={() => { setCurrentTab("wishlist"); setMobileMenuOpen(false); }}><FaStar /> {text.wishlist}</button>
-            <button className="btn-click" style={styles.mainTab(currentTab === "backlog")} onClick={() => { setCurrentTab("backlog"); setMobileMenuOpen(false); }}><FaChartLine /> {text.backlog}</button>
-            <button className="btn-click" style={styles.mainTab(currentTab === "compare")} onClick={() => { setCurrentTab("compare"); setMobileMenuOpen(false); }}><FaBalanceScale /> {text.compare}</button>
-            <button className="btn-click" style={styles.iconBtn} onClick={() => setShowSettings(true)}><FaCog /></button>
-            {!user ? <button className="btn-click" style={styles.loginBtn} onClick={() => setShowLoginModal(true)}><FaEnvelope /> {text.login}</button> :
-              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <div style={styles.userAvatar}>{userData?.username?.charAt(0).toUpperCase()}</div>
-                <button className="btn-click" style={styles.logoutBtn} onClick={logout}>{text.logout}</button>
-              </div>}
-          </div>
-        </div>
 
-        {/* HOME TAB - Simplified version to avoid regex issues */}
+        {/* HOME TAB */}
         {currentTab === "home" && (
           <div className="fade-in">
             <div style={styles.tabNav}>
-              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "findGame")} onClick={() => setDiscoverSubTab("findGame")}>🔍 Find Game</button>
-              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "topPicks")} onClick={() => setDiscoverSubTab("topPicks")}>🎯 Top Picks</button>
-              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "bestEver")} onClick={() => setDiscoverSubTab("bestEver")}>🏆 Best Ever</button>
-              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "hiddenGems")} onClick={() => setDiscoverSubTab("hiddenGems")}>💎 Hidden Gems</button>
-              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "top20")} onClick={() => setDiscoverSubTab("top20")}>📊 Top 20</button>
+              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "findGame")} onClick={() => setDiscoverSubTab("findGame")}>🔍 {text.findYourGame}</button>
+              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "topPicks")} onClick={() => setDiscoverSubTab("topPicks")}>🎯 {text.topPicks}</button>
+              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "bestEver")} onClick={() => setDiscoverSubTab("bestEver")}>🏆 {text.bestEver}</button>
+              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "hiddenGems")} onClick={() => setDiscoverSubTab("hiddenGems")}>💎 {text.hiddenGems}</button>
+              <button className="btn-click" style={styles.tabNavBtn(discoverSubTab === "top20")} onClick={() => setDiscoverSubTab("top20")}>📊 {text.top20}</button>
             </div>
 
             {discoverSubTab === "findGame" && (
               <>
                 <div style={styles.randomFilterSection}>
-                  <div style={styles.randomFilterTitle}><FaRandom /> Random Game</div>
+                  <div style={styles.randomFilterTitle}><FaRandom size={14} /> {text.randomGame}</div>
                   <div style={styles.randomFilterRow}>
-                    <label className="btn-click" style={styles.randomCheckbox}><input type="checkbox" checked={randomExcludeHorror} onChange={e => setRandomExcludeHorror(e.target.checked)} /> Exclude Horror</label>
-                    <label className="btn-click" style={styles.randomCheckbox}><input type="checkbox" checked={randomExcludeIndie} onChange={e => setRandomExcludeIndie(e.target.checked)} /> Exclude Indie</label>
-                    <label className="btn-click" style={styles.randomCheckbox}><input type="checkbox" checked={randomExcludeOld} onChange={e => setRandomExcludeOld(e.target.checked)} /> Exclude before 2015</label>
-                    <div><span>Year:</span>
-                      <select className="btn-click" value={randomYear} onChange={e => setRandomYear(e.target.value)} style={styles.randomSelect}>
-                        <option value="all">All Years</option>
-                        {[...new Set(gamesWithData.map(g => g.year))].sort((a,b) => b - a).slice(0, 10).map(year => (
-                          <option key={year} value={year}>{year}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div><span>Min Rating: {randomMinRating}</span><input type="range" min="0" max="10" step="0.5" value={randomMinRating} onChange={e => setRandomMinRating(parseFloat(e.target.value))} style={styles.randomSlider} /></div>
-                    <select className="btn-click" value={randomMode} onChange={e => setRandomMode(e.target.value)} style={styles.randomSelect}>
-                      <option value="full">Fully Random</option><option value="genre">Random by Genre</option><option value="mood">Random by Mood</option>
-                    </select>
-                    <button className="btn-click" style={styles.loginBtn} onClick={doRandom}><FaRandom /> Roll</button>
+                    <label className="btn-click" style={styles.randomCheckbox}><input type="checkbox" checked={randomExcludeHorror} onChange={e => setRandomExcludeHorror(e.target.checked)} /> No Horror</label>
+                    <label className="btn-click" style={styles.randomCheckbox}><input type="checkbox" checked={randomExcludeIndie} onChange={e => setRandomExcludeIndie(e.target.checked)} /> No Indie</label>
+                    <label className="btn-click" style={styles.randomCheckbox}><input type="checkbox" checked={randomExcludeOld} onChange={e => setRandomExcludeOld(e.target.checked)} /> 2015+</label>
                   </div>
+                  <div style={styles.randomFilterRow}>
+                    <select className="btn-click" value={randomYear} onChange={e => setRandomYear(e.target.value)} style={styles.randomSelect}>
+                      <option value="all">{text.allYears}</option>
+                      {[...new Set(gamesWithData.map(g => g.year))].sort((a,b) => b - a).slice(0, 10).map(year => (
+                        <option key={year} value={year}>{year}</option>
+                      ))}
+                    </select>
+                    <select className="btn-click" value={randomMode} onChange={e => setRandomMode(e.target.value)} style={styles.randomSelect}>
+                      <option value="full">Random</option><option value="genre">By Genre</option><option value="mood">By Mood</option>
+                    </select>
+                    <button className="btn-click" style={styles.loginBtn} onClick={doRandom}><FaRandom size={12} /> Roll</button>
+                  </div>
+                  <div><span style={{ fontSize: 12 }}>Min Rating: {randomMinRating}</span><input type="range" min="0" max="10" step="0.5" value={randomMinRating} onChange={e => setRandomMinRating(parseFloat(e.target.value))} style={styles.randomSlider} /></div>
                 </div>
 
-                <div style={styles.sectionTitle}>Top Picks</div>
-                <div style={styles.grid}>{TOP_PICKS_GAMES.slice(0, 8).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
-                
-                <div style={styles.sectionTitle}>Best Ever</div>
-                <div style={styles.grid}>{BEST_EVER_GAMES.slice(0, 12).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
-                
-                <div style={styles.sectionTitle}>Hidden Gems</div>
-                <div style={styles.grid}>{HIDDEN_GEMS_GAMES.slice(0, 8).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
+                <div style={styles.tabNav}>
+                  <button className="btn-click" style={styles.tabNavBtn(step === 1)} onClick={() => setStep(1)}>{text.mood}</button>
+                  <button className="btn-click" style={styles.tabNavBtn(step === 2)} onClick={() => setStep(2)}>{text.genre}</button>
+                  <button className="btn-click" style={styles.tabNavBtn(step === 3)} onClick={() => setStep(3)}>{text.playtime}</button>
+                  <button className="btn-click" style={styles.tabNavBtn(step === 4)} onClick={() => setStep(4)}>{text.results}</button>
+                </div>
+
+                {step === 1 && (
+                  <div className="slide-in">
+                    <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 20, textAlign: "center" }}>{text.mood} 🎭</div>
+                    <div style={styles.pillGrid}>{MOODS.map(m => <button key={m} className="btn-click" style={styles.pill(selectedMoods.includes(m))} onClick={() => toggle(selectedMoods, setSelectedMoods, m)}>{m}</button>)}</div>
+                    <button className="btn-click" style={styles.nextBtn} onClick={() => setStep(2)}>{text.next} →</button>
+                  </div>
+                )}
+                {step === 2 && (
+                  <div className="slide-in">
+                    <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 20, textAlign: "center" }}>{text.genre} 🎮</div>
+                    <div style={styles.pillGrid}>{GENRES.map(g => <button key={g} className="btn-click" style={styles.pill(selectedGenres.includes(g))} onClick={() => toggle(selectedGenres, setSelectedGenres, g)}>{g}</button>)}</div>
+                    <button className="btn-click" style={styles.nextBtn} onClick={() => setStep(3)}>{text.next} →</button>
+                  </div>
+                )}
+                {step === 3 && (
+                  <div className="slide-in">
+                    <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 20, textAlign: "center" }}>{text.playtime} ⏱️</div>
+                    <div style={styles.pillGrid}>{PLAYTIMES.map(p => <button key={p} className="btn-click" style={styles.pill(selectedPlaytime === p)} onClick={() => setSelectedPlaytime(p === selectedPlaytime ? null : p)}>{p}</button>)}</div>
+                    <button className="btn-click" style={styles.nextBtn} onClick={() => setStep(4)}>{text.results} 🚀</button>
+                  </div>
+                )}
+                {step === 4 && (
+                  <div className="fade-in">
+                    <input style={styles.searchBar} placeholder={text.search} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+                    <div style={styles.filterRow}>
+                      <span style={{ fontSize: 12 }}>{text.sort}:</span>
+                      <button className="btn-click" style={styles.filterBtn(sortBy === "score")} onClick={() => setSortBy("score")}>{text.bestMatch}</button>
+                      <button className="btn-click" style={styles.filterBtn(sortBy === "rating")} onClick={() => setSortBy("rating")}>{text.rating}</button>
+                      <button className="btn-click" style={styles.filterBtn(sortBy === "year")} onClick={() => setSortBy("year")}>{text.year}</button>
+                    </div>
+                    {topPicks.length > 0 && (
+                      <div>
+                        <div style={styles.sectionTitle}>🎯 {text.topPicks}</div>
+                        <div style={styles.topPicksRow}>{topPicks.slice(0, 6).map((g,i) => <div key={g.id} className="game-card" style={styles.topPickCard} onClick={() => openGameDetail(g)}><div style={{ fontSize: 18, marginBottom: 6 }}>{["🥇","🥈","🥉","4","5","6"][i]}</div><img src={g.finalImg || g.img} style={{ width: "100%", height: 70, objectFit: "cover", borderRadius: 8 }} alt={g.name} /><div style={{ fontWeight: 700, marginTop: 8, fontSize: 11, wordWrap: "break-word" }}>{g.name}</div><div style={{ fontSize: 10, color: currentColors.primary }}>★ {(g.finalRating || g.rating)?.toFixed(1)}</div><button className="btn-click" style={{ ...styles.addBtn, padding: "6px 8px", fontSize: 10 }} onClick={(e) => { e.stopPropagation(); addToLibrary(g); }}>+ {text.add}</button></div>)}</div>
+                      </div>
+                    )}
+                    <div style={styles.sectionTitle}>📋 {text.allResults}</div>
+                    <div style={styles.grid}>{restResults.slice(0, 20).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
+                  </div>
+                )}
               </>
             )}
 
             {discoverSubTab === "topPicks" && (
-              <div><div style={styles.sectionTitle}>Top Picks</div><div style={styles.grid}>{TOP_PICKS_GAMES.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div></div>
+              <div className="fade-in">
+                <div style={styles.sectionTitle}>🎯 {text.topPicks}</div>
+                <div style={styles.grid}>{TOP_PICKS_GAMES.slice(0, 20).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
+              </div>
             )}
 
             {discoverSubTab === "bestEver" && (
-              <div><div style={styles.sectionTitle}>Best Ever</div><div style={styles.grid}>{BEST_EVER_GAMES.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div></div>
+              <div className="fade-in">
+                <input style={styles.searchBar} placeholder={text.search} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+                <div style={styles.filterRow}>
+                  <span>{text.sort}:</span>
+                  <button className="btn-click" style={styles.filterBtn(sortBy === "score")} onClick={() => setSortBy("score")}>{text.bestMatch}</button>
+                  <button className="btn-click" style={styles.filterBtn(sortBy === "rating")} onClick={() => setSortBy("rating")}>{text.rating}</button>
+                </div>
+                <div style={styles.sectionTitle}>🏆 {text.bestEver}</div>
+                <div style={styles.grid}>{filteredCategoryGames(BEST_EVER_GAMES).slice(0, 30).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
+              </div>
             )}
 
             {discoverSubTab === "hiddenGems" && (
-              <div><div style={styles.sectionTitle}>Hidden Gems</div><div style={styles.grid}>{HIDDEN_GEMS_GAMES.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div></div>
+              <div className="fade-in">
+                <div style={styles.sectionTitle}>💎 {text.hiddenGems}</div>
+                <div style={styles.grid}>{HIDDEN_GEMS_GAMES.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
+              </div>
             )}
 
             {discoverSubTab === "top20" && (
-              <div>
+              <div className="fade-in">
                 <select className="btn-click" value={selectedGenreForTop} onChange={e => setSelectedGenreForTop(e.target.value)} style={styles.topGenreSelect}>
                   {GENRES.map(g => <option key={g} value={g}>{g}</option>)}
                 </select>
-                <div style={styles.sectionTitle}>Top 20 - {selectedGenreForTop}</div>
-                <div style={styles.grid}>{top20ByGenre.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
+                <div style={styles.sectionTitle}>⭐ Top 20 - {selectedGenreForTop}</div>
+                {top20ByGenre.length === 0 ? (
+                  <div style={styles.emptyState}>No games found.</div>
+                ) : (
+                  <div style={styles.grid}>{top20ByGenre.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
+                )}
               </div>
             )}
           </div>
@@ -1197,31 +1256,31 @@ export default function NexPlay() {
         {/* LIBRARY TAB */}
         {currentTab === "library" && (
           <div className="fade-in">
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-              <div style={styles.sectionTitle}>📚 Library ({library.length})</div>
-              <div style={{ display: "flex", gap: 12 }}>
-                <button className="btn-click" style={styles.loginBtn} onClick={exportLibrary}><FaFileExport /> Export</button>
-                <label className="btn-click" style={styles.loginBtn}><FaFileImport /> Import<input type="file" accept=".json" style={{ display: "none" }} onChange={importLibrary} /></label>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, flexWrap: "wrap", gap: 10 }}>
+              <div style={styles.sectionTitle}>📚 {text.library} ({library.length})</div>
+              <div style={{ display: "flex", gap: 10 }}>
+                <button className="btn-click" style={styles.loginBtn} onClick={exportLibrary}><FaFileExport size={12} /> {text.export}</button>
+                <label className="btn-click" style={styles.loginBtn}><FaFileImport size={12} /> {text.import}<input type="file" accept=".json" style={{ display: "none" }} onChange={importLibrary} /></label>
               </div>
             </div>
             <div style={styles.statsRow}>
-              <div style={styles.statCard}><div style={styles.statNumber}>{library.length}</div><div>Total</div></div>
-              <div style={styles.statCard}><div style={styles.statNumber}>{library.filter(g => g.status === "playing").length}</div><div>Playing</div></div>
-              <div style={styles.statCard}><div style={styles.statNumber}>{library.filter(g => g.status === "completed").length}</div><div>Completed</div></div>
+              <div style={styles.statCard}><div style={styles.statNumber}>{library.length}</div><div>{text.total}</div></div>
+              <div style={styles.statCard}><div style={styles.statNumber}>{library.filter(g => g.status === "playing").length}</div><div>{text.playing}</div></div>
+              <div style={styles.statCard}><div style={styles.statNumber}>{library.filter(g => g.status === "completed").length}</div><div>{text.completed}</div></div>
             </div>
-            {library.length === 0 ? <div style={styles.emptyState}>Library is empty. Add games from Discover!</div> : library.map(game => (
-              <div key={game.id} style={styles.libraryCard}>
+            {library.length === 0 ? <div style={styles.emptyState}>{text.library} is empty.</div> : library.map(game => (
+              <div key={game.id} className="fade-in" style={styles.libraryCard}>
                 <img src={game.finalImg || game.img} style={styles.libraryImg} onClick={() => openGameDetail(game)} alt={game.name} />
                 <div style={styles.libraryInfo}>
                   <div style={styles.libraryTitle}>{game.name}</div>
-                  <div style={styles.libraryMeta}>{game.developer} · {game.year}</div>
+                  <div style={styles.libraryMeta}>{game.developer?.slice(0, 20)} · {game.year}</div>
                   <div style={styles.libraryActions}>
                     <select className="btn-click" value={game.status} onChange={e => updateStatus(game.id, e.target.value, game)} style={styles.select}>
                       <option value="wishlist">📝 Wishlist</option><option value="playing">🎮 Playing</option><option value="completed">✅ Completed</option>
                     </select>
-                    <button className="btn-click" onClick={() => toggleFavorite(game.id)} style={styles.select}><FaHeart color={favorites.includes(game.id) ? currentColors.primary : "#fff"} /></button>
-                    <button className="btn-click" onClick={() => markAsPlayed(game)} style={styles.select}><FaClock /> Played</button>
-                    <button className="btn-click" onClick={() => removeFromLibrary(game.id)} style={{ ...styles.select, color: "#ff6b6b" }}>Remove</button>
+                    <button className="btn-click" onClick={() => toggleFavorite(game.id)} style={styles.select}><FaHeart color={favorites.includes(game.id) ? currentColors.primary : "#fff"} size={11} /></button>
+                    <button className="btn-click" onClick={() => markAsPlayed(game)} style={styles.select}><FaClock size={11} /> {text.played}</button>
+                    <button className="btn-click" onClick={() => removeFromLibrary(game.id)} style={{ ...styles.select, color: "#ff6b6b" }}><FaTrash size={11} /></button>
                   </div>
                 </div>
               </div>
@@ -1237,28 +1296,45 @@ export default function NexPlay() {
                 <div style={styles.profileHeader}>
                   <div style={styles.profileAvatarLarge}>{userData?.username?.charAt(0).toUpperCase()}</div>
                   <div>
-                    <div style={{ fontSize: 24, fontWeight: 700 }}>{userData?.username}</div>
-                    <div style={{ fontSize: 13, color: currentColors.textSecondary }}>{user.email}</div>
-                    <div style={{ fontSize: 13, color: currentColors.textSecondary, marginBottom: 14 }}>{userData?.bio || "No bio"}</div>
+                    <div style={{ fontSize: 20, fontWeight: 700, display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap", justifyContent: "center" }}>{userData?.username}{userData?.username === "Sherlock10K" && <span style={{ color: currentColors.primary }}>👑</span>}</div>
+                    <div style={{ fontSize: 11, color: currentColors.textSecondary }}>{user.email}</div>
+                    <div style={{ fontSize: 11, color: currentColors.textSecondary, marginBottom: 10 }}>{userData?.bio || "No bio"}</div>
                     <div style={styles.statsRow}>
-                      <div><div style={styles.statNumber}>{library.length}</div><div>Total</div></div>
-                      <div><div style={styles.statNumber}>{library.filter(g => g.status === "completed").length}</div><div>Completed</div></div>
-                      <div><div style={styles.statNumber}>{favorites.length}</div><div>Favorites</div></div>
+                      <div><div style={styles.statNumber}>{library.length}</div><div>{text.total}</div></div>
+                      <div><div style={styles.statNumber}>{library.filter(g => g.status === "completed").length}</div><div>{text.completed}</div></div>
+                      <div><div style={styles.statNumber}>{favorites.length}</div><div>{text.favorites}</div></div>
                     </div>
-                    <button className="btn-click" style={styles.editBtn} onClick={openEditModal}><FaEdit /> Edit Profile</button>
-                    <button className="btn-click" style={{ ...styles.donationBtn, marginLeft: 12 }} onClick={() => window.open("https://ko-fi.com", "_blank")}><FaDonate /> Donate</button>
+                    <button className="btn-click" style={styles.editBtn} onClick={openEditModal}><FaEdit size={11} /> {text.editProfile}</button>
+                    <button className="btn-click" style={{ ...styles.donationBtn, marginLeft: 8 }} onClick={() => window.open("https://ko-fi.com", "_blank")}><FaDonate size={11} /> {text.donate}</button>
                   </div>
                 </div>
 
+                <div style={styles.sectionTitle}><GiAchievement size={16} /> {text.achievements}</div>
+                <div style={styles.achievementGrid}>
+                  {achievements.slice(0, 8).map(ach => (
+                    <div key={ach.id} style={{ ...styles.achievementCard, opacity: ach.unlocked ? 1 : 0.5 }}>
+                      <div style={styles.achievementIcon}>{ach.icon}</div>
+                      <div style={styles.achievementInfo}>
+                        <div style={styles.achievementName}>{ach.name}</div>
+                        <div style={styles.achievementDesc}>{ach.desc}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
                 <div style={styles.platformSection}>
-                  <div style={styles.randomFilterTitle}><FaSteam /> Steam Connection</div>
+                  <div style={styles.randomFilterTitle}><FaSteam size={14} /> Steam</div>
                   <div style={styles.platformRow}>
-                    <input type="text" placeholder="Steam ID" value={steamIdInput} onChange={e => setSteamIdInput(e.target.value)} style={{ ...styles.input, marginBottom: 0, flex: 1 }} />
+                    <input type="text" placeholder={text.steamId} value={steamIdInput} onChange={e => setSteamIdInput(e.target.value)} style={{ ...styles.input, marginBottom: 0, flex: 1, fontSize: 12 }} />
                     <button className="btn-click" style={styles.platformBtn(colors.steam)} onClick={handleSteamLogin} disabled={syncingPlatform === "steam"}>
-                      <FaSteam /> {syncingPlatform === "steam" ? "Importing..." : "Import Steam Games"}
+                      <FaSteam size={12} /> {syncingPlatform === "steam" ? "..." : text.importGames}
                     </button>
                   </div>
                 </div>
+
+                {userData?.lastPlayed?.length > 0 && (
+                  <><div style={styles.sectionTitle}><FaClock size={14} /> {text.recentlyPlayed}</div><div style={styles.lastPlayedRow}>{userData.lastPlayed.slice(0,6).map((g,i) => <div key={i} style={styles.lastPlayedCard} onClick={() => { const game = [...gamesWithData, ...MANUAL_HIDDEN_GEMS].find(a => a.id === g.gameId); if (game) openGameDetail(game); }}><img src={g.gameImg} style={styles.lastPlayedImg} alt={g.gameName} /><div style={styles.lastPlayedName}>{g.gameName.slice(0, 10)}</div></div>)}</div></>
+                )}
               </>
             ) : <div style={styles.emptyState}>Login to see your profile</div>}
           </div>
@@ -1268,14 +1344,14 @@ export default function NexPlay() {
         {currentTab === "ai" && (
           <div className="fade-in">
             <div style={styles.aiSection}>
-              <div style={styles.randomFilterTitle}><FaRobot /> AI Assistant</div>
+              <div style={styles.randomFilterTitle}><FaRobot size={14} /> {text.ai}</div>
               <div style={styles.aiRow}>
-                <input style={{ ...styles.input, marginBottom: 0, flex: 1 }} placeholder="Ask for game recommendations..." value={aiQuery} onChange={e => setAiQuery(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleAiSearch()} />
-                <button className="btn-click" style={styles.loginBtn} onClick={handleAiSearch} disabled={isAiLoading}>{isAiLoading ? "Thinking..." : "Go"}</button>
+                <input style={{ ...styles.input, marginBottom: 0, flex: 1 }} placeholder="Ask for recommendations..." value={aiQuery} onChange={e => setAiQuery(e.target.value)} onKeyDown={e => e.key === "Enter" && handleAiSearch()} />
+                <button className="btn-click" style={styles.loginBtn} onClick={handleAiSearch} disabled={isAiLoading}>{isAiLoading ? "..." : "Go"}</button>
               </div>
-              {aiResponse && <div style={styles.aiResultBox}>{aiResponse}</div>}
+              {aiResponse && <div className="fade-in" style={styles.aiResultBox}>{aiResponse}</div>}
             </div>
-            <div style={styles.sectionTitle}>Top Picks</div>
+            <div style={styles.sectionTitle}>🎯 {text.topPicks}</div>
             <div style={styles.grid}>{TOP_PICKS_GAMES.slice(0, 12).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
           </div>
         )}
@@ -1283,36 +1359,62 @@ export default function NexPlay() {
         {/* AOTY TAB */}
         {currentTab === "aoty" && (
           <div className="fade-in">
-            <div style={styles.sectionTitle}><FaTrophy /> Game of the Year Winners</div>
-            <div style={styles.grid}>
-              {Object.entries(AOTY_DATA).reverse().slice(0, 12).map(([year, data]) => (
-                <div key={year} style={styles.aotyYearCard} onClick={() => {
-                  if (data.tga) {
-                    const gameData = { id: year, name: data.tga.winner, rating: 9.0, genre: "Action", playtime: "20-40h", year: parseInt(year), img: data.tga.img, developer: "Various", platforms: ["PC", "Console"], steamId: data.tga.steamId };
-                    openGameDetail(gameData);
-                  }
-                }}>
-                  {data.tga?.img && <img src={data.tga.img} style={{ width: "100%", height: 100, objectFit: "cover", borderRadius: 12, marginBottom: 12 }} alt={data.tga.winner} />}
-                  <div style={{ fontWeight: 700, fontSize: 20, color: currentColors.primary }}>{year}</div>
-                  <div style={{ fontSize: 12, marginTop: 8 }}>{data.tga?.winner || "TBA"}</div>
+            {selectedAotyYear ? (
+              <>
+                <button className="btn-click" style={styles.gotyBackBtn} onClick={() => { setSelectedAotyYear(null); setAotySearch(""); setAotyResult(null); }}>
+                  <FaArrowLeft size={12} /> {text.backToAOTY}
+                </button>
+                <div style={styles.aotyResultCard}>
+                  <div style={{ fontSize: 24, fontWeight: 800, marginBottom: 8, textAlign: "center", color: currentColors.primary }}>{selectedAotyYear}</div>
+                  <div style={styles.aotyWinnerCard} onClick={() => {
+                    const award = AOTY_DATA[selectedAotyYear]?.tga;
+                    if (award) {
+                      const gameData = { id: selectedAotyYear, name: award.winner, rating: 9.0, genre: "Action", playtime: "20-40h", year: selectedAotyYear, img: award.img, developer: "Various", platforms: ["PC", "Console"], steamId: award.steamId, finalRating: 9.0, finalImg: award.img };
+                      openGameDetail(gameData);
+                    }
+                  }}>
+                    <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
+                      <FaTrophy style={{ color: currentColors.primary, fontSize: 24 }} />
+                      <div>
+                        <div style={{ fontSize: 11, color: currentColors.primary }}>The Game Awards</div>
+                        <div style={{ fontSize: 16, fontWeight: 600 }}>{AOTY_DATA[selectedAotyYear]?.tga?.winner || "TBA"}</div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              ))}
-            </div>
+              </>
+            ) : (
+              <>
+                <div style={styles.sectionTitle}><FaTrophy size={16} /> {text.aotyTitle}</div>
+                <input style={styles.searchBar} placeholder={text.searchAOTY} value={aotySearch} onChange={e => setAotySearch(e.target.value)} />
+                {!aotySearch && !selectedAotyYear && (
+                  <div style={styles.grid}>
+                    {Object.entries(AOTY_DATA).reverse().slice(0, 16).map(([year, data]) => (
+                      <div key={year} style={styles.aotyYearCard} onClick={() => setSelectedAotyYear(parseInt(year))}>
+                        {data.tga?.img && <img src={data.tga.img} style={{ width: "100%", height: 80, objectFit: "cover", borderRadius: 10, marginBottom: 8 }} alt={data.tga.winner} />}
+                        <div style={{ fontWeight: 700, fontSize: 18, color: currentColors.primary }}>{year}</div>
+                        <div style={{ fontSize: 10, marginTop: 6 }}>{data.tga?.winner?.slice(0, 20) || "No data"}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
           </div>
         )}
 
         {/* FRIENDS TAB */}
         {currentTab === "friends" && (
           <div className="fade-in">
-            <div style={styles.sectionTitle}><FaUsers /> Find Friends</div>
+            <div style={styles.sectionTitle}><FaUsers size={14} /> {text.findFriends}</div>
             <div style={styles.searchRow}>
-              <input style={{ ...styles.input, marginBottom: 0, flex: 1 }} placeholder="Search by username..." value={searchUsersTerm} onChange={e => setSearchUsersTerm(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSearchUsers()} />
-              <button className="btn-click" style={styles.loginBtn} onClick={handleSearchUsers}><FaSearch /> Search</button>
+              <input style={{ ...styles.input, marginBottom: 0, flex: 1 }} placeholder="Search username..." value={searchUsersTerm} onChange={e => setSearchUsersTerm(e.target.value)} onKeyDown={e => e.key === "Enter" && handleSearchUsers()} />
+              <button className="btn-click" style={styles.loginBtn} onClick={handleSearchUsers}><FaSearch size={12} /> {text.search}</button>
             </div>
-            {foundUsers.map(u => (
+            {foundUsers.slice(0, 10).map(u => (
               <div key={u.id} style={styles.userCard}>
                 <div style={styles.userAvatarSmall}>{u.username?.charAt(0).toUpperCase()}</div>
-                <div><div style={{ fontWeight: 700 }}>{u.username}</div><div style={{ fontSize: 13, color: currentColors.textSecondary }}>{u.bio || "No bio"}</div></div>
+                <div><div style={{ fontWeight: 700, fontSize: 14 }}>{u.username}</div><div style={{ fontSize: 11, color: currentColors.textSecondary }}>{u.bio?.slice(0, 30) || "No bio"}</div></div>
               </div>
             ))}
           </div>
@@ -1321,14 +1423,19 @@ export default function NexPlay() {
         {/* PLAYLISTS TAB */}
         {currentTab === "playlists" && (
           <div className="fade-in">
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
-              <div style={styles.sectionTitle}><FaList /> Playlists</div>
-              <button className="btn-click" style={styles.loginBtn} onClick={() => setShowCreatePlaylist(true)}><FaPlusCircle /> Create</button>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20, flexWrap: "wrap", gap: 10 }}>
+              <div style={styles.sectionTitle}><FaList size={14} /> {text.playlists}</div>
+              <button className="btn-click" style={styles.loginBtn} onClick={() => setShowCreatePlaylist(true)}><FaPlusCircle size={12} /> {text.createPlaylist}</button>
             </div>
-            {playlists.map(playlist => (
+            {playlists.length === 0 ? <div style={styles.emptyState}>No playlists yet.</div> : playlists.map(playlist => (
               <div key={playlist.id} style={styles.playlistCard}>
-                <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 12 }}>{playlist.name}</div>
-                <div style={styles.grid}>{playlist.games.slice(0, 4).map(game => <GameCard key={game.id} game={game} showBtn={false} />)}</div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                  <div style={{ fontWeight: 700, fontSize: 16 }}>{playlist.name}</div>
+                  <button className="btn-click" style={{ background: "rgba(255,255,255,0.05)", border: "none", borderRadius: 6, padding: "4px 10px", color: currentColors.textSecondary, cursor: "pointer", fontSize: 11 }} onClick={() => deletePlaylist(playlist.id)}><FaTrashAlt size={10} /> Delete</button>
+                </div>
+                <div style={styles.grid}>
+                  {playlist.games.slice(0, 6).map(game => <GameCard key={game.id} game={game} showBtn={false} />)}
+                </div>
               </div>
             ))}
           </div>
@@ -1338,12 +1445,17 @@ export default function NexPlay() {
         {currentTab === "gameNight" && (
           <div className="fade-in">
             <div style={styles.gameNightCard}>
-              <div style={styles.randomFilterTitle}><GiSpinningWheel /> Game Night Mode</div>
+              <div style={styles.randomFilterTitle}><GiSpinningWheel size={14} /> {text.gameNightMode}</div>
+              <label className="btn-click" style={styles.randomCheckbox}><input type="checkbox" checked={gameNightFilters.excludeMultiplayer} onChange={e => setGameNightFilters({ ...gameNightFilters, excludeMultiplayer: e.target.checked })} /> {text.excludeMultiplayer}</label>
+              <div style={{ margin: "12px 0" }}>
+                <div style={{ fontSize: 11, color: currentColors.textSecondary }}>Min Rating: {gameNightFilters.minRating}</div>
+                <input type="range" min="0" max="10" step="0.5" value={gameNightFilters.minRating} onChange={e => setGameNightFilters({ ...gameNightFilters, minRating: parseFloat(e.target.value) })} style={styles.randomSlider} />
+              </div>
               <button className="btn-click" style={styles.loginBtn} onClick={spinGameNight} disabled={spinning}>
-                {spinning ? "Spinning..." : "Spin the Wheel"}
+                {spinning ? "🎲" : <><GiSpinningWheel size={14} /> {text.spinWheel}</>}
               </button>
               {spinResult && !spinning && (
-                <div style={{ marginTop: 24 }}><GameCard game={spinResult} showBtn={true} /></div>
+                <div style={{ marginTop: 20 }}><GameCard game={spinResult} showBtn={true} /></div>
               )}
             </div>
           </div>
@@ -1352,15 +1464,15 @@ export default function NexPlay() {
         {/* WISHLIST TAB */}
         {currentTab === "wishlist" && (
           <div className="fade-in">
-            <div style={styles.sectionTitle}><FaStar /> Wishlist</div>
-            <div style={styles.grid}>{wishlist.map(game => <GameCard key={game.id} game={game} showBtn={true} />)}</div>
+            <div style={styles.sectionTitle}><FaStar size={14} /> {text.wishlist}</div>
+            {wishlist.length === 0 ? <div style={styles.emptyState}>Empty</div> : <div style={styles.grid}>{wishlist.slice(0, 20).map(game => <GameCard key={game.id} game={game} showBtn={true} />)}</div>}
           </div>
         )}
 
         {/* BACKLOG TAB */}
         {currentTab === "backlog" && (
           <div className="fade-in">
-            <div style={styles.sectionTitle}><FaChartLine /> Backlog Cleaner</div>
+            <div style={styles.sectionTitle}><FaChartLine size={14} /> {text.backlog}</div>
             {backlogRecommendation && typeof backlogRecommendation === "object" ? (
               <div><GameCard game={backlogRecommendation} showBtn={true} /></div>
             ) : (
@@ -1372,15 +1484,15 @@ export default function NexPlay() {
         {/* COMPARE TAB */}
         {currentTab === "compare" && (
           <div className="fade-in">
-            <div style={styles.sectionTitle}><FaBalanceScale /> Compare Games</div>
+            <div style={styles.sectionTitle}><FaBalanceScale size={14} /> {text.compareGames}</div>
             <div style={styles.compareCard}>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
-                <select className="btn-click" style={styles.select} value={compareGames[0]?.id || ""} onChange={e => { const game = [...gamesWithData, ...MANUAL_HIDDEN_GEMS].find(g => g.id === parseInt(e.target.value)); setCompareGames([game, compareGames[1]]); }}>
-                  <option value="">Select Game 1</option>
+              <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 12 }}>
+                <select className="btn-click" style={{ ...styles.select, flex: 1 }} value={compareGames[0]?.id || ""} onChange={e => { const game = [...gamesWithData, ...MANUAL_HIDDEN_GEMS].find(g => g.id === parseInt(e.target.value)); setCompareGames([game, compareGames[1]]); }}>
+                  <option value="">{text.selectGame} 1</option>
                   {[...gamesWithData, ...MANUAL_HIDDEN_GEMS].slice(0, 30).map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
                 </select>
-                <select className="btn-click" style={styles.select} value={compareGames[1]?.id || ""} onChange={e => { const game = [...gamesWithData, ...MANUAL_HIDDEN_GEMS].find(g => g.id === parseInt(e.target.value)); setCompareGames([compareGames[0], game]); }}>
-                  <option value="">Select Game 2</option>
+                <select className="btn-click" style={{ ...styles.select, flex: 1 }} value={compareGames[1]?.id || ""} onChange={e => { const game = [...gamesWithData, ...MANUAL_HIDDEN_GEMS].find(g => g.id === parseInt(e.target.value)); setCompareGames([compareGames[0], game]); }}>
+                  <option value="">{text.selectGame} 2</option>
                   {[...gamesWithData, ...MANUAL_HIDDEN_GEMS].slice(0, 30).map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
                 </select>
               </div>
@@ -1389,13 +1501,13 @@ export default function NexPlay() {
         )}
       </div>
 
-      {/* MODALS */}
+      {/* MODALS - same as before */}
       {showCreatePlaylist && (
         <div style={styles.modalOverlay} onClick={() => setShowCreatePlaylist(false)}>
           <div style={styles.modalContent} onClick={e => e.stopPropagation()}>
-            <div style={styles.modalTitle}>Create Playlist</div>
-            <input style={styles.input} placeholder="Playlist name" value={newPlaylistName} onChange={e => setNewPlaylistName(e.target.value)} />
-            <button className="btn-click" style={styles.modalBtn} onClick={createPlaylist}>Create</button>
+            <div style={styles.modalTitle}>{text.createPlaylist}</div>
+            <input style={styles.input} placeholder={text.playlistName} value={newPlaylistName} onChange={e => setNewPlaylistName(e.target.value)} />
+            <button className="btn-click" style={styles.modalBtn} onClick={createPlaylist}>{text.createPlaylist}</button>
           </div>
         </div>
       )}
@@ -1403,18 +1515,13 @@ export default function NexPlay() {
       {showSettings && (
         <div style={styles.modalOverlay} onClick={() => setShowSettings(false)}>
           <div style={styles.modalContent} onClick={e => e.stopPropagation()}>
-            <div style={styles.modalTitle}>Settings</div>
+            <div style={styles.modalTitle}>{text.settings} ⚙️</div>
             <div style={styles.settingsSection}>
-              <div style={styles.settingsRow}><span>Sound:</span><button className="btn-click" style={styles.iconBtn} onClick={() => setSoundEnabled(!soundEnabled)}>{soundEnabled ? "ON" : "OFF"}</button></div>
-              <div style={styles.settingsRow}><span>Language:</span><button className="btn-click" style={styles.iconBtn} onClick={() => setLang(lang === "en" ? "de" : "en")}>{lang === "en" ? "DE" : "EN"}</button></div>
-              <div style={styles.settingsRow}><span>Theme:</span>
-                <div style={{ display: "flex", gap: 8 }}>
-                  <button className="btn-click" style={{ ...styles.iconBtn, background: theme === "dark" ? currentColors.primary : "rgba(255,255,255,0.08)" }} onClick={() => setTheme("dark")}>Dark</button>
-                  <button className="btn-click" style={{ ...styles.iconBtn, background: theme === "light" ? currentColors.primary : "rgba(255,255,255,0.08)" }} onClick={() => setTheme("light")}>Light</button>
-                </div>
-              </div>
+              <div style={styles.settingsRow}><span style={styles.settingsLabel}>{text.sound}:</span><button className="btn-click" style={styles.iconBtn} onClick={() => setSoundEnabled(!soundEnabled)}>{soundEnabled ? <FaVolumeUp size={14} /> : <FaVolumeMute size={14} />} {soundEnabled ? "ON" : "OFF"}</button></div>
+              <div style={styles.settingsRow}><span style={styles.settingsLabel}>{text.language}:</span><button className="btn-click" style={styles.iconBtn} onClick={() => setLang(lang === "en" ? "de" : "en")}><FaLanguage size={14} /> {lang === "en" ? "DE" : "EN"}</button></div>
+              <div style={styles.settingsRow}><span style={styles.settingsLabel}>{text.theme}:</span><div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}><button className="btn-click" style={{ ...styles.iconBtn, background: theme === "dark" ? currentColors.primary : "rgba(255,255,255,0.08)", padding: "6px 12px" }} onClick={() => setTheme("dark")}><FaMoon size={12} /> {text.dark}</button><button className="btn-click" style={{ ...styles.iconBtn, background: theme === "light" ? currentColors.primary : "rgba(255,255,255,0.08)", padding: "6px 12px" }} onClick={() => setTheme("light")}><FaSun size={12} /> {text.light}</button></div></div>
             </div>
-            <button className="btn-click" style={styles.modalBtn} onClick={() => setShowSettings(false)}>Close</button>
+            <button className="btn-click" style={styles.modalBtn} onClick={() => setShowSettings(false)}>{text.close}</button>
           </div>
         </div>
       )}
@@ -1422,13 +1529,13 @@ export default function NexPlay() {
       {showRandomModal && randomGame && (
         <div style={styles.modalOverlay} onClick={() => setShowRandomModal(false)}>
           <div style={styles.modalContent} onClick={e => e.stopPropagation()}>
-            <div style={styles.modalTitle}>Random Game</div>
-            <img src={randomGame.finalImg || randomGame.img} style={{ width: "100%", borderRadius: 18, marginBottom: 20 }} alt={randomGame.name} />
-            <div style={{ fontSize: 18, fontWeight: 700, textAlign: "center" }}>{randomGame.name}</div>
-            <div style={{ fontSize: 14, textAlign: "center", marginBottom: 20 }}>★ {(randomGame.finalRating || randomGame.rating)?.toFixed(1)} · {randomGame.playtime}</div>
-            <div style={{ display: "flex", gap: 14, justifyContent: "center" }}>
-              <button className="btn-click" style={styles.addBtn} onClick={() => { addToLibrary(randomGame); setShowRandomModal(false); }}>Add</button>
-              <button className="btn-click" style={styles.modalBtnSecondary} onClick={doRandom}>Roll Again</button>
+            <div style={styles.modalTitle}>🎲 {text.randomGame}</div>
+            <img src={randomGame.finalImg || randomGame.img} style={{ width: "100%", borderRadius: 14, marginBottom: 16 }} alt={randomGame.name} />
+            <div style={{ fontSize: 16, fontWeight: 700, textAlign: "center", marginBottom: 6 }}>{randomGame.name}</div>
+            <div style={{ fontSize: 13, color: currentColors.primary, textAlign: "center", marginBottom: 12 }}>★ {(randomGame.finalRating || randomGame.rating)?.toFixed(1)} · {randomGame.playtime}</div>
+            <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
+              <button className="btn-click" style={{ ...styles.addBtn, width: "auto", padding: "8px 16px" }} onClick={() => { addToLibrary(randomGame); setShowRandomModal(false); }}>+ {text.add}</button>
+              <button className="btn-click" style={{ ...styles.modalBtnSecondary, padding: "8px 16px" }} onClick={doRandom}>{text.rollAgain}</button>
             </div>
           </div>
         </div>
@@ -1437,14 +1544,14 @@ export default function NexPlay() {
       {showLoginModal && (
         <div style={styles.modalOverlay} onClick={() => setShowLoginModal(false)}>
           <div style={styles.modalContent} onClick={e => e.stopPropagation()}>
-            <div style={styles.modalTitle}>{isLogin ? "Login" : "Register"}</div>
+            <div style={styles.modalTitle}>{isLogin ? text.login : text.register}</div>
             {errorMsg && <div style={styles.errorText}>{errorMsg}</div>}
             <input style={styles.input} type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
             <div style={styles.passwordWrapper}>
               <input style={styles.input} type={showPassword ? "text" : "password"} placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
-              <span style={styles.passwordEye} onClick={() => setShowPassword(!showPassword)}>{showPassword ? <FaEyeSlash /> : <FaEye />}</span>
+              <span style={styles.passwordEye} onClick={() => setShowPassword(!showPassword)}>{showPassword ? <FaEyeSlash size={14} /> : <FaEye size={14} />}</span>
             </div>
-            <button className="btn-click" style={styles.modalBtn} onClick={isLogin ? handleLogin : handleRegister}>{isLogin ? "Login" : "Register"}</button>
+            <button className="btn-click" style={styles.modalBtn} onClick={isLogin ? handleLogin : handleRegister}>{isLogin ? text.login : text.register}</button>
             <div style={styles.switchText} onClick={() => { setIsLogin(!isLogin); setErrorMsg(""); }}>{isLogin ? "No account? Register" : "Already have an account? Login"}</div>
           </div>
         </div>
@@ -1453,10 +1560,12 @@ export default function NexPlay() {
       {showEditModal && user && (
         <div style={styles.modalOverlay} onClick={() => setShowEditModal(false)}>
           <div style={styles.modalContent} onClick={e => e.stopPropagation()}>
-            <div style={styles.modalTitle}>Edit Profile</div>
-            <input style={styles.input} placeholder="Username" value={editUsername} onChange={e => setEditUsername(e.target.value)} />
-            <textarea style={styles.textarea} placeholder="Bio" rows="2" value={editBio} onChange={e => setEditBio(e.target.value)} />
-            <button className="btn-click" style={styles.modalBtn} onClick={handleUpdateProfile}>Save</button>
+            <div style={styles.modalTitle}>{text.editProfile}</div>
+            {editError && <div style={styles.errorText}>{editError}</div>}
+            {editSuccess && <div style={styles.successText}>{editSuccess}</div>}
+            <input style={styles.input} placeholder={text.username} value={editUsername} onChange={e => setEditUsername(e.target.value)} />
+            <textarea style={styles.textarea} placeholder={text.bio} rows="2" value={editBio} onChange={e => setEditBio(e.target.value)} />
+            <button className="btn-click" style={styles.modalBtn} onClick={handleUpdateProfile}>{text.save}</button>
           </div>
         </div>
       )}
