@@ -28,30 +28,15 @@ const MOODS = ["Emotional", "Action", "Dark", "Fantasy", "Horror", "Mystery", "C
 const GENRES = ["Action", "Adventure", "RPG", "Indie", "Horror", "Strategy", "Puzzle", "Open World", "Story Rich", "Fighting", "Sports", "Racing", "Simulation"];
 const PLAYTIMES = ["Under 10h", "10-20h", "20-40h", "40-60h", "60-100h", "100h+"];
 
-// ========== AOTY DATEN ==========
 const AOTY_DATA = {
-  2025: {
-    tga: { winner: "Clair Obscur: Expedition 33", nominees: ["Clair Obscur: Expedition 33", "Avowed", "Fable", "Hades II", "Metroid Prime 4"], img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2358720/header.jpg", steamId: 2358720, genre: "RPG", playtime: "60-100h", developer: "Kepler Interactive" },
-    bafta: { winner: "Clair Obscur: Expedition 33", nominees: ["Clair Obscur", "Avowed", "Fable", "Hades II", "Metroid Prime 4"], img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2358720/header.jpg", steamId: 2358720, genre: "RPG", playtime: "60-100h", developer: "Kepler Interactive" }
-  },
-  2024: {
-    tga: { winner: "Astro Bot", nominees: ["Astro Bot", "Balatro", "Black Myth: Wukong", "Final Fantasy VII Rebirth", "Metaphor: ReFantazio"], img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2357570/header.jpg", steamId: 2357570, genre: "Platformer", playtime: "20-40h", developer: "Team Asobi" }
-  },
-  2023: {
-    tga: { winner: "Baldur's Gate 3", nominees: ["Alan Wake 2", "Baldur's Gate 3", "Marvel's Spider-Man 2", "Resident Evil 4", "The Legend of Zelda: Tears of the Kingdom"], img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1086940/header.jpg", steamId: 1086940, genre: "RPG", playtime: "100h+", developer: "Larian Studios" }
-  },
-  2022: {
-    tga: { winner: "Elden Ring", nominees: ["A Plague Tale: Requiem", "Elden Ring", "God of War Ragnarök", "Horizon Forbidden West", "Stray"], img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg", steamId: 1245620, genre: "Open World", playtime: "100h+", developer: "FromSoftware" }
-  },
-  2021: {
-    tga: { winner: "It Takes Two", nominees: ["Deathloop", "It Takes Two", "Metroid Dread", "Psychonauts 2", "Ratchet & Clank: Rift Apart"], img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1426210/header.jpg", steamId: 1426210, genre: "Adventure", playtime: "20-40h", developer: "Hazelight Studios" }
-  },
-  2020: {
-    tga: { winner: "The Last of Us Part II", nominees: ["Animal Crossing: New Horizons", "Doom Eternal", "Final Fantasy VII Remake", "Ghost of Tsushima", "Hades"], img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1888930/header.jpg", steamId: 1888930, genre: "Action", playtime: "40-60h", developer: "Naughty Dog" }
-  }
+  2025: { winner: "Clair Obscur: Expedition 33", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2358720/header.jpg", steamId: 2358720, genre: "RPG", playtime: "60-100h", developer: "Kepler Interactive", description: "Clair Obscur: Expedition 33 ist ein episches RPG in einer düsteren Fantasy-Welt." },
+  2024: { winner: "Astro Bot", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2357570/header.jpg", steamId: 2357570, genre: "Platformer", playtime: "20-40h", developer: "Team Asobi", description: "Astro Bot ist ein charmantes 3D-Platformer-Abenteuer." },
+  2023: { winner: "Baldur's Gate 3", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1086940/header.jpg", steamId: 1086940, genre: "RPG", playtime: "100h+", developer: "Larian Studios", description: "Baldur's Gate 3 ist das ultimative D&D-Rollenspielerlebnis." },
+  2022: { winner: "Elden Ring", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg", steamId: 1245620, genre: "Open World", playtime: "100h+", developer: "FromSoftware", description: "Elden Ring ist ein Meisterwerk des Open-World-Action-RPGs." },
+  2021: { winner: "It Takes Two", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1426210/header.jpg", steamId: 1426210, genre: "Adventure", playtime: "20-40h", developer: "Hazelight Studios", description: "It Takes Two ist ein einzigartiges Koop-Abenteuer." },
+  2020: { winner: "The Last of Us Part II", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1888930/header.jpg", steamId: 1888930, genre: "Action", playtime: "40-60h", developer: "Naughty Dog", description: "The Last of Us Part II ist ein emotionales Meisterwerk." }
 };
 
-// ========== MANUELLE SPIELE (eindeutige IDs) ==========
 const MANUAL_GAMES = [
   { id: 8001, name: "The Witcher 3: Wild Hunt", rating: 9.5, genre: "RPG", playtime: "100h+", year: 2015, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/292030/header.jpg", developer: "CD Projekt Red", mood: "Epic", description: "The Witcher 3 ist ein Meisterwerk des Open-World-RPGs.", platforms: ["PC", "PS4", "Xbox One", "Switch"], steamId: 292030 },
   { id: 8002, name: "Red Dead Redemption 2", rating: 9.6, genre: "Open World", playtime: "100h+", year: 2018, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1174180/header.jpg", developer: "Rockstar Games", mood: "Epic", description: "Red Dead Redemption 2 ist ein episches Western-Epos.", platforms: ["PC", "PS4", "Xbox One", "Stadia"], steamId: 1174180 },
@@ -75,8 +60,8 @@ const MANUAL_HIDDEN_GEMS = [
 ];
 
 const translations = {
-  en: { home: "Discover", library: "Library", profile: "Profile", friends: "Friends", ai: "AI Assistant", aoty: "AOTY", random: "Random", playlists: "Playlists", activity: "Activity", wishlist: "Wishlist", backlog: "Backlog Cleaner", tags: "Tags", journal: "Journal", export: "Export", import: "Import", theme: "Theme", dark: "Dark", light: "Light", auto: "Auto", randomGame: "Random Game", yearFilter: "Year", allYears: "All Years", login: "Login", register: "Register", logout: "Logout", search: "Search games...", searchAOTY: "Search by year, game or award...", mood: "What's your mood?", genre: "Pick your genres", playtime: "How long?", next: "Next", results: "Show Results", topPicks: "Top Picks", bestEver: "Best Ever", allResults: "All Results", hiddenGems: "Hidden Gems", sort: "Sort", bestMatch: "Best Match", rating: "Rating", year: "Year", add: "Add to Library", inLibrary: "In Library", reviews: "Reviews", played: "Played", remove: "Remove", editProfile: "Edit Profile", username: "Username", bio: "Bio", private: "Private profile", save: "Save", achievements: "Achievements", firstGame: "First Game", collector: "Collector", completionist: "Completionist", recentlyPlayed: "Recently Played", favorites: "Favorites", total: "Total", playing: "Playing", completed: "Completed", rollAgain: "Roll Again", close: "Close", back: "Back", buyOn: "Buy on", writeReview: "Write Review", yourReview: "Your review...", submit: "Submit", noReviews: "No reviews yet", findFriends: "Find Friends", settings: "Settings", sound: "Sound Effects", language: "Language", steamId: "Steam ID", importGames: "Import Steam Games", findSteamId: "How to find your Steam ID", donate: "Support the developer", topRated: "Top Rated Game", topGenre: "Top Genre", totalPlaytime: "Total Playtime", aotyTitle: "Game of the Year", top10: "Top 10 by Genre", findYourGame: "Find Your Game", allAwards: "All Awards", backToAOTY: "Back to AOTY Overview", createPlaylist: "Create Playlist", playlistName: "Playlist Name", addToPlaylist: "Add to Playlist", gameNightMode: "Game Night Mode", spinWheel: "Spin the Wheel", excludeMultiplayer: "Exclude Multiplayer", activityFeed: "Activity Feed", addToWishlist: "Add to Wishlist", checkPrice: "Check Price", backlogTip: "You should play", addTag: "Add Tag", compareGames: "Compare Games", selectGame: "Select Game", journalNotes: "My Notes", exportLibrary: "Export Library", importLibrary: "Import Library", themeSelect: "Select Theme", loading: "Loading...", showMore: "Show more", showLess: "Show less", winner: "Winner", compareFeatures: "Compare Features", graphics: "Graphics", story: "Story", gameplay: "Gameplay", replayability: "Replayability", nominees: "Nominees", tga: "The Game Awards", bafta: "BAFTA Games", goldenJoystick: "Golden Joystick", dice: "D.I.C.E. Awards", gameDevelopersChoice: "Game Developers Choice", japanGameAwards: "Japan Game Awards", steamConnect: "Steam Connect" },
-  de: { home: "Entdecken", library: "Bibliothek", profile: "Profil", friends: "Freunde", ai: "KI-Assistent", aoty: "AOTY", random: "Zufall", playlists: "Playlists", activity: "Aktivitäten", wishlist: "Wunschliste", backlog: "Backlog Reiniger", tags: "Tags", journal: "Tagebuch", export: "Exportieren", import: "Importieren", theme: "Design", dark: "Dunkel", light: "Hell", auto: "Auto", randomGame: "Zufälliges Spiel", yearFilter: "Jahr", allYears: "Alle Jahre", login: "Anmelden", register: "Registrieren", logout: "Abmelden", search: "Spiele suchen...", searchAOTY: "Suche nach Jahr, Spiel oder Award...", mood: "Wie ist deine Stimmung?", genre: "Wähle deine Genres", playtime: "Wie lange?", next: "Weiter", results: "Ergebnisse", topPicks: "Top Empfehlungen", bestEver: "Beste Aller Zeiten", allResults: "Alle Ergebnisse", hiddenGems: "Geheimtipps", sort: "Sortieren", bestMatch: "Bester Treffer", rating: "Bewertung", year: "Jahr", add: "Zur Bibliothek", inLibrary: "In Bibliothek", reviews: "Bewertungen", played: "Gespielt", remove: "Entfernen", editProfile: "Profil bearbeiten", username: "Benutzername", bio: "Über mich", private: "Privates Profil", save: "Speichern", achievements: "Erfolge", firstGame: "Erstes Spiel", collector: "Sammler", completionist: "Vollender", recentlyPlayed: "Zuletzt gespielt", favorites: "Favoriten", total: "Gesamt", playing: "Spielt", completed: "Abgeschlossen", rollAgain: "Nochmal", close: "Schließen", back: "Zurück", buyOn: "Kaufen auf", writeReview: "Bewertung schreiben", yourReview: "Deine Bewertung...", submit: "Speichern", noReviews: "Keine Bewertungen", findFriends: "Freunde finden", settings: "Einstellungen", sound: "Soundeffekte", language: "Sprache", steamId: "Steam ID", importGames: "Steam Spiele importieren", findSteamId: "So findest du deine Steam ID", donate: "Unterstütze den Entwickler", topRated: "Bestbewertetes Spiel", topGenre: "Top Genre", totalPlaytime: "Spielzeit Gesamt", aotyTitle: "Spiel des Jahres", top10: "Top 10 pro Genre", findYourGame: "Finde dein Spiel", allAwards: "Alle Auszeichnungen", backToAOTY: "Zurück zur AOTY Übersicht", createPlaylist: "Playlist erstellen", playlistName: "Playlist Name", addToPlaylist: "Zu Playlist hinzufügen", gameNightMode: "Spielabend Modus", spinWheel: "Rad drehen", excludeMultiplayer: "Multiplayer ausschließen", activityFeed: "Aktivitäten Feed", addToWishlist: "Zur Wunschliste", checkPrice: "Preis prüfen", backlogTip: "Du solltest spielen", addTag: "Tag hinzufügen", compareGames: "Spiele vergleichen", selectGame: "Spiel auswählen", journalNotes: "Meine Notizen", exportLibrary: "Bibliothek exportieren", importLibrary: "Bibliothek importieren", themeSelect: "Design auswählen", loading: "Laden...", showMore: "Mehr anzeigen", showLess: "Weniger anzeigen", winner: "Gewinner", compareFeatures: "Funktionen vergleichen", graphics: "Grafik", story: "Geschichte", gameplay: "Spielspaß", replayability: "Wiederspielwert", nominees: "Nominiert", tga: "The Game Awards", bafta: "BAFTA Games", goldenJoystick: "Golden Joystick", dice: "D.I.C.E. Awards", gameDevelopersChoice: "Game Developers Choice", japanGameAwards: "Japan Game Awards", steamConnect: "Steam Verbindung" }
+  en: { home: "Discover", library: "Library", profile: "Profile", friends: "Friends", ai: "AI Assistant", aoty: "AOTY", random: "Random", playlists: "Playlists", compare: "Compare", activity: "Activity", wishlist: "Wishlist", backlog: "Backlog Cleaner", tags: "Tags", journal: "Journal", export: "Export", import: "Import", theme: "Theme", dark: "Dark", light: "Light", auto: "Auto", randomGame: "Random Game", yearFilter: "Year", allYears: "All Years", login: "Login", register: "Register", logout: "Logout", search: "Search games...", searchAOTY: "Search by year or game name...", mood: "What's your mood?", genre: "Pick your genres", playtime: "How long?", next: "Next", results: "Show Results", topPicks: "Top Picks", bestEver: "Best Ever", allResults: "All Results", hiddenGems: "Hidden Gems", sort: "Sort", bestMatch: "Best Match", rating: "Rating", year: "Year", add: "Add to Library", inLibrary: "In Library", reviews: "Reviews", played: "Played", remove: "Remove", editProfile: "Edit Profile", username: "Username", bio: "Bio", private: "Private profile", save: "Save", achievements: "Achievements", firstGame: "First Game", collector: "Collector", completionist: "Completionist", recentlyPlayed: "Recently Played", favorites: "Favorites", total: "Total", playing: "Playing", completed: "Completed", rollAgain: "Roll Again", close: "Close", back: "Back", buyOn: "Buy on", writeReview: "Write Review", yourReview: "Your review...", submit: "Submit", noReviews: "No reviews yet", findFriends: "Find Friends", settings: "Settings", sound: "Sound Effects", language: "Language", steamId: "Steam ID", importGames: "Import Steam Games", findSteamId: "How to find your Steam ID", donate: "Support the developer", topRated: "Top Rated Game", topGenre: "Top Genre", totalPlaytime: "Total Playtime", aotyTitle: "Game of the Year", top10: "Top 10 by Genre", findYourGame: "Find Your Game", allAwards: "All Awards", backToAOTY: "Back to AOTY Overview", createPlaylist: "Create Playlist", playlistName: "Playlist Name", addToPlaylist: "Add to Playlist", gameNightMode: "Game Night Mode", spinWheel: "Spin the Wheel", excludeMultiplayer: "Exclude Multiplayer", activityFeed: "Activity Feed", addToWishlist: "Add to Wishlist", checkPrice: "Check Price", backlogTip: "You should play", addTag: "Add Tag", compareGames: "Compare Games", selectGame: "Select Game", journalNotes: "My Notes", exportLibrary: "Export Library", importLibrary: "Import Library", themeSelect: "Select Theme", loading: "Loading...", showMore: "Show more", showLess: "Show less", winner: "Winner", graphics: "Graphics", story: "Story", gameplay: "Gameplay", replayability: "Replayability", steamConnect: "Steam Connect" },
+  de: { home: "Entdecken", library: "Bibliothek", profile: "Profil", friends: "Freunde", ai: "KI-Assistent", aoty: "AOTY", random: "Zufall", playlists: "Playlists", compare: "Vergleichen", activity: "Aktivitäten", wishlist: "Wunschliste", backlog: "Backlog Reiniger", tags: "Tags", journal: "Tagebuch", export: "Exportieren", import: "Importieren", theme: "Design", dark: "Dunkel", light: "Hell", auto: "Auto", randomGame: "Zufälliges Spiel", yearFilter: "Jahr", allYears: "Alle Jahre", login: "Anmelden", register: "Registrieren", logout: "Abmelden", search: "Spiele suchen...", searchAOTY: "Suche nach Jahr oder Spielname...", mood: "Wie ist deine Stimmung?", genre: "Wähle deine Genres", playtime: "Wie lange?", next: "Weiter", results: "Ergebnisse", topPicks: "Top Empfehlungen", bestEver: "Beste Aller Zeiten", allResults: "Alle Ergebnisse", hiddenGems: "Geheimtipps", sort: "Sortieren", bestMatch: "Bester Treffer", rating: "Bewertung", year: "Jahr", add: "Zur Bibliothek", inLibrary: "In Bibliothek", reviews: "Bewertungen", played: "Gespielt", remove: "Entfernen", editProfile: "Profil bearbeiten", username: "Benutzername", bio: "Über mich", private: "Privates Profil", save: "Speichern", achievements: "Erfolge", firstGame: "Erstes Spiel", collector: "Sammler", completionist: "Vollender", recentlyPlayed: "Zuletzt gespielt", favorites: "Favoriten", total: "Gesamt", playing: "Spielt", completed: "Abgeschlossen", rollAgain: "Nochmal", close: "Schließen", back: "Zurück", buyOn: "Kaufen auf", writeReview: "Bewertung schreiben", yourReview: "Deine Bewertung...", submit: "Speichern", noReviews: "Keine Bewertungen", findFriends: "Freunde finden", settings: "Einstellungen", sound: "Soundeffekte", language: "Sprache", steamId: "Steam ID", importGames: "Steam Spiele importieren", findSteamId: "So findest du deine Steam ID", donate: "Unterstütze den Entwickler", topRated: "Bestbewertetes Spiel", topGenre: "Top Genre", totalPlaytime: "Spielzeit Gesamt", aotyTitle: "Spiel des Jahres", top10: "Top 10 pro Genre", findYourGame: "Finde dein Spiel", allAwards: "Alle Auszeichnungen", backToAOTY: "Zurück zur AOTY Übersicht", createPlaylist: "Playlist erstellen", playlistName: "Playlist Name", addToPlaylist: "Zu Playlist hinzufügen", gameNightMode: "Spielabend Modus", spinWheel: "Rad drehen", excludeMultiplayer: "Multiplayer ausschließen", activityFeed: "Aktivitäten Feed", addToWishlist: "Zur Wunschliste", checkPrice: "Preis prüfen", backlogTip: "Du solltest spielen", addTag: "Tag hinzufügen", compareGames: "Spiele vergleichen", selectGame: "Spiel auswählen", journalNotes: "Meine Notizen", exportLibrary: "Bibliothek exportieren", importLibrary: "Bibliothek importieren", themeSelect: "Design auswählen", loading: "Laden...", showMore: "Mehr anzeigen", showLess: "Weniger anzeigen", winner: "Gewinner", graphics: "Grafik", story: "Geschichte", gameplay: "Spielspaß", replayability: "Wiederspielwert", steamConnect: "Steam Verbindung" }
 };
 
 const RAWG_API_KEY = "4da2c00cf3b2459d988e0ed0ac16988d";
@@ -172,7 +157,6 @@ export default function NexPlay() {
   const [aotySearch, setAotySearch] = useState("");
   const [aotyResult, setAotyResult] = useState(null);
   const [selectedAotyYear, setSelectedAotyYear] = useState(null);
-  const [selectedAotyCategory, setSelectedAotyCategory] = useState(null);
   const [selectedGenreForTop, setSelectedGenreForTop] = useState("Action");
   const [searchQuery, setSearchQuery] = useState("");
   const [step, setStep] = useState(1);
@@ -233,6 +217,7 @@ export default function NexPlay() {
   const [syncingPlatform, setSyncingPlatform] = useState(null);
   const [expandedDescriptions, setExpandedDescriptions] = useState({});
   const [profilePicUrl, setProfilePicUrl] = useState(null);
+  const [profilePicUploading, setProfilePicUploading] = useState(false);
   const fileInputRef = useRef(null);
 
   const text = translations[lang];
@@ -529,7 +514,7 @@ export default function NexPlay() {
 
   const searchAOTY = () => {
     const search = aotySearch.trim().toLowerCase();
-    if (!search) { setAotyResult(null); setSelectedAotyYear(null); setSelectedAotyCategory(null); return; }
+    if (!search) { setAotyResult(null); setSelectedAotyYear(null); return; }
     const yearMatch = search.match(/^\d{4}$/);
     if (yearMatch) {
       const year = parseInt(search);
@@ -538,13 +523,10 @@ export default function NexPlay() {
       return;
     }
     for (const [year, data] of Object.entries(AOTY_DATA)) {
-      for (const [category, award] of Object.entries(data)) {
-        if (award.winner?.toLowerCase().includes(search) || award.nominees?.some(n => n.toLowerCase().includes(search))) {
-          setAotyResult({ type: "game", year, game: award.winner, category, data: award });
-          setSelectedAotyYear(year);
-          setSelectedAotyCategory(category);
-          return;
-        }
+      if (data.winner?.toLowerCase().includes(search)) {
+        setAotyResult({ type: "game", year, game: data.winner, data });
+        setSelectedAotyYear(year);
+        return;
       }
     }
     setAotyResult({ type: "error", message: "Game not found" });
@@ -599,7 +581,7 @@ export default function NexPlay() {
     const file = event.target.files[0];
     if (!file || !user) return;
     
-    setLoadingAction(true);
+    setProfilePicUploading(true);
     try {
       const storage = getStorage();
       const storageRef = ref(storage, `profile_pics/${user.uid}`);
@@ -613,7 +595,7 @@ export default function NexPlay() {
       console.error("Fehler beim Hochladen:", error);
       alert("Fehler beim Hochladen des Profilbildes");
     } finally {
-      setLoadingAction(false);
+      setProfilePicUploading(false);
     }
   };
 
@@ -903,8 +885,6 @@ export default function NexPlay() {
     .expandable-text { transition: all 0.3s ease; }
     .profile-stat-card { transition: transform 0.2s ease; }
     .profile-stat-card:hover { transform: translateY(-4px); }
-    .award-card { transition: all 0.2s ease; }
-    .award-card:hover { transform: translateX(4px); border-color: ${currentColors.primary}60; }
     @media (max-width: 768px) {
       .desktop-only { display: none !important; }
       .hamburger-btn { display: flex !important; }
@@ -1068,7 +1048,6 @@ export default function NexPlay() {
     compareValue: { fontWeight: 500, color: currentColors.text, fontSize: 14 },
     journalCard: { background: currentColors.bgCard, borderRadius: 20, padding: 20, marginBottom: 24 },
     tag: { background: "rgba(255,212,0,0.15)", borderRadius: 20, padding: "6px 14px", fontSize: 12, color: currentColors.primary, display: "inline-flex", alignItems: "center", gap: 8 },
-    categoryGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: 24, marginTop: 24 },
     profileSection: { marginBottom: 32 },
     profileSectionTitle: { fontSize: 20, fontWeight: 600, marginBottom: 20, display: "flex", alignItems: "center", gap: 12, color: currentColors.text }
   };
@@ -1509,6 +1488,7 @@ export default function NexPlay() {
                       <FaCamera size={18} color={currentColors.primary} />
                     </div>
                     <input type="file" ref={fileInputRef} style={{ display: "none" }} accept="image/*" onChange={handleProfilePicUpload} />
+                    {profilePicUploading && <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", background: "rgba(0,0,0,0.7)", borderRadius: "50%", padding: "8px" }}><FaSpinner className="spinning-wheel" size={20} /></div>}
                   </div>
                   <div>
                     <div style={{ fontSize: 32, fontWeight: 700, display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", justifyContent: "center" }}>{userData?.username}{userData?.username === "Sherlock10K" && <span style={{ color: currentColors.primary, fontSize: 28 }}>👑</span>}</div>
@@ -1554,15 +1534,15 @@ export default function NexPlay() {
                   )}
                 </div>
 
-                {/* Achievements Section */}
+                {/* Achievements Section - SICHTBAR */}
                 <div style={styles.profileSection}>
                   <div style={styles.profileSectionTitle}><GiAchievement size={18} /> {text.achievements}</div>
                   <div style={styles.achievementGrid}>
                     {achievements.map(ach => (
-                      <div key={ach.id} className="profile-stat-card" style={{ ...styles.achievementCard, opacity: ach.unlocked ? 1 : 0.5 }}>
+                      <div key={ach.id} className="profile-stat-card" style={{ ...styles.achievementCard, opacity: ach.unlocked ? 1 : 0.6 }}>
                         <div style={styles.achievementIcon}>{ach.icon}</div>
                         <div style={styles.achievementInfo}>
-                          <div style={styles.achievementName}>{ach.name} {ach.funny && "😂"} {ach.hidden && "🤫"}</div>
+                          <div style={styles.achievementName}>{ach.name} {ach.funny && "😂"}</div>
                           <div style={styles.achievementDesc}>{ach.desc}</div>
                         </div>
                       </div>
@@ -1574,7 +1554,7 @@ export default function NexPlay() {
           </div>
         )}
 
-        {/* RANDOM TAB (mit Game Night integriert) */}
+        {/* RANDOM TAB */}
         {currentTab === "random" && (
           <div className="fade-in">
             <div style={styles.randomFilterSection}>
@@ -1658,15 +1638,15 @@ export default function NexPlay() {
         {/* AOTY TAB */}
         {currentTab === "aoty" && (
           <div className="fade-in">
-            {selectedAotyYear && selectedAotyCategory ? (
+            {selectedAotyYear ? (
               <>
-                <button className="btn-click" style={styles.gotyBackBtn} onClick={() => { setSelectedAotyYear(selectedAotyYear); setSelectedAotyCategory(null); }}>
-                  <FaArrowLeft size={14} /> Back to {selectedAotyYear} Awards
+                <button className="btn-click" style={styles.gotyBackBtn} onClick={() => { setSelectedAotyYear(null); setAotySearch(""); setAotyResult(null); }}>
+                  <FaArrowLeft size={14} /> {text.backToAOTY}
                 </button>
                 <div style={styles.aotyResultCard}>
-                  <div style={{ fontSize: 28, fontWeight: 800, marginBottom: 14, textAlign: "center", color: currentColors.primary }}>{selectedAotyYear}</div>
+                  <div style={{ fontSize: 30, fontWeight: 800, marginBottom: 24, textAlign: "center", color: currentColors.primary }}>{selectedAotyYear}</div>
                   <div className="award-card" style={styles.aotyWinnerCard} onClick={() => {
-                    const award = AOTY_DATA[selectedAotyYear]?.[selectedAotyCategory];
+                    const award = AOTY_DATA[selectedAotyYear];
                     if (award) {
                       const gameData = {
                         id: selectedAotyYear,
@@ -1677,7 +1657,7 @@ export default function NexPlay() {
                         year: selectedAotyYear,
                         img: award.img,
                         developer: award.developer || "Various",
-                        description: `The ${selectedAotyCategory.toUpperCase()} winner for ${selectedAotyYear}. Ein herausragendes Spiel, das alle Kriterien erfüllt.`,
+                        description: award.description || `${award.winner} ist das Spiel des Jahres ${selectedAotyYear}. Ein Meisterwerk seiner Zeit.`,
                         platforms: ["PC", "Console"],
                         steamId: award.steamId,
                         finalRating: 9.0,
@@ -1687,58 +1667,12 @@ export default function NexPlay() {
                     }
                   }}>
                     <div style={{ display: "flex", gap: 18, alignItems: "center", flexWrap: "wrap" }}>
-                      {selectedAotyCategory === "tga" && <FaTrophy style={{ color: currentColors.primary, fontSize: 30 }} />}
-                      {selectedAotyCategory === "bafta" && <FaAward style={{ color: currentColors.primary, fontSize: 30 }} />}
-                      {selectedAotyCategory === "goldenJoystick" && <FaMedal style={{ color: currentColors.primary, fontSize: 30 }} />}
-                      {selectedAotyCategory === "dice" && <FaDiceD6 style={{ color: currentColors.primary, fontSize: 30 }} />}
+                      <FaTrophy style={{ color: currentColors.primary, fontSize: 30 }} />
                       <div>
-                        <div style={{ fontSize: 14, color: currentColors.primary }}>
-                          {selectedAotyCategory === "tga" && text.tga}
-                          {selectedAotyCategory === "bafta" && text.bafta}
-                          {selectedAotyCategory === "goldenJoystick" && text.goldenJoystick}
-                          {selectedAotyCategory === "dice" && text.dice}
-                        </div>
-                        <div style={{ fontSize: 24, fontWeight: 700 }}>{AOTY_DATA[selectedAotyYear]?.[selectedAotyCategory]?.winner}</div>
+                        <div style={{ fontSize: 14, color: currentColors.primary }}>Game of the Year</div>
+                        <div style={{ fontSize: 24, fontWeight: 700 }}>{AOTY_DATA[selectedAotyYear]?.winner}</div>
                       </div>
                     </div>
-                  </div>
-                  <div style={{ marginTop: 28 }}>
-                    <div style={{ fontSize: 17, fontWeight: 600, marginBottom: 18 }}>🏆 {text.nominees}</div>
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: 14 }}>
-                      {AOTY_DATA[selectedAotyYear]?.[selectedAotyCategory]?.nominees?.map(nominee => (
-                        <span key={nominee} style={{ background: "rgba(255,255,255,0.1)", borderRadius: 30, padding: "8px 20px", fontSize: 14 }}>{nominee}</span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </>
-            ) : selectedAotyYear ? (
-              <>
-                <button className="btn-click" style={styles.gotyBackBtn} onClick={() => { setSelectedAotyYear(null); setAotySearch(""); setAotyResult(null); }}>
-                  <FaArrowLeft size={14} /> {text.backToAOTY}
-                </button>
-                <div style={styles.aotyResultCard}>
-                  <div style={{ fontSize: 30, fontWeight: 800, marginBottom: 24, textAlign: "center", color: currentColors.primary }}>{selectedAotyYear}</div>
-                  <div style={styles.categoryGrid}>
-                    {Object.entries(AOTY_DATA[selectedAotyYear]).map(([category, award]) => (
-                      <div key={category} className="award-card" style={styles.aotyWinnerCard} onClick={() => setSelectedAotyCategory(category)}>
-                        <div style={{ display: "flex", gap: 16, alignItems: "center", flexWrap: "wrap" }}>
-                          {category === "tga" && <FaTrophy style={{ color: currentColors.primary, fontSize: 24 }} />}
-                          {category === "bafta" && <FaAward style={{ color: currentColors.primary, fontSize: 24 }} />}
-                          {category === "goldenJoystick" && <FaMedal style={{ color: currentColors.primary, fontSize: 24 }} />}
-                          {category === "dice" && <FaDiceD6 style={{ color: currentColors.primary, fontSize: 24 }} />}
-                          <div>
-                            <div style={{ fontSize: 13, color: currentColors.primary }}>
-                              {category === "tga" && text.tga}
-                              {category === "bafta" && text.bafta}
-                              {category === "goldenJoystick" && text.goldenJoystick}
-                              {category === "dice" && text.dice}
-                            </div>
-                            <div style={{ fontSize: 19, fontWeight: 600 }}>{award.winner}</div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
                   </div>
                 </div>
               </>
@@ -1749,26 +1683,32 @@ export default function NexPlay() {
                 {aotyResult?.type === "year" && aotyResult.data && (
                   <div style={styles.aotyResultCard}>
                     <div style={{ fontSize: 30, fontWeight: 800, marginBottom: 24, textAlign: "center", color: currentColors.primary }}>{aotyResult.year}</div>
-                    <div style={styles.categoryGrid}>
-                      {Object.entries(aotyResult.data).map(([category, award]) => (
-                        <div key={category} className="award-card" style={styles.aotyWinnerCard} onClick={() => { setSelectedAotyYear(aotyResult.year); setSelectedAotyCategory(category); }}>
-                          <div style={{ display: "flex", gap: 16, alignItems: "center", flexWrap: "wrap" }}>
-                            {category === "tga" && <FaTrophy style={{ color: currentColors.primary, fontSize: 24 }} />}
-                            {category === "bafta" && <FaAward style={{ color: currentColors.primary, fontSize: 24 }} />}
-                            {category === "goldenJoystick" && <FaMedal style={{ color: currentColors.primary, fontSize: 24 }} />}
-                            {category === "dice" && <FaDiceD6 style={{ color: currentColors.primary, fontSize: 24 }} />}
-                            <div>
-                              <div style={{ fontSize: 13, color: currentColors.primary }}>
-                                {category === "tga" && text.tga}
-                                {category === "bafta" && text.bafta}
-                                {category === "goldenJoystick" && text.goldenJoystick}
-                                {category === "dice" && text.dice}
-                              </div>
-                              <div style={{ fontSize: 19, fontWeight: 600 }}>{award.winner}</div>
-                            </div>
-                          </div>
+                    <div className="award-card" style={styles.aotyWinnerCard} onClick={() => {
+                      const award = aotyResult.data;
+                      const gameData = {
+                        id: aotyResult.year,
+                        name: award.winner,
+                        rating: 9.0,
+                        genre: award.genre || "Action",
+                        playtime: award.playtime || "20-40h",
+                        year: aotyResult.year,
+                        img: award.img,
+                        developer: award.developer || "Various",
+                        description: award.description || `${award.winner} ist das Spiel des Jahres ${aotyResult.year}.`,
+                        platforms: ["PC", "Console"],
+                        steamId: award.steamId,
+                        finalRating: 9.0,
+                        finalImg: award.img
+                      };
+                      openGameDetail(gameData);
+                    }}>
+                      <div style={{ display: "flex", gap: 18, alignItems: "center", flexWrap: "wrap" }}>
+                        <FaTrophy style={{ color: currentColors.primary, fontSize: 30 }} />
+                        <div>
+                          <div style={{ fontSize: 14, color: currentColors.primary }}>Game of the Year</div>
+                          <div style={{ fontSize: 24, fontWeight: 700 }}>{aotyResult.data.winner}</div>
                         </div>
-                      ))}
+                      </div>
                     </div>
                   </div>
                 )}
@@ -1778,7 +1718,7 @@ export default function NexPlay() {
                     {Object.keys(AOTY_DATA).sort((a,b) => b - a).map(year => (
                       <div key={year} className="aoty-year-card" style={styles.aotyYearCard} onClick={() => setSelectedAotyYear(parseInt(year))}>
                         <div style={{ fontWeight: 700, fontSize: 26, color: currentColors.primary }}>{year}</div>
-                        <div style={{ fontSize: 14, marginTop: 12 }}>{Object.keys(AOTY_DATA[year]).length} Awards</div>
+                        <div style={{ fontSize: 14, marginTop: 12 }}>{AOTY_DATA[year].winner}</div>
                       </div>
                     ))}
                   </div>
@@ -1842,7 +1782,6 @@ export default function NexPlay() {
             <textarea style={styles.textarea} placeholder={text.bio} rows="3" value={editBio} onChange={e => setEditBio(e.target.value)} />
             <label className="btn-click" style={styles.checkbox}><input type="checkbox" checked={editPrivate} onChange={e => setEditPrivate(e.target.checked)} /> {text.private}</label>
             
-            {/* Steam Connect im Edit Modal */}
             <div style={{ marginTop: 20, paddingTop: 20, borderTop: `1px solid rgba(255,255,255,0.1)` }}>
               <div style={{ fontWeight: 600, marginBottom: 16, fontSize: 16 }}><FaSteam /> {text.steamConnect}</div>
               <div style={styles.platformRow}>
@@ -1861,7 +1800,6 @@ export default function NexPlay() {
         </div>
       )}
 
-      {/* Weitere Modals */}
       {showCreatePlaylist && (
         <div className="fade-in" style={styles.modalOverlay} onClick={() => setShowCreatePlaylist(false)}>
           <div className="slide-in" style={styles.modalContent} onClick={e => e.stopPropagation()}>
