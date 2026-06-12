@@ -80,25 +80,16 @@ const translateGenre = (genreName) => {
 
 let steamGamesCache = {};
 
-// ========== KORRIGIERTES RATING-SYSTEM (KEINE 5.0 MEHR!) ==========
+// ========== RATING-SYSTEM ==========
 const calculateWeightedRating = (game, steamData) => {
   const name = game.name?.toLowerCase() || "";
   const currentYear = new Date().getFullYear();
   const gameYear = game.year || 2020;
   const age = currentYear - gameYear;
   
-  // 1. BASIS RATING (RAWG/Metacritic) - normalerweise zwischen 7-9
   let baseRating = game.rawgRating || 7.5;
+  let steamRating = steamData?.steamRating || baseRating * 0.9;
   
-  // 2. STEAM USER RATING (wenn vorhanden)
-  let steamRating = 0;
-  if (steamData?.steamRating) {
-    steamRating = steamData.steamRating;
-  } else {
-    steamRating = baseRating * 0.9;
-  }
-  
-  // 3. ALTERS-ABZUG (sanft, nicht zu hart)
   let agePenalty = 0;
   if (age >= 25) agePenalty = -0.8;
   else if (age >= 20) agePenalty = -0.6;
@@ -106,9 +97,7 @@ const calculateWeightedRating = (game, steamData) => {
   else if (age >= 10) agePenalty = -0.2;
   else if (age >= 5) agePenalty = -0.1;
   else if (age <= 1) agePenalty = 0.2;
-  else agePenalty = 0;
   
-  // 4. POPULARITÄTS-BONUS
   let popularityBonus = 0;
   const reviewCount = steamData?.reviewCount || game.popularity || 0;
   if (reviewCount > 500000) popularityBonus = 0.5;
@@ -117,25 +106,16 @@ const calculateWeightedRating = (game, steamData) => {
   else if (reviewCount > 50000) popularityBonus = 0.1;
   else if (reviewCount < 1000 && reviewCount > 0) popularityBonus = -0.2;
   
-  // 5. FINALE BERECHNUNG
   let finalRating = (baseRating * 0.5) + (steamRating * 0.3) + popularityBonus + agePenalty;
   
-  // ========== SPEZIALFÄLLE ==========
+  // Spezialfälle
   if (name === "tekken 3" || name.includes("tekken 3")) finalRating = 7.6;
-  if (name.includes("tekken 7")) finalRating = 8.4;
   if (name.includes("elden ring")) finalRating = 9.5;
   if (name.includes("baldur's gate 3")) finalRating = 9.6;
   if (name.includes("witcher 3")) finalRating = 9.4;
-  if (name.includes("red dead redemption 2")) finalRating = 9.4;
-  if (name.includes("god of war") && !name.includes("ragnarok")) finalRating = 9.2;
-  if (name.includes("the last of us")) finalRating = 9.3;
-  if (name.includes("cyberpunk")) finalRating = 8.2;
-  if (name.includes("starfield")) finalRating = 7.8;
-  if (name.includes("hogwarts legacy")) finalRating = 8.0;
   
-  // Begrenzungen - REALISTISCH!
   finalRating = Math.min(finalRating, 9.7);
-  finalRating = Math.max(finalRating, 6.5); // Minimum 6.5, NICHT 5.0!
+  finalRating = Math.max(finalRating, 6.5);
   finalRating = Math.round(finalRating * 10) / 10;
   
   return finalRating;
@@ -839,8 +819,14 @@ export default function NexPlay() {
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .text-wrap { word-wrap: break-word; overflow-wrap: break-word; white-space: normal; }
     @media (max-width: 768px) {
-      .mobile-full-width { width: 100%; }
-      .mobile-stack { flex-direction: column; align-items: stretch; }
+      .desktop-only { display: none !important; }
+      .hamburger-btn { display: flex !important; }
+      .main-tabs-desktop { display: none !important; }
+    }
+    @media (min-width: 769px) {
+      .hamburger-btn { display: none !important; }
+      .main-tabs-desktop { display: flex !important; }
+      .mobile-menu-overlay { display: none !important; }
     }
   `;
 
@@ -864,7 +850,7 @@ export default function NexPlay() {
     loginBtn: { background: "linear-gradient(135deg, #4285f4, #3367d6)", border: "none", borderRadius: 12, padding: "10px 18px", color: "#fff", cursor: "pointer", fontWeight: 600, display: "flex", alignItems: "center", gap: 8, fontSize: 14 },
     logoutBtn: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 12, padding: "10px 18px", color: currentColors.text, cursor: "pointer", display: "flex", alignItems: "center", gap: 8, fontSize: 14 },
     userAvatar: { width: 36, height: 36, borderRadius: "50%", background: currentColors.primary, display: "flex", alignItems: "center", justifyContent: "center", color: currentColors.bg, fontWeight: 700, fontSize: 16 },
-    hamburgerBtn: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 12, padding: "10px 14px", color: currentColors.text, cursor: "pointer", display: "none", alignItems: "center", gap: 8, fontSize: 20, "@media (max-width: 768px)": { display: "flex" } },
+    hamburgerBtn: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 12, padding: "10px 14px", color: currentColors.text, cursor: "pointer", alignItems: "center", gap: 8, fontSize: 20, display: "none" },
     mobileMenu: { position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: currentColors.bg, zIndex: 1000, padding: "20px", overflowY: "auto", transform: mobileMenuOpen ? "translateX(0)" : "translateX(-100%)", transition: "transform 0.3s ease" },
     mobileMenuClose: { position: "absolute", top: 16, right: 16, background: "rgba(255,255,255,0.1)", border: "none", borderRadius: "50%", padding: "10px", cursor: "pointer", color: currentColors.text },
     mobileMenuItem: { display: "flex", alignItems: "center", gap: 12, padding: "14px 0", borderBottom: "1px solid rgba(255,255,255,0.05)", width: "100%", background: "none", border: "none", color: currentColors.text, fontSize: 16, cursor: "pointer" },
@@ -1110,7 +1096,7 @@ export default function NexPlay() {
   return (
     <div style={styles.app} onClick={initAudio}>
       {/* Mobile Menu Overlay */}
-      <div style={styles.mobileMenu}>
+      <div className="mobile-menu-overlay" style={styles.mobileMenu}>
         <button className="btn-click" style={styles.mobileMenuClose} onClick={closeMobileMenu}><FaTimes size={20} /></button>
         <div style={{ marginTop: 40 }}>
           <button className="btn-click" style={styles.mobileMenuItem} onClick={() => { setCurrentTab("home"); closeMobileMenu(); }}><FaHome /> {text.home}</button>
@@ -1140,22 +1126,24 @@ export default function NexPlay() {
             </div>
             <span style={styles.logoText}>NexPlay</span>
           </div>
-          <button className="btn-click" style={styles.hamburgerBtn} onClick={toggleMobileMenu}>
-            <FaBars size={18} />
+          
+          {/* HAMBURGER MENU BUTTON - NUR AUF MOBILE SICHTBAR */}
+          <button className="btn-click hamburger-btn" style={styles.hamburgerBtn} onClick={toggleMobileMenu}>
+            <FaBars size={20} />
           </button>
-          <div style={{ display: window.innerWidth > 768 ? "block" : "none" }}>
-            <div className="main-tabs" style={styles.mainTabs}>
-              <button className="btn-click" style={styles.mainTab(currentTab === "home")} onClick={() => setCurrentTab("home")}><FaHome size={14} /> {text.home}</button>
-              <button className="btn-click" style={styles.mainTab(currentTab === "library")} onClick={() => setCurrentTab("library")}><BsFillCollectionFill size={14} /> {text.library}</button>
-              <button className="btn-click" style={styles.mainTab(currentTab === "profile")} onClick={() => setCurrentTab("profile")}><FaUser size={14} /> {text.profile}</button>
-              <button className="btn-click" style={styles.mainTab(currentTab === "ai")} onClick={() => setCurrentTab("ai")}><FaRobot size={14} /> {text.ai}</button>
-              <button className="btn-click" style={styles.iconBtn} onClick={() => setShowSettings(true)}><FaCog size={14} /></button>
-              {!user ? <button className="btn-click" style={styles.loginBtn} onClick={() => setShowLoginModal(true)}><FaEnvelope size={14} /> {text.login}</button> :
-                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                  <div style={styles.userAvatar}>{userData?.username?.charAt(0).toUpperCase()}</div>
-                  <button className="btn-click" style={styles.logoutBtn} onClick={logout}><FaSignOutAlt size={14} /></button>
-                </div>}
-            </div>
+          
+          {/* DESKTOP MENU - NUR AUF DESKTOP SICHTBAR */}
+          <div className="main-tabs-desktop" style={styles.mainTabs}>
+            <button className="btn-click" style={styles.mainTab(currentTab === "home")} onClick={() => setCurrentTab("home")}><FaHome size={14} /> {text.home}</button>
+            <button className="btn-click" style={styles.mainTab(currentTab === "library")} onClick={() => setCurrentTab("library")}><BsFillCollectionFill size={14} /> {text.library}</button>
+            <button className="btn-click" style={styles.mainTab(currentTab === "profile")} onClick={() => setCurrentTab("profile")}><FaUser size={14} /> {text.profile}</button>
+            <button className="btn-click" style={styles.mainTab(currentTab === "ai")} onClick={() => setCurrentTab("ai")}><FaRobot size={14} /> {text.ai}</button>
+            <button className="btn-click" style={styles.iconBtn} onClick={() => setShowSettings(true)}><FaCog size={14} /></button>
+            {!user ? <button className="btn-click" style={styles.loginBtn} onClick={() => setShowLoginModal(true)}><FaEnvelope size={14} /> {text.login}</button> :
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <div style={styles.userAvatar}>{userData?.username?.charAt(0).toUpperCase()}</div>
+                <button className="btn-click" style={styles.logoutBtn} onClick={logout}><FaSignOutAlt size={14} /></button>
+              </div>}
           </div>
         </div>
 
