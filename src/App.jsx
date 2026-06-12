@@ -80,42 +80,117 @@ const translateGenre = (genreName) => {
 
 let steamGamesCache = {};
 
-const checkAndFixRatings = (game, steamData) => {
-  let rating = game.rawgRating || 7.0;
-  const name = game.name?.toLowerCase() || "";
-  if (name.includes("goldeneye") && name.includes("007")) rating = 8.5;
-  if (name.includes("perfect dark")) rating = 8.3;
-  if (name.includes("metroid prime") && !name.includes("remastered")) rating = 9.0;
-  return rating;
-};
-
+// ========== NEUES RATING-SYSTEM MIT ALTERS-ABZUG ==========
 const calculateWeightedRating = (game, steamData) => {
-  const metacriticScore = game.rawgRating || 7.0;
-  let userRating = steamData?.steamRating || metacriticScore * 0.9;
-  let popularity = 7.0;
-  const reviewCount = steamData?.reviewCount || 5000;
-  if (reviewCount > 500000) popularity = 9.5;
-  else if (reviewCount > 200000) popularity = 9.0;
-  else if (reviewCount > 100000) popularity = 8.5;
-  else if (reviewCount > 50000) popularity = 8.0;
-  else if (reviewCount > 10000) popularity = 7.5;
-  let relevance = 7.0;
+  const name = game.name?.toLowerCase() || "";
   const currentYear = new Date().getFullYear();
-  const gameAge = currentYear - (game.year || 2020);
-  if (gameAge <= 1) relevance = 9.5;
-  else if (gameAge <= 2) relevance = 9.0;
-  else if (gameAge <= 3) relevance = 8.5;
-  else if (gameAge <= 5) relevance = 8.0;
-  else if (gameAge <= 8) relevance = 7.5;
-  let weightedRating = (metacriticScore * 0.3) + (userRating * 0.4) + (popularity * 0.2) + (relevance * 0.1);
-  weightedRating = Math.round(weightedRating * 10) / 10;
-  weightedRating = Math.max(weightedRating, 6.0);
-  return weightedRating;
+  const gameYear = game.year || 2020;
+  const age = currentYear - gameYear;
+  
+  // 1. BASIS RATING von RAWG/Metacritic (0-10)
+  let baseRating = game.rawgRating || 7.0;
+  
+  // 2. STEAM USER RATING (wenn vorhanden)
+  let steamRating = 0;
+  if (steamData?.steamRating) {
+    steamRating = steamData.steamRating;
+  }
+  
+  // 3. POPULARITÄT (basierend auf Review-Anzahl)
+  let popularityBonus = 0;
+  const reviewCount = steamData?.reviewCount || game.popularity || 0;
+  if (reviewCount > 500000) popularityBonus = 0.8;      // Mega-Hit
+  else if (reviewCount > 200000) popularityBonus = 0.5;  // Sehr beliebt
+  else if (reviewCount > 100000) popularityBonus = 0.3;  // Beliebt
+  else if (reviewCount > 50000) popularityBonus = 0.1;   // Nischenhit
+  else if (reviewCount < 5000 && reviewCount > 0) popularityBonus = -0.5; // Unbekannt
+  else popularityBonus = 0;
+  
+  // 4. ALTERS-ABZUG (ältere Spiele werden schlechter bewertet)
+  let agePenalty = 0;
+  if (age >= 25) agePenalty = -1.8;      // 1999 und älter
+  else if (age >= 20) agePenalty = -1.4;  // 2000-2005
+  else if (age >= 15) agePenalty = -1.0;  // 2006-2010
+  else if (age >= 10) agePenalty = -0.6;  // 2011-2015
+  else if (age >= 5) agePenalty = -0.2;   // 2016-2020
+  else if (age <= 1) agePenalty = 0.3;    // Neues Spiel (2024-2025)
+  else agePenalty = 0;
+  
+  // 5. TECHNIK-BONUS (neuere Spiele haben bessere Grafik/Technik)
+  let techBonus = 0;
+  if (age <= 2) techBonus = 0.5;       // 2023-2025
+  else if (age <= 5) techBonus = 0.2;  // 2020-2022
+  else if (age >= 15) techBonus = -0.6; // Sehr alte Technik
+  else if (age >= 20) techBonus = -0.9;
+  
+  // 6. GENRE-BONUS (bestimmte Genres sind beliebter)
+  let genreBonus = 0;
+  const popularGenres = ["Action", "RPG", "Open World", "Story Rich"];
+  const unpopularGenres = ["Puzzle", "Simulation", "Strategy"];
+  if (popularGenres.includes(game.genre)) genreBonus = 0.2;
+  if (unpopularGenres.includes(game.genre)) genreBonus = -0.1;
+  
+  // 7. FINALE BERECHNUNG
+  let finalRating = (baseRating * 0.4) + (steamRating * 0.3) + popularityBonus + agePenalty + techBonus + genreBonus;
+  
+  // ========== SPEZIALFÄLLE ==========
+  // Tekken 3 (1997) - fairer Wert
+  if (name === "tekken 3" || name.includes("tekken 3")) {
+    finalRating = 7.4;
+  }
+  // Tekken allgemein (alt)
+  if ((name.includes("tekken") || name.includes("Tekken")) && age > 15) {
+    finalRating = Math.min(finalRating, 7.6);
+  }
+  // Street Fighter II (1991)
+  if (name.includes("street fighter ii") || name.includes("street fighter 2")) {
+    finalRating = 7.5;
+  }
+  // Super Mario 64 (1996)
+  if (name === "super mario 64" || name.includes("super mario 64")) {
+    finalRating = 7.8;
+  }
+  // GoldenEye 007 (1997)
+  if (name.includes("goldeneye")) {
+    finalRating = 7.3;
+  }
+  // Half-Life (1998)
+  if (name === "half-life" && !name.includes("2")) {
+    finalRating = 8.0;
+  }
+  // Ocarina of Time (1998) - zeitloser Klassiker, aber technisch alt
+  if (name.includes("ocarina of time")) {
+    finalRating = 8.2;
+  }
+  // PS1/PS2 Ära Spiele max 8.2
+  if (age >= 20) {
+    finalRating = Math.min(finalRating, 8.2);
+  }
+  // PS3/Xbox360 Ära max 8.6
+  if (age >= 12 && age < 20) {
+    finalRating = Math.min(finalRating, 8.6);
+  }
+  // Moderne Spiele (2020+) können höher sein
+  if (age <= 3) {
+    finalRating = Math.min(finalRating, 9.7);
+  }
+  
+  // Untergrenze für sehr alte Spiele
+  if (age >= 25 && finalRating > 7.5) {
+    finalRating = Math.min(finalRating, 7.5);
+  }
+  
+  // Begrenzungen
+  finalRating = Math.min(finalRating, 9.7);
+  finalRating = Math.max(finalRating, 5.0);
+  finalRating = Math.round(finalRating * 10) / 10;
+  
+  return finalRating;
 };
 
 const generateLongDescription = (gameName, rawDescription) => {
   if (rawDescription && rawDescription.length > 200) return rawDescription;
-  return `${gameName} ist ein Meisterwerk der Videospielgeschichte. Die Entwickler haben unglaubliche Arbeit in jedes Detail gesteckt. Die Spielmechanik ist intuitiv und dennoch tiefgründig. Die Geschichte fesselt von der ersten Minute an. Ein absolutes Muss für jeden Fan des Genres!`;
+  return `${gameName} ist ein Spiel, das Spieler auf der ganzen Welt begeistert. Die Entwickler haben viel Liebe zum Detail gesteckt. Die Spielmechanik ist durchdacht und macht süchtig. Die Atmosphäre ist einzigartig und fesselnd. Ein Erlebnis, das man nicht verpassen sollte!`;
 };
 
 const getGameImage = (rawgImg, gameName, steamData) => {
@@ -452,19 +527,25 @@ export default function NexPlay() {
 
   const HIDDEN_GEMS_GAMES = useMemo(() => {
     const rawgGems = gamesWithData.filter(g => g.finalRating >= 8.5 && g.reviewCount < 20000 && g.genre === "Indie").slice(0, 10);
-    const manualGemsWithRating = MANUAL_HIDDEN_GEMS.map(g => ({ ...g, finalRating: g.rating, finalImg: g.img, finalDescription: g.description }));
+    const manualGemsWithRating = MANUAL_HIDDEN_GEMS.map(g => ({ ...g, finalRating: calculateWeightedRating(g, null), finalImg: g.img, finalDescription: g.description }));
     const allGems = [...rawgGems, ...manualGemsWithRating];
     return allGems.filter((g, index, self) => index === self.findIndex(g2 => g2.name === g.name)).sort((a, b) => b.finalRating - a.finalRating).slice(0, 30);
   }, [gamesWithData]);
 
   const TOP_PICKS_GAMES = useMemo(() => {
-    const rawgPicks = gamesWithData.filter(g => g.finalRating >= 9.0 && g.reviewCount >= 50000);
-    if (rawgPicks.length >= 12) return rawgPicks.slice(0, 20);
-    const fallback = gamesWithData.filter(g => g.finalRating >= 8.8);
-    return [...rawgPicks, ...fallback].slice(0, 20);
+    const modernGames = gamesWithData.filter(g => g.year >= 2020 && g.finalRating >= 8.5);
+    if (modernGames.length >= 12) return modernGames.slice(0, 20);
+    const allHighRated = gamesWithData.filter(g => g.finalRating >= 8.8);
+    return [...modernGames, ...allHighRated].slice(0, 20);
   }, [gamesWithData]);
 
-  const BEST_EVER_GAMES = useMemo(() => [...gamesWithData].sort((a,b) => b.finalRating - a.finalRating).slice(0, 40), [gamesWithData]);
+  const BEST_EVER_GAMES = useMemo(() => {
+    const sorted = [...gamesWithData].sort((a, b) => {
+      if (b.finalRating !== a.finalRating) return b.finalRating - a.finalRating;
+      return b.year - a.year;
+    });
+    return sorted.slice(0, 40);
+  }, [gamesWithData]);
 
   const searchAOTY = () => {
     const search = aotySearch.trim().toLowerCase();
@@ -488,18 +569,21 @@ export default function NexPlay() {
 
   useEffect(() => { searchAOTY(); }, [aotySearch]);
 
-  // FIX: Top 20 by Genre - unterschiedliche Games für jedes Genre
+  // FIXED: Top 20 by Genre - zeigt nur Spiele des ausgewählten Genres
   const top20ByGenre = useMemo(() => {
-    const filtered = gamesWithData.filter(g => g.genre === selectedGenreForTop);
-    if (filtered.length === 0) {
-      return gamesWithData.filter(g => g.finalRating >= 8.5).slice(0, 20);
-    }
-    const shuffled = [...filtered];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    return shuffled.sort((a, b) => b.finalRating - a.finalRating).slice(0, 20);
+    // Exakte Genre-Filterung
+    let filtered = gamesWithData.filter(g => {
+      if (!g.genre) return false;
+      return g.genre.toLowerCase() === selectedGenreForTop.toLowerCase();
+    });
+    
+    // Nach Rating sortieren (höchstes zuerst)
+    const sorted = [...filtered].sort((a, b) => {
+      if (b.finalRating !== a.finalRating) return b.finalRating - a.finalRating;
+      return b.year - a.year;
+    });
+    
+    return sorted.slice(0, 20);
   }, [gamesWithData, selectedGenreForTop]);
 
   const doRandom = () => {
@@ -1244,7 +1328,7 @@ export default function NexPlay() {
                 </select>
                 <div style={styles.sectionTitle}>⭐ Top 20 - {selectedGenreForTop}</div>
                 {top20ByGenre.length === 0 ? (
-                  <div style={styles.emptyState}>No games found.</div>
+                  <div style={styles.emptyState}>No games found in this genre.</div>
                 ) : (
                   <div style={styles.grid}>{top20ByGenre.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
                 )}
@@ -1501,7 +1585,7 @@ export default function NexPlay() {
         )}
       </div>
 
-      {/* MODALS - same as before */}
+      {/* MODALS */}
       {showCreatePlaylist && (
         <div style={styles.modalOverlay} onClick={() => setShowCreatePlaylist(false)}>
           <div style={styles.modalContent} onClick={e => e.stopPropagation()}>
