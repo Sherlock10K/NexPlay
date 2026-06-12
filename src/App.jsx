@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { FaHome, FaUser, FaFire, FaSearch, FaHeart, FaStar, FaTrash, FaSignOutAlt, FaPlus, FaCheck, FaEnvelope, FaEye, FaEyeSlash, FaEdit, FaUsers, FaClock, FaRandom, FaThumbsUp, FaThumbsDown, FaArrowLeft, FaCog, FaVolumeUp, FaVolumeMute, FaLanguage, FaSteam, FaPlaystation, FaGamepad, FaTrophy, FaGem, FaShoppingCart, FaRobot, FaFilter, FaLink, FaExternalLinkAlt, FaDonate, FaAward, FaList, FaMedal, FaGamepad as FaGamepadIcon, FaDiceD6, FaGlobe, FaStarHalfAlt, FaTv, FaMicrophone, FaVideo, FaDesktop, FaPlusCircle, FaTrashAlt, FaUsers as FaUsersIcon, FaBell, FaCalendarAlt, FaChartLine, FaBook, FaTags, FaBalanceScale, FaFileExport, FaFileImport, FaMoon, FaSun, FaAdjust, FaBars, FaTimes, FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { FaHome, FaUser, FaFire, FaSearch, FaHeart, FaStar, FaTrash, FaSignOutAlt, FaPlus, FaCheck, FaEnvelope, FaEye, FaEyeSlash, FaEdit, FaUsers, FaClock, FaRandom, FaThumbsUp, FaThumbsDown, FaArrowLeft, FaCog, FaVolumeUp, FaVolumeMute, FaLanguage, FaSteam, FaPlaystation, FaGamepad, FaTrophy, FaGem, FaShoppingCart, FaRobot, FaFilter, FaLink, FaExternalLinkAlt, FaDonate, FaAward, FaList, FaMedal, FaGamepad as FaGamepadIcon, FaDiceD6, FaGlobe, FaStarHalfAlt, FaTv, FaMicrophone, FaVideo, FaDesktop, FaPlusCircle, FaTrashAlt, FaUsers as FaUsersIcon, FaBell, FaCalendarAlt, FaChartLine, FaBook, FaTags, FaBalanceScale, FaFileExport, FaFileImport, FaMoon, FaSun, FaAdjust, FaBars, FaTimes, FaChevronDown, FaChevronUp, FaSoccerBallO, FaFutbol } from "react-icons/fa";
 import { GiConsoleController, GiAchievement, GiSwordman, GiPuzzle, GiMusicalNotes, GiBrain, GiShield, GiMagicSwirl, GiTrophy, GiLaurels, GiSpinningWheel, GiNotebook, GiTwoCoins } from "react-icons/gi";
 import { BsFillCollectionFill, BsFillHeartFill, BsFillStarFill, BsFillAwardFill, BsFillPlayFill } from "react-icons/bs";
 import { auth, loginWithEmail, registerWithEmail, logout, loadLibraryFromFirestore, saveLibraryToFirestore, loadProfileFromFirestore, saveProfileToFirestore, updateUsername, updateBio, togglePrivacy, searchUsers, resetPassword, addGameReview, getGameReviews, updateLastPlayed, likeReview, dislikeReview } from "./firebase";
@@ -27,34 +27,170 @@ const MOODS = ["Emotional", "Action", "Dark", "Fantasy", "Horror", "Mystery", "C
 const GENRES = ["Action", "Adventure", "RPG", "Indie", "Horror", "Strategy", "Puzzle", "Open World", "Story Rich", "Fighting", "Sports", "Racing", "Simulation"];
 const PLAYTIMES = ["Under 10h", "10-20h", "20-40h", "40-60h", "60-100h", "100h+"];
 
+// ========== VOLLSTÄNDIGE AOTY DATEN (mit Nominierungen) ==========
 const AOTY_DATA = {
-  2026: { tga: { winner: "TBA 2026", img: "https://placehold.co/300x200/14141f/ffd400?text=TBA" } },
-  2025: { tga: { winner: "Clair Obscur: Expedition 33", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2358720/header.jpg", steamId: 2358720 } },
-  2024: { tga: { winner: "Astro Bot", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2357570/header.jpg", steamId: 2357570 } },
-  2023: { tga: { winner: "Baldur's Gate 3", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1086940/header.jpg", steamId: 1086940 } },
-  2022: { tga: { winner: "Elden Ring", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg", steamId: 1245620 } },
-  2021: { tga: { winner: "It Takes Two", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1426210/header.jpg", steamId: 1426210 } },
-  2020: { tga: { winner: "The Last of Us Part II", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1888930/header.jpg", steamId: 1888930 } },
-  2019: { tga: { winner: "Sekiro: Shadows Die Twice", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/814380/header.jpg", steamId: 814380 } },
-  2018: { tga: { winner: "God of War", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1593500/header.jpg", steamId: 1593500 } },
-  2017: { tga: { winner: "The Legend of Zelda: Breath of the Wild", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg", steamId: 1245620 } },
-  2016: { tga: { winner: "Overwatch", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2357570/header.jpg", steamId: 2357570 } },
-  2015: { tga: { winner: "The Witcher 3: Wild Hunt", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/292030/header.jpg", steamId: 292030 } },
-  2014: { tga: { winner: "Dragon Age: Inquisition", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1222690/header.jpg", steamId: 1222690 } },
-  2013: { tga: { winner: "Grand Theft Auto V", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/271590/header.jpg", steamId: 271590 } },
-  2012: { tga: { winner: "The Walking Dead: Season One", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/207610/header.jpg", steamId: 207610 } },
-  2011: { tga: { winner: "The Elder Scrolls V: Skyrim", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/489830/header.jpg", steamId: 489830 } },
-  2010: { tga: { winner: "Red Dead Redemption", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1174180/header.jpg", steamId: 1174180 } },
-  2009: { tga: { winner: "Uncharted 2: Among Thieves", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1250/header.jpg", steamId: 1250 } },
-  2008: { tga: { winner: "Grand Theft Auto IV", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/12210/header.jpg", steamId: 12210 } },
-  2007: { tga: { winner: "BioShock", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/7670/header.jpg", steamId: 7670 } },
-  2006: { tga: { winner: "The Elder Scrolls IV: Oblivion", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/22330/header.jpg", steamId: 22330 } },
-  2005: { tga: { winner: "Resident Evil 4", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/254700/header.jpg", steamId: 254700 } },
-  2004: { tga: { winner: "Grand Theft Auto: San Andreas", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/12120/header.jpg", steamId: 12120 } },
-  2003: { tga: { winner: "Madden NFL 2004", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/15530/header.jpg", steamId: 15530 } }
+  2024: {
+    tga: { 
+      winner: "Astro Bot", 
+      nominees: ["Astro Bot", "Balatro", "Black Myth: Wukong", "Elden Ring: Shadow of the Erdtree", "Final Fantasy VII Rebirth", "Metaphor: ReFantazio"],
+      img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2357570/header.jpg", 
+      steamId: 2357570 
+    },
+    bafta: {
+      winner: "Baldur's Gate 3",
+      nominees: ["Alan Wake 2", "Baldur's Gate 3", "Cocoon", "Dave the Diver", "The Legend of Zelda: Tears of the Kingdom", "Viewfinder"],
+      img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1086940/header.jpg",
+      steamId: 1086940
+    },
+    goldenJoystick: {
+      winner: "Baldur's Gate 3",
+      nominees: ["Alan Wake 2", "Baldur's Gate 3", "Cyberpunk 2077: Phantom Liberty", "Final Fantasy XVI", "Lies of P", "Starfield"],
+      img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1086940/header.jpg",
+      steamId: 1086940
+    },
+    dice: {
+      winner: "Baldur's Gate 3",
+      nominees: ["Alan Wake 2", "Baldur's Gate 3", "Cocoon", "Marvel's Spider-Man 2", "The Legend of Zelda: Tears of the Kingdom"],
+      img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1086940/header.jpg",
+      steamId: 1086940
+    },
+    ballonDor: {
+      winner: "Elden Ring",
+      nominees: ["Baldur's Gate 3", "Elden Ring", "The Legend of Zelda: Tears of the Kingdom", "Alan Wake 2"],
+      img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg",
+      steamId: 1245620
+    },
+    saudi: {
+      winner: "EA Sports FC 24",
+      nominees: ["EA Sports FC 24", "F1 23", "eFootball 2024", "UFC 5"],
+      img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2195250/header.jpg",
+      steamId: 2195250
+    }
+  },
+  2023: {
+    tga: { 
+      winner: "Baldur's Gate 3", 
+      nominees: ["Alan Wake 2", "Baldur's Gate 3", "Marvel's Spider-Man 2", "Resident Evil 4", "Super Mario Bros. Wonder", "The Legend of Zelda: Tears of the Kingdom"],
+      img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1086940/header.jpg", 
+      steamId: 1086940 
+    },
+    bafta: {
+      winner: "Baldur's Gate 3",
+      nominees: ["Alan Wake 2", "Baldur's Gate 3", "Cocoon", "Dave the Diver", "The Legend of Zelda: Tears of the Kingdom", "Viewfinder"],
+      img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1086940/header.jpg",
+      steamId: 1086940
+    },
+    goldenJoystick: {
+      winner: "Baldur's Gate 3",
+      nominees: ["Alan Wake 2", "Baldur's Gate 3", "Cyberpunk 2077: Phantom Liberty", "Final Fantasy XVI", "Lies of P", "Starfield"],
+      img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1086940/header.jpg",
+      steamId: 1086940
+    },
+    dice: {
+      winner: "Baldur's Gate 3",
+      nominees: ["Alan Wake 2", "Baldur's Gate 3", "Cocoon", "Marvel's Spider-Man 2", "The Legend of Zelda: Tears of the Kingdom"],
+      img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1086940/header.jpg",
+      steamId: 1086940
+    },
+    ballonDor: {
+      winner: "Baldur's Gate 3",
+      nominees: ["Baldur's Gate 3", "Alan Wake 2", "The Legend of Zelda: Tears of the Kingdom", "Resident Evil 4"],
+      img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1086940/header.jpg",
+      steamId: 1086940
+    },
+    saudi: {
+      winner: "EA Sports FC 24",
+      nominees: ["EA Sports FC 24", "F1 23", "eFootball 2024", "UFC 5"],
+      img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2195250/header.jpg",
+      steamId: 2195250
+    }
+  },
+  2022: {
+    tga: { 
+      winner: "Elden Ring", 
+      nominees: ["A Plague Tale: Requiem", "Elden Ring", "God of War Ragnarök", "Horizon Forbidden West", "Stray", "Xenoblade Chronicles 3"],
+      img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg", 
+      steamId: 1245620 
+    },
+    bafta: {
+      winner: "Elden Ring",
+      nominees: ["Elden Ring", "God of War Ragnarök", "Horizon Forbidden West", "Stray", "Vampire Survivors"],
+      img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg",
+      steamId: 1245620
+    },
+    goldenJoystick: {
+      winner: "Elden Ring",
+      nominees: ["Elden Ring", "God of War Ragnarök", "Horizon Forbidden West", "Stray", "Call of Duty: Modern Warfare II"],
+      img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg",
+      steamId: 1245620
+    },
+    dice: {
+      winner: "Elden Ring",
+      nominees: ["Elden Ring", "God of War Ragnarök", "Horizon Forbidden West", "Stray", "Vampire Survivors"],
+      img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg",
+      steamId: 1245620
+    },
+    ballonDor: {
+      winner: "God of War Ragnarök",
+      nominees: ["Elden Ring", "God of War Ragnarök", "Horizon Forbidden West", "Stray"],
+      img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1593500/header.jpg",
+      steamId: 1593500
+    },
+    saudi: {
+      winner: "FIFA 23",
+      nominees: ["FIFA 23", "F1 22", "eFootball 2023", "UFC 4"],
+      img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1811260/header.jpg",
+      steamId: 1811260
+    }
+  },
+  2021: {
+    tga: { 
+      winner: "It Takes Two", 
+      nominees: ["Deathloop", "It Takes Two", "Metroid Dread", "Psychonauts 2", "Ratchet & Clank: Rift Apart", "Resident Evil Village"],
+      img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1426210/header.jpg", 
+      steamId: 1426210 
+    },
+    bafta: {
+      winner: "Returnal",
+      nominees: ["Deathloop", "Forza Horizon 5", "It Takes Two", "Ratchet & Clank: Rift Apart", "Returnal"],
+      img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1649240/header.jpg",
+      steamId: 1649240
+    },
+    goldenJoystick: {
+      winner: "Resident Evil Village",
+      nominees: ["Deathloop", "Forza Horizon 5", "It Takes Two", "Metroid Dread", "Resident Evil Village"],
+      img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1196590/header.jpg",
+      steamId: 1196590
+    },
+    ballonDor: {
+      winner: "It Takes Two",
+      nominees: ["It Takes Two", "Deathloop", "Resident Evil Village", "Forza Horizon 5"],
+      img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1426210/header.jpg",
+      steamId: 1426210
+    }
+  },
+  2020: {
+    tga: { 
+      winner: "The Last of Us Part II", 
+      nominees: ["Animal Crossing: New Horizons", "Doom Eternal", "Final Fantasy VII Remake", "Ghost of Tsushima", "Hades", "The Last of Us Part II"],
+      img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1888930/header.jpg", 
+      steamId: 1888930 
+    },
+    goldenJoystick: {
+      winner: "The Last of Us Part II",
+      nominees: ["Animal Crossing: New Horizons", "Cyberpunk 2077", "Fall Guys", "Final Fantasy VII Remake", "Hades", "The Last of Us Part II"],
+      img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1888930/header.jpg",
+      steamId: 1888930
+    },
+    ballonDor: {
+      winner: "Hades",
+      nominees: ["Hades", "The Last of Us Part II", "Ghost of Tsushima", "Final Fantasy VII Remake"],
+      img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1145360/header.jpg",
+      steamId: 1145360
+    }
+  }
 };
 
-// ========== MANUELLE HIDDEN GEMS (15 Spiele) ==========
 const MANUAL_HIDDEN_GEMS = [
   { id: 9001, name: "CrossCode", rating: 9.1, genre: "RPG", playtime: "40-60h", year: 2018, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/368340/header.jpg", developer: "Radical Fish Games", mood: "Action", platforms: ["PC", "Switch", "PS4", "Xbox One"], steamId: 368340 },
   { id: 9002, name: "Outer Wilds", rating: 9.3, genre: "Adventure", playtime: "20-40h", year: 2019, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/753640/header.jpg", developer: "Mobius Digital", mood: "Mystery", platforms: ["PC", "PS4", "Xbox One", "Switch"], steamId: 753640 },
@@ -74,8 +210,8 @@ const MANUAL_HIDDEN_GEMS = [
 ];
 
 const translations = {
-  en: { home: "Discover", library: "Library", profile: "Profile", friends: "Friends", ai: "AI Assistant", aoty: "AOTY", playlists: "Playlists", gameNight: "Game Night", activity: "Activity", wishlist: "Wishlist", backlog: "Backlog Cleaner", tags: "Tags", compare: "Compare", journal: "Journal", export: "Export", import: "Import", theme: "Theme", dark: "Dark", light: "Light", auto: "Auto", randomGame: "Random Game", yearFilter: "Year", allYears: "All Years", login: "Login", register: "Register", logout: "Logout", search: "Search games...", searchAOTY: "Search by year or game name...", mood: "What's your mood?", genre: "Pick your genres", playtime: "How long?", next: "Next", results: "Show Results", topPicks: "Top Picks", bestEver: "Best Ever", allResults: "All Results", hiddenGems: "Hidden Gems", sort: "Sort", bestMatch: "Best Match", rating: "Rating", year: "Year", add: "Add to Library", inLibrary: "In Library", reviews: "Reviews", played: "Played", remove: "Remove", editProfile: "Edit Profile", username: "Username", bio: "Bio", private: "Private profile", save: "Save", achievements: "Achievements", firstGame: "First Game", collector: "Collector", completionist: "Completionist", recentlyPlayed: "Recently Played", favorites: "Favorites", total: "Total", playing: "Playing", completed: "Completed", rollAgain: "Roll Again", close: "Close", back: "Back", buyOn: "Buy on", writeReview: "Write Review", yourReview: "Your review...", submit: "Submit", noReviews: "No reviews yet", findFriends: "Find Friends", settings: "Settings", sound: "Sound Effects", language: "Language", steamId: "Steam ID", importGames: "Import Steam Games", findSteamId: "How to find your Steam ID", donate: "Support the developer", topRated: "Top Rated Game", topGenre: "Top Genre", totalPlaytime: "Total Playtime", aotyTitle: "Game of the Year", top10: "Top 10 by Genre", findYourGame: "Find Your Game", allAwards: "All Awards", backToAOTY: "Back to AOTY Overview", createPlaylist: "Create Playlist", playlistName: "Playlist Name", addToPlaylist: "Add to Playlist", gameNightMode: "Game Night Mode", spinWheel: "Spin the Wheel", excludeMultiplayer: "Exclude Multiplayer", activityFeed: "Activity Feed", addToWishlist: "Add to Wishlist", checkPrice: "Check Price", backlogTip: "You should play", addTag: "Add Tag", compareGames: "Compare Games", selectGame: "Select Game", journalNotes: "My Notes", exportLibrary: "Export Library", importLibrary: "Import Library", themeSelect: "Select Theme", loading: "Loading...", showMore: "Show more", showLess: "Show less", winner: "Winner", compareFeatures: "Compare Features", graphics: "Graphics", story: "Story", gameplay: "Gameplay", replayability: "Replayability" },
-  de: { home: "Entdecken", library: "Bibliothek", profile: "Profil", friends: "Freunde", ai: "KI-Assistent", aoty: "AOTY", playlists: "Playlists", gameNight: "Spielabend", activity: "Aktivitäten", wishlist: "Wunschliste", backlog: "Backlog Reiniger", tags: "Tags", compare: "Vergleichen", journal: "Tagebuch", export: "Exportieren", import: "Importieren", theme: "Design", dark: "Dunkel", light: "Hell", auto: "Auto", randomGame: "Zufälliges Spiel", yearFilter: "Jahr", allYears: "Alle Jahre", login: "Anmelden", register: "Registrieren", logout: "Abmelden", search: "Spiele suchen...", searchAOTY: "Suche nach Jahr oder Spielname...", mood: "Wie ist deine Stimmung?", genre: "Wähle deine Genres", playtime: "Wie lange?", next: "Weiter", results: "Ergebnisse", topPicks: "Top Empfehlungen", bestEver: "Beste Aller Zeiten", allResults: "Alle Ergebnisse", hiddenGems: "Geheimtipps", sort: "Sortieren", bestMatch: "Bester Treffer", rating: "Bewertung", year: "Jahr", add: "Zur Bibliothek", inLibrary: "In Bibliothek", reviews: "Bewertungen", played: "Gespielt", remove: "Entfernen", editProfile: "Profil bearbeiten", username: "Benutzername", bio: "Über mich", private: "Privates Profil", save: "Speichern", achievements: "Erfolge", firstGame: "Erstes Spiel", collector: "Sammler", completionist: "Vollender", recentlyPlayed: "Zuletzt gespielt", favorites: "Favoriten", total: "Gesamt", playing: "Spielt", completed: "Abgeschlossen", rollAgain: "Nochmal", close: "Schließen", back: "Zurück", buyOn: "Kaufen auf", writeReview: "Bewertung schreiben", yourReview: "Deine Bewertung...", submit: "Speichern", noReviews: "Keine Bewertungen", findFriends: "Freunde finden", settings: "Einstellungen", sound: "Soundeffekte", language: "Sprache", steamId: "Steam ID", importGames: "Steam Spiele importieren", findSteamId: "So findest du deine Steam ID", donate: "Unterstütze den Entwickler", topRated: "Bestbewertetes Spiel", topGenre: "Top Genre", totalPlaytime: "Spielzeit Gesamt", aotyTitle: "Spiel des Jahres", top10: "Top 10 pro Genre", findYourGame: "Finde dein Spiel", allAwards: "Alle Auszeichnungen", backToAOTY: "Zurück zur AOTY Übersicht", createPlaylist: "Playlist erstellen", playlistName: "Playlist Name", addToPlaylist: "Zu Playlist hinzufügen", gameNightMode: "Spielabend Modus", spinWheel: "Rad drehen", excludeMultiplayer: "Multiplayer ausschließen", activityFeed: "Aktivitäten Feed", addToWishlist: "Zur Wunschliste", checkPrice: "Preis prüfen", backlogTip: "Du solltest spielen", addTag: "Tag hinzufügen", compareGames: "Spiele vergleichen", selectGame: "Spiel auswählen", journalNotes: "Meine Notizen", exportLibrary: "Bibliothek exportieren", importLibrary: "Bibliothek importieren", themeSelect: "Design auswählen", loading: "Laden...", showMore: "Mehr anzeigen", showLess: "Weniger anzeigen", winner: "Gewinner", compareFeatures: "Funktionen vergleichen", graphics: "Grafik", story: "Geschichte", gameplay: "Spielspaß", replayability: "Wiederspielwert" }
+  en: { home: "Discover", library: "Library", profile: "Profile", friends: "Friends", ai: "AI Assistant", aoty: "AOTY", playlists: "Playlists", gameNight: "Game Night", activity: "Activity", wishlist: "Wishlist", backlog: "Backlog Cleaner", tags: "Tags", compare: "Compare", journal: "Journal", export: "Export", import: "Import", theme: "Theme", dark: "Dark", light: "Light", auto: "Auto", randomGame: "Random Game", yearFilter: "Year", allYears: "All Years", login: "Login", register: "Register", logout: "Logout", search: "Search games...", searchAOTY: "Search by year or game name...", mood: "What's your mood?", genre: "Pick your genres", playtime: "How long?", next: "Next", results: "Show Results", topPicks: "Top Picks", bestEver: "Best Ever", allResults: "All Results", hiddenGems: "Hidden Gems", sort: "Sort", bestMatch: "Best Match", rating: "Rating", year: "Year", add: "Add to Library", inLibrary: "In Library", reviews: "Reviews", played: "Played", remove: "Remove", editProfile: "Edit Profile", username: "Username", bio: "Bio", private: "Private profile", save: "Save", achievements: "Achievements", firstGame: "First Game", collector: "Collector", completionist: "Completionist", recentlyPlayed: "Recently Played", favorites: "Favorites", total: "Total", playing: "Playing", completed: "Completed", rollAgain: "Roll Again", close: "Close", back: "Back", buyOn: "Buy on", writeReview: "Write Review", yourReview: "Your review...", submit: "Submit", noReviews: "No reviews yet", findFriends: "Find Friends", settings: "Settings", sound: "Sound Effects", language: "Language", steamId: "Steam ID", importGames: "Import Steam Games", findSteamId: "How to find your Steam ID", donate: "Support the developer", topRated: "Top Rated Game", topGenre: "Top Genre", totalPlaytime: "Total Playtime", aotyTitle: "Game of the Year", top10: "Top 10 by Genre", findYourGame: "Find Your Game", allAwards: "All Awards", backToAOTY: "Back to AOTY Overview", createPlaylist: "Create Playlist", playlistName: "Playlist Name", addToPlaylist: "Add to Playlist", gameNightMode: "Game Night Mode", spinWheel: "Spin the Wheel", excludeMultiplayer: "Exclude Multiplayer", activityFeed: "Activity Feed", addToWishlist: "Add to Wishlist", checkPrice: "Check Price", backlogTip: "You should play", addTag: "Add Tag", compareGames: "Compare Games", selectGame: "Select Game", journalNotes: "My Notes", exportLibrary: "Export Library", importLibrary: "Import Library", themeSelect: "Select Theme", loading: "Loading...", showMore: "Show more", showLess: "Show less", winner: "Winner", compareFeatures: "Compare Features", graphics: "Graphics", story: "Story", gameplay: "Gameplay", replayability: "Replayability", nominees: "Nominees", tga: "The Game Awards", bafta: "BAFTA Games", goldenJoystick: "Golden Joystick", dice: "D.I.C.E. Awards", ballonDor: "Ballon d'Or Gaming", saudi: "Saudi Esports Awards" },
+  de: { home: "Entdecken", library: "Bibliothek", profile: "Profil", friends: "Freunde", ai: "KI-Assistent", aoty: "AOTY", playlists: "Playlists", gameNight: "Spielabend", activity: "Aktivitäten", wishlist: "Wunschliste", backlog: "Backlog Reiniger", tags: "Tags", compare: "Vergleichen", journal: "Tagebuch", export: "Exportieren", import: "Importieren", theme: "Design", dark: "Dunkel", light: "Hell", auto: "Auto", randomGame: "Zufälliges Spiel", yearFilter: "Jahr", allYears: "Alle Jahre", login: "Anmelden", register: "Registrieren", logout: "Abmelden", search: "Spiele suchen...", searchAOTY: "Suche nach Jahr oder Spielname...", mood: "Wie ist deine Stimmung?", genre: "Wähle deine Genres", playtime: "Wie lange?", next: "Weiter", results: "Ergebnisse", topPicks: "Top Empfehlungen", bestEver: "Beste Aller Zeiten", allResults: "Alle Ergebnisse", hiddenGems: "Geheimtipps", sort: "Sortieren", bestMatch: "Bester Treffer", rating: "Bewertung", year: "Jahr", add: "Zur Bibliothek", inLibrary: "In Bibliothek", reviews: "Bewertungen", played: "Gespielt", remove: "Entfernen", editProfile: "Profil bearbeiten", username: "Benutzername", bio: "Über mich", private: "Privates Profil", save: "Speichern", achievements: "Erfolge", firstGame: "Erstes Spiel", collector: "Sammler", completionist: "Vollender", recentlyPlayed: "Zuletzt gespielt", favorites: "Favoriten", total: "Gesamt", playing: "Spielt", completed: "Abgeschlossen", rollAgain: "Nochmal", close: "Schließen", back: "Zurück", buyOn: "Kaufen auf", writeReview: "Bewertung schreiben", yourReview: "Deine Bewertung...", submit: "Speichern", noReviews: "Keine Bewertungen", findFriends: "Freunde finden", settings: "Einstellungen", sound: "Soundeffekte", language: "Sprache", steamId: "Steam ID", importGames: "Steam Spiele importieren", findSteamId: "So findest du deine Steam ID", donate: "Unterstütze den Entwickler", topRated: "Bestbewertetes Spiel", topGenre: "Top Genre", totalPlaytime: "Spielzeit Gesamt", aotyTitle: "Spiel des Jahres", top10: "Top 10 pro Genre", findYourGame: "Finde dein Spiel", allAwards: "Alle Auszeichnungen", backToAOTY: "Zurück zur AOTY Übersicht", createPlaylist: "Playlist erstellen", playlistName: "Playlist Name", addToPlaylist: "Zu Playlist hinzufügen", gameNightMode: "Spielabend Modus", spinWheel: "Rad drehen", excludeMultiplayer: "Multiplayer ausschließen", activityFeed: "Aktivitäten Feed", addToWishlist: "Zur Wunschliste", checkPrice: "Preis prüfen", backlogTip: "Du solltest spielen", addTag: "Tag hinzufügen", compareGames: "Spiele vergleichen", selectGame: "Spiel auswählen", journalNotes: "Meine Notizen", exportLibrary: "Bibliothek exportieren", importLibrary: "Bibliothek importieren", themeSelect: "Design auswählen", loading: "Laden...", showMore: "Mehr anzeigen", showLess: "Weniger anzeigen", winner: "Gewinner", compareFeatures: "Funktionen vergleichen", graphics: "Grafik", story: "Geschichte", gameplay: "Spielspaß", replayability: "Wiederspielwert", nominees: "Nominiert", tga: "The Game Awards", bafta: "BAFTA Games", goldenJoystick: "Golden Joystick", dice: "D.I.C.E. Awards", ballonDor: "Ballon d'Or Gaming", saudi: "Saudi Esports Awards" }
 };
 
 const RAWG_API_KEY = "4da2c00cf3b2459d988e0ed0ac16988d";
@@ -164,6 +300,7 @@ export default function NexPlay() {
   const [aotySearch, setAotySearch] = useState("");
   const [aotyResult, setAotyResult] = useState(null);
   const [selectedAotyYear, setSelectedAotyYear] = useState(null);
+  const [selectedAotyCategory, setSelectedAotyCategory] = useState(null);
   const [selectedGenreForTop, setSelectedGenreForTop] = useState("Action");
   const [searchQuery, setSearchQuery] = useState("");
   const [step, setStep] = useState(1);
@@ -474,15 +611,6 @@ export default function NexPlay() {
     });
   }, [allGames]);
 
-  // Genug Spiele für jedes Genre (mindestens 10 pro Genre)
-  const gamesByGenre = useMemo(() => {
-    const result = {};
-    GENRES.forEach(genre => {
-      result[genre] = gamesWithData.filter(g => g.genre === genre).slice(0, 10);
-    });
-    return result;
-  }, [gamesWithData]);
-
   const HIDDEN_GEMS_GAMES = useMemo(() => {
     const rawgGems = gamesWithData.filter(g => g.finalRating >= 8.5 && g.reviewCount < 20000 && (g.genre === "Indie" || g.genre === "Puzzle" || g.genre === "Adventure")).slice(0, 20);
     const manualGemsWithRating = MANUAL_HIDDEN_GEMS.map(g => ({ ...g, finalRating: calculateWeightedRating(g, null), finalImg: g.img, finalDescription: generateLongDescription(g.name, "") }));
@@ -507,7 +635,7 @@ export default function NexPlay() {
 
   const searchAOTY = () => {
     const search = aotySearch.trim().toLowerCase();
-    if (!search) { setAotyResult(null); setSelectedAotyYear(null); return; }
+    if (!search) { setAotyResult(null); setSelectedAotyYear(null); setSelectedAotyCategory(null); return; }
     const yearMatch = search.match(/^\d{4}$/);
     if (yearMatch) {
       const year = parseInt(search);
@@ -516,10 +644,13 @@ export default function NexPlay() {
       return;
     }
     for (const [year, data] of Object.entries(AOTY_DATA)) {
-      if (data.tga?.winner?.toLowerCase().includes(search)) {
-        setAotyResult({ type: "game", year, game: data.tga.winner, category: "tga", data });
-        setSelectedAotyYear(year);
-        return;
+      for (const [category, award] of Object.entries(data)) {
+        if (award.winner?.toLowerCase().includes(search) || award.nominees?.some(n => n.toLowerCase().includes(search))) {
+          setAotyResult({ type: "game", year, game: award.winner, category, data: award });
+          setSelectedAotyYear(year);
+          setSelectedAotyCategory(category);
+          return;
+        }
       }
     }
     setAotyResult({ type: "error", message: "Game not found" });
@@ -527,7 +658,6 @@ export default function NexPlay() {
 
   useEffect(() => { searchAOTY(); }, [aotySearch]);
 
-  // Top 10 by Genre (statt Top 20)
   const top10ByGenre = useMemo(() => {
     let filtered = gamesWithData.filter(g => {
       if (!g.genre) return false;
@@ -694,12 +824,17 @@ export default function NexPlay() {
   const openGameDetail = async (game) => {
     initAudio();
     setLoadingAction(true);
-    const fullGame = [...gamesWithData, ...MANUAL_HIDDEN_GEMS].find(g => g.id === game.id) || game;
-    setSelectedGameDetail(fullGame);
-    const reviews = await getGameReviews(fullGame.id);
-    setGameDetailReviews(reviews);
-    setCurrentTab("gameDetail");
-    setLoadingAction(false);
+    try {
+      const fullGame = [...gamesWithData, ...MANUAL_HIDDEN_GEMS].find(g => g.id === game.id) || game;
+      setSelectedGameDetail(fullGame);
+      const reviews = await getGameReviews(fullGame.id);
+      setGameDetailReviews(reviews);
+      setCurrentTab("gameDetail");
+    } catch (error) {
+      console.error("Error loading game detail:", error);
+    } finally {
+      setLoadingAction(false);
+    }
   };
 
   const closeGameDetail = () => { setSelectedGameDetail(null); setCurrentTab("home"); };
@@ -838,12 +973,13 @@ export default function NexPlay() {
     @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes slideIn { from { opacity: 0; transform: translateY(-50px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes wheelSpin { 0% { transform: rotate(0deg); } 100% { transform: rotate(1440deg); } }
     .fade-in { animation: fadeIn 0.4s ease-out; }
     .slide-in { animation: slideIn 0.3s ease-out; }
     .game-card { transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1); cursor: pointer; background: ${currentColors.bgCard}; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); }
     .game-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 20px 30px -12px rgba(0,0,0,0.5); border-color: ${currentColors.primary}40; }
     .btn-click:active { transform: scale(0.96); }
-    .spinning-wheel { animation: spin 0.5s ease-out; }
+    .spinning-wheel { animation: wheelSpin 0.5s ease-out; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .text-wrap { word-wrap: break-word; overflow-wrap: break-word; white-space: normal; }
@@ -992,7 +1128,10 @@ export default function NexPlay() {
     topGenreSelect: { background: currentColors.bgCard, border: `1px solid ${currentColors.primary}30`, borderRadius: 10, padding: "10px 16px", color: currentColors.text, fontSize: 14, marginBottom: 20, cursor: "pointer", width: "100%" },
     aotyYearCard: { background: currentColors.bgCard, borderRadius: 14, padding: 12, textAlign: "center", cursor: "pointer", border: "1px solid rgba(255,255,255,0.05)" },
     playlistCard: { background: currentColors.bgCard, borderRadius: 14, padding: 14, marginBottom: 14, border: `1px solid ${currentColors.primary}20` },
-    gameNightCard: { background: currentColors.bgCard, borderRadius: 14, padding: 16, marginBottom: 20, textAlign: "center" },
+    gameNightCard: { background: currentColors.bgCard, borderRadius: 16, padding: 24, marginBottom: 20, textAlign: "center" },
+    wheelContainer: { margin: "20px 0", display: "flex", justifyContent: "center" },
+    wheel: { width: 200, height: 200, borderRadius: "50%", background: `conic-gradient(${currentColors.primary} 0deg 72deg, ${currentColors.primaryDark} 72deg 144deg, ${colors.success} 144deg 216deg, ${colors.error} 216deg 288deg, ${colors.steam} 288deg 360deg)`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "transform 0.1s", boxShadow: "0 10px 30px rgba(0,0,0,0.3)" },
+    wheelInner: { width: 60, height: 60, borderRadius: "50%", background: currentColors.bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24 },
     activityCard: { background: currentColors.bgCard, borderRadius: 10, padding: 10, marginBottom: 10, display: "flex", alignItems: "center", gap: 10 },
     compareCard: { background: currentColors.bgCard, borderRadius: 20, padding: 20, marginBottom: 24 },
     compareGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 20 },
@@ -1002,7 +1141,8 @@ export default function NexPlay() {
     compareLabel: { fontWeight: 600, color: currentColors.textSecondary, fontSize: 13 },
     compareValue: { fontWeight: 500, color: currentColors.text, fontSize: 13 },
     journalCard: { background: currentColors.bgCard, borderRadius: 14, padding: 14, marginBottom: 16 },
-    tag: { background: "rgba(255,212,0,0.15)", borderRadius: 14, padding: "3px 8px", fontSize: 10, color: currentColors.primary, display: "inline-flex", alignItems: "center", gap: 4 }
+    tag: { background: "rgba(255,212,0,0.15)", borderRadius: 14, padding: "3px 8px", fontSize: 10, color: currentColors.primary, display: "inline-flex", alignItems: "center", gap: 4 },
+    categoryGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 16, marginTop: 16 }
   };
 
   const GameCard = ({ game, showBtn = false }) => {
@@ -1464,30 +1604,78 @@ export default function NexPlay() {
           </div>
         )}
 
-        {/* AOTY TAB */}
+        {/* AOTY TAB - VOLLSTÄNDIG MIT NOMINIERUNGEN */}
         {currentTab === "aoty" && (
           <div className="fade-in">
-            {selectedAotyYear ? (
+            {selectedAotyYear && selectedAotyCategory ? (
+              <>
+                <button className="btn-click" style={styles.gotyBackBtn} onClick={() => { setSelectedAotyYear(null); setSelectedAotyCategory(null); setAotySearch(""); setAotyResult(null); }}>
+                  <FaArrowLeft size={12} /> {text.backToAOTY}
+                </button>
+                <div style={styles.aotyResultCard}>
+                  <div style={{ fontSize: 24, fontWeight: 800, marginBottom: 8, textAlign: "center", color: currentColors.primary }}>{selectedAotyYear}</div>
+                  <div style={styles.aotyWinnerCard}>
+                    <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
+                      {selectedAotyCategory === "tga" && <FaTrophy style={{ color: currentColors.primary, fontSize: 24 }} />}
+                      {selectedAotyCategory === "bafta" && <FaAward style={{ color: currentColors.primary, fontSize: 24 }} />}
+                      {selectedAotyCategory === "goldenJoystick" && <FaMedal style={{ color: currentColors.primary, fontSize: 24 }} />}
+                      {selectedAotyCategory === "dice" && <FaDiceD6 style={{ color: currentColors.primary, fontSize: 24 }} />}
+                      {selectedAotyCategory === "ballonDor" && <FaFutbol style={{ color: currentColors.primary, fontSize: 24 }} />}
+                      {selectedAotyCategory === "saudi" && <FaGlobe style={{ color: currentColors.primary, fontSize: 24 }} />}
+                      <div>
+                        <div style={{ fontSize: 12, color: currentColors.primary }}>
+                          {selectedAotyCategory === "tga" && text.tga}
+                          {selectedAotyCategory === "bafta" && text.bafta}
+                          {selectedAotyCategory === "goldenJoystick" && text.goldenJoystick}
+                          {selectedAotyCategory === "dice" && text.dice}
+                          {selectedAotyCategory === "ballonDor" && text.ballonDor}
+                          {selectedAotyCategory === "saudi" && text.saudi}
+                        </div>
+                        <div style={{ fontSize: 20, fontWeight: 700 }}>{AOTY_DATA[selectedAotyYear]?.[selectedAotyCategory]?.winner}</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{ marginTop: 20 }}>
+                    <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 12 }}>🏆 {text.nominees}</div>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+                      {AOTY_DATA[selectedAotyYear]?.[selectedAotyCategory]?.nominees?.map(nominee => (
+                        <span key={nominee} style={{ background: "rgba(255,255,255,0.1)", borderRadius: 20, padding: "6px 14px", fontSize: 13 }}>{nominee}</span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : selectedAotyYear ? (
               <>
                 <button className="btn-click" style={styles.gotyBackBtn} onClick={() => { setSelectedAotyYear(null); setAotySearch(""); setAotyResult(null); }}>
                   <FaArrowLeft size={12} /> {text.backToAOTY}
                 </button>
                 <div style={styles.aotyResultCard}>
-                  <div style={{ fontSize: 24, fontWeight: 800, marginBottom: 8, textAlign: "center", color: currentColors.primary }}>{selectedAotyYear}</div>
-                  <div style={styles.aotyWinnerCard} onClick={() => {
-                    const award = AOTY_DATA[selectedAotyYear]?.tga;
-                    if (award) {
-                      const gameData = { id: selectedAotyYear, name: award.winner, rating: 9.0, genre: "Action", playtime: "20-40h", year: selectedAotyYear, img: award.img, developer: "Various", platforms: ["PC", "Console"], steamId: award.steamId, finalRating: 9.0, finalImg: award.img };
-                      openGameDetail(gameData);
-                    }
-                  }}>
-                    <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
-                      <FaTrophy style={{ color: currentColors.primary, fontSize: 24 }} />
-                      <div>
-                        <div style={{ fontSize: 11, color: currentColors.primary }}>The Game Awards</div>
-                        <div style={{ fontSize: 16, fontWeight: 600 }}>{AOTY_DATA[selectedAotyYear]?.tga?.winner || "TBA"}</div>
+                  <div style={{ fontSize: 24, fontWeight: 800, marginBottom: 16, textAlign: "center", color: currentColors.primary }}>{selectedAotyYear}</div>
+                  <div style={styles.categoryGrid}>
+                    {Object.entries(AOTY_DATA[selectedAotyYear]).map(([category, award]) => (
+                      <div key={category} className="award-card" style={styles.aotyWinnerCard} onClick={() => setSelectedAotyCategory(category)}>
+                        <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
+                          {category === "tga" && <FaTrophy style={{ color: currentColors.primary, fontSize: 20 }} />}
+                          {category === "bafta" && <FaAward style={{ color: currentColors.primary, fontSize: 20 }} />}
+                          {category === "goldenJoystick" && <FaMedal style={{ color: currentColors.primary, fontSize: 20 }} />}
+                          {category === "dice" && <FaDiceD6 style={{ color: currentColors.primary, fontSize: 20 }} />}
+                          {category === "ballonDor" && <FaFutbol style={{ color: currentColors.primary, fontSize: 20 }} />}
+                          {category === "saudi" && <FaGlobe style={{ color: currentColors.primary, fontSize: 20 }} />}
+                          <div>
+                            <div style={{ fontSize: 11, color: currentColors.primary }}>
+                              {category === "tga" && text.tga}
+                              {category === "bafta" && text.bafta}
+                              {category === "goldenJoystick" && text.goldenJoystick}
+                              {category === "dice" && text.dice}
+                              {category === "ballonDor" && text.ballonDor}
+                              {category === "saudi" && text.saudi}
+                            </div>
+                            <div style={{ fontSize: 16, fontWeight: 600 }}>{award.winner}</div>
+                          </div>
+                        </div>
                       </div>
-                    </div>
+                    ))}
                   </div>
                 </div>
               </>
@@ -1495,28 +1683,43 @@ export default function NexPlay() {
               <>
                 <div style={styles.sectionTitle}><FaTrophy size={16} /> {text.aotyTitle}</div>
                 <input style={styles.searchBar} placeholder={text.searchAOTY} value={aotySearch} onChange={e => setAotySearch(e.target.value)} />
-                {aotyResult?.type === "year" && aotyResult.data?.tga && (
+                {aotyResult?.type === "year" && aotyResult.data && (
                   <div style={styles.aotyResultCard}>
                     <div style={{ fontSize: 24, fontWeight: 800, marginBottom: 16, textAlign: "center", color: currentColors.primary }}>{aotyResult.year}</div>
-                    <div className="award-card" style={styles.aotyWinnerCard}>
-                      <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
-                        <FaTrophy style={{ color: currentColors.primary, fontSize: 24 }} />
-                        <div>
-                          <div style={{ fontSize: 11, color: currentColors.primary }}>The Game Awards</div>
-                          <div style={{ fontSize: 16, fontWeight: 600 }}>{aotyResult.data.tga.winner}</div>
+                    <div style={styles.categoryGrid}>
+                      {Object.entries(aotyResult.data).map(([category, award]) => (
+                        <div key={category} className="award-card" style={styles.aotyWinnerCard} onClick={() => { setSelectedAotyYear(aotyResult.year); setSelectedAotyCategory(category); }}>
+                          <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
+                            {category === "tga" && <FaTrophy style={{ color: currentColors.primary, fontSize: 20 }} />}
+                            {category === "bafta" && <FaAward style={{ color: currentColors.primary, fontSize: 20 }} />}
+                            {category === "goldenJoystick" && <FaMedal style={{ color: currentColors.primary, fontSize: 20 }} />}
+                            {category === "dice" && <FaDiceD6 style={{ color: currentColors.primary, fontSize: 20 }} />}
+                            {category === "ballonDor" && <FaFutbol style={{ color: currentColors.primary, fontSize: 20 }} />}
+                            {category === "saudi" && <FaGlobe style={{ color: currentColors.primary, fontSize: 20 }} />}
+                            <div>
+                              <div style={{ fontSize: 11, color: currentColors.primary }}>
+                                {category === "tga" && text.tga}
+                                {category === "bafta" && text.bafta}
+                                {category === "goldenJoystick" && text.goldenJoystick}
+                                {category === "dice" && text.dice}
+                                {category === "ballonDor" && text.ballonDor}
+                                {category === "saudi" && text.saudi}
+                              </div>
+                              <div style={{ fontSize: 16, fontWeight: 600 }}>{award.winner}</div>
+                            </div>
+                          </div>
                         </div>
-                      </div>
+                      ))}
                     </div>
                   </div>
                 )}
                 {aotyResult?.type === "error" && <div style={styles.emptyState}>{aotyResult.message}</div>}
                 {!aotySearch && !selectedAotyYear && (
                   <div style={styles.grid}>
-                    {Object.entries(AOTY_DATA).reverse().map(([year, data]) => (
+                    {Object.keys(AOTY_DATA).sort((a,b) => b - a).map(year => (
                       <div key={year} className="aoty-year-card" style={styles.aotyYearCard} onClick={() => setSelectedAotyYear(parseInt(year))}>
-                        {data.tga?.img && <img src={data.tga.img} style={{ width: "100%", height: 100, objectFit: "cover", borderRadius: 12, marginBottom: 12 }} alt={data.tga.winner} />}
                         <div style={{ fontWeight: 700, fontSize: 20, color: currentColors.primary }}>{year}</div>
-                        <div style={{ fontSize: 12, marginTop: 8 }}>{data.tga?.winner || "No data"}</div>
+                        <div style={{ fontSize: 11, marginTop: 8 }}>{Object.keys(AOTY_DATA[year]).length} Awards</div>
                       </div>
                     ))}
                   </div>
@@ -1568,27 +1771,43 @@ export default function NexPlay() {
           </div>
         )}
 
-        {/* GAME NIGHT TAB */}
+        {/* GAME NIGHT TAB - VERBESSERTE UI */}
         {currentTab === "gameNight" && (
           <div className="fade-in">
             <div style={styles.gameNightCard}>
-              <div style={styles.randomFilterTitle}><GiSpinningWheel size={14} /> {text.gameNightMode}</div>
-              <div style={{ marginBottom: 16 }}>
-                <label className="btn-click" style={styles.randomCheckbox}><input type="checkbox" checked={gameNightFilters.excludeMultiplayer} onChange={e => setGameNightFilters({ ...gameNightFilters, excludeMultiplayer: e.target.checked })} /> {text.excludeMultiplayer}</label>
+              <div style={styles.randomFilterTitle}><GiSpinningWheel size={18} /> {text.gameNightMode}</div>
+              
+              <div style={{ marginBottom: 20 }}>
+                <label className="btn-click" style={styles.randomCheckbox}>
+                  <input type="checkbox" checked={gameNightFilters.excludeMultiplayer} onChange={e => setGameNightFilters({ ...gameNightFilters, excludeMultiplayer: e.target.checked })} /> 
+                  {text.excludeMultiplayer}
+                </label>
               </div>
-              <div style={{ marginBottom: 16 }}>
-                <div style={{ fontSize: 12, color: currentColors.textSecondary, marginBottom: 8 }}>Min Rating: {gameNightFilters.minRating}</div>
+              
+              <div style={{ marginBottom: 20 }}>
+                <div style={{ fontSize: 13, color: currentColors.textSecondary, marginBottom: 8 }}>⭐ Min Rating: {gameNightFilters.minRating}</div>
                 <input type="range" min="0" max="10" step="0.5" value={gameNightFilters.minRating} onChange={e => setGameNightFilters({ ...gameNightFilters, minRating: parseFloat(e.target.value) })} style={styles.randomSlider} />
               </div>
-              <div style={{ marginBottom: 16 }}>
+              
+              <div style={{ marginBottom: 20 }}>
                 <input type="number" placeholder="Max Playtime (hours)" style={styles.input} value={gameNightFilters.maxPlaytime} onChange={e => setGameNightFilters({ ...gameNightFilters, maxPlaytime: e.target.value })} />
               </div>
+              
+              <div style={styles.wheelContainer}>
+                <div className={spinning ? "spinning-wheel" : ""} style={styles.wheel} onClick={spinGameNight}>
+                  <div style={styles.wheelInner}>
+                    <GiSpinningWheel size={28} />
+                  </div>
+                </div>
+              </div>
+              
               <button className="btn-click" style={styles.loginBtn} onClick={spinGameNight} disabled={spinning}>
-                {spinning ? <span className="spinning-wheel">🎲</span> : <><GiSpinningWheel size={14} /> {text.spinWheel}</>}
+                {spinning ? "🎲 Spinning..." : <>🎲 {text.spinWheel}</>}
               </button>
+              
               {spinResult && !spinning && (
-                <div style={{ marginTop: 20, textAlign: "center" }}>
-                  <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 12 }}>🎉 Game Night Pick!</div>
+                <div style={{ marginTop: 28, textAlign: "center", animation: "fadeIn 0.5s ease-out" }}>
+                  <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 16, color: currentColors.primary }}>🎉 Game Night Pick!</div>
                   <GameCard game={spinResult} showBtn={true} />
                 </div>
               )}
@@ -1603,7 +1822,7 @@ export default function NexPlay() {
             {activityFeed.length === 0 ? <div style={styles.emptyState}>No activity yet. Start adding games to your library!</div> : activityFeed.map(activity => (
               <div key={activity.id} style={styles.activityCard}>
                 <div style={{ fontSize: 24 }}>{activity.type === "add" ? "➕" : activity.type === "completed" ? "✅" : "🎮"}</div>
-                <div><div style={{ fontSize: 13 }}>{activity.message}</div><div style={{ fontSize: 10, color: currentColors.textMuted }}>{new Date(activity.timestamp).toLocaleString()}</div></div>
+                <div style={{ flex: 1 }}><div style={{ fontSize: 13 }}>{activity.message}</div><div style={{ fontSize: 10, color: currentColors.textMuted }}>{new Date(activity.timestamp).toLocaleString()}</div></div>
               </div>
             ))}
           </div>
@@ -1652,90 +1871,36 @@ export default function NexPlay() {
               {compareGames[0] && compareGames[1] && (
                 <div>
                   <div style={styles.compareGrid}>
-                    {/* Spiel 1 */}
                     <div style={styles.compareColumn}>
                       <div style={styles.compareHeader}>
                         <img src={compareGames[0].finalImg || compareGames[0].img} style={{ width: 80, height: 107, objectFit: "cover", borderRadius: 12, marginBottom: 12 }} alt={compareGames[0].name} />
                         <div>{compareGames[0].name}</div>
                         <div style={{ fontSize: 14, color: currentColors.primary, marginTop: 4 }}>★ {compareGames[0].finalRating?.toFixed(1)}</div>
                       </div>
-                      <div style={styles.compareRow}>
-                        <span style={styles.compareLabel}>{text.year}</span>
-                        <span style={styles.compareValue}>{compareGames[0].year}</span>
-                      </div>
-                      <div style={styles.compareRow}>
-                        <span style={styles.compareLabel}>{text.genre}</span>
-                        <span style={styles.compareValue}>{compareGames[0].genre}</span>
-                      </div>
-                      <div style={styles.compareRow}>
-                        <span style={styles.compareLabel}>{text.playtime}</span>
-                        <span style={styles.compareValue}>{compareGames[0].playtime}</span>
-                      </div>
-                      <div style={styles.compareRow}>
-                        <span style={styles.compareLabel}>Developer</span>
-                        <span style={styles.compareValue}>{compareGames[0].developer}</span>
-                      </div>
-                      <div style={styles.compareRow}>
-                        <span style={styles.compareLabel}>{text.graphics}</span>
-                        <span style={styles.compareValue}>{compareGames[0].year >= 2020 ? "⭐ Sehr gut" : compareGames[0].year >= 2015 ? "👍 Gut" : "👎 Veraltet"}</span>
-                      </div>
-                      <div style={styles.compareRow}>
-                        <span style={styles.compareLabel}>{text.story}</span>
-                        <span style={styles.compareValue}>{compareGames[0].genre === "Story Rich" || compareGames[0].genre === "RPG" ? "⭐ Ausgezeichnet" : "👍 Gut"}</span>
-                      </div>
-                      <div style={styles.compareRow}>
-                        <span style={styles.compareLabel}>{text.gameplay}</span>
-                        <span style={styles.compareValue}>{compareGames[0].finalRating >= 9 ? "⭐ Meisterhaft" : compareGames[0].finalRating >= 8 ? "👍 Solide" : "👎 Durchschnitt"}</span>
-                      </div>
-                      <div style={styles.compareRow}>
-                        <span style={styles.compareLabel}>{text.replayability}</span>
-                        <span style={styles.compareValue}>{compareGames[0].playtime === "100h+" || compareGames[0].playtime === "60-100h" ? "⭐ Sehr hoch" : "👍 Mittel"}</span>
-                      </div>
+                      <div style={styles.compareRow}><span style={styles.compareLabel}>{text.year}</span><span style={styles.compareValue}>{compareGames[0].year}</span></div>
+                      <div style={styles.compareRow}><span style={styles.compareLabel}>{text.genre}</span><span style={styles.compareValue}>{compareGames[0].genre}</span></div>
+                      <div style={styles.compareRow}><span style={styles.compareLabel}>{text.playtime}</span><span style={styles.compareValue}>{compareGames[0].playtime}</span></div>
+                      <div style={styles.compareRow}><span style={styles.compareLabel}>{text.graphics}</span><span style={styles.compareValue}>{compareGames[0].year >= 2020 ? "⭐ Sehr gut" : "👍 Gut"}</span></div>
+                      <div style={styles.compareRow}><span style={styles.compareLabel}>{text.story}</span><span style={styles.compareValue}>{compareGames[0].genre === "Story Rich" || compareGames[0].genre === "RPG" ? "⭐ Ausgezeichnet" : "👍 Gut"}</span></div>
+                      <div style={styles.compareRow}><span style={styles.compareLabel}>{text.gameplay}</span><span style={styles.compareValue}>{compareGames[0].finalRating >= 9 ? "⭐ Meisterhaft" : "👍 Solide"}</span></div>
+                      <div style={styles.compareRow}><span style={styles.compareLabel}>{text.replayability}</span><span style={styles.compareValue}>{compareGames[0].playtime === "100h+" || compareGames[0].playtime === "60-100h" ? "⭐ Sehr hoch" : "👍 Mittel"}</span></div>
                     </div>
-                    
-                    {/* Spiel 2 */}
                     <div style={styles.compareColumn}>
                       <div style={styles.compareHeader}>
                         <img src={compareGames[1].finalImg || compareGames[1].img} style={{ width: 80, height: 107, objectFit: "cover", borderRadius: 12, marginBottom: 12 }} alt={compareGames[1].name} />
                         <div>{compareGames[1].name}</div>
                         <div style={{ fontSize: 14, color: currentColors.primary, marginTop: 4 }}>★ {compareGames[1].finalRating?.toFixed(1)}</div>
                       </div>
-                      <div style={styles.compareRow}>
-                        <span style={styles.compareLabel}>{text.year}</span>
-                        <span style={styles.compareValue}>{compareGames[1].year}</span>
-                      </div>
-                      <div style={styles.compareRow}>
-                        <span style={styles.compareLabel}>{text.genre}</span>
-                        <span style={styles.compareValue}>{compareGames[1].genre}</span>
-                      </div>
-                      <div style={styles.compareRow}>
-                        <span style={styles.compareLabel}>{text.playtime}</span>
-                        <span style={styles.compareValue}>{compareGames[1].playtime}</span>
-                      </div>
-                      <div style={styles.compareRow}>
-                        <span style={styles.compareLabel}>Developer</span>
-                        <span style={styles.compareValue}>{compareGames[1].developer}</span>
-                      </div>
-                      <div style={styles.compareRow}>
-                        <span style={styles.compareLabel}>{text.graphics}</span>
-                        <span style={styles.compareValue}>{compareGames[1].year >= 2020 ? "⭐ Sehr gut" : compareGames[1].year >= 2015 ? "👍 Gut" : "👎 Veraltet"}</span>
-                      </div>
-                      <div style={styles.compareRow}>
-                        <span style={styles.compareLabel}>{text.story}</span>
-                        <span style={styles.compareValue}>{compareGames[1].genre === "Story Rich" || compareGames[1].genre === "RPG" ? "⭐ Ausgezeichnet" : "👍 Gut"}</span>
-                      </div>
-                      <div style={styles.compareRow}>
-                        <span style={styles.compareLabel}>{text.gameplay}</span>
-                        <span style={styles.compareValue}>{compareGames[1].finalRating >= 9 ? "⭐ Meisterhaft" : compareGames[1].finalRating >= 8 ? "👍 Solide" : "👎 Durchschnitt"}</span>
-                      </div>
-                      <div style={styles.compareRow}>
-                        <span style={styles.compareLabel}>{text.replayability}</span>
-                        <span style={styles.compareValue}>{compareGames[1].playtime === "100h+" || compareGames[1].playtime === "60-100h" ? "⭐ Sehr hoch" : "👍 Mittel"}</span>
-                      </div>
+                      <div style={styles.compareRow}><span style={styles.compareLabel}>{text.year}</span><span style={styles.compareValue}>{compareGames[1].year}</span></div>
+                      <div style={styles.compareRow}><span style={styles.compareLabel}>{text.genre}</span><span style={styles.compareValue}>{compareGames[1].genre}</span></div>
+                      <div style={styles.compareRow}><span style={styles.compareLabel}>{text.playtime}</span><span style={styles.compareValue}>{compareGames[1].playtime}</span></div>
+                      <div style={styles.compareRow}><span style={styles.compareLabel}>{text.graphics}</span><span style={styles.compareValue}>{compareGames[1].year >= 2020 ? "⭐ Sehr gut" : "👍 Gut"}</span></div>
+                      <div style={styles.compareRow}><span style={styles.compareLabel}>{text.story}</span><span style={styles.compareValue}>{compareGames[1].genre === "Story Rich" || compareGames[1].genre === "RPG" ? "⭐ Ausgezeichnet" : "👍 Gut"}</span></div>
+                      <div style={styles.compareRow}><span style={styles.compareLabel}>{text.gameplay}</span><span style={styles.compareValue}>{compareGames[1].finalRating >= 9 ? "⭐ Meisterhaft" : "👍 Solide"}</span></div>
+                      <div style={styles.compareRow}><span style={styles.compareLabel}>{text.replayability}</span><span style={styles.compareValue}>{compareGames[1].playtime === "100h+" || compareGames[1].playtime === "60-100h" ? "⭐ Sehr hoch" : "👍 Mittel"}</span></div>
                     </div>
                   </div>
                   
-                  {/* Vergleichs-Ergebnis */}
                   <div style={{ marginTop: 24, padding: 16, background: "rgba(0,0,0,0.2)", borderRadius: 12, textAlign: "center" }}>
                     <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 8 }}>🏆 {text.winner}</div>
                     <div style={{ fontSize: 20, fontWeight: 800, color: currentColors.primary }}>
