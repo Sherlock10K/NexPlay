@@ -3,14 +3,14 @@ import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, si
 import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove, collection, query, where, getDocs, addDoc, deleteDoc, orderBy, limit } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
-// Deine Firebase Config hier einfügen (aus der Firebase Console)
+// Firebase Config aus Umgebungsvariablen (für Vercel) oder Fallback
 const firebaseConfig = {
-  apiKey: "DEIN_API_KEY",
-  authDomain: "DEIN_AUTH_DOMAIN",
-  projectId: "DEIN_PROJECT_ID",
-  storageBucket: "DEIN_STORAGE_BUCKET",
-  messagingSenderId: "DEIN_SENDER_ID",
-  appId: "DEIN_APP_ID"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyDGCgGnRCnExhH-iMcHf_JTvOgaTc23dXw",
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "nexplay-f6d12.firebaseapp.com",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "nexplay-f6d12",
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "nexplay-f6d12.firebasestorage.app",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "132794794516",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:132794794516:web:6b4fe5ec16af6c6577dd01"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -30,7 +30,6 @@ export const loadLibraryFromFirestore = async (userId) => {
   return docSnap.exists() ? docSnap.data().library || [] : [];
 };
 
-// ========== PROFILE FUNCTIONS ==========
 export const saveProfileToFirestore = async (userId, profileData) => {
   const userRef = doc(db, "users", userId);
   await setDoc(userRef, profileData, { merge: true });
@@ -65,7 +64,6 @@ export const searchUsers = async (searchTerm) => {
   return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 };
 
-// ========== REVIEW FUNCTIONS ==========
 export const addGameReview = async (userId, gameId, gameName, rating, comment) => {
   const reviewsRef = collection(db, "reviews");
   await addDoc(reviewsRef, {
@@ -99,7 +97,6 @@ export const dislikeReview = async (reviewId, userId) => {
   await updateDoc(reviewRef, { likes: newLikes, dislikes: newDislikes });
 };
 
-// ========== LAST PLAYED ==========
 export const updateLastPlayed = async (userId, gameId, gameName, gameImg) => {
   const userRef = doc(db, "users", userId);
   const userSnap = await getDoc(userRef);
@@ -109,7 +106,6 @@ export const updateLastPlayed = async (userId, gameId, gameName, gameImg) => {
   await updateDoc(userRef, { lastPlayed: updated });
 };
 
-// ========== LOGIN/REGISTER ==========
 export const loginWithEmail = async (email, password) => {
   try {
     const result = await signInWithEmailAndPassword(auth, email, password);
