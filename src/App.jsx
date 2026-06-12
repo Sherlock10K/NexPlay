@@ -229,6 +229,8 @@ export default function NexPlay() {
     setReviewsGame(null);
   };
 
+  const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
+
   useEffect(() => {
     localStorage.setItem("nexplay_theme", theme);
     document.body.style.backgroundColor = theme === "dark" ? "#0a0a0f" : theme === "light" ? "#f5f5f5" : window.matchMedia("(prefers-color-scheme: dark)").matches ? "#0a0a0f" : "#f5f5f5";
@@ -1069,31 +1071,6 @@ export default function NexPlay() {
     );
   }
 
-  const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
-
-  const mainTabsContent = (
-    <div className="main-tabs" style={{ ...styles.mainTabs, display: mobileMenuOpen ? "flex" : "flex", flexWrap: "wrap" }}>
-      <button className="btn-click" style={styles.mainTab(currentTab === "home")} onClick={() => { setCurrentTab("home"); setMobileMenuOpen(false); }}><FaHome /> {text.home}</button>
-      <button className="btn-click" style={styles.mainTab(currentTab === "library")} onClick={() => { setCurrentTab("library"); setMobileMenuOpen(false); }}><BsFillCollectionFill /> {text.library}</button>
-      <button className="btn-click" style={styles.mainTab(currentTab === "profile")} onClick={() => { setCurrentTab("profile"); setMobileMenuOpen(false); }}><FaUser /> {text.profile}</button>
-      <button className="btn-click" style={styles.mainTab(currentTab === "friends")} onClick={() => { setCurrentTab("friends"); setMobileMenuOpen(false); }}><FaUsers /> {text.friends}</button>
-      <button className="btn-click" style={styles.mainTab(currentTab === "ai")} onClick={() => { setCurrentTab("ai"); setMobileMenuOpen(false); }}><FaRobot /> {text.ai}</button>
-      <button className="btn-click" style={styles.mainTab(currentTab === "aoty")} onClick={() => { setCurrentTab("aoty"); setMobileMenuOpen(false); }}><FaTrophy /> {text.aoty}</button>
-      <button className="btn-click" style={styles.mainTab(currentTab === "playlists")} onClick={() => { setCurrentTab("playlists"); setMobileMenuOpen(false); }}><FaList /> {text.playlists}</button>
-      <button className="btn-click" style={styles.mainTab(currentTab === "gameNight")} onClick={() => { setCurrentTab("gameNight"); setMobileMenuOpen(false); }}><GiSpinningWheel /> {text.gameNight}</button>
-      <button className="btn-click" style={styles.mainTab(currentTab === "activity")} onClick={() => { setCurrentTab("activity"); setMobileMenuOpen(false); }}><FaBell /> {text.activity}</button>
-      <button className="btn-click" style={styles.mainTab(currentTab === "wishlist")} onClick={() => { setCurrentTab("wishlist"); setMobileMenuOpen(false); }}><FaStar /> {text.wishlist}</button>
-      <button className="btn-click" style={styles.mainTab(currentTab === "backlog")} onClick={() => { setCurrentTab("backlog"); setMobileMenuOpen(false); }}><FaChartLine /> {text.backlog}</button>
-      <button className="btn-click" style={styles.mainTab(currentTab === "compare")} onClick={() => { setCurrentTab("compare"); setMobileMenuOpen(false); }}><FaBalanceScale /> {text.compare}</button>
-      <button className="btn-click" style={styles.iconBtn} onClick={() => setShowSettings(true)}><FaCog /></button>
-      {!user ? <button className="btn-click" style={styles.loginBtn} onClick={() => setShowLoginModal(true)}><FaEnvelope /> {text.login}</button> :
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <div style={styles.userAvatar}>{userData?.username?.charAt(0).toUpperCase()}</div>
-          <button className="btn-click" style={styles.logoutBtn} onClick={logout}>{text.logout}</button>
-        </div>}
-    </div>
-  );
-
   return (
     <div style={styles.app} onClick={initAudio}>
       <div style={styles.container}>
@@ -1105,10 +1082,53 @@ export default function NexPlay() {
           <button className="btn-click" style={{ ...styles.iconBtn, display: window.innerWidth <= 768 ? "flex" : "none" }} onClick={toggleMobileMenu}>
             <FaBars />
           </button>
-          <div style={{ display: window.innerWidth > 768 ? "block" : "none" }}>{mainTabsContent}</div>
+          <div style={{ display: window.innerWidth > 768 ? "block" : "none" }}>
+            <div className="main-tabs" style={styles.mainTabs}>
+              <button className="btn-click" style={styles.mainTab(currentTab === "home")} onClick={() => { setCurrentTab("home"); setMobileMenuOpen(false); }}><FaHome /> {text.home}</button>
+              <button className="btn-click" style={styles.mainTab(currentTab === "library")} onClick={() => { setCurrentTab("library"); setMobileMenuOpen(false); }}><BsFillCollectionFill /> {text.library}</button>
+              <button className="btn-click" style={styles.mainTab(currentTab === "profile")} onClick={() => { setCurrentTab("profile"); setMobileMenuOpen(false); }}><FaUser /> {text.profile}</button>
+              <button className="btn-click" style={styles.mainTab(currentTab === "friends")} onClick={() => { setCurrentTab("friends"); setMobileMenuOpen(false); }}><FaUsers /> {text.friends}</button>
+              <button className="btn-click" style={styles.mainTab(currentTab === "ai")} onClick={() => { setCurrentTab("ai"); setMobileMenuOpen(false); }}><FaRobot /> {text.ai}</button>
+              <button className="btn-click" style={styles.mainTab(currentTab === "aoty")} onClick={() => { setCurrentTab("aoty"); setMobileMenuOpen(false); }}><FaTrophy /> {text.aoty}</button>
+              <button className="btn-click" style={styles.mainTab(currentTab === "playlists")} onClick={() => { setCurrentTab("playlists"); setMobileMenuOpen(false); }}><FaList /> {text.playlists}</button>
+              <button className="btn-click" style={styles.mainTab(currentTab === "gameNight")} onClick={() => { setCurrentTab("gameNight"); setMobileMenuOpen(false); }}><GiSpinningWheel /> {text.gameNight}</button>
+              <button className="btn-click" style={styles.mainTab(currentTab === "activity")} onClick={() => { setCurrentTab("activity"); setMobileMenuOpen(false); }}><FaBell /> {text.activity}</button>
+              <button className="btn-click" style={styles.mainTab(currentTab === "wishlist")} onClick={() => { setCurrentTab("wishlist"); setMobileMenuOpen(false); }}><FaStar /> {text.wishlist}</button>
+              <button className="btn-click" style={styles.mainTab(currentTab === "backlog")} onClick={() => { setCurrentTab("backlog"); setMobileMenuOpen(false); }}><FaChartLine /> {text.backlog}</button>
+              <button className="btn-click" style={styles.mainTab(currentTab === "compare")} onClick={() => { setCurrentTab("compare"); setMobileMenuOpen(false); }}><FaBalanceScale /> {text.compare}</button>
+              <button className="btn-click" style={styles.iconBtn} onClick={() => setShowSettings(true)}><FaCog /></button>
+              {!user ? <button className="btn-click" style={styles.loginBtn} onClick={() => setShowLoginModal(true)}><FaEnvelope /> {text.login}</button> :
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <div style={styles.userAvatar}>{userData?.username?.charAt(0).toUpperCase()}</div>
+                  <button className="btn-click" style={styles.logoutBtn} onClick={logout}>{text.logout}</button>
+                </div>}
+            </div>
+          </div>
         </div>
-        <div style={{ display: window.innerWidth <= 768 && mobileMenuOpen ? "block" : "none" }}>{mainTabsContent}</div>
+        <div style={{ display: window.innerWidth <= 768 && mobileMenuOpen ? "block" : "none" }}>
+          <div className="main-tabs" style={{ ...styles.mainTabs, flexDirection: "column", width: "100%" }}>
+            <button className="btn-click" style={styles.mainTab(currentTab === "home")} onClick={() => { setCurrentTab("home"); setMobileMenuOpen(false); }}><FaHome /> {text.home}</button>
+            <button className="btn-click" style={styles.mainTab(currentTab === "library")} onClick={() => { setCurrentTab("library"); setMobileMenuOpen(false); }}><BsFillCollectionFill /> {text.library}</button>
+            <button className="btn-click" style={styles.mainTab(currentTab === "profile")} onClick={() => { setCurrentTab("profile"); setMobileMenuOpen(false); }}><FaUser /> {text.profile}</button>
+            <button className="btn-click" style={styles.mainTab(currentTab === "friends")} onClick={() => { setCurrentTab("friends"); setMobileMenuOpen(false); }}><FaUsers /> {text.friends}</button>
+            <button className="btn-click" style={styles.mainTab(currentTab === "ai")} onClick={() => { setCurrentTab("ai"); setMobileMenuOpen(false); }}><FaRobot /> {text.ai}</button>
+            <button className="btn-click" style={styles.mainTab(currentTab === "aoty")} onClick={() => { setCurrentTab("aoty"); setMobileMenuOpen(false); }}><FaTrophy /> {text.aoty}</button>
+            <button className="btn-click" style={styles.mainTab(currentTab === "playlists")} onClick={() => { setCurrentTab("playlists"); setMobileMenuOpen(false); }}><FaList /> {text.playlists}</button>
+            <button className="btn-click" style={styles.mainTab(currentTab === "gameNight")} onClick={() => { setCurrentTab("gameNight"); setMobileMenuOpen(false); }}><GiSpinningWheel /> {text.gameNight}</button>
+            <button className="btn-click" style={styles.mainTab(currentTab === "activity")} onClick={() => { setCurrentTab("activity"); setMobileMenuOpen(false); }}><FaBell /> {text.activity}</button>
+            <button className="btn-click" style={styles.mainTab(currentTab === "wishlist")} onClick={() => { setCurrentTab("wishlist"); setMobileMenuOpen(false); }}><FaStar /> {text.wishlist}</button>
+            <button className="btn-click" style={styles.mainTab(currentTab === "backlog")} onClick={() => { setCurrentTab("backlog"); setMobileMenuOpen(false); }}><FaChartLine /> {text.backlog}</button>
+            <button className="btn-click" style={styles.mainTab(currentTab === "compare")} onClick={() => { setCurrentTab("compare"); setMobileMenuOpen(false); }}><FaBalanceScale /> {text.compare}</button>
+            <button className="btn-click" style={styles.iconBtn} onClick={() => setShowSettings(true)}><FaCog /></button>
+            {!user ? <button className="btn-click" style={styles.loginBtn} onClick={() => setShowLoginModal(true)}><FaEnvelope /> {text.login}</button> :
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <div style={styles.userAvatar}>{userData?.username?.charAt(0).toUpperCase()}</div>
+                <button className="btn-click" style={styles.logoutBtn} onClick={logout}>{text.logout}</button>
+              </div>}
+          </div>
+        </div>
 
+        {/* HOME TAB */}
         {currentTab === "home" && (
           <div className="fade-in">
             <div style={styles.tabNav}>
@@ -1187,7 +1207,7 @@ export default function NexPlay() {
                       </div>
                     )}
                     <div style={styles.sectionTitle}>📋 {text.allResults}</div>
-                    <div style={styles.grid}>{restResults.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
+                    <div style={styles.grid}>{restResults.slice(0, 30).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
                   </div>
                 )}
               </>
@@ -1196,7 +1216,7 @@ export default function NexPlay() {
             {discoverSubTab === "topPicks" && (
               <div className="fade-in">
                 <div style={styles.sectionTitle}>🎯 {text.topPicks}</div>
-                <div style={styles.grid}>{TOP_PICKS_GAMES.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
+                <div style={styles.grid}>{TOP_PICKS_GAMES.slice(0, 20).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
               </div>
             )}
 
@@ -1237,192 +1257,7 @@ export default function NexPlay() {
           </div>
         )}
 
-        {currentTab === "aoty" && (
-          <div className="fade-in">
-            {selectedAotyYear ? (
-              <>
-                <button className="btn-click" style={styles.gotyBackBtn} onClick={() => { setSelectedAotyYear(null); setAotySearch(""); setAotyResult(null); }}>
-                  <FaArrowLeft /> {text.backToAOTY}
-                </button>
-                <div style={styles.aotyResultCard}>
-                  <div style={{ fontSize: 28, fontWeight: 800, marginBottom: 8, textAlign: "center", color: currentColors.primary }}>{selectedAotyYear}</div>
-                  <div key="tga" className="award-card" style={styles.aotyWinnerCard} onClick={() => {
-                    const award = AOTY_DATA[selectedAotyYear]?.tga;
-                    if (award) {
-                      const gameData = { id: selectedAotyYear, name: award.winner, rating: 9.0, genre: "Action", playtime: "20-40h", year: selectedAotyYear, img: award.img, developer: "Various", mood: "Epic", description: `The Game Awards winner ${selectedAotyYear}.`, platforms: ["PC", "Console"], steamId: award.steamId, finalRating: 9.0, finalImg: award.img };
-                      openGameDetail(gameData);
-                    }
-                  }}>
-                    <div style={{ display: "flex", gap: 16, alignItems: "center", flexWrap: "wrap" }}>
-                      <div style={{ width: 40, textAlign: "center" }}><FaTrophy style={{ color: currentColors.primary, fontSize: 28 }} /></div>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: 12, color: currentColors.primary, marginBottom: 2 }}>The Game Awards</div>
-                        <div style={{ fontSize: 18, fontWeight: 600 }}>{AOTY_DATA[selectedAotyYear]?.tga?.winner || "TBA"}</div>
-                      </div>
-                      {AOTY_DATA[selectedAotyYear]?.tga?.img && <img src={AOTY_DATA[selectedAotyYear].tga.img} style={{ width: 80, height: 45, objectFit: "cover", borderRadius: 8 }} alt="" />}
-                    </div>
-                  </div>
-                </div>
-              </>
-            ) : (
-              <>
-                <div style={styles.sectionTitle}><FaTrophy /> {text.aotyTitle}</div>
-                <input style={styles.searchBar} placeholder={text.searchAOTY} value={aotySearch} onChange={e => setAotySearch(e.target.value)} />
-                {aotyResult?.type === "year" && aotyResult.data?.tga && (
-                  <div style={styles.aotyResultCard}>
-                    <div style={{ fontSize: 28, fontWeight: 800, marginBottom: 16, textAlign: "center", color: currentColors.primary }}>{aotyResult.year}</div>
-                    <div className="award-card" style={styles.aotyWinnerCard}>
-                      <div style={{ display: "flex", gap: 16, alignItems: "center", flexWrap: "wrap" }}>
-                        <div style={{ width: 40, textAlign: "center" }}><FaTrophy style={{ color: currentColors.primary, fontSize: 28 }} /></div>
-                        <div>
-                          <div style={{ fontSize: 12, color: currentColors.primary }}>The Game Awards</div>
-                          <div style={{ fontSize: 18, fontWeight: 600 }}>{aotyResult.data.tga.winner}</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                {aotyResult?.type === "error" && <div style={styles.emptyState}>{aotyResult.message}</div>}
-                {!aotySearch && !selectedAotyYear && (
-                  <div style={styles.grid}>
-                    {Object.entries(AOTY_DATA).reverse().map(([year, data]) => (
-                      <div key={year} className="aoty-year-card" style={styles.aotyYearCard} onClick={() => setSelectedAotyYear(parseInt(year))}>
-                        {data.tga?.img && <img src={data.tga.img} style={{ width: "100%", height: 120, objectFit: "cover", borderRadius: 12, marginBottom: 12 }} alt={data.tga.winner} />}
-                        <div style={{ fontWeight: 700, fontSize: 20, color: currentColors.primary }}>{year}</div>
-                        <div style={{ fontSize: 12, marginTop: 8 }}>{data.tga?.winner || "No data"}</div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-        )}
-
-        {currentTab === "playlists" && (
-          <div className="fade-in">
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
-              <div style={styles.sectionTitle}><FaList /> {text.playlists}</div>
-              <button className="btn-click" style={styles.loginBtn} onClick={() => setShowCreatePlaylist(true)}><FaPlusCircle /> {text.createPlaylist}</button>
-            </div>
-            {playlists.length === 0 ? <div style={styles.emptyState}>No playlists yet. Create your first one!</div> : playlists.map(playlist => (
-              <div key={playlist.id} style={styles.playlistCard}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                  <div style={{ fontWeight: 700, fontSize: 18 }}>{playlist.name}</div>
-                  <button className="btn-click" style={{ background: "rgba(255,255,255,0.05)", border: "none", borderRadius: 8, padding: "6px 12px", color: currentColors.textSecondary, cursor: "pointer" }} onClick={() => deletePlaylist(playlist.id)}><FaTrashAlt /> Delete</button>
-                </div>
-                <div style={styles.grid}>
-                  {playlist.games.map(game => <GameCard key={game.id} game={game} showBtn={false} />)}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {currentTab === "gameNight" && (
-          <div className="fade-in">
-            <div style={styles.gameNightCard}>
-              <div style={styles.randomFilterTitle}><GiSpinningWheel /> {text.gameNightMode}</div>
-              <div style={{ marginBottom: 20 }}>
-                <label className="btn-click" style={styles.randomCheckbox}><input type="checkbox" checked={gameNightFilters.excludeMultiplayer} onChange={e => setGameNightFilters({ ...gameNightFilters, excludeMultiplayer: e.target.checked })} /> {text.excludeMultiplayer}</label>
-              </div>
-              <div style={{ marginBottom: 20 }}>
-                <div style={{ fontSize: 12, color: currentColors.textSecondary, marginBottom: 8 }}>Min Rating: {gameNightFilters.minRating}</div>
-                <input type="range" min="0" max="10" step="0.5" value={gameNightFilters.minRating} onChange={e => setGameNightFilters({ ...gameNightFilters, minRating: parseFloat(e.target.value) })} style={styles.randomSlider} />
-              </div>
-              <div style={{ marginBottom: 20 }}>
-                <input type="number" placeholder="Max Playtime (hours)" style={styles.input} value={gameNightFilters.maxPlaytime} onChange={e => setGameNightFilters({ ...gameNightFilters, maxPlaytime: e.target.value })} />
-              </div>
-              <button className="btn-click" style={styles.loginBtn} onClick={spinGameNight} disabled={spinning}>
-                {spinning ? <span className="spinning-wheel">🎲</span> : <><GiSpinningWheel /> {text.spinWheel}</>}
-              </button>
-              {spinResult && !spinning && (
-                <div style={{ marginTop: 24, textAlign: "center" }}>
-                  <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 8 }}>🎉 Game Night Pick!</div>
-                  <GameCard game={spinResult} showBtn={true} />
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {currentTab === "activity" && (
-          <div className="fade-in">
-            <div style={styles.sectionTitle}><FaBell /> {text.activityFeed}</div>
-            {activityFeed.length === 0 ? <div style={styles.emptyState}>No activity yet. Start adding games to your library!</div> : activityFeed.map(activity => (
-              <div key={activity.id} style={styles.activityCard}>
-                <div style={{ fontSize: 24 }}>{activity.type === "add" ? "➕" : activity.type === "completed" ? "✅" : activity.type === "review" ? "✍️" : "🎮"}</div>
-                <div style={{ flex: 1 }}><div style={{ fontSize: 13 }}>{activity.message}</div><div style={{ fontSize: 10, color: currentColors.textMuted }}>{new Date(activity.timestamp).toLocaleString()}</div></div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {currentTab === "wishlist" && (
-          <div className="fade-in">
-            <div style={styles.sectionTitle}><FaStar /> {text.wishlist}</div>
-            {wishlist.length === 0 ? <div style={styles.emptyState}>Your wishlist is empty. Add games from the game detail page!</div> : <div style={styles.grid}>{wishlist.map(game => <GameCard key={game.id} game={game} showBtn={true} />)}</div>
-          </div>
-        )}
-
-        {currentTab === "backlog" && (
-          <div className="fade-in">
-            <div style={styles.sectionTitle}><FaChartLine /> {text.backlog}</div>
-            {backlogRecommendation && typeof backlogRecommendation === "object" ? (
-              <div style={styles.gameNightCard}>
-                <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 12 }}>{text.backlogTip}:</div>
-                <GameCard game={backlogRecommendation} showBtn={true} />
-              </div>
-            ) : (
-              <div style={styles.emptyState}>{backlogRecommendation || "No backlog games! Add some games to your library."}</div>
-            )}
-          </div>
-        )}
-
-        {currentTab === "compare" && (
-          <div className="fade-in">
-            <div style={styles.sectionTitle}><FaBalanceScale /> {text.compareGames}</div>
-            <div style={styles.compareCard}>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
-                <div>
-                  <div style={{ fontWeight: 600, marginBottom: 12 }}>{text.selectGame} 1</div>
-                  <select className="btn-click" style={styles.select} value={compareGames[0]?.id || ""} onChange={e => { const game = [...gamesWithData, ...MANUAL_HIDDEN_GEMS].find(g => g.id === parseInt(e.target.value)); setCompareGames([game, compareGames[1]]); }}>
-                    <option value="">Select a game</option>
-                    {[...gamesWithData, ...MANUAL_HIDDEN_GEMS].slice(0, 50).map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <div style={{ fontWeight: 600, marginBottom: 12 }}>{text.selectGame} 2</div>
-                  <select className="btn-click" style={styles.select} value={compareGames[1]?.id || ""} onChange={e => { const game = [...gamesWithData, ...MANUAL_HIDDEN_GEMS].find(g => g.id === parseInt(e.target.value)); setCompareGames([compareGames[0], game]); }}>
-                    <option value="">Select a game</option>
-                    {[...gamesWithData, ...MANUAL_HIDDEN_GEMS].slice(0, 50).map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
-                  </select>
-                </div>
-              </div>
-              {compareGames[0] && compareGames[1] && (
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginTop: 24 }}>
-                  <div style={{ textAlign: "center" }}>
-                    <img src={compareGames[0].finalImg || compareGames[0].img} style={{ width: 100, borderRadius: 8, marginBottom: 12 }} alt={compareGames[0].name} />
-                    <div style={{ fontWeight: 700, fontSize: 16 }}>{compareGames[0].name}</div>
-                    <div>★ {(compareGames[0].finalRating || compareGames[0].rating)?.toFixed(1)}</div>
-                    <div>{compareGames[0].genre}</div>
-                    <div>{compareGames[0].year}</div>
-                    <div>{compareGames[0].playtime}</div>
-                  </div>
-                  <div style={{ textAlign: "center" }}>
-                    <img src={compareGames[1].finalImg || compareGames[1].img} style={{ width: 100, borderRadius: 8, marginBottom: 12 }} alt={compareGames[1].name} />
-                    <div style={{ fontWeight: 700, fontSize: 16 }}>{compareGames[1].name}</div>
-                    <div>★ {(compareGames[1].finalRating || compareGames[1].rating)?.toFixed(1)}</div>
-                    <div>{compareGames[1].genre}</div>
-                    <div>{compareGames[1].year}</div>
-                    <div>{compareGames[1].playtime}</div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
+        {/* LIBRARY TAB */}
         {currentTab === "library" && (
           <div className="fade-in">
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
@@ -1450,7 +1285,7 @@ export default function NexPlay() {
                     <button className="btn-click" onClick={() => toggleFavorite(game.id)} style={styles.select}><FaHeart color={favorites.includes(game.id) ? currentColors.primary : "#fff"} /></button>
                     <button className="btn-click" onClick={() => markAsPlayed(game)} style={styles.select}><FaClock /> {text.played}</button>
                     <button className="btn-click" onClick={() => removeFromLibrary(game.id)} style={{ ...styles.select, color: "#ff6b6b" }}>{text.remove}</button>
-                    <button className="btn-click" onClick={() => { const ps = playlists; if (ps.length === 0) alert("Create a playlist first!"); else { const pId = prompt("Enter playlist ID to add this game"); if (pId) addToPlaylist(parseInt(pId), game); } }} style={styles.select}><FaList /> Add to Playlist</button>
+                    <button className="btn-click" onClick={() => { if (playlists.length === 0) alert("Create a playlist first!"); else { const pId = prompt("Enter playlist ID to add this game"); if (pId) addToPlaylist(parseInt(pId), game); } }} style={styles.select}><FaList /> Add to Playlist</button>
                   </div>
                 </div>
               </div>
@@ -1458,6 +1293,7 @@ export default function NexPlay() {
           </div>
         )}
 
+        {/* PROFILE TAB */}
         {currentTab === "profile" && (
           <div className="fade-in">
             {user ? (
@@ -1540,6 +1376,90 @@ export default function NexPlay() {
           </div>
         )}
 
+        {/* AI TAB */}
+        {currentTab === "ai" && (
+          <div className="fade-in">
+            <div style={styles.aiSection}>
+              <div style={styles.randomFilterTitle}><FaRobot /> {text.ai}</div>
+              <div style={styles.aiRow}>
+                <input style={{ ...styles.input, marginBottom: 0, flex: 1 }} placeholder="Ask AI for game recommendations..." value={aiQuery} onChange={e => setAiQuery(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleAiSearch()} />
+                <button className="btn-click" style={styles.loginBtn} onClick={handleAiSearch} disabled={isAiLoading}>{isAiLoading ? "Thinking..." : "✨ Go"}</button>
+              </div>
+              {aiResponse && <div className="fade-in" style={styles.aiResultBox}>{aiResponse}</div>}
+            </div>
+            <div style={styles.sectionTitle}>🎯 {text.topPicks}</div>
+            <div style={styles.grid}>{TOP_PICKS_GAMES.slice(0, 20).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
+            <div style={styles.sectionTitle}>🏆 {text.bestEver}</div>
+            <div style={styles.grid}>{BEST_EVER_GAMES.slice(0, 20).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
+            <div style={styles.sectionTitle}>💎 {text.hiddenGems}</div>
+            <div style={styles.grid}>{HIDDEN_GEMS_GAMES.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
+          </div>
+        )}
+
+        {/* AOTY TAB */}
+        {currentTab === "aoty" && (
+          <div className="fade-in">
+            {selectedAotyYear ? (
+              <>
+                <button className="btn-click" style={styles.gotyBackBtn} onClick={() => { setSelectedAotyYear(null); setAotySearch(""); setAotyResult(null); }}>
+                  <FaArrowLeft /> {text.backToAOTY}
+                </button>
+                <div style={styles.aotyResultCard}>
+                  <div style={{ fontSize: 28, fontWeight: 800, marginBottom: 8, textAlign: "center", color: currentColors.primary }}>{selectedAotyYear}</div>
+                  <div key="tga" className="award-card" style={styles.aotyWinnerCard} onClick={() => {
+                    const award = AOTY_DATA[selectedAotyYear]?.tga;
+                    if (award) {
+                      const gameData = { id: selectedAotyYear, name: award.winner, rating: 9.0, genre: "Action", playtime: "20-40h", year: selectedAotyYear, img: award.img, developer: "Various", mood: "Epic", description: `The Game Awards winner ${selectedAotyYear}.`, platforms: ["PC", "Console"], steamId: award.steamId, finalRating: 9.0, finalImg: award.img };
+                      openGameDetail(gameData);
+                    }
+                  }}>
+                    <div style={{ display: "flex", gap: 16, alignItems: "center", flexWrap: "wrap" }}>
+                      <div style={{ width: 40, textAlign: "center" }}><FaTrophy style={{ color: currentColors.primary, fontSize: 28 }} /></div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: 12, color: currentColors.primary, marginBottom: 2 }}>The Game Awards</div>
+                        <div style={{ fontSize: 18, fontWeight: 600 }}>{AOTY_DATA[selectedAotyYear]?.tga?.winner || "TBA"}</div>
+                      </div>
+                      {AOTY_DATA[selectedAotyYear]?.tga?.img && <img src={AOTY_DATA[selectedAotyYear].tga.img} style={{ width: 80, height: 45, objectFit: "cover", borderRadius: 8 }} alt="" />}
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                <div style={styles.sectionTitle}><FaTrophy /> {text.aotyTitle}</div>
+                <input style={styles.searchBar} placeholder={text.searchAOTY} value={aotySearch} onChange={e => setAotySearch(e.target.value)} />
+                {aotyResult?.type === "year" && aotyResult.data?.tga && (
+                  <div style={styles.aotyResultCard}>
+                    <div style={{ fontSize: 28, fontWeight: 800, marginBottom: 16, textAlign: "center", color: currentColors.primary }}>{aotyResult.year}</div>
+                    <div className="award-card" style={styles.aotyWinnerCard}>
+                      <div style={{ display: "flex", gap: 16, alignItems: "center", flexWrap: "wrap" }}>
+                        <div style={{ width: 40, textAlign: "center" }}><FaTrophy style={{ color: currentColors.primary, fontSize: 28 }} /></div>
+                        <div>
+                          <div style={{ fontSize: 12, color: currentColors.primary }}>The Game Awards</div>
+                          <div style={{ fontSize: 18, fontWeight: 600 }}>{aotyResult.data.tga.winner}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {aotyResult?.type === "error" && <div style={styles.emptyState}>{aotyResult.message}</div>}
+                {!aotySearch && !selectedAotyYear && (
+                  <div style={styles.grid}>
+                    {Object.entries(AOTY_DATA).reverse().map(([year, data]) => (
+                      <div key={year} className="aoty-year-card" style={styles.aotyYearCard} onClick={() => setSelectedAotyYear(parseInt(year))}>
+                        {data.tga?.img && <img src={data.tga.img} style={{ width: "100%", height: 120, objectFit: "cover", borderRadius: 12, marginBottom: 12 }} alt={data.tga.winner} />}
+                        <div style={{ fontWeight: 700, fontSize: 20, color: currentColors.primary }}>{year}</div>
+                        <div style={{ fontSize: 12, marginTop: 8 }}>{data.tga?.winner || "No data"}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        )}
+
+        {/* FRIENDS TAB */}
         {currentTab === "friends" && (
           <div className="fade-in">
             <div style={styles.sectionTitle}><FaUsers /> {text.findFriends}</div>
@@ -1559,26 +1479,139 @@ export default function NexPlay() {
           </div>
         )}
 
-        {currentTab === "ai" && (
+        {/* PLAYLISTS TAB */}
+        {currentTab === "playlists" && (
           <div className="fade-in">
-            <div style={styles.aiSection}>
-              <div style={styles.randomFilterTitle}><FaRobot /> {text.ai}</div>
-              <div style={styles.aiRow}>
-                <input style={{ ...styles.input, marginBottom: 0, flex: 1 }} placeholder="Ask AI for game recommendations..." value={aiQuery} onChange={e => setAiQuery(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleAiSearch()} />
-                <button className="btn-click" style={styles.loginBtn} onClick={handleAiSearch} disabled={isAiLoading}>{isAiLoading ? "Thinking..." : "✨ Go"}</button>
-              </div>
-              {aiResponse && <div className="fade-in" style={styles.aiResultBox}>{aiResponse}</div>}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+              <div style={styles.sectionTitle}><FaList /> {text.playlists}</div>
+              <button className="btn-click" style={styles.loginBtn} onClick={() => setShowCreatePlaylist(true)}><FaPlusCircle /> {text.createPlaylist}</button>
             </div>
-            <div style={styles.sectionTitle}>🎯 {text.topPicks}</div>
-            <div style={styles.grid}>{TOP_PICKS_GAMES.slice(0, 20).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
-            <div style={styles.sectionTitle}>🏆 {text.bestEver}</div>
-            <div style={styles.grid}>{BEST_EVER_GAMES.slice(0, 20).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
-            <div style={styles.sectionTitle}>💎 {text.hiddenGems}</div>
-            <div style={styles.grid}>{HIDDEN_GEMS_GAMES.map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div>
+            {playlists.length === 0 ? <div style={styles.emptyState}>No playlists yet. Create your first one!</div> : playlists.map(playlist => (
+              <div key={playlist.id} style={styles.playlistCard}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                  <div style={{ fontWeight: 700, fontSize: 18 }}>{playlist.name}</div>
+                  <button className="btn-click" style={{ background: "rgba(255,255,255,0.05)", border: "none", borderRadius: 8, padding: "6px 12px", color: currentColors.textSecondary, cursor: "pointer" }} onClick={() => deletePlaylist(playlist.id)}><FaTrashAlt /> Delete</button>
+                </div>
+                <div style={styles.grid}>
+                  {playlist.games.slice(0, 8).map(game => <GameCard key={game.id} game={game} showBtn={false} />)}
+                </div>
+                {playlist.games.length > 8 && <div style={{ textAlign: "center", marginTop: 12 }}>+{playlist.games.length - 8} more</div>}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* GAME NIGHT TAB */}
+        {currentTab === "gameNight" && (
+          <div className="fade-in">
+            <div style={styles.gameNightCard}>
+              <div style={styles.randomFilterTitle}><GiSpinningWheel /> {text.gameNightMode}</div>
+              <div style={{ marginBottom: 20 }}>
+                <label className="btn-click" style={styles.randomCheckbox}><input type="checkbox" checked={gameNightFilters.excludeMultiplayer} onChange={e => setGameNightFilters({ ...gameNightFilters, excludeMultiplayer: e.target.checked })} /> {text.excludeMultiplayer}</label>
+              </div>
+              <div style={{ marginBottom: 20 }}>
+                <div style={{ fontSize: 12, color: currentColors.textSecondary, marginBottom: 8 }}>Min Rating: {gameNightFilters.minRating}</div>
+                <input type="range" min="0" max="10" step="0.5" value={gameNightFilters.minRating} onChange={e => setGameNightFilters({ ...gameNightFilters, minRating: parseFloat(e.target.value) })} style={styles.randomSlider} />
+              </div>
+              <div style={{ marginBottom: 20 }}>
+                <input type="number" placeholder="Max Playtime (hours)" style={styles.input} value={gameNightFilters.maxPlaytime} onChange={e => setGameNightFilters({ ...gameNightFilters, maxPlaytime: e.target.value })} />
+              </div>
+              <button className="btn-click" style={styles.loginBtn} onClick={spinGameNight} disabled={spinning}>
+                {spinning ? <span className="spinning-wheel">🎲</span> : <><GiSpinningWheel /> {text.spinWheel}</>}
+              </button>
+              {spinResult && !spinning && (
+                <div style={{ marginTop: 24, textAlign: "center" }}>
+                  <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 8 }}>🎉 Game Night Pick!</div>
+                  <GameCard game={spinResult} showBtn={true} />
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ACTIVITY TAB */}
+        {currentTab === "activity" && (
+          <div className="fade-in">
+            <div style={styles.sectionTitle}><FaBell /> {text.activityFeed}</div>
+            {activityFeed.length === 0 ? <div style={styles.emptyState}>No activity yet. Start adding games to your library!</div> : activityFeed.map(activity => (
+              <div key={activity.id} style={styles.activityCard}>
+                <div style={{ fontSize: 24 }}>{activity.type === "add" ? "➕" : activity.type === "completed" ? "✅" : activity.type === "review" ? "✍️" : "🎮"}</div>
+                <div style={{ flex: 1 }}><div style={{ fontSize: 13 }}>{activity.message}</div><div style={{ fontSize: 10, color: currentColors.textMuted }}>{new Date(activity.timestamp).toLocaleString()}</div></div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* WISHLIST TAB */}
+        {currentTab === "wishlist" && (
+          <div className="fade-in">
+            <div style={styles.sectionTitle}><FaStar /> {text.wishlist}</div>
+            {wishlist.length === 0 ? <div style={styles.emptyState}>Your wishlist is empty. Add games from the game detail page!</div> : <div style={styles.grid}>{wishlist.map(game => <GameCard key={game.id} game={game} showBtn={true} />)}</div>
+          </div>
+        )}
+
+        {/* BACKLOG TAB */}
+        {currentTab === "backlog" && (
+          <div className="fade-in">
+            <div style={styles.sectionTitle}><FaChartLine /> {text.backlog}</div>
+            {backlogRecommendation && typeof backlogRecommendation === "object" ? (
+              <div style={styles.gameNightCard}>
+                <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 12 }}>{text.backlogTip}:</div>
+                <GameCard game={backlogRecommendation} showBtn={true} />
+              </div>
+            ) : (
+              <div style={styles.emptyState}>{backlogRecommendation || "No backlog games! Add some games to your library."}</div>
+            )}
+          </div>
+        )}
+
+        {/* COMPARE TAB */}
+        {currentTab === "compare" && (
+          <div className="fade-in">
+            <div style={styles.sectionTitle}><FaBalanceScale /> {text.compareGames}</div>
+            <div style={styles.compareCard}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+                <div>
+                  <div style={{ fontWeight: 600, marginBottom: 12 }}>{text.selectGame} 1</div>
+                  <select className="btn-click" style={styles.select} value={compareGames[0]?.id || ""} onChange={e => { const game = [...gamesWithData, ...MANUAL_HIDDEN_GEMS].find(g => g.id === parseInt(e.target.value)); setCompareGames([game, compareGames[1]]); }}>
+                    <option value="">Select a game</option>
+                    {[...gamesWithData, ...MANUAL_HIDDEN_GEMS].slice(0, 50).map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <div style={{ fontWeight: 600, marginBottom: 12 }}>{text.selectGame} 2</div>
+                  <select className="btn-click" style={styles.select} value={compareGames[1]?.id || ""} onChange={e => { const game = [...gamesWithData, ...MANUAL_HIDDEN_GEMS].find(g => g.id === parseInt(e.target.value)); setCompareGames([compareGames[0], game]); }}>
+                    <option value="">Select a game</option>
+                    {[...gamesWithData, ...MANUAL_HIDDEN_GEMS].slice(0, 50).map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
+                  </select>
+                </div>
+              </div>
+              {compareGames[0] && compareGames[1] && (
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginTop: 24 }}>
+                  <div style={{ textAlign: "center" }}>
+                    <img src={compareGames[0].finalImg || compareGames[0].img} style={{ width: 100, borderRadius: 8, marginBottom: 12 }} alt={compareGames[0].name} />
+                    <div style={{ fontWeight: 700, fontSize: 16 }}>{compareGames[0].name}</div>
+                    <div>★ {(compareGames[0].finalRating || compareGames[0].rating)?.toFixed(1)}</div>
+                    <div>{compareGames[0].genre}</div>
+                    <div>{compareGames[0].year}</div>
+                    <div>{compareGames[0].playtime}</div>
+                  </div>
+                  <div style={{ textAlign: "center" }}>
+                    <img src={compareGames[1].finalImg || compareGames[1].img} style={{ width: 100, borderRadius: 8, marginBottom: 12 }} alt={compareGames[1].name} />
+                    <div style={{ fontWeight: 700, fontSize: 16 }}>{compareGames[1].name}</div>
+                    <div>★ {(compareGames[1].finalRating || compareGames[1].rating)?.toFixed(1)}</div>
+                    <div>{compareGames[1].genre}</div>
+                    <div>{compareGames[1].year}</div>
+                    <div>{compareGames[1].playtime}</div>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>
 
+      {/* MODALS */}
       {showCreatePlaylist && (
         <div className="fade-in" style={styles.modalOverlay} onClick={() => setShowCreatePlaylist(false)}>
           <div className="slide-in" style={styles.modalContent} onClick={e => e.stopPropagation()}>
@@ -1639,25 +1672,6 @@ export default function NexPlay() {
             <textarea style={styles.textarea} placeholder={text.bio} rows="2" value={editBio} onChange={e => setEditBio(e.target.value)} />
             <label className="btn-click" style={styles.checkbox}><input type="checkbox" checked={editPrivate} onChange={e => setEditPrivate(e.target.checked)} /> {text.private}</label>
             <button className="btn-click" style={styles.modalBtn} onClick={handleUpdateProfile}>{text.save}</button>
-          </div>
-        </div>
-      )}
-
-      {showReviews && reviewsGame && (
-        <div className="fade-in" style={styles.modalOverlay} onClick={closeReviews}>
-          <div className="slide-in" style={{ ...styles.modalContent, maxWidth: 550 }} onClick={e => e.stopPropagation()}>
-            <div style={styles.modalTitle}>{text.reviews} for {reviewsGame.name}</div>
-            {gameDetailReviews.length === 0 ? <div style={styles.emptyState}>{text.noReviews}</div> :
-              gameDetailReviews.map(review => (
-                <div key={review.id} style={styles.reviewCard}>
-                  <div style={styles.reviewHeader}>
-                    <span style={styles.reviewUsername}>{review.username}</span>
-                    <span style={styles.reviewRating}>★ {review.rating}/5</span>
-                  </div>
-                  <div style={styles.reviewComment}>{review.comment || "No comment"}</div>
-                </div>
-              ))}
-            <button className="btn-click" style={styles.modalBtn} onClick={closeReviews}>{text.close}</button>
           </div>
         </div>
       )}
