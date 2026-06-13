@@ -1,7 +1,8 @@
 import { useState, useEffect, useMemo, useRef } from "react";
-import { FaHome, FaUser, FaFire, FaSearch, FaHeart, FaStar, FaTrash, FaSignOutAlt, FaPlus, FaCheck, FaEnvelope, FaEye, FaEyeSlash, FaEdit, FaUsers, FaClock, FaRandom, FaThumbsUp, FaThumbsDown, FaArrowLeft, FaCog, FaVolumeUp, FaVolumeMute, FaLanguage, FaSteam, FaPlaystation, FaGamepad, FaTrophy, FaGem, FaShoppingCart, FaRobot, FaFilter, FaLink, FaExternalLinkAlt, FaDonate, FaAward, FaList, FaMedal, FaGamepad as FaGamepadIcon, FaDiceD6, FaGlobe, FaStarHalfAlt, FaTv, FaMicrophone, FaVideo, FaDesktop, FaPlusCircle, FaTrashAlt, FaUsers as FaUsersIcon, FaBell, FaCalendarAlt, FaChartLine, FaBook, FaTags, FaBalanceScale, FaFileExport, FaFileImport, FaMoon, FaSun, FaAdjust, FaBars, FaTimes, FaChevronDown, FaChevronUp, FaFutbol, FaSpinner, FaCamera, FaQuestionCircle, FaLightbulb, FaBolt, FaRocket, FaCalendarCheck, FaTrophy as FaTrophySolid } from "react-icons/fa";
+import { FaHome, FaUser, FaFire, FaSearch, FaHeart, FaStar, FaTrash, FaSignOutAlt, FaPlus, FaCheck, FaEnvelope, FaEye, FaEyeSlash, FaEdit, FaUsers, FaClock, FaRandom, FaThumbsUp, FaThumbsDown, FaArrowLeft, FaCog, FaVolumeUp, FaVolumeMute, FaLanguage, FaSteam, FaPlaystation, FaGamepad, FaTrophy, FaGem, FaShoppingCart, FaRobot, FaFilter, FaLink, FaExternalLinkAlt, FaDonate, FaAward, FaList, FaMedal, FaGamepad as FaGamepadIcon, FaDiceD6, FaGlobe, FaStarHalfAlt, FaTv, FaMicrophone, FaVideo, FaDesktop, FaPlusCircle, FaTrashAlt, FaUsers as FaUsersIcon, FaBell, FaCalendarAlt, FaChartLine, FaBook, FaTags, FaBalanceScale, FaFileExport, FaFileImport, FaMoon, FaSun, FaAdjust, FaBars, FaTimes, FaChevronDown, FaChevronUp, FaFutbol, FaSpinner, FaCamera, FaQuestionCircle, FaLightbulb, FaBolt, FaRocket, FaCalendarCheck, FaTrophy as FaTrophySolid, FaNewspaper } from "react-icons/fa";
 import { GiConsoleController, GiAchievement, GiSwordman, GiPuzzle, GiMusicalNotes, GiBrain, GiShield, GiMagicSwirl, GiTrophy, GiLaurels, GiSpinningWheel, GiNotebook, GiTwoCoins, GiLevelEndFlag, GiCancel, GiConfirmed, GiSadCrab, GiFruitTree, GiNightSky, GiCoffeeCup, GiPartyPopper, GiMagicHat, GiDiceTwentyFacesTwenty } from "react-icons/gi";
 import { BsFillCollectionFill, BsFillHeartFill, BsFillStarFill, BsFillAwardFill, BsFillPlayFill, BsFillPatchCheckFill } from "react-icons/bs";
+import { SiKofi } from "react-icons/si";
 import { auth, loginWithEmail, registerWithEmail, logout, loadLibraryFromFirestore, saveLibraryToFirestore, loadProfileFromFirestore, saveProfileToFirestore, updateUsername, updateBio, togglePrivacy, searchUsers, resetPassword, addGameReview, getGameReviews, updateLastPlayed, likeReview, dislikeReview } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -33,20 +34,75 @@ const YEARS = [...Array(25)].map((_, i) => new Date().getFullYear() - i);
 
 const DEEPSEEK_API_KEY = "sk-b5699f49547a4e4ab7eaa74cb6bb7016";
 
+// ========== AOTY DATA with WINNERS & NOMINEES ==========
 const AOTY_DATA = {
-  2025: { winner: "Clair Obscur: Expedition 33", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2358720/header.jpg", steamId: 2358720, genre: "RPG", playtime: "60-100h", developer: "Kepler Interactive", description: "Clair Obscur: Expedition 33 ist ein episches RPG in einer düsteren Fantasy-Welt." },
-  2024: { winner: "Astro Bot", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2357570/header.jpg", steamId: 2357570, genre: "Platformer", playtime: "20-40h", developer: "Team Asobi", description: "Astro Bot ist ein charmantes 3D-Platformer-Abenteuer." },
-  2023: { winner: "Baldur's Gate 3", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1086940/header.jpg", steamId: 1086940, genre: "RPG", playtime: "100h+", developer: "Larian Studios", description: "Baldur's Gate 3 ist das ultimative D&D-Rollenspielerlebnis." },
-  2022: { winner: "Elden Ring", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg", steamId: 1245620, genre: "Open World", playtime: "100h+", developer: "FromSoftware", description: "Elden Ring ist ein Meisterwerk des Open-World-Action-RPGs." },
-  2021: { winner: "It Takes Two", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1426210/header.jpg", steamId: 1426210, genre: "Adventure", playtime: "20-40h", developer: "Hazelight Studios", description: "It Takes Two ist ein einzigartiges Koop-Abenteuer." },
-  2020: { winner: "The Last of Us Part II", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1888930/header.jpg", steamId: 1888930, genre: "Action", playtime: "40-60h", developer: "Naughty Dog", description: "The Last of Us Part II ist ein emotionales Meisterwerk." }
+  2025: { 
+    winner: "Clair Obscur: Expedition 33", 
+    nominees: ["Clair Obscur: Expedition 33", "Fable", "Avowed", "Star Wars Outlaws", "Assassin's Creed Shadows"],
+    img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2358720/header.jpg", 
+    steamId: 2358720, 
+    genre: "RPG", 
+    playtime: "60-100h", 
+    developer: "Kepler Interactive", 
+    description: "Clair Obscur: Expedition 33 ist ein episches RPG in einer düsteren Fantasy-Welt. Entdecke eine atemberaubende offene Welt, kämpfe gegen mythologische Kreaturen und erlebe eine emotionale Geschichte über Verlust und Hoffnung." 
+  },
+  2024: { 
+    winner: "Astro Bot", 
+    nominees: ["Astro Bot", "Final Fantasy VII Rebirth", "Metaphor: ReFantazio", "Tekken 8", "Dragon's Dogma 2"],
+    img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2357570/header.jpg", 
+    steamId: 2357570, 
+    genre: "Platformer", 
+    playtime: "20-40h", 
+    developer: "Team Asobi", 
+    description: "Astro Bot ist ein charmantes 3D-Platformer-Abenteuer. Begleite Astro auf einer Reise durch bunte Welten, löse kreative Rätsel und bekämpfe lustige Gegner." 
+  },
+  2023: { 
+    winner: "Baldur's Gate 3", 
+    nominees: ["Baldur's Gate 3", "Alan Wake 2", "Spider-Man 2", "Resident Evil 4", "Super Mario Bros. Wonder"],
+    img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1086940/header.jpg", 
+    steamId: 1086940, 
+    genre: "RPG", 
+    playtime: "100h+", 
+    developer: "Larian Studios", 
+    description: "Baldur's Gate 3 ist das ultimative D&D-Rollenspielerlebnis. Erstelle deinen eigenen Charakter, treffe Entscheidungen mit Konsequenzen und erlebe eine epische Geschichte voller Wendungen." 
+  },
+  2022: { 
+    winner: "Elden Ring", 
+    nominees: ["Elden Ring", "God of War Ragnarök", "Horizon Forbidden West", "Stray", "Xenoblade Chronicles 3"],
+    img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg", 
+    steamId: 1245620, 
+    genre: "Open World", 
+    playtime: "100h+", 
+    developer: "FromSoftware", 
+    description: "Elden Ring ist ein Meisterwerk des Open-World-Action-RPGs. Erkunde die riesige Welt 'The Lands Between' mit ihren Geheimnissen, herausfordernden Bossen und einer tiefgründigen Geschichte." 
+  },
+  2021: { 
+    winner: "It Takes Two", 
+    nominees: ["It Takes Two", "Resident Evil Village", "Metroid Dread", "Psychonauts 2", "Ratchet & Clank: Rift Apart"],
+    img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1426210/header.jpg", 
+    steamId: 1426210, 
+    genre: "Adventure", 
+    playtime: "20-40h", 
+    developer: "Hazelight Studios", 
+    description: "It Takes Two ist ein einzigartiges Koop-Abenteuer. Zwei Spieler müssen zusammenarbeiten, um Rätsel zu lösen und die Beziehung eines zerstrittenen Paares zu retten." 
+  },
+  2020: { 
+    winner: "The Last of Us Part II", 
+    nominees: ["The Last of Us Part II", "Hades", "Ghost of Tsushima", "Doom Eternal", "Final Fantasy VII Remake"],
+    img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1888930/header.jpg", 
+    steamId: 1888930, 
+    genre: "Action", 
+    playtime: "40-60h", 
+    developer: "Naughty Dog", 
+    description: "The Last of Us Part II ist ein emotionales Meisterwerk über Rache und Vergebung. Begleite Ellie auf einer gefährlichen Reise durch eine postapokalyptische Welt voller Gefahren." 
+  }
 };
 
 const MANUAL_GAMES = [
-  { id: 8001, name: "The Witcher 3: Wild Hunt", rating: 9.5, genre: "RPG", playtime: "100h+", year: 2015, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/292030/header.jpg", developer: "CD Projekt Red", mood: "Epic", description: "Ein Meisterwerk des Open-World-RPGs.", platforms: ["PC", "PS4", "Xbox One", "Switch"], steamId: 292030 },
-  { id: 8002, name: "Red Dead Redemption 2", rating: 9.6, genre: "Open World", playtime: "100h+", year: 2018, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1174180/header.jpg", developer: "Rockstar Games", mood: "Epic", description: "Ein episches Western-Epos.", platforms: ["PC", "PS4", "Xbox One", "Stadia"], steamId: 1174180 },
-  { id: 8003, name: "God of War (2018)", rating: 9.4, genre: "Action", playtime: "40-60h", year: 2018, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1593500/header.jpg", developer: "Santa Monica Studio", mood: "Epic", description: "Eine emotionale Reise durch die nordische Mythologie.", platforms: ["PC", "PS4", "PS5"], steamId: 1593500 },
-  { id: 8004, name: "Cyberpunk 2077", rating: 8.5, genre: "RPG", playtime: "60-100h", year: 2020, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1091500/header.jpg", developer: "CD Projekt Red", mood: "Action", description: "Ein Open-World-RPG in einer dystopischen Zukunft.", platforms: ["PC", "PS5", "Xbox Series X", "PS4", "Xbox One"], steamId: 1091500 },
+  { id: 8001, name: "The Witcher 3: Wild Hunt", rating: 9.5, genre: "RPG", playtime: "100h+", year: 2015, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/292030/header.jpg", developer: "CD Projekt Red", mood: "Epic", description: "Ein Meisterwerk des Open-World-RPGs. Als Geralt von Riva jagst du Monster, löst Quests und triffst Entscheidungen, die die Welt verändern.", platforms: ["PC", "PS4", "Xbox One", "Switch"], steamId: 292030 },
+  { id: 8002, name: "Red Dead Redemption 2", rating: 9.6, genre: "Open World", playtime: "100h+", year: 2018, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1174180/header.jpg", developer: "Rockstar Games", mood: "Epic", description: "Ein episches Western-Epos. Erlebe die Geschichte von Arthur Morgan, einem Outlaw auf der Flucht vor der Moderne.", platforms: ["PC", "PS4", "Xbox One", "Stadia"], steamId: 1174180 },
+  { id: 8003, name: "God of War (2018)", rating: 9.4, genre: "Action", playtime: "40-60h", year: 2018, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1593500/header.jpg", developer: "Santa Monica Studio", mood: "Epic", description: "Eine emotionale Reise durch die nordische Mythologie. Kratos und sein Sohn Atreus haben eine der besten Vater-Sohn-Beziehungen.", platforms: ["PC", "PS4", "PS5"], steamId: 1593500 },
+  { id: 8004, name: "Cyberpunk 2077", rating: 8.5, genre: "RPG", playtime: "60-100h", year: 2020, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1091500/header.jpg", developer: "CD Projekt Red", mood: "Action", description: "Ein Open-World-RPG in einer dystopischen Zukunft. Night City ist eine der beeindruckendsten Spielwelten.", platforms: ["PC", "PS5", "Xbox Series X", "PS4", "Xbox One"], steamId: 1091500 },
   { id: 8005, name: "Elden Ring", rating: 9.5, genre: "Open World", playtime: "100h+", year: 2022, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg", developer: "FromSoftware", mood: "Challenging", description: "Ein Meisterwerk des Open-World-Action-RPGs.", platforms: ["PC", "PS5", "Xbox Series X", "PS4"], steamId: 1245620 },
   { id: 8006, name: "Baldur's Gate 3", rating: 9.6, genre: "RPG", playtime: "100h+", year: 2023, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1086940/header.jpg", developer: "Larian Studios", mood: "Epic", description: "Das ultimative D&D-Rollenspielerlebnis.", platforms: ["PC", "PS5", "Xbox Series X"], steamId: 1086940 }
 ];
@@ -60,23 +116,35 @@ const MANUAL_HIDDEN_GEMS = [
 
 // ========== FUNNY ACHIEVEMENTS ==========
 const FUNNY_ACHIEVEMENTS = [
-  { id: "click_master", name: "🖱️ Klick-Meister", description: "Klicke 100 Mal auf das NexPlay Logo", requirement: "100 logo clicks", unlocked: false, progress: 0, icon: "🖱️", secret: false },
-  { id: "night_owl", name: "🦉 Nacht-Eule", description: "Besuche die Seite zwischen 2-4 Uhr morgens", requirement: "Visit between 2-4 AM", unlocked: false, progress: 0, icon: "🌙", secret: true },
-  { id: "collector_mania", name: "📦 Bibliotheks-König", description: "Füge 50 Spiele zur Bibliothek hinzu", requirement: "50 games in library", unlocked: false, progress: 0, icon: "📚", secret: false },
-  { id: "review_god", name: "✍️ Review-Gott", description: "Schreibe 20 Bewertungen", requirement: "20 reviews", unlocked: false, progress: 0, icon: "✍️", secret: false },
-  { id: "completionist_ultra", name: "🏆 Ultra-Vollender", description: "Schließe 15 Spiele ab", requirement: "15 completed games", unlocked: false, progress: 0, icon: "🏆", secret: false },
-  { id: "random_addict", name: "🎲 Zufalls-Junkie", description: "Nutze den Random Generator 50 Mal", requirement: "50 random rolls", unlocked: false, progress: 0, icon: "🎲", secret: false },
-  { id: "ai_friend", name: "🤖 KI-Buddy", description: "Stelle der KI 100 Fragen", requirement: "100 AI messages", unlocked: false, progress: 0, icon: "🤖", secret: false },
-  { id: "theme_hopper", name: "🎨 Theme-Hüpfer", description: "Wechsle das Theme 50 Mal", requirement: "50 theme changes", unlocked: false, progress: 0, icon: "🎨", secret: false },
-  { id: "secret_click", name: "🤫 Geheimnis-Klicker", description: "Klicke auf das versteckte Easter Egg", requirement: "Find the secret", unlocked: false, progress: 0, icon: "🥚", secret: true },
-  { id: "midnight_coder", name: "💻 Mitternachts-Coder", description: "Speichere um Mitternacht eine Änderung", requirement: "Save at midnight", unlocked: false, progress: 0, icon: "🌃", secret: true },
-  { id: "five_star", name: "⭐⭐⭐⭐⭐ Fünf-Sterne", description: "Gib einem Spiel 5 Sterne", requirement: "Rate a game 5 stars", unlocked: false, progress: 0, icon: "⭐", secret: false },
-  { id: "wishlist_master", name: "📝 Wunschlisten-Master", description: "Füge 20 Spiele zur Wunschliste hinzu", requirement: "20 wishlisted games", unlocked: false, progress: 0, icon: "📝", secret: false }
+  { id: "click_master", name: "🖱️ Klick-Meister", description: "Klicke 100 Mal auf das NexPlay Logo", requirement: "100 logo clicks", unlocked: false, progress: 0, icon: "🖱️", secret: false, reward: 100 },
+  { id: "night_owl", name: "🦉 Nacht-Eule", description: "Besuche die Seite zwischen 2-4 Uhr morgens", requirement: "Visit between 2-4 AM", unlocked: false, progress: 0, icon: "🌙", secret: true, reward: 150 },
+  { id: "collector_mania", name: "📦 Bibliotheks-König", description: "Füge 50 Spiele zur Bibliothek hinzu", requirement: "50 games in library", unlocked: false, progress: 0, icon: "📚", secret: false, reward: 200 },
+  { id: "review_god", name: "✍️ Review-Gott", description: "Schreibe 20 Bewertungen", requirement: "20 reviews", unlocked: false, progress: 0, icon: "✍️", secret: false, reward: 150 },
+  { id: "completionist_ultra", name: "🏆 Ultra-Vollender", description: "Schließe 15 Spiele ab", requirement: "15 completed games", unlocked: false, progress: 0, icon: "🏆", secret: false, reward: 250 },
+  { id: "random_addict", name: "🎲 Zufalls-Junkie", description: "Nutze den Random Generator 50 Mal", requirement: "50 random rolls", unlocked: false, progress: 0, icon: "🎲", secret: false, reward: 100 },
+  { id: "ai_friend", name: "🤖 KI-Buddy", description: "Stelle der KI 100 Fragen", requirement: "100 AI messages", unlocked: false, progress: 0, icon: "🤖", secret: false, reward: 150 },
+  { id: "theme_hopper", name: "🎨 Theme-Hüpfer", description: "Wechsle das Theme 50 Mal", requirement: "50 theme changes", unlocked: false, progress: 0, icon: "🎨", secret: false, reward: 100 },
+  { id: "secret_click", name: "🤫 Geheimnis-Klicker", description: "Klicke auf das versteckte Easter Egg", requirement: "Find the secret", unlocked: false, progress: 0, icon: "🥚", secret: true, reward: 500 },
+  { id: "midnight_coder", name: "💻 Mitternachts-Coder", description: "Speichere um Mitternacht eine Änderung", requirement: "Save at midnight", unlocked: false, progress: 0, icon: "🌃", secret: true, reward: 200 },
+  { id: "five_star", name: "⭐⭐⭐⭐⭐ Fünf-Sterne", description: "Gib einem Spiel 5 Sterne", requirement: "Rate a game 5 stars", unlocked: false, progress: 0, icon: "⭐", secret: false, reward: 50 },
+  { id: "wishlist_master", name: "📝 Wunschlisten-Master", description: "Füge 20 Spiele zur Wunschliste hinzu", requirement: "20 wishlisted games", unlocked: false, progress: 0, icon: "📝", secret: false, reward: 100 }
 ];
+
+// ========== GAMING NEWS API ==========
+const fetchGamingNews = async () => {
+  try {
+    const response = await fetch('https://gnews.io/api/v4/search?q=gaming&lang=en&country=us&max=10&apikey=YOUR_API_KEY');
+    const data = await response.json();
+    return data.articles || [];
+  } catch (error) {
+    console.error("News API error:", error);
+    return [];
+  }
+};
 
 const translations = {
   en: { 
-    home: "Discover", library: "Library", profile: "Profile", friends: "Friends", ai: "AI Assistant", aoty: "AOTY", random: "Random", playlists: "Playlists", compare: "Compare", achievements: "Achievements", gamification: "Gamification",
+    home: "Discover", library: "Library", profile: "Profile", friends: "Friends", ai: "AI Assistant", aoty: "AOTY", random: "Random", playlists: "Playlists", compare: "Compare", achievements: "Achievements", gamification: "Gamification", news: "Gaming News", support: "Support",
     activity: "Activity", wishlist: "Wishlist", backlog: "Backlog Cleaner", tags: "Tags", journal: "Journal", export: "Export", import: "Import", theme: "Theme", dark: "Dark", light: "Light", auto: "Auto",
     randomGame: "Random Game", yearFilter: "Year", allYears: "All Years", login: "Login", register: "Register", logout: "Logout", search: "Search games...", searchAOTY: "Search by year or game name...",
     mood: "What's your mood?", genre: "Pick your genres", playtime: "How long?", next: "Next", results: "Show Results", topPicks: "Top Picks", bestEver: "Best Ever", allResults: "All Results",
@@ -94,10 +162,12 @@ const translations = {
     level: "Level", xp: "XP", badges: "Badges", completionProgress: "Completion Progress", quickStats: "Quick Stats", dailyChallenges: "Daily Challenges", weeklyChallenges: "Weekly Challenges",
     levelUp: "Level Up!", congrats: "Congratulations!", newLevel: "You reached level", points: "points", claim: "Claim", completed: "Completed", inProgress: "In Progress",
     gameRoulette: "Game Roulette", pickThree: "Pick 3 random games", rouletteResult: "Your 3 games for today:", achievementsUnlocked: "Achievements Unlocked", clickToSee: "Click to see requirement",
-    secret: "🔒 SECRET", notifications: "Notifications", autoSave: "Auto-save", compactView: "Compact View", highContrast: "High Contrast"
+    secret: "🔒 SECRET", notifications: "Notifications", autoSave: "Auto-save", compactView: "Compact View", highContrast: "High Contrast", nominees: "Nominees", winnerBadge: "🏆 Winner",
+    freeAiQueries: "Free AI Queries left", subscribeUnlimited: "Subscribe on Ko-fi for unlimited AI chat", readMore: "Read more", supportMessage: "Support NexPlay development",
+    becomePatron: "Become a Patron", aiLimitReached: "You've used all free AI queries. Support NexPlay on Ko-fi to unlock unlimited AI chat!"
   },
   de: { 
-    home: "Entdecken", library: "Bibliothek", profile: "Profil", friends: "Freunde", ai: "KI-Assistent", aoty: "AOTY", random: "Zufall", playlists: "Playlists", compare: "Vergleichen", achievements: "Erfolge", gamification: "Gamification",
+    home: "Entdecken", library: "Bibliothek", profile: "Profil", friends: "Freunde", ai: "KI-Assistent", aoty: "AOTY", random: "Zufall", playlists: "Playlists", compare: "Vergleichen", achievements: "Erfolge", gamification: "Gamification", news: "Gaming News", support: "Unterstützen",
     activity: "Aktivitäten", wishlist: "Wunschliste", backlog: "Backlog Reiniger", tags: "Tags", journal: "Tagebuch", export: "Exportieren", import: "Importieren", theme: "Design", dark: "Dunkel", light: "Hell", auto: "Auto",
     randomGame: "Zufälliges Spiel", yearFilter: "Jahr", allYears: "Alle Jahre", login: "Anmelden", register: "Registrieren", logout: "Abmelden", search: "Spiele suchen...", searchAOTY: "Suche nach Jahr oder Spielname...",
     mood: "Wie ist deine Stimmung?", genre: "Wähle deine Genres", playtime: "Wie lange?", next: "Weiter", results: "Ergebnisse", topPicks: "Top Empfehlungen", bestEver: "Beste Aller Zeiten", allResults: "Alle Ergebnisse",
@@ -115,7 +185,9 @@ const translations = {
     level: "Level", xp: "XP", badges: "Abzeichen", completionProgress: "Fortschritt", quickStats: "Schnellstatistiken", dailyChallenges: "Tägliche Herausforderungen", weeklyChallenges: "Wöchentliche Herausforderungen",
     levelUp: "Level Up!", congrats: "Glückwunsch!", newLevel: "Du hast Level", points: "Punkte", claim: "Abholen", completed: "Abgeschlossen", inProgress: "In Bearbeitung",
     gameRoulette: "Spiel-Roulette", pickThree: "3 zufällige Spiele", rouletteResult: "Deine 3 Spiele für heute:", achievementsUnlocked: "Erfolge freigeschaltet", clickToSee: "Klicken für Aufgabe",
-    secret: "🔒 GEHEIM", notifications: "Benachrichtigungen", autoSave: "Auto-speichern", compactView: "Kompakte Ansicht", highContrast: "Hoher Kontrast"
+    secret: "🔒 GEHEIM", notifications: "Benachrichtigungen", autoSave: "Auto-speichern", compactView: "Kompakte Ansicht", highContrast: "Hoher Kontrast", nominees: "Nominierte", winnerBadge: "🏆 Gewinner",
+    freeAiQueries: "Kostenlose KI-Anfragen übrig", subscribeUnlimited: "Auf Ko-fi abonnieren für unbegrenzten KI-Chat", readMore: "Weiterlesen", supportMessage: "Unterstütze die NexPlay-Entwicklung",
+    becomePatron: "Unterstützer werden", aiLimitReached: "Du hast alle kostenlosen KI-Anfragen aufgebraucht. Unterstütze NexPlay auf Ko-fi für unbegrenzten KI-Chat!"
   }
 };
 
@@ -140,7 +212,7 @@ const calculateWeightedRating = (game, steamData) => {
 
 const generateLongDescription = (gameName, rawDescription) => {
   if (rawDescription && rawDescription.length > 200) return rawDescription;
-  return `${gameName} ist ein herausragendes Spiel, das die Herzen von Gamern erobert hat. Die Entwickler haben viel Liebe zum Detail gesteckt. Die Spielmechanik ist intuitiv und tiefgründig. Ein absolutes Muss!`;
+  return `${gameName} ist ein herausragendes Spiel, das die Herzen von Gamern erobert hat. Die Entwickler haben viel Liebe zum Detail gesteckt. Die Spielmechanik ist intuitiv und tiefgründig. Ein absolutes Muss für jeden Fan!`;
 };
 
 const getGameImage = (rawgImg, gameName, steamData) => {
@@ -201,6 +273,10 @@ export default function NexPlay() {
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [aiMessages, setAiMessages] = useState([{ role: "assistant", content: "🎮 Hallo! Ich bin dein KI-Gaming-Assistent! Frag mich nach Spielen, Tipps oder lass dir was empfehlen!\n\n💡 Quick-Actions:\n• Empfehle mir ein RPG\n• Tipps für Elden Ring\n• Was ist neu in der Gaming-Welt?" }]);
   const [aiInput, setAiInput] = useState("");
+  const [freeAiQueries, setFreeAiQueries] = useState(() => {
+    const saved = localStorage.getItem("nexplay_freeAi");
+    return saved ? parseInt(saved) : 5;
+  });
   const aiChatEndRef = useRef(null);
   const [logoClickCount, setLogoClickCount] = useState(() => parseInt(localStorage.getItem("nexplay_logoClicks") || "0"));
   const [randomRollCount, setRandomRollCount] = useState(() => parseInt(localStorage.getItem("nexplay_randomRolls") || "0"));
@@ -208,6 +284,8 @@ export default function NexPlay() {
   const [themeChangeCount, setThemeChangeCount] = useState(() => parseInt(localStorage.getItem("nexplay_themeChanges") || "0"));
   const [midnightSave, setMidnightSave] = useState(() => localStorage.getItem("nexplay_midnightSave") === "true");
   const [secretEggFound, setSecretEggFound] = useState(() => localStorage.getItem("nexplay_secretEgg") === "true");
+  const [news, setNews] = useState([]);
+  const [loadingNews, setLoadingNews] = useState(false);
   const [categoryFilter, setCategoryFilter] = useState({ genre: "", minRating: 0, year: 0 });
   const [searchUsersTerm, setSearchUsersTerm] = useState("");
   const [foundUsers, setFoundUsers] = useState([]);
@@ -296,95 +374,84 @@ export default function NexPlay() {
     const newAchievements = [...achievements];
     let changed = false;
 
-    // Click Master Achievement
     const clickMaster = newAchievements.find(a => a.id === "click_master");
     if (clickMaster && !clickMaster.unlocked && logoClickCount >= 100) {
       clickMaster.unlocked = true;
       changed = true;
-      showNotif(`🎉 Achievement unlocked: ${clickMaster.name}!`, "success");
+      showNotif(`🎉 Achievement unlocked: ${clickMaster.name}! +${clickMaster.reward} XP`, "success");
     }
 
-    // Collector Mania
     const collector = newAchievements.find(a => a.id === "collector_mania");
     if (collector && !collector.unlocked && library.length >= 50) {
       collector.unlocked = true;
       changed = true;
-      showNotif(`🎉 Achievement unlocked: ${collector.name}!`, "success");
+      showNotif(`🎉 Achievement unlocked: ${collector.name}! +${collector.reward} XP`, "success");
     }
 
-    // Review God
     const reviewGod = newAchievements.find(a => a.id === "review_god");
     if (reviewGod && !reviewGod.unlocked && gameDetailReviews.length >= 20) {
       reviewGod.unlocked = true;
       changed = true;
-      showNotif(`🎉 Achievement unlocked: ${reviewGod.name}!`, "success");
+      showNotif(`🎉 Achievement unlocked: ${reviewGod.name}! +${reviewGod.reward} XP`, "success");
     }
 
-    // Completionist Ultra
     const completionistUltra = newAchievements.find(a => a.id === "completionist_ultra");
     if (completionistUltra && !completionistUltra.unlocked && library.filter(g => g.status === "completed").length >= 15) {
       completionistUltra.unlocked = true;
       changed = true;
-      showNotif(`🎉 Achievement unlocked: ${completionistUltra.name}!`, "success");
+      showNotif(`🎉 Achievement unlocked: ${completionistUltra.name}! +${completionistUltra.reward} XP`, "success");
     }
 
-    // Random Addict
     const randomAddict = newAchievements.find(a => a.id === "random_addict");
     if (randomAddict && !randomAddict.unlocked && randomRollCount >= 50) {
       randomAddict.unlocked = true;
       changed = true;
-      showNotif(`🎉 Achievement unlocked: ${randomAddict.name}!`, "success");
+      showNotif(`🎉 Achievement unlocked: ${randomAddict.name}! +${randomAddict.reward} XP`, "success");
     }
 
-    // AI Friend
     const aiFriend = newAchievements.find(a => a.id === "ai_friend");
     if (aiFriend && !aiFriend.unlocked && aiMessageCount >= 100) {
       aiFriend.unlocked = true;
       changed = true;
-      showNotif(`🎉 Achievement unlocked: ${aiFriend.name}!`, "success");
+      showNotif(`🎉 Achievement unlocked: ${aiFriend.name}! +${aiFriend.reward} XP`, "success");
     }
 
-    // Theme Hopper
     const themeHopper = newAchievements.find(a => a.id === "theme_hopper");
     if (themeHopper && !themeHopper.unlocked && themeChangeCount >= 50) {
       themeHopper.unlocked = true;
       changed = true;
-      showNotif(`🎉 Achievement unlocked: ${themeHopper.name}!`, "success");
+      showNotif(`🎉 Achievement unlocked: ${themeHopper.name}! +${themeHopper.reward} XP`, "success");
     }
 
-    // Night Owl
     const nightOwl = newAchievements.find(a => a.id === "night_owl");
     if (nightOwl && !nightOwl.unlocked) {
       const hour = new Date().getHours();
       if (hour >= 2 && hour < 4) {
         nightOwl.unlocked = true;
         changed = true;
-        showNotif(`🎉 Secret achievement unlocked: ${nightOwl.name}! 🦉`, "success");
+        showNotif(`🎉 Secret achievement unlocked: ${nightOwl.name}! 🦉 +${nightOwl.reward} XP`, "success");
       }
     }
 
-    // Midnight Coder
     const midnightCoder = newAchievements.find(a => a.id === "midnight_coder");
     if (midnightCoder && !midnightCoder.unlocked && midnightSave) {
       midnightCoder.unlocked = true;
       changed = true;
-      showNotif(`🎉 Secret achievement unlocked: ${midnightCoder.name}! 🌃`, "success");
+      showNotif(`🎉 Secret achievement unlocked: ${midnightCoder.name}! 🌃 +${midnightCoder.reward} XP`, "success");
     }
 
-    // Five Star
     const fiveStar = newAchievements.find(a => a.id === "five_star");
     if (fiveStar && !fiveStar.unlocked && reviewRating === 5) {
       fiveStar.unlocked = true;
       changed = true;
-      showNotif(`🎉 Achievement unlocked: ${fiveStar.name}! ⭐⭐⭐⭐⭐`, "success");
+      showNotif(`🎉 Achievement unlocked: ${fiveStar.name}! ⭐⭐⭐⭐⭐ +${fiveStar.reward} XP`, "success");
     }
 
-    // Wishlist Master
     const wishlistMaster = newAchievements.find(a => a.id === "wishlist_master");
     if (wishlistMaster && !wishlistMaster.unlocked && wishlist.length >= 20) {
       wishlistMaster.unlocked = true;
       changed = true;
-      showNotif(`🎉 Achievement unlocked: ${wishlistMaster.name}! 📝`, "success");
+      showNotif(`🎉 Achievement unlocked: ${wishlistMaster.name}! 📝 +${wishlistMaster.reward} XP`, "success");
     }
 
     if (changed) {
@@ -429,7 +496,7 @@ export default function NexPlay() {
     }
   }, [library, favorites, gameDetailReviews, gameJournal, logoClickCount, randomRollCount, aiMessageCount, themeChangeCount, midnightSave, secretEggFound, achievements]);
 
-  // Daily/Weekly Challenges
+  // ========== DAILY CHALLENGES ==========
   useEffect(() => {
     const today = new Date().toDateString();
     const savedDaily = localStorage.getItem("nexplay_dailyChallenges");
@@ -447,6 +514,17 @@ export default function NexPlay() {
       localStorage.setItem("nexplay_dailyChallenges", JSON.stringify(newChallenges));
       localStorage.setItem("nexplay_dailyDate", today);
     }
+  }, []);
+
+  // ========== GAMING NEWS ==========
+  useEffect(() => {
+    const loadNews = async () => {
+      setLoadingNews(true);
+      const articles = await fetchGamingNews();
+      setNews(articles);
+      setLoadingNews(false);
+    };
+    loadNews();
   }, []);
 
   const claimDailyReward = (challengeId) => {
@@ -491,8 +569,9 @@ export default function NexPlay() {
     localStorage.setItem("nexplay_randomRolls", randomRollCount);
     localStorage.setItem("nexplay_aiMessages", aiMessageCount);
     localStorage.setItem("nexplay_themeChanges", themeChangeCount);
+    localStorage.setItem("nexplay_freeAi", freeAiQueries);
     document.body.style.backgroundColor = currentColors.bg;
-  }, [theme, soundEnabled, notificationsEnabled, compactView, highContrast, autoSave, logoClickCount, randomRollCount, aiMessageCount, themeChangeCount, currentColors.bg]);
+  }, [theme, soundEnabled, notificationsEnabled, compactView, highContrast, autoSave, logoClickCount, randomRollCount, aiMessageCount, themeChangeCount, freeAiQueries, currentColors.bg]);
 
   useEffect(() => {
     const savedPlaylists = localStorage.getItem("nexplay_playlists");
@@ -750,18 +829,26 @@ export default function NexPlay() {
 
   const sendAiMessage = async () => {
     if (!aiInput.trim()) return;
+    
+    // Check free AI queries limit
+    if (freeAiQueries <= 0) {
+      setAiMessages(prev => [...prev, { role: "assistant", content: `🚫 ${text.aiLimitReached}\n\n💡 ${text.subscribeUnlimited}: https://ko-fi.com/sherlock10k` }]);
+      return;
+    }
+    
     const userMessage = aiInput.trim();
     setAiMessages(prev => [...prev, { role: "user", content: userMessage }]);
     setAiInput("");
     setIsAiLoading(true);
     setAiMessageCount(prev => prev + 1);
+    setFreeAiQueries(prev => prev - 1);
     updateAchievements();
     
     const quickResponses = {
-      "empfehle mir ein rpg": "🎮 **RPG-Empfehlungen:**\n1. **Baldur's Gate 3** - 9.6/10 - Das ultimative D&D-Erlebnis\n2. **The Witcher 3** - 9.5/10 - Meisterhaftes Open-World-RPG\n3. **Disco Elysium** - 9.4/10 - Einzigartiges Detektiv-RPG",
-      "tips für elden ring": "🗡️ **Elden Ring Tipps:**\n• Level Lebenspunkte zuerst\n• Erkunde Limgrave gründlich\n• Nutze Geisterbeschwörungen\n• Waffe auf +3 vor Margit bringen",
-      "was ist neu": "🎉 **Neu in der Gaming-Welt:**\n• Neue DLCs für Cyberpunk 2077\n• Baldur's Gate 3 Update mit neuen Endings\n• Elden Ring: Shadow of the Erdtree kommt bald!",
-      "like": "❤️ Danke für dein Feedback! Ich freue mich, dass ich helfen konnte!"
+      "empfehle mir ein rpg": "🎮 **RPG-Empfehlungen:**\n1. **Baldur's Gate 3** - 9.6/10 - Das ultimative D&D-Erlebnis\n2. **The Witcher 3** - 9.5/10 - Meisterhaftes Open-World-RPG\n3. **Disco Elysium** - 9.4/10 - Einzigartiges Detektiv-RPG\n4. **Cyberpunk 2077** - 8.5/10 - Night City ist atemberaubend!\n\nWelches interessiert dich besonders?",
+      "tips für elden ring": "🗡️ **Elden Ring Tipps für Anfänger:**\n\n• **Lebenspunkte (VIGOR)** zuerst auf 20-30 leveln\n• **Limgrave** gründlich erkunden VOR dem ersten Boss\n• **Geisterbeschwörungen** nutzen - sie helfen enorm!\n• Waffe auf **+3 oder höher** bringen vor Margit\n• **Keine Scham** - leveln und später zurückkommen ist okay!\n\nBrauchst du Tipps für einen bestimmten Boss? 🎯",
+      "was ist neu": "🎉 **Neu in der Gaming-Welt (aktuell):**\n\n• **Cyberpunk 2077** - Phantom Liberty DLC mit neuem Ende\n• **Baldur's Gate 3** - Patch 7 mit neuen Endings und Mod-Support\n• **Elden Ring** - Shadow of the Erdtree DLC ist in Entwicklung!\n• **Black Myth: Wukong** - Release steht bevor!\n\nInteressiert dich eines davon genauer? 📰",
+      "like": "❤️ **Danke für dein Feedback!** Ich freue mich, dass ich helfen konnte. Wenn du mehr wissen willst, frag einfach weiter! 🎮"
     };
     
     const lowerMsg = userMessage.toLowerCase();
@@ -777,11 +864,11 @@ export default function NexPlay() {
       const lowerMsg = msg.toLowerCase();
       if (lowerMsg.includes("empfehl") || lowerMsg.includes("vorschlag")) {
         const random = TOP_PICKS_GAMES[Math.floor(Math.random() * TOP_PICKS_GAMES.length)];
-        return `🎮 **Spielempfehlung:** ${random.name}\n⭐ Bewertung: ${random.finalRating}/10\n🎭 Genre: ${random.genre}\n⏱️ Spielzeit: ${random.playtime}\n\n${random.finalDescription?.substring(0, 150)}...`;
+        return `🎮 **Spielempfehlung für dich:**\n\n📌 **${random.name}**\n⭐ Bewertung: ${random.finalRating}/10\n🎭 Genre: ${random.genre}\n⏱️ Spielzeit: ${random.playtime}\n📅 Jahr: ${random.year}\n\n${random.finalDescription?.substring(0, 200)}...\n\nMöchtest du mehr über dieses Spiel wissen? 🔍`;
       }
-      if (lowerMsg.includes("witcher")) return "🐺 **The Witcher 3 Tipps:** Mach alle Nebenquests, lerne Gwent, die DLCs sind ein Muss!";
-      if (lowerMsg.includes("elden ring")) return "🗡️ **Elden Ring Tipps:** Level Lebenspunkte zuerst, erkunde Limgrave gründlich, nutze Geisterbeschwörungen!";
-      return `Danke für deine Frage! Ich kann dir helfen mit:\n• Spielempfehlungen\n• Spiel-Tipps\n• Genre-Fragen\n• Gaming-News\n\n💡 Tipp: Probier \"Empfehle mir ein RPG\" oder \"Tips für Elden Ring\"!`;
+      if (lowerMsg.includes("witcher")) return "🐺 **The Witcher 3: Wild Hunt - Ultimative Tipps:**\n\n• **Nebenquests**: Nimm dir Zeit! Viele sind besser als die Hauptstory\n• **Gwent**: Lerne das Kartenspiel - es macht süchtig!\n• **Builds**: Experimentiere mit verschiedenen Fähigkeiten\n• **DLCs**: Hearts of Stone & Blood and Wine sind absolute Pflicht!\n• **Alchemie**: Braue Tränke und Öle für schwere Gegner\n\nFrag mich gerne nach mehr Details! 🎮";
+      if (lowerMsg.includes("elden ring")) return "🗡️ **Elden Ring - Anfänger-Tipps:**\n\n• **Lebenspunkte**: Level zuerst VIGOR auf 20-30\n• **Erkundung**: Erkunde Limgrave gründlich VOR dem ersten Hauptboss\n• **Geisterbeschwörungen**: Nutze sie! Sie helfen enorm\n• **Waffen**: Bring deine Hauptwaffe auf +3 oder höher vor Margit\n• **Keine Scham**: Leveln und später zurückkommen ist völlig okay!\n\nBrauchst du Tipps für einen bestimmten Boss? 🎯";
+      return `Danke für deine Frage zu "${msg.substring(0, 50)}"! 🎮\n\nIch kann dir helfen mit:\n• **Spielempfehlungen** (z.B. "Empfehle mir ein RPG")\n• **Spiel-Tipps** (z.B. "Tipps für Elden Ring")\n• **Genre-Fragen** (z.B. "Beste Action-Spiele")\n• **Gaming-News** (z.B. "Was ist neu in der Gaming-Welt?")\n\nWas möchtest du genau wissen? 😊\n\n💡 **Tipp:** Du hast noch ${freeAiQueries - 1} kostenlose Anfragen. Unterstütze NexPlay auf Ko-fi für unbegrenzte KI-Chats!`;
     };
     
     try {
@@ -791,12 +878,12 @@ export default function NexPlay() {
         body: JSON.stringify({
           model: "deepseek-chat",
           messages: [
-            { role: "system", content: "Du bist ein Gaming-Assistent. Antworte auf Deutsch, freundlich und mit Emojis. Gib konkrete Spieltipps." },
+            { role: "system", content: "Du bist ein Gaming-Assistent. Antworte auf Deutsch, freundlich und mit Emojis. Gib konkrete Spieltipps. Antworte ausführlich mit ca. 100-200 Wörtern pro Antwort." },
             ...aiMessages.slice(-5).map(m => ({ role: m.role, content: m.content })),
             { role: "user", content: userMessage }
           ],
-          temperature: 0.7,
-          max_tokens: 500
+          temperature: 0.8,
+          max_tokens: 600
         })
       });
       if (response.ok) {
@@ -820,7 +907,7 @@ export default function NexPlay() {
       await saveProfileToFirestore(user.uid, { profilePic: downloadURL });
       setUserData(prev => ({ ...prev, profilePic: downloadURL }));
       showNotif("Profilbild erfolgreich geändert!");
-    } catch (error) { console.error("Fehler:", error); showNotif("Fehler beim Hochladen", "error"); }
+    } catch (error) { console.error("Fehler:", error); showNotif("Fehler beim Hochladen - Prüfe Firebase Storage Regeln", "error"); }
     finally { setProfilePicUploading(false); }
   };
 
@@ -927,7 +1014,7 @@ export default function NexPlay() {
       const reviews = await getGameReviews(fullGame.id);
       setGameDetailReviews(reviews);
       setCurrentTab("gameDetail");
-    } catch (error) { console.error("Error loading game detail:", error); showNotif("Fehler beim Laden des Spiels", "error"); }
+    } catch (error) { console.error("Error loading game detail:", error); showNotif("Fehler beim Laden des Spiels - Prüfe Firebase Reviews Collection", "error"); }
     finally { setLoadingAction(false); }
   };
 
@@ -935,6 +1022,7 @@ export default function NexPlay() {
 
   const submitGameDetailReview = async () => {
     if (reviewRating === 0) { showNotif("Bitte gib eine Bewertung ab", "error"); return; }
+    if (!user) { showNotif("Bitte melde dich an, um Bewertungen zu schreiben", "error"); return; }
     setLoadingAction(true);
     await addGameReview(user.uid, selectedGameDetail.id, selectedGameDetail.name, reviewRating, reviewComment);
     setGameDetailReviews(await getGameReviews(selectedGameDetail.id));
@@ -962,6 +1050,7 @@ export default function NexPlay() {
   };
 
   const markAsPlayed = async (game) => {
+    if (!user) return;
     setLoadingAction(true);
     await updateLastPlayed(user.uid, game.id, game.name, game.img);
     setUserData(await loadProfileFromFirestore(user.uid));
@@ -1037,8 +1126,19 @@ export default function NexPlay() {
     .spinning-wheel { animation: wheelSpin 0.5s ease-out; }
     .pulse-dot { animation: pulse 1s infinite; }
     .confetti { position: fixed; animation: confetti 3s linear forwards; pointer-events: none; z-index: 10000; }
-    @media (max-width: 768px) { .hamburger-btn { display: flex !important; } .main-tabs-desktop { display: none !important; } .desktop-only { display: none !important; } }
-    @media (min-width: 769px) { .hamburger-btn { display: none !important; } .main-tabs-desktop { display: flex !important; } .mobile-only { display: none !important; } }
+    @media (max-width: 768px) { 
+      .hamburger-btn { display: flex !important; } 
+      .main-tabs-desktop { display: none !important; } 
+      .desktop-only { display: none !important; }
+      .game-card { margin-bottom: 16px; }
+      .sectionTitle { font-size: 22px !important; }
+      .game-name { font-size: 14px !important; }
+    }
+    @media (min-width: 769px) { 
+      .hamburger-btn { display: none !important; } 
+      .main-tabs-desktop { display: flex !important; } 
+      .mobile-only { display: none !important; }
+    }
   `;
 
   useEffect(() => { const style = document.createElement("style"); style.textContent = animationStyles; document.head.appendChild(style); }, [currentColors]);
@@ -1054,10 +1154,10 @@ export default function NexPlay() {
     rightSection: { display: "flex", alignItems: "center", gap: 20 },
     badge10k: { background: currentColors.primary, color: currentColors.bg, borderRadius: "20px", padding: "6px 14px", fontSize: 13, fontWeight: 700 },
     mainTabs: { display: "flex", gap: 12, flexWrap: "wrap", alignItems: "center", justifyContent: "flex-start" },
-    mainTab: (active) => ({ background: active ? currentColors.primary : "rgba(255,255,255,0.08)", border: "none", borderRadius: 14, padding: compactView ? "8px 20px" : "12px 28px", color: active ? currentColors.bg : currentColors.text, cursor: "pointer", fontWeight: 600, fontSize: 14, display: "flex", alignItems: "center", gap: 10, transition: "all 0.2s ease", whiteSpace: "nowrap" }),
+    mainTab: (active) => ({ background: active ? currentColors.primary : "rgba(255,255,255,0.08)", border: "none", borderRadius: 14, padding: compactView ? "8px 20px" : "12px 28px", color: active ? currentColors.bg : currentColors.text, cursor: "pointer", fontWeight: 600, fontSize: 15, display: "flex", alignItems: "center", gap: 10, transition: "all 0.2s ease", whiteSpace: "nowrap" }),
     iconBtn: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 14, padding: compactView ? "8px 14px" : "12px 18px", color: currentColors.text, cursor: "pointer", display: "flex", alignItems: "center", gap: 10, fontSize: 14, transition: "all 0.2s ease" },
-    loginBtn: { background: "linear-gradient(135deg, #4285f4, #3367d6)", border: "none", borderRadius: 14, padding: compactView ? "8px 20px" : "12px 28px", color: "#fff", cursor: "pointer", fontWeight: 600, display: "flex", alignItems: "center", gap: 10, fontSize: 14, transition: "all 0.2s ease" },
-    logoutBtn: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 14, padding: compactView ? "8px 20px" : "12px 28px", color: currentColors.text, cursor: "pointer", display: "flex", alignItems: "center", gap: 10, fontSize: 14, transition: "all 0.2s ease" },
+    loginBtn: { background: "linear-gradient(135deg, #4285f4, #3367d6)", border: "none", borderRadius: 14, padding: compactView ? "8px 20px" : "12px 28px", color: "#fff", cursor: "pointer", fontWeight: 600, display: "flex", alignItems: "center", gap: 10, fontSize: 15, transition: "all 0.2s ease" },
+    logoutBtn: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 14, padding: compactView ? "8px 20px" : "12px 28px", color: currentColors.text, cursor: "pointer", display: "flex", alignItems: "center", gap: 10, fontSize: 15, transition: "all 0.2s ease" },
     userAvatar: { width: 44, height: 44, borderRadius: "50%", background: currentColors.primary, display: "flex", alignItems: "center", justifyContent: "center", color: currentColors.bg, fontWeight: 700, fontSize: 18, objectFit: "cover" },
     hamburgerBtn: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 14, padding: "12px", color: currentColors.text, cursor: "pointer", alignItems: "center", gap: 8, fontSize: 22, display: "none" },
     mobileMenu: { position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: currentColors.bg, zIndex: 1000, padding: "24px", overflowY: "auto", transform: mobileMenuOpen ? "translateX(0)" : "translateX(-100%)", transition: "transform 0.3s ease" },
@@ -1069,16 +1169,16 @@ export default function NexPlay() {
     gameCard: { background: currentColors.bgCard, borderRadius: 20, overflow: "hidden", cursor: "pointer", border: "1px solid rgba(255,255,255,0.08)", transition: "all 0.3s ease", position: "relative" },
     gameImg: { width: "100%", aspectRatio: "3/4", objectFit: "cover" },
     gameInfo: { padding: compactView ? "12px" : "16px" },
-    gameName: { fontSize: compactView ? 13 : 15, fontWeight: 700, marginBottom: 6, color: currentColors.text, wordWrap: "break-word" },
+    gameName: { fontSize: compactView ? 14 : 16, fontWeight: 700, marginBottom: 6, color: currentColors.text, wordWrap: "break-word" },
     rating: { display: "flex", alignItems: "center", gap: 6, color: currentColors.primary, fontSize: 13, fontWeight: 600, marginBottom: 8 },
-    addBtn: { background: currentColors.primary, border: "none", borderRadius: 12, padding: compactView ? "8px 10px" : "10px 14px", fontSize: compactView ? 12 : 14, fontWeight: 600, cursor: "pointer", width: "100%", marginTop: 10, color: currentColors.bg, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, transition: "all 0.2s ease" },
+    addBtn: { background: currentColors.primary, border: "none", borderRadius: 12, padding: compactView ? "8px 10px" : "10px 14px", fontSize: compactView ? 13 : 15, fontWeight: 600, cursor: "pointer", width: "100%", marginTop: 10, color: currentColors.bg, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, transition: "all 0.2s ease" },
     searchBar: { background: currentColors.bgCard, border: `1px solid rgba(255,255,255,0.08)`, borderRadius: 16, padding: "14px 20px", color: currentColors.text, fontSize: 15, width: "100%", marginBottom: 28, outline: "none", transition: "all 0.2s ease" },
     pillGrid: { display: "flex", flexWrap: "wrap", gap: 12, marginBottom: 28 },
     pill: (selected) => ({ background: selected ? currentColors.primary : "rgba(255,255,255,0.06)", border: "none", borderRadius: 40, padding: "12px 24px", color: selected ? currentColors.bg : currentColors.text, cursor: "pointer", fontSize: 14, fontWeight: selected ? 600 : 400 }),
     nextBtn: { background: currentColors.primary, border: "none", borderRadius: 16, padding: "14px 32px", fontSize: 16, fontWeight: 600, cursor: "pointer", color: currentColors.bg, marginTop: 32, width: "100%" },
     filterRow: { display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 24, alignItems: "center" },
     filterBtn: (active) => ({ background: active ? currentColors.primary : "rgba(255,255,255,0.05)", border: "none", borderRadius: 10, padding: "8px 16px", color: active ? currentColors.bg : currentColors.text, cursor: "pointer", fontSize: 13 }),
-    sectionTitle: { fontSize: compactView ? 20 : 24, fontWeight: 700, marginBottom: 20, display: "flex", alignItems: "center", gap: 12, color: currentColors.text },
+    sectionTitle: { fontSize: compactView ? 22 : 28, fontWeight: 700, marginBottom: 20, display: "flex", alignItems: "center", gap: 12, color: currentColors.text },
     topPicksRow: { display: "flex", gap: 20, overflowX: "auto", marginBottom: 32, paddingBottom: 12 },
     topPickCard: { minWidth: compactView ? 160 : 200, background: currentColors.bgCard, borderRadius: 16, padding: 14, cursor: "pointer", position: "relative" },
     libraryCard: { background: currentColors.bgCard, borderRadius: 16, display: "flex", gap: 16, padding: 16, marginBottom: 16, alignItems: "center", flexWrap: "wrap" },
@@ -1087,7 +1187,7 @@ export default function NexPlay() {
     libraryTitle: { fontWeight: 700, fontSize: 16, color: currentColors.text, marginBottom: 6 },
     libraryMeta: { fontSize: 13, color: currentColors.textSecondary, marginBottom: 8 },
     libraryActions: { display: "flex", gap: 10, flexWrap: "wrap" },
-    select: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 10, padding: "8px 14px", color: currentColors.text, fontSize: 13, cursor: "pointer" },
+    select: { background: currentColors.bgCard, border: `1px solid ${currentColors.primary}30`, borderRadius: 10, padding: "8px 14px", color: currentColors.text, fontSize: 13, cursor: "pointer", transition: "all 0.2s ease" },
     statCard: { background: currentColors.bgCard, borderRadius: 16, padding: compactView ? "12px" : "20px", textAlign: "center", minWidth: 80, flex: 1 },
     statNumber: { fontSize: compactView ? 24 : 32, fontWeight: 800, color: currentColors.primary },
     statLabel: { fontSize: 12, color: currentColors.textSecondary, marginTop: 6 },
@@ -1101,7 +1201,7 @@ export default function NexPlay() {
     randomFilterRow: { display: "flex", gap: 16, flexWrap: "wrap", alignItems: "center", marginBottom: 12 },
     randomCheckbox: { display: "flex", alignItems: "center", gap: 8, cursor: "pointer", fontSize: 14, color: currentColors.textSecondary },
     randomSlider: { width: 200, accentColor: currentColors.primary },
-    randomSelect: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 12, padding: "8px 16px", color: currentColors.text, fontSize: 14, cursor: "pointer" },
+    randomSelect: { background: currentColors.bgCard, border: `1px solid ${currentColors.primary}30`, borderRadius: 12, padding: "8px 16px", color: currentColors.text, fontSize: 14, cursor: "pointer" },
     aiSection: { background: currentColors.bgCard, borderRadius: 24, padding: 24, marginBottom: 28 },
     aiChatContainer: { height: 450, display: "flex", flexDirection: "column", background: currentColors.bgCard, borderRadius: 20, overflow: "hidden", marginTop: 16, border: `1px solid ${currentColors.primary}20` },
     aiMessages: { flex: 1, overflowY: "auto", padding: 20, display: "flex", flexDirection: "column", gap: 12 },
@@ -1140,7 +1240,18 @@ export default function NexPlay() {
     trailerFrame: { width: "100%", height: 360, borderRadius: 24, marginBottom: 28, border: "none", background: "#000" },
     settingsSection: { background: currentColors.bgCard, borderRadius: 24, padding: 24, marginBottom: 28 },
     settingsRow: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18, flexWrap: "wrap", gap: 12 },
-    settingsLabel: { fontSize: 15, color: currentColors.text }
+    settingsLabel: { fontSize: 15, color: currentColors.text },
+    aotyResultCard: { background: currentColors.bgCard, borderRadius: 32, padding: 32, marginBottom: 32, border: `1px solid ${currentColors.primary}30` },
+    aotyWinnerCard: { background: `linear-gradient(135deg, ${currentColors.primary}10, ${currentColors.bgCard})`, borderRadius: 20, padding: 18, marginBottom: 16, cursor: "pointer", display: "flex", gap: 16, alignItems: "center", flexWrap: "wrap", transition: "all 0.2s ease" },
+    aotyYearCard: { background: currentColors.bgCard, borderRadius: 22, padding: 24, textAlign: "center", cursor: "pointer", border: "1px solid rgba(255,255,255,0.05)", transition: "all 0.2s ease" },
+    gotyBackBtn: { background: "rgba(255,255,255,0.05)", border: "none", borderRadius: 14, padding: "10px 20px", color: currentColors.text, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 24, fontSize: 14, transition: "all 0.2s ease" },
+    topGenreSelect: { background: currentColors.bgCard, border: `1px solid ${currentColors.primary}30`, borderRadius: 16, padding: "14px 24px", color: currentColors.text, fontSize: 15, marginBottom: 28, cursor: "pointer", width: "100%", transition: "all 0.2s ease" },
+    newsCard: { background: currentColors.bgCard, borderRadius: 20, padding: 20, marginBottom: 20, border: `1px solid ${currentColors.primary}20`, transition: "all 0.2s ease" },
+    newsTitle: { fontSize: 18, fontWeight: 700, marginBottom: 8, color: currentColors.text },
+    newsDescription: { fontSize: 14, color: currentColors.textSecondary, marginBottom: 12 },
+    newsLink: { color: currentColors.primary, textDecoration: "none", fontSize: 13 },
+    supportCard: { background: currentColors.bgCard, borderRadius: 28, padding: 40, textAlign: "center", border: `1px solid ${currentColors.primary}30` },
+    koFiBtn: { background: "#ff5e5e", border: "none", borderRadius: 20, padding: "16px 32px", fontSize: 18, fontWeight: 700, color: "#fff", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 12, transition: "all 0.2s ease", textDecoration: "none" }
   };
 
   const GameCard = ({ game, showBtn = false }) => {
@@ -1303,6 +1414,8 @@ export default function NexPlay() {
           <button className="btn-click" style={styles.mobileMenuItem} onClick={() => { setCurrentTab("playlists"); closeMobileMenu(); }}><FaList size={18} /> {text.playlists}</button>
           <button className="btn-click" style={styles.mobileMenuItem} onClick={() => { setCurrentTab("achievements"); closeMobileMenu(); }}><GiAchievement size={18} /> {text.achievementsTitle}</button>
           <button className="btn-click" style={styles.mobileMenuItem} onClick={() => { setCurrentTab("gamification"); closeMobileMenu(); }}><FaBolt size={18} /> {text.gamification}</button>
+          <button className="btn-click" style={styles.mobileMenuItem} onClick={() => { setCurrentTab("news"); closeMobileMenu(); }}><FaNewspaper size={18} /> {text.news}</button>
+          <button className="btn-click" style={styles.mobileMenuItem} onClick={() => { setCurrentTab("support"); closeMobileMenu(); }}><FaDonate size={18} /> {text.support}</button>
           <button className="btn-click" style={styles.mobileMenuItem} onClick={() => { setCurrentTab("compare"); closeMobileMenu(); }}><FaBalanceScale size={18} /> {text.compare}</button>
           <button className="btn-click" style={styles.mobileMenuItem} onClick={() => { setShowSettings(true); closeMobileMenu(); }}><FaCog size={18} /> {text.settings}</button>
           {!user ? <button className="btn-click" style={{ ...styles.mobileMenuItem, background: "linear-gradient(135deg, #4285f4, #3367d6)", marginTop: 24, borderRadius: 16, justifyContent: "center", padding: "14px" }} onClick={() => { setShowLoginModal(true); closeMobileMenu(); }}><FaEnvelope size={18} /> {text.login}</button> :
@@ -1328,6 +1441,8 @@ export default function NexPlay() {
               <button className="btn-click" style={styles.mainTab(currentTab === "playlists")} onClick={() => setCurrentTab("playlists")}><FaList size={15} /> {text.playlists}</button>
               <button className="btn-click" style={styles.mainTab(currentTab === "achievements")} onClick={() => setCurrentTab("achievements")}><GiAchievement size={15} /> {text.achievementsTitle}</button>
               <button className="btn-click" style={styles.mainTab(currentTab === "gamification")} onClick={() => setCurrentTab("gamification")}><FaBolt size={15} /> {text.gamification}</button>
+              <button className="btn-click" style={styles.mainTab(currentTab === "news")} onClick={() => setCurrentTab("news")}><FaNewspaper size={15} /> {text.news}</button>
+              <button className="btn-click" style={styles.mainTab(currentTab === "support")} onClick={() => setCurrentTab("support")}><FaDonate size={15} /> {text.support}</button>
               <button className="btn-click" style={styles.iconBtn} onClick={() => setShowSettings(true)}><FaCog size={15} /></button>
               <span style={styles.badge10k}>10K</span>
               {!user ? <button className="btn-click" style={styles.loginBtn} onClick={() => setShowLoginModal(true)}><FaEnvelope size={15} /> {text.login}</button> :
@@ -1455,7 +1570,9 @@ export default function NexPlay() {
                   <div style={styles.libraryMeta}>{game.developer?.slice(0, 40)} · {game.year}</div>
                   <div style={styles.libraryActions}>
                     <select className="btn-click" value={game.status} onChange={e => updateStatus(game.id, e.target.value, game)} style={styles.select}>
-                      <option value="wishlist">📝 Wunschliste</option><option value="playing">🎮 {text.playing}</option><option value="completed">✅ {text.completed}</option>
+                      <option value="wishlist">📝 Wunschliste</option>
+                      <option value="playing">🎮 {text.playing}</option>
+                      <option value="completed">✅ {text.completed}</option>
                     </select>
                     <button className="btn-click" onClick={() => toggleFavorite(game.id)} style={styles.select}><FaHeart color={favorites.includes(game.id) ? currentColors.primary : "#fff"} size={13} /></button>
                     <button className="btn-click" onClick={() => markAsPlayed(game)} style={styles.select}><FaClock size={13} /> {text.played}</button>
@@ -1522,11 +1639,14 @@ export default function NexPlay() {
           <div className="fade-in">
             <div style={styles.aiSection}>
               <div style={styles.randomFilterTitle}><FaRobot size={18} /> {text.ai}</div>
+              <div style={{ marginBottom: 12, padding: "0 16px" }}>
+                <span style={{ fontSize: 13, color: currentColors.primary }}>💬 {text.freeAiQueries}: {freeAiQueries}</span>
+              </div>
               <div style={styles.aiQuickActions}>
                 <button className="btn-click" style={styles.aiQuickBtn} onClick={() => { setAiInput("Empfehle mir ein RPG"); sendAiMessage(); }}>🎮 RPG empfehlen</button>
                 <button className="btn-click" style={styles.aiQuickBtn} onClick={() => { setAiInput("Tipps für Elden Ring"); sendAiMessage(); }}>🗡️ Elden Ring Tipps</button>
                 <button className="btn-click" style={styles.aiQuickBtn} onClick={() => { setAiInput("Was ist neu in der Gaming-Welt?"); sendAiMessage(); }}>📰 Gaming News</button>
-                <button className="btn-click" style={styles.aiQuickBtn} onClick={() => { setAiInput("Danke!"); sendAiMessage(); }}>👍 Like</button>
+                <button className="btn-click" style={styles.aiQuickBtn} onClick={() => { setAiInput("Like"); sendAiMessage(); }}>👍 Like</button>
               </div>
               <div style={styles.aiChatContainer}>
                 <div style={styles.aiMessages}>
@@ -1549,7 +1669,7 @@ export default function NexPlay() {
           </div>
         )}
 
-        {/* AOTY TAB - KOMPLETT ÜBERARBEITET */}
+        {/* AOTY TAB - KOMPLETT ÜBERARBEITET mit Nominees */}
         {currentTab === "aoty" && (
           <div className="fade-in">
             {selectedAotyYear ? (
@@ -1557,8 +1677,60 @@ export default function NexPlay() {
                 <button className="btn-click" style={styles.gotyBackBtn} onClick={() => { setSelectedAotyYear(null); setAotySearch(""); setAotyResult(null); }}><FaArrowLeft size={14} /> {text.backToAOTY}</button>
                 <div style={styles.aotyResultCard}>
                   <div style={{ fontSize: 30, fontWeight: 800, marginBottom: 24, textAlign: "center", color: currentColors.primary }}>{selectedAotyYear}</div>
-                  <div className="award-card" style={styles.aotyWinnerCard} onClick={() => { const award = AOTY_DATA[selectedAotyYear]; if (award) { const gameData = { id: selectedAotyYear, name: award.winner, rating: 9.0, genre: award.genre || "Action", playtime: award.playtime || "20-40h", year: selectedAotyYear, img: award.img, developer: award.developer || "Various", description: award.description || `${award.winner} ist das Spiel des Jahres ${selectedAotyYear}.`, platforms: ["PC", "Console"], steamId: award.steamId, finalRating: 9.0, finalImg: award.img }; openGameDetail(gameData); } }}>
-                    <div style={{ display: "flex", gap: 18, alignItems: "center", flexWrap: "wrap" }}><FaTrophy style={{ color: currentColors.primary, fontSize: 30 }} /><div><div style={{ fontSize: 14, color: currentColors.primary }}>Spiel des Jahres</div><div style={{ fontSize: 24, fontWeight: 700 }}>{AOTY_DATA[selectedAotyYear]?.winner}</div></div></div>
+                  <div className="award-card" style={styles.aotyWinnerCard} onClick={() => {
+                    const award = AOTY_DATA[selectedAotyYear];
+                    if (award) {
+                      const gameData = {
+                        id: selectedAotyYear,
+                        name: award.winner,
+                        rating: 9.0,
+                        genre: award.genre || "Action",
+                        playtime: award.playtime || "20-40h",
+                        year: selectedAotyYear,
+                        img: award.img,
+                        developer: award.developer || "Various",
+                        description: award.description || `${award.winner} ist das Spiel des Jahres ${selectedAotyYear}.`,
+                        platforms: ["PC", "Console"],
+                        steamId: award.steamId,
+                        finalRating: 9.0,
+                        finalImg: award.img
+                      };
+                      openGameDetail(gameData);
+                    }
+                  }}>
+                    <div style={{ display: "flex", gap: 18, alignItems: "center", flexWrap: "wrap" }}>
+                      <FaTrophy style={{ color: currentColors.primary, fontSize: 30 }} />
+                      <div>
+                        <div style={{ fontSize: 14, color: currentColors.primary }}>🏆 {text.winner}</div>
+                        <div style={{ fontSize: 24, fontWeight: 700 }}>{AOTY_DATA[selectedAotyYear]?.winner}</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{ marginTop: 24 }}>
+                    <div style={{ fontSize: 18, fontWeight: 600, marginBottom: 16 }}>📋 {text.nominees}</div>
+                    {AOTY_DATA[selectedAotyYear]?.nominees?.map((nominee, idx) => (
+                      <div key={idx} style={{ ...styles.aotyWinnerCard, opacity: 0.8 }} onClick={() => {
+                        const nomineeGame = MANUAL_GAMES.find(g => g.name === nominee) || { name: nominee, genre: "Unknown", year: selectedAotyYear, img: "https://placehold.co/300x400" };
+                        const gameData = {
+                          id: `nominee-${idx}`,
+                          name: nominee,
+                          rating: 8.5,
+                          genre: nomineeGame.genre || "Action",
+                          playtime: "20-40h",
+                          year: selectedAotyYear,
+                          img: nomineeGame.img || "https://placehold.co/300x400",
+                          developer: "Various",
+                          description: `${nominee} war nominiert für das Spiel des Jahres ${selectedAotyYear}.`,
+                          platforms: ["PC", "Console"],
+                          finalRating: 8.5,
+                          finalImg: nomineeGame.img || "https://placehold.co/300x400"
+                        };
+                        openGameDetail(gameData);
+                      }}>
+                        <div style={{ fontSize: 20 }}>{idx + 1}.</div>
+                        <div><div style={{ fontSize: 16 }}>{nominee}</div></div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </>
@@ -1566,22 +1738,71 @@ export default function NexPlay() {
               <>
                 <div style={styles.sectionTitle}><FaTrophy size={20} /> {text.aotyTitle}</div>
                 <input style={styles.searchBar} placeholder={text.searchAOTY} value={aotySearch} onChange={e => setAotySearch(e.target.value)} />
-                {aotyResult?.type === "year" && aotyResult.data && (
+                {aotyResult ? (
                   <div style={styles.aotyResultCard}>
+                    <button className="btn-click" style={styles.gotyBackBtn} onClick={() => { setAotyResult(null); setSelectedAotyYear(null); setAotySearch(""); }}><FaArrowLeft size={14} /> {text.backToAOTY}</button>
                     <div style={{ fontSize: 30, fontWeight: 800, marginBottom: 24, textAlign: "center", color: currentColors.primary }}>{aotyResult.year}</div>
-                    <div className="award-card" style={styles.aotyWinnerCard} onClick={() => { const award = aotyResult.data; const gameData = { id: aotyResult.year, name: award.winner, rating: 9.0, genre: award.genre || "Action", playtime: award.playtime || "20-40h", year: aotyResult.year, img: award.img, developer: award.developer || "Various", description: award.description || `${award.winner} ist das Spiel des Jahres ${aotyResult.year}.`, platforms: ["PC", "Console"], steamId: award.steamId, finalRating: 9.0, finalImg: award.img }; openGameDetail(gameData); }}>
-                      <div style={{ display: "flex", gap: 18, alignItems: "center", flexWrap: "wrap" }}><FaTrophy style={{ color: currentColors.primary, fontSize: 30 }} /><div><div style={{ fontSize: 14, color: currentColors.primary }}>Spiel des Jahres</div><div style={{ fontSize: 24, fontWeight: 700 }}>{aotyResult.data.winner}</div></div></div>
+                    <div className="award-card" style={styles.aotyWinnerCard} onClick={() => {
+                      const award = aotyResult.data;
+                      const gameData = {
+                        id: aotyResult.year,
+                        name: award.winner,
+                        rating: 9.0,
+                        genre: award.genre || "Action",
+                        playtime: award.playtime || "20-40h",
+                        year: aotyResult.year,
+                        img: award.img,
+                        developer: award.developer || "Various",
+                        description: award.description || `${award.winner} ist das Spiel des Jahres ${aotyResult.year}.`,
+                        platforms: ["PC", "Console"],
+                        steamId: award.steamId,
+                        finalRating: 9.0,
+                        finalImg: award.img
+                      };
+                      openGameDetail(gameData);
+                    }}>
+                      <div style={{ display: "flex", gap: 18, alignItems: "center", flexWrap: "wrap" }}>
+                        <FaTrophy style={{ color: currentColors.primary, fontSize: 30 }} />
+                        <div>
+                          <div style={{ fontSize: 14, color: currentColors.primary }}>🏆 {text.winner}</div>
+                          <div style={{ fontSize: 24, fontWeight: 700 }}>{aotyResult.data.winner}</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{ marginTop: 24 }}>
+                      <div style={{ fontSize: 18, fontWeight: 600, marginBottom: 16 }}>📋 {text.nominees}</div>
+                      {aotyResult.data.nominees?.map((nominee, idx) => (
+                        <div key={idx} style={{ ...styles.aotyWinnerCard, opacity: 0.8 }} onClick={() => {
+                          const nomineeGame = MANUAL_GAMES.find(g => g.name === nominee) || { name: nominee, genre: "Unknown", year: aotyResult.year, img: "https://placehold.co/300x400" };
+                          const gameData = {
+                            id: `nominee-${idx}`,
+                            name: nominee,
+                            rating: 8.5,
+                            genre: nomineeGame.genre || "Action",
+                            playtime: "20-40h",
+                            year: aotyResult.year,
+                            img: nomineeGame.img || "https://placehold.co/300x400",
+                            developer: "Various",
+                            description: `${nominee} war nominiert für das Spiel des Jahres ${aotyResult.year}.`,
+                            platforms: ["PC", "Console"],
+                            finalRating: 8.5,
+                            finalImg: nomineeGame.img || "https://placehold.co/300x400"
+                          };
+                          openGameDetail(gameData);
+                        }}>
+                          <div style={{ fontSize: 20 }}>{idx + 1}.</div>
+                          <div><div style={{ fontSize: 16 }}>{nominee}</div></div>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                )}
-                {aotyResult?.type === "error" && <div style={styles.emptyState}>{aotyResult.message}</div>}
-                {!aotySearch && !selectedAotyYear && (
+                ) : (
                   <div style={styles.grid}>
                     {Object.keys(AOTY_DATA).sort((a,b) => b - a).map(year => (
                       <div key={year} className="aoty-year-card" style={styles.aotyYearCard} onClick={() => setSelectedAotyYear(parseInt(year))}>
                         <div style={{ fontWeight: 700, fontSize: 26, color: currentColors.primary }}>{year}</div>
-                        <div style={{ fontSize: 14, marginTop: 12 }}>{AOTY_DATA[year].winner}</div>
                         <img src={AOTY_DATA[year].img} style={{ width: "100%", borderRadius: 16, marginTop: 12 }} alt={AOTY_DATA[year].winner} />
+                        <div style={{ fontSize: 14, marginTop: 12 }}>🏆 {AOTY_DATA[year].winner}</div>
                       </div>
                     ))}
                   </div>
@@ -1651,7 +1872,7 @@ export default function NexPlay() {
           </div>
         )}
 
-        {/* ACHIEVEMENTS TAB - NEU */}
+        {/* ACHIEVEMENTS TAB */}
         {currentTab === "achievements" && (
           <div className="fade-in">
             <div style={styles.sectionTitle}><GiAchievement size={20} /> {text.achievementsTitle} ({unlockedCount}/{achievements.length})</div>
@@ -1673,7 +1894,7 @@ export default function NexPlay() {
           </div>
         )}
 
-        {/* GAMIFICATION TAB - NEU */}
+        {/* GAMIFICATION TAB */}
         {currentTab === "gamification" && (
           <div className="fade-in">
             <div style={styles.sectionTitle}><FaBolt size={20} /> {text.gamification}</div>
@@ -1686,7 +1907,6 @@ export default function NexPlay() {
               <div style={{ fontWeight: 600, marginBottom: 8 }}>XP Fortschritt zu Level {userLevel + 1}</div>
               <div style={styles.progressBar}><div style={{ ...styles.progressFill, width: `${(userXP % 1000) / 10}%` }}></div></div>
             </div>
-
             <div style={styles.sectionTitle}><FaCalendarCheck size={18} /> {text.dailyChallenges}</div>
             {dailyChallenges.map(challenge => (
               <div key={challenge.id} style={{ ...styles.achievementCard, background: challenge.completed ? `${colors.success}20` : `${currentColors.primary}10` }}>
@@ -1702,7 +1922,51 @@ export default function NexPlay() {
           </div>
         )}
 
-        {/* COMPARE TAB - EIGENER TAB FÜR GAMIFICATION */}
+        {/* NEWS TAB */}
+        {currentTab === "news" && (
+          <div className="fade-in">
+            <div style={styles.sectionTitle}><FaNewspaper size={20} /> {text.news}</div>
+            {loadingNews ? (
+              <div style={{ textAlign: "center", padding: 40 }}><div style={styles.loadingSpinner}></div></div>
+            ) : news.length === 0 ? (
+              <div style={styles.emptyState}>Keine News verfügbar. API-Key für GNews.io erforderlich.</div>
+            ) : (
+              news.map((article, idx) => (
+                <div key={idx} style={styles.newsCard}>
+                  {article.image && <img src={article.image} style={{ width: "100%", height: 200, objectFit: "cover", borderRadius: 16, marginBottom: 16 }} alt={article.title} />}
+                  <div style={styles.newsTitle}>{article.title}</div>
+                  <div style={styles.newsDescription}>{article.description?.substring(0, 150)}...</div>
+                  <a href={article.url} target="_blank" rel="noopener noreferrer" style={styles.newsLink}>{text.readMore} →</a>
+                </div>
+              ))
+            )}
+          </div>
+        )}
+
+        {/* SUPPORT TAB */}
+        {currentTab === "support" && (
+          <div className="fade-in">
+            <div style={styles.supportCard}>
+              <div style={{ fontSize: 48, marginBottom: 24 }}>☕</div>
+              <div style={{ fontSize: 32, fontWeight: 700, marginBottom: 16, color: currentColors.primary }}>{text.supportMessage}</div>
+              <p style={{ fontSize: 16, marginBottom: 24, color: currentColors.textSecondary }}>Mit deiner Unterstützung kann NexPlay weiter wachsen und noch mehr Features bekommen! 🚀</p>
+              <a href="https://ko-fi.com/sherlock10k" target="_blank" rel="noopener noreferrer" style={styles.koFiBtn}>
+                <SiKofi size={24} /> {text.becomePatron}
+              </a>
+              <div style={{ marginTop: 32, fontSize: 14, color: currentColors.textSecondary }}>
+                <p>💪 Als Unterstützer bekommst du:</p>
+                <ul style={{ textAlign: "left", display: "inline-block", marginTop: 12 }}>
+                  <li>✓ Unbegrenzte KI-Chats</li>
+                  <li>✓ Exklusive Badges & Achievements</li>
+                  <li>✓ Früher Zugang zu neuen Features</li>
+                  <li>✓ Dein Name in den Credits</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* COMPARE TAB */}
         {currentTab === "compare" && (
           <div className="fade-in">
             <div style={styles.sectionTitle}><FaBalanceScale size={18} /> {text.compareGames}</div>
@@ -1726,7 +1990,7 @@ export default function NexPlay() {
 
       {/* MODALS */}
       {showEditModal && user && (<div className="fade-in" style={styles.modalOverlay} onClick={() => setShowEditModal(false)}><div className="slide-in" style={styles.modalContent} onClick={e => e.stopPropagation()}><div style={styles.modalTitle}>{text.editProfile}</div>{editError && <div style={styles.errorText}>{editError}</div>}{editSuccess && <div style={styles.successText}>{editSuccess}</div>}<input style={styles.input} placeholder={text.username} value={editUsername} onChange={e => setEditUsername(e.target.value)} /><textarea style={styles.textarea} placeholder={text.bio} rows="3" value={editBio} onChange={e => setEditBio(e.target.value)} /><label className="btn-click" style={styles.checkbox}><input type="checkbox" checked={editPrivate} onChange={e => setEditPrivate(e.target.checked)} /> {text.private}</label><div style={{ marginTop: 20, paddingTop: 20, borderTop: `1px solid rgba(255,255,255,0.1)` }}><div style={{ fontWeight: 600, marginBottom: 16, fontSize: 16 }}><FaSteam /> {text.steamConnect}</div><div style={styles.platformRow}><input type="text" placeholder={text.steamId} value={steamIdInput} onChange={e => setSteamIdInput(e.target.value)} style={{ ...styles.input, marginBottom: 0, flex: 1 }} /><button className="btn-click" style={styles.platformBtn(colors.steam)} onClick={handleSteamLogin} disabled={syncingPlatform === "steam"}><FaSteam size={14} /> {syncingPlatform === "steam" ? "Importiere..." : text.importGames}</button></div><div style={{ fontSize: 12, color: currentColors.textSecondary, marginTop: 12 }}>🔍 {text.findSteamId}: <a href="https://steamidfinder.com/" target="_blank" rel="noreferrer" style={{ color: currentColors.primary }}>steamidfinder.com</a></div></div><button className="btn-click" style={styles.modalBtn} onClick={handleUpdateProfile}>{text.save}</button></div></div>)}
-      {selectedAchievement && (<div className="fade-in" style={styles.modalOverlay} onClick={() => setSelectedAchievement(null)}><div className="slide-in" style={styles.modalContent} onClick={e => e.stopPropagation()}><div style={styles.modalTitle}>{selectedAchievement.name}</div><div style={{ fontSize: 48, textAlign: "center", marginBottom: 16 }}>{selectedAchievement.icon}</div><div style={{ fontSize: 16, marginBottom: 12, textAlign: "center" }}>{selectedAchievement.description}</div><div style={{ fontSize: 14, color: currentColors.textSecondary, textAlign: "center" }}>🎯 Aufgabe: {selectedAchievement.requirement}</div>{selectedAchievement.secret && !selectedAchievement.unlocked && <div style={{ fontSize: 12, color: colors.warning, textAlign: "center", marginTop: 12 }}>🔒 {text.secret} - Die Aufgabe wird enthüllt, wenn du sie erfüllst!</div>}<button className="btn-click" style={styles.modalBtn} onClick={() => setSelectedAchievement(null)}>{text.close}</button></div></div>)}
+      {selectedAchievement && (<div className="fade-in" style={styles.modalOverlay} onClick={() => setSelectedAchievement(null)}><div className="slide-in" style={styles.modalContent} onClick={e => e.stopPropagation()}><div style={styles.modalTitle}>{selectedAchievement.name}</div><div style={{ fontSize: 48, textAlign: "center", marginBottom: 16 }}>{selectedAchievement.icon}</div><div style={{ fontSize: 16, marginBottom: 12, textAlign: "center" }}>{selectedAchievement.description}</div><div style={{ fontSize: 14, color: currentColors.textSecondary, textAlign: "center" }}>🎯 Aufgabe: {selectedAchievement.requirement}</div><div style={{ fontSize: 12, color: colors.success, textAlign: "center", marginTop: 8 }}>🏆 Belohnung: +{selectedAchievement.reward} XP</div>{selectedAchievement.secret && !selectedAchievement.unlocked && <div style={{ fontSize: 12, color: colors.warning, textAlign: "center", marginTop: 12 }}>🔒 {text.secret} - Die Aufgabe wird enthüllt, wenn du sie erfüllst!</div>}<button className="btn-click" style={styles.modalBtn} onClick={() => setSelectedAchievement(null)}>{text.close}</button></div></div>)}
       {showCreatePlaylist && (<div className="fade-in" style={styles.modalOverlay} onClick={() => setShowCreatePlaylist(false)}><div className="slide-in" style={styles.modalContent} onClick={e => e.stopPropagation()}><div style={styles.modalTitle}>{text.createPlaylist}</div><input style={styles.input} placeholder={text.playlistName} value={newPlaylistName} onChange={e => setNewPlaylistName(e.target.value)} /><button className="btn-click" style={styles.modalBtn} onClick={createPlaylist}>{text.createPlaylist}</button></div></div>)}
       {showSettings && (<div className="fade-in" style={styles.modalOverlay} onClick={() => setShowSettings(false)}><div className="slide-in" style={styles.modalContent} onClick={e => e.stopPropagation()}><div style={styles.modalTitle}>{text.settings} ⚙️</div><div style={styles.settingsSection}><div style={styles.settingsRow}><span style={styles.settingsLabel}>{text.sound}:</span><button className="btn-click" style={styles.iconBtn} onClick={() => setSoundEnabled(!soundEnabled)}>{soundEnabled ? <FaVolumeUp size={15} /> : <FaVolumeMute size={15} />} {soundEnabled ? "ON" : "OFF"}</button></div><div style={styles.settingsRow}><span style={styles.settingsLabel}>{text.language}:</span><button className="btn-click" style={styles.iconBtn} onClick={() => setLang(lang === "en" ? "de" : "en")}><FaLanguage size={15} /> {lang === "en" ? "DE" : "EN"}</button></div><div style={styles.settingsRow}><span style={styles.settingsLabel}>{text.theme}:</span><div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}><button className="btn-click" style={{ ...styles.iconBtn, background: theme === "dark" ? currentColors.primary : "rgba(255,255,255,0.08)", padding: "8px 16px" }} onClick={() => { setTheme("dark"); setThemeChangeCount(prev => prev + 1); updateAchievements(); }}><FaMoon size={13} /> {text.dark}</button><button className="btn-click" style={{ ...styles.iconBtn, background: theme === "light" ? currentColors.primary : "rgba(255,255,255,0.08)", padding: "8px 16px" }} onClick={() => { setTheme("light"); setThemeChangeCount(prev => prev + 1); updateAchievements(); }}><FaSun size={13} /> {text.light}</button><button className="btn-click" style={{ ...styles.iconBtn, background: theme === "auto" ? currentColors.primary : "rgba(255,255,255,0.08)", padding: "8px 16px" }} onClick={() => { setTheme("auto"); setThemeChangeCount(prev => prev + 1); updateAchievements(); }}><FaAdjust size={13} /> {text.auto}</button></div></div><div style={styles.settingsRow}><span style={styles.settingsLabel}>{text.notifications}:</span><button className="btn-click" style={styles.iconBtn} onClick={() => setNotificationsEnabled(!notificationsEnabled)}>{notificationsEnabled ? "🔔 ON" : "🔕 OFF"}</button></div><div style={styles.settingsRow}><span style={styles.settingsLabel}>{text.autoSave}:</span><button className="btn-click" style={styles.iconBtn} onClick={() => setAutoSave(!autoSave)}>{autoSave ? "✅ ON" : "❌ OFF"}</button></div><div style={styles.settingsRow}><span style={styles.settingsLabel}>{text.compactView}:</span><button className="btn-click" style={styles.iconBtn} onClick={() => setCompactView(!compactView)}>{compactView ? "📐 ON" : "📏 OFF"}</button></div><div style={styles.settingsRow}><span style={styles.settingsLabel}>{text.highContrast}:</span><button className="btn-click" style={styles.iconBtn} onClick={() => setHighContrast(!highContrast)}>{highContrast ? "🔆 ON" : "🔅 OFF"}</button></div></div><button className="btn-click" style={styles.modalBtn} onClick={() => setShowSettings(false)}>{text.close}</button></div></div>)}
       {showRandomModal && randomGame && (<div className="fade-in" style={styles.modalOverlay} onClick={() => setShowRandomModal(false)}><div className="slide-in" style={styles.modalContent} onClick={e => e.stopPropagation()}><div style={styles.modalTitle}>🎲 {text.randomGame}</div><img src={randomGame.finalImg || randomGame.img} style={{ width: "100%", borderRadius: 24, marginBottom: 24 }} alt={randomGame.name} /><div style={{ fontSize: 20, fontWeight: 700, textAlign: "center", marginBottom: 10 }}>{randomGame.name}</div><div style={{ fontSize: 16, color: currentColors.primary, textAlign: "center", marginBottom: 16 }}>★ {(randomGame.finalRating || randomGame.rating)?.toFixed(1)} · {randomGame.playtime} · {randomGame.year}</div><div style={{ fontSize: 14, marginBottom: 24, color: currentColors.textSecondary, textAlign: "center", maxHeight: 150, overflow: "auto" }}>{(randomGame.finalDescription || generateLongDescription(randomGame.name, "")).slice(0, 250)}...</div><div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}><button className="btn-click" style={{ ...styles.addBtn, width: "auto", padding: "10px 24px", fontSize: 14 }} onClick={() => { addToLibrary(randomGame); setShowRandomModal(false); }}>+ {text.add}</button><button className="btn-click" style={styles.modalBtnSecondary} onClick={doRandom}>{text.rollAgain}</button></div></div></div>)}
