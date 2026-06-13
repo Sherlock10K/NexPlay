@@ -95,7 +95,7 @@ export default function NexPlay() {
   
   // ========== AI CHAT STATE ==========
   const [aiMessages, setAiMessages] = useState([
-    { role: "assistant", content: "🎮 Hallo! Ich bin dein Gaming-Assistent! Ich kann dir:\n• Spiele empfehlen basierend auf deinem Geschmack\n• Fragen zu Spielen beantworten\n• Tipps und Tricks geben\n• Gaming-News auf dem Laufenden halten\n\nWas möchtest du heute wissen?" }
+    { role: "assistant", content: "Hi! Ich bin dein Gaming-Assistent. Frag mich nach Spielempfehlungen, Tipps oder was du sonst wissen möchtest! 🎮" }
   ]);
   const [aiInput, setAiInput] = useState("");
   const [isAiLoading, setIsAiLoading] = useState(false);
@@ -137,7 +137,7 @@ export default function NexPlay() {
     audio.play().catch(() => {});
   };
 
-  // ========== AI CHAT FUNCTION (VERBESSERT) ==========
+  // ========== AI CHAT FUNCTION ==========
   const sendAiMessage = async () => {
     if (!aiInput.trim()) return;
     
@@ -145,31 +145,6 @@ export default function NexPlay() {
     setAiMessages(prev => [...prev, { role: "user", content: userMessage }]);
     setAiInput("");
     setIsAiLoading(true);
-    
-    // Verbesserte lokale Antworten (Fallback falls API nicht geht)
-    const getLocalResponse = (message) => {
-      const msg = message.toLowerCase();
-      if (msg.includes("empfehl") || msg.includes("vorschlag") || msg.includes("was soll ich spielen")) {
-        const randomGame = FIXED_GAMES[Math.floor(Math.random() * FIXED_GAMES.length)];
-        return `🎮 **Spielempfehlung für dich:**\n\n📌 **${randomGame.name}**\n⭐ Bewertung: ${randomGame.rating}/10\n🎭 Genre: ${randomGame.genre}\n⏱️ Spielzeit: ${randomGame.playtime}\n📅 Jahr: ${randomGame.year}\n\n${randomGame.description.substring(0, 200)}...\n\nMöchtest du mehr über dieses Spiel wissen? 🔍`;
-      }
-      if (msg.includes("witcher") || msg.includes("the witcher")) {
-        return "🐺 **The Witcher 3: Wild Hunt - Ultimative Tipps:**\n\n• **Nebenquests**: Nimm dir Zeit! Viele sind besser als die Hauptstory\n• **Gwent**: Lerne das Kartenspiel - es macht süchtig!\n• **Builds**: Experimentiere mit verschiedenen Fähigkeiten\n• **DLCs**: Hearts of Stone & Blood and Wine sind absolute Pflicht!\n• **Alchemie**: Braue Tränke und Öle für schwere Gegner\n\nFrag mich gerne nach mehr Details! 🎮";
-      }
-      if (msg.includes("elden ring")) {
-        return "🗡️ **Elden Ring - Anfänger-Tipps:**\n\n• **Lebenspunkte**: Level zuerst VIGOR auf 20-30\n• **Erkundung**: Erkunde Limgrave gründlich VOR dem ersten Hauptboss\n• **Geisterbeschwörungen**: Nutze sie! Sie helfen enorm\n• **Waffen**: Bring deine Hauptwaffe auf +3 oder höher vor Margit\n• **Keine Scham**: Leveln und später zurückkommen ist völlig okay!\n\nBrauchst du Tipps für einen bestimmten Boss? 🎯";
-      }
-      if (msg.includes("rpg")) {
-        return "🎲 **Top RPG-Empfehlungen auf NexPlay:**\n\n1. **Baldur's Gate 3** - 9.6/10 - Das ultimative D&D-Erlebnis\n2. **The Witcher 3** - 9.5/10 - Meisterhaftes Open-World-RPG\n3. **Disco Elysium** - 9.4/10 - Einzigartiges Detektiv-RPG\n4. **Cyberpunk 2077** - 8.5/10 - Night City ist atemberaubend\n\nWelches RPG interessiert dich besonders? Ich kann dir mehr Details geben! 🔍";
-      }
-      if (msg.includes("action")) {
-        return "⚔️ **Top Action-Spiele auf NexPlay:**\n\n1. **God of War** - 9.4/10 - Vater-Sohn-Epos mit brutalen Kämpfen\n2. **Hades** - 9.3/10 - Roguelite mit griechischer Mythologie\n3. **Hollow Knight** - 9.3/10 - Atmosphärisches Metroidvania\n4. **Elden Ring** - 9.5/10 - Herausforderndes Action-RPG\n\nDiese Spiele bieten intensive Kämpfe und tolle Geschichten! 🎮";
-      }
-      if (msg.includes("open world")) {
-        return "🌍 **Open World Meisterwerke:**\n\n• **Red Dead Redemption 2** - 9.6/10 - Lebendigste Welt aller Zeiten\n• **Elden Ring** - 9.5/10 - Riesige, geheimnisvolle Welt\n• **The Witcher 3** - 9.5/10 - Atmosphärisches Fantasy-Open-World\n• **Cyberpunk 2077** - 8.5/10 - Dichte, vertikale Metropole\n\nWelche Art von Open World suchst du? 🗺️";
-      }
-      return `Danke für deine Frage zu "${message.substring(0, 50)}"! 🎮\n\nIch kann dir helfen mit:\n• **Spielempfehlungen** (z.B. "Empfehle mir ein RPG")\n• **Spiel-Tipps** (z.B. "Tipps für Elden Ring")\n• **Genre-Fragen** (z.B. "Beste Action-Spiele")\n• **Bestimmte Spiele** (z.B. "Was ist The Witcher 3?")\n\nWas möchtest du genau wissen? 😊`;
-    };
     
     try {
       const response = await fetch("https://api.deepseek.com/v1/chat/completions", {
@@ -181,25 +156,21 @@ export default function NexPlay() {
         body: JSON.stringify({
           model: "deepseek-chat",
           messages: [
-            { role: "system", content: "Du bist ein begeisterter Gaming-Assistent für NexPlay. Du gibst detaillierte, hilfreiche Antworten zu Spielen, Empfehlungen und Gaming-Tipps. Antworte immer auf Deutsch, sei freundlich und nutze Emojis. Gib konkrete Empfehlungen aus diesen Spielen: The Witcher 3, Elden Ring, Baldur's Gate 3, Red Dead Redemption 2, God of War, Hades, Hollow Knight, Stardew Valley, Portal 2, Disco Elysium." },
+            { role: "system", content: "Du bist ein Gaming-Assistent. Du hilfst bei Spielempfehlungen, beantwortest Fragen zu Spielen und gibst Tipps. Sei freundlich und enthusiastisch. Antworte auf Deutsch." },
             ...aiMessages.slice(-5).map(m => ({ role: m.role, content: m.content })),
             { role: "user", content: userMessage }
           ],
-          temperature: 0.8,
-          max_tokens: 600
+          temperature: 0.7,
+          max_tokens: 500
         })
       });
       
-      if (response.ok) {
-        const data = await response.json();
-        const assistantReply = data.choices?.[0]?.message?.content || getLocalResponse(userMessage);
-        setAiMessages(prev => [...prev, { role: "assistant", content: assistantReply }]);
-      } else {
-        setAiMessages(prev => [...prev, { role: "assistant", content: getLocalResponse(userMessage) }]);
-      }
+      const data = await response.json();
+      const assistantReply = data.choices?.[0]?.message?.content || "Entschuldigung, ich konnte keine Antwort generieren. Bitte versuche es später erneut.";
+      setAiMessages(prev => [...prev, { role: "assistant", content: assistantReply }]);
     } catch (error) {
       console.error("AI Error:", error);
-      setAiMessages(prev => [...prev, { role: "assistant", content: getLocalResponse(userMessage) }]);
+      setAiMessages(prev => [...prev, { role: "assistant", content: "Entschuldigung, es gab einen Fehler bei der Verbindung zur KI. Bitte versuche es später erneut." }]);
     } finally {
       setIsAiLoading(false);
     }
@@ -228,10 +199,6 @@ export default function NexPlay() {
     playSound();
     setSelectedGameDetail(game);
     setJournalText(gameJournal[game.id] || "");
-    // Reviews laden für dieses Spiel (optional)
-    if (user) {
-      getGameReviews(game.id).then(setGameDetailReviews).catch(() => {});
-    }
     setCurrentTab("gameDetail");
   };
 
@@ -290,25 +257,8 @@ export default function NexPlay() {
 
   const submitReview = async () => {
     if (reviewRating === 0) return;
-    if (user) {
-      await addGameReview(user.uid, selectedGameDetail.id, selectedGameDetail.name, reviewRating, reviewComment);
-      const reviews = await getGameReviews(selectedGameDetail.id);
-      setGameDetailReviews(reviews);
-    } else {
-      // Demo-Review ohne Login
-      const newReview = {
-        id: Date.now(),
-        userId: "demo",
-        gameId: selectedGameDetail.id,
-        gameName: selectedGameDetail.name,
-        rating: reviewRating,
-        comment: reviewComment,
-        likes: [],
-        dislikes: [],
-        createdAt: new Date().toISOString()
-      };
-      setGameDetailReviews(prev => [newReview, ...prev]);
-    }
+    await addGameReview(user.uid, selectedGameDetail.id, selectedGameDetail.name, reviewRating, reviewComment);
+    setGameDetailReviews(await getGameReviews(selectedGameDetail.id));
     setReviewRating(0);
     setReviewComment("");
     playSound();
@@ -477,7 +427,7 @@ export default function NexPlay() {
     navTab: (active) => ({ background: active ? currentColors.primary : "rgba(255,255,255,0.08)", border: "none", borderRadius: 12, padding: "10px 20px", color: active ? currentColors.bg : currentColors.text, cursor: "pointer", fontWeight: 600, fontSize: 14, display: "flex", alignItems: "center", gap: 8 }),
     avatar: { width: 40, height: 40, borderRadius: "50%", background: currentColors.primary, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 18, objectFit: "cover" },
     grid: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 24 },
-    gameCard: { background: currentColors.bgCard, borderRadius: 20, overflow: "hidden", cursor: "pointer", border: "1px solid rgba(255,255,255,0.08)", transition: "all 0.3s ease", position: "relative", "&:hover": { transform: "translateY(-4px)", boxShadow: "0 8px 24px rgba(0,0,0,0.2)" } },
+    gameCard: { background: currentColors.bgCard, borderRadius: 20, overflow: "hidden", cursor: "pointer", border: "1px solid rgba(255,255,255,0.08)", transition: "all 0.3s ease", position: "relative" },
     gameImg: { width: "100%", aspectRatio: "3/4", objectFit: "cover" },
     gameInfo: { padding: "14px" },
     gameName: { fontSize: 14, fontWeight: 700, marginBottom: 4, wordWrap: "break-word" },
@@ -502,9 +452,9 @@ export default function NexPlay() {
     cameraIcon: { position: "absolute", bottom: 0, right: 0, background: currentColors.bg, borderRadius: "50%", padding: "8px", cursor: "pointer", boxShadow: "0 2px 8px rgba(0,0,0,0.3)" },
     achievementGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 12, marginTop: 16 },
     achievementCard: { background: "rgba(0,0,0,0.3)", borderRadius: 12, padding: 12, display: "flex", alignItems: "center", gap: 12 },
-    aiChatContainer: { height: 550, display: "flex", flexDirection: "column", background: currentColors.bgCard, borderRadius: 24, overflow: "hidden" },
+    aiChatContainer: { height: 500, display: "flex", flexDirection: "column", background: currentColors.bgCard, borderRadius: 24, overflow: "hidden" },
     aiMessages: { flex: 1, overflowY: "auto", padding: 20, display: "flex", flexDirection: "column", gap: 12 },
-    aiMessage: (isUser) => ({ background: isUser ? currentColors.primary : "rgba(255,255,255,0.08)", color: isUser ? currentColors.bg : currentColors.text, padding: "12px 16px", borderRadius: 18, borderBottomRightRadius: isUser ? 4 : 18, borderBottomLeftRadius: isUser ? 18 : 4, maxWidth: "80%", alignSelf: isUser ? "flex-end" : "flex-start", whiteSpace: "pre-wrap" }),
+    aiMessage: (isUser) => ({ background: isUser ? currentColors.primary : "rgba(255,255,255,0.08)", color: isUser ? currentColors.bg : currentColors.text, padding: "12px 16px", borderRadius: 18, borderBottomRightRadius: isUser ? 4 : 18, borderBottomLeftRadius: isUser ? 18 : 4, maxWidth: "80%", alignSelf: isUser ? "flex-end" : "flex-start" }),
     aiInputRow: { display: "flex", gap: 12, padding: 16, background: "rgba(0,0,0,0.3)", borderTop: `1px solid rgba(255,255,255,0.08)` },
     wheel: { width: 200, height: 200, borderRadius: "50%", background: `conic-gradient(${currentColors.primary} 0deg 72deg, #4caf50 72deg 144deg, #f44336 144deg 216deg, #1b2838 216deg 288deg, #ffd400 288deg 360deg)`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "transform 0.1s", boxShadow: "0 10px 30px rgba(0,0,0,0.3)" },
     wheelInner: { width: 60, height: 60, borderRadius: "50%", background: currentColors.bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24 }
@@ -523,7 +473,6 @@ export default function NexPlay() {
   // ========== GAME DETAIL VIEW ==========
   if (currentTab === "gameDetail" && selectedGameDetail) {
     const tags = customTags[selectedGameDetail.id] || [];
-    const isOnLibrary = library.some(g => g.id === selectedGameDetail.id);
     const isOnWishlist = wishlist.some(g => g.id === selectedGameDetail.id);
     const fullDesc = selectedGameDetail.description;
     const isExpanded = expandedDescriptions[selectedGameDetail.id];
@@ -564,8 +513,7 @@ export default function NexPlay() {
                 )}
               </div>
               <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 20 }}>
-                {!isOnLibrary && <button style={{ ...styles.addBtn, width: "auto", padding: "10px 20px" }} onClick={() => addToLibrary(selectedGameDetail)}>+ Zur Bibliothek</button>}
-                {isOnLibrary && <button style={{ ...styles.addBtn, width: "auto", padding: "10px 20px", background: colors.success }}>✅ Bereits in Bibliothek</button>}
+                <button style={{ ...styles.addBtn, width: "auto", padding: "10px 20px" }} onClick={() => addToLibrary(selectedGameDetail)}>+ Zur Bibliothek</button>
                 <button style={{ ...styles.addBtn, width: "auto", padding: "10px 20px", background: isOnWishlist ? colors.success : currentColors.primary }} onClick={() => addToWishlist(selectedGameDetail)}>⭐ Wunschliste</button>
               </div>
               <div style={{ marginBottom: 20 }}>
@@ -598,22 +546,6 @@ export default function NexPlay() {
             </div>
             <textarea style={styles.input} placeholder="Deine Bewertung..." rows="2" value={reviewComment} onChange={e => setReviewComment(e.target.value)} />
             <button style={styles.modalBtn} onClick={submitReview}>Bewertung speichern</button>
-            
-            {/* Reviews anzeigen */}
-            {gameDetailReviews.length > 0 && (
-              <div style={{ marginTop: 24 }}>
-                <div style={styles.sectionTitle}>Reviews ({gameDetailReviews.length})</div>
-                {gameDetailReviews.map(review => (
-                  <div key={review.id} style={{ background: "rgba(255,255,255,0.05)", borderRadius: 12, padding: 12, marginBottom: 12 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-                      <span style={{ color: currentColors.primary }}>★ {review.rating}</span>
-                      <span style={{ fontSize: 12, color: currentColors.textSecondary }}>{new Date(review.createdAt).toLocaleString()}</span>
-                    </div>
-                    <div style={{ fontSize: 14 }}>{review.comment}</div>
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
         </div>
       </div>
@@ -623,12 +555,6 @@ export default function NexPlay() {
   // ========== MAIN APP ==========
   return (
     <div style={styles.app}>
-      <style>{`
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
-        .spinning-wheel { animation: spin 0.5s ease-out; }
-      `}</style>
-      
       <div style={styles.container}>
         {/* HEADER */}
         <div style={styles.header}>
@@ -642,7 +568,7 @@ export default function NexPlay() {
               <button style={styles.navTab(currentTab === "home")} onClick={() => setCurrentTab("home")}><FaHome /> Entdecken</button>
               <button style={styles.navTab(currentTab === "library")} onClick={() => setCurrentTab("library")}><BsFillCollectionFill /> Bibliothek</button>
               <button style={styles.navTab(currentTab === "profile")} onClick={() => setCurrentTab("profile")}><FaUser /> Profil</button>
-              <button style={styles.navTab(currentTab === "ai")} onClick={() => setCurrentTab("ai")}><FaRobot /> KI-Assistent</button>
+              <button style={styles.navTab(currentTab === "ai")} onClick={() => setCurrentTab("ai")}><FaRobot /> KI</button>
               <button style={styles.navTab(currentTab === "aoty")} onClick={() => setCurrentTab("aoty")}><FaTrophy /> AOTY</button>
               <button style={styles.navTab(currentTab === "random")} onClick={() => setCurrentTab("random")}><FaRandom /> Zufall</button>
               {!user && <button style={styles.navTab(false)} onClick={() => setShowLoginModal(true)}>Login</button>}
@@ -737,7 +663,7 @@ export default function NexPlay() {
                   </div>
                 </div>
 
-                {/* ACHIEVEMENTS */}
+                {/* ACHIEVEMENTS SICHTBAR */}
                 <div style={styles.sectionTitle}><GiAchievement /> Erfolge</div>
                 <div style={styles.achievementGrid}>
                   {achievements.map(ach => (
@@ -785,7 +711,7 @@ export default function NexPlay() {
           </div>
         )}
 
-        {/* AI TAB - VERBESSERTER CHAT */}
+        {/* AI TAB - MIT CHAT UI */}
         {currentTab === "ai" && (
           <div>
             <div style={styles.sectionTitle}><FaRobot /> KI-Assistent mit DeepSeek</div>
@@ -793,8 +719,8 @@ export default function NexPlay() {
               <div style={styles.aiMessages}>
                 {aiMessages.map((msg, idx) => (
                   <div key={idx} style={styles.aiMessage(msg.role === "user")}>
-                    <div style={{ fontWeight: 600, marginBottom: 4, fontSize: 12, opacity: 0.7 }}>{msg.role === "user" ? "Du" : "🎮 NexPlay AI"}</div>
-                    <div style={{ fontSize: 14, lineHeight: 1.5, whiteSpace: "pre-wrap" }}>{msg.content}</div>
+                    <div style={{ fontWeight: 600, marginBottom: 4, fontSize: 12, opacity: 0.7 }}>{msg.role === "user" ? "Du" : "NexPlay AI"}</div>
+                    <div style={{ fontSize: 14, lineHeight: 1.5 }}>{msg.content}</div>
                   </div>
                 ))}
                 {isAiLoading && (
@@ -809,8 +735,8 @@ export default function NexPlay() {
                 <div ref={aiChatEndRef} />
               </div>
               <div style={styles.aiInputRow}>
-                <input style={{ flex: 1, background: "rgba(255,255,255,0.05)", border: "none", borderRadius: 24, padding: "12px 18px", color: currentColors.text, fontSize: 14, outline: "none" }} placeholder="Frag mich nach Spielen, Tipps oder Empfehlungen..." value={aiInput} onChange={e => setAiInput(e.target.value)} onKeyPress={e => e.key === "Enter" && sendAiMessage()} />
-                <button style={styles.addBtn} onClick={sendAiMessage} disabled={isAiLoading}>{isAiLoading ? "..." : "Senden"}</button>
+                <input style={{ flex: 1, background: "rgba(255,255,255,0.05)", border: "none", borderRadius: 24, padding: "12px 18px", color: currentColors.text, fontSize: 14, outline: "none" }} placeholder="Frag mich nach Spielen..." value={aiInput} onChange={e => setAiInput(e.target.value)} onKeyPress={e => e.key === "Enter" && sendAiMessage()} />
+                <button style={styles.addBtn} onClick={sendAiMessage} disabled={isAiLoading}>Senden</button>
               </div>
             </div>
           </div>
