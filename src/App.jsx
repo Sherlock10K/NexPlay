@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from "react";
-import { FaHome, FaUser, FaFire, FaSearch, FaHeart, FaStar, FaTrash, FaSignOutAlt, FaPlus, FaCheck, FaEnvelope, FaEye, FaEyeSlash, FaEdit, FaUsers, FaClock, FaRandom, FaThumbsUp, FaThumbsDown, FaArrowLeft, FaCog, FaVolumeUp, FaVolumeMute, FaLanguage, FaSteam, FaPlaystation, FaGamepad, FaTrophy, FaGem, FaShoppingCart, FaRobot, FaFilter, FaLink, FaExternalLinkAlt, FaDonate, FaAward, FaList, FaMedal, FaGamepad as FaGamepadIcon, FaDiceD6, FaGlobe, FaStarHalfAlt, FaTv, FaMicrophone, FaVideo, FaDesktop, FaPlusCircle, FaTrashAlt, FaUsers as FaUsersIcon, FaBell, FaCalendarAlt, FaChartLine, FaBook, FaTags, FaBalanceScale, FaFileExport, FaFileImport, FaMoon, FaSun, FaAdjust, FaBars, FaTimes, FaChevronDown, FaChevuefgnvn, FaFutbol, FaSpinner, FaCamera, FaRobot as FaRobotIcon } from "react-icons/fa";
+import { FaHome, FaUser, FaFire, FaSearch, FaHeart, FaStar, FaTrash, FaSignOutAlt, FaPlus, FaCheck, FaEnvelope, FaEye, FaEyeSlash, FaEdit, FaUsers, FaClock, FaRandom, FaThumbsUp, FaThumbsDown, FaArrowLeft, FaCog, FaVolumeUp, FaVolumeMute, FaLanguage, FaSteam, FaPlaystation, FaGamepad, FaTrophy, FaGem, FaShoppingCart, FaRobot, FaFilter, FaLink, FaExternalLinkAlt, FaDonate, FaAward, FaList, FaMedal, FaGamepad as FaGamepadIcon, FaDiceD6, FaGlobe, FaStarHalfAlt, FaTv, FaMicrophone, FaVideo, FaDesktop, FaPlusCircle, FaTrashAlt, FaUsers as FaUsersIcon, FaBell, FaCalendarAlt, FaChartLine, FaBook, FaTags, FaBalanceScale, FaFileExport, FaFileImport, FaMoon, FaSun, FaAdjust, FaBars, FaTimes, FaChevronDown, FaChevronUp, FaFutbol, FaSpinner, FaCamera } from "react-icons/fa";
 import { GiConsoleController, GiAchievement, GiSwordman, GiPuzzle, GiMusicalNotes, GiBrain, GiShield, GiMagicSwirl, GiTrophy, GiLaurels, GiSpinningWheel, GiNotebook, GiTwoCoins, GiLevelEndFlag } from "react-icons/gi";
 import { BsFillCollectionFill, BsFillHeartFill, BsFillStarFill, BsFillAwardFill, BsFillPlayFill } from "react-icons/bs";
 import { auth, loginWithEmail, registerWithEmail, logout, loadLibraryFromFirestore, saveLibraryToFirestore, loadProfileFromFirestore, saveProfileToFirestore, updateUsername, updateBio, togglePrivacy, searchUsers, resetPassword, addGameReview, getGameReviews, updateLastPlayed, likeReview, dislikeReview } from "./firebase";
@@ -31,27 +31,28 @@ const PLAYTIMES = ["Under 10h", "10-20h", "20-40h", "40-60h", "60-100h", "100h+"
 const DEEPSEEK_API_KEY = "sk-b5699f49547a4e4ab7eaa74cb6bb7016";
 
 const AOTY_DATA = {
-  2025: { winner: "Clair Obscur: Expedition 33", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2358720/header.jpg", steamId: 2358720, genre: "RPG", playtime: "60-100h", developer: "Kepler Interactive", description: "Clair Obscur: Expedition 33 ist ein episches RPG in einer düsteren Fantasy-Welt. Entdecke eine atemberaubende offene Welt, kämpfe gegen mythologische Kreaturen und erlebe eine emotionale Geschichte über Verlust und Hoffnung." },
-  2024: { winner: "Astro Bot", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2357570/header.jpg", steamId: 2357570, genre: "Platformer", playtime: "20-40h", developer: "Team Asobi", description: "Astro Bot ist ein charmantes 3D-Platformer-Abenteuer. Begleite Astro auf einer Reise durch bunte Welten, löse kreative Rätsel und bekämpfe lustige Gegner. Ein Fest für die ganze Familie!" },
-  2023: { winner: "Baldur's Gate 3", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1086940/header.jpg", steamId: 1086940, genre: "RPG", playtime: "100h+", developer: "Larian Studios", description: "Baldur's Gate 3 ist das ultimative D&D-Rollenspielerlebnis. Erstelle deinen eigenen Charakter, treffe Entscheidungen mit Konsequenzen und erlebe eine epische Geschichte voller Wendungen." },
-  2022: { winner: "Elden Ring", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg", steamId: 1245620, genre: "Open World", playtime: "100h+", developer: "FromSoftware", description: "Elden Ring ist ein Meisterwerk des Open-World-Action-RPGs. Erkunde die riesige Welt 'The Lands Between' mit ihren Geheimnissen, herausfordernden Bossen und einer tiefgründigen Geschichte von George R.R. Martin." },
-  2021: { winner: "It Takes Two", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1426210/header.jpg", steamId: 1426210, genre: "Adventure", playtime: "20-40h", developer: "Hazelight Studios", description: "It Takes Two ist ein einzigartiges Koop-Abenteuer. Zwei Spieler müssen zusammenarbeiten, um Rätsel zu lösen und die Beziehung eines zerstrittenen Paares zu retten. Ein emotionales Meisterwerk!" },
-  2020: { winner: "The Last of Us Part II", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1888930/header.jpg", steamId: 1888930, genre: "Action", playtime: "40-60h", developer: "Naughty Dog", description: "The Last of Us Part II ist ein emotionales Meisterwerk über Rache und Vergebung. Begleite Ellie auf einer gefährlichen Reise durch eine postapokalyptische Welt voller Gefahren." }
+  2025: { winner: "Clair Obscur: Expedition 33", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2358720/header.jpg", steamId: 2358720, genre: "RPG", playtime: "60-100h", developer: "Kepler Interactive", description: "Clair Obscur: Expedition 33 ist ein episches RPG in einer düsteren Fantasy-Welt." },
+  2024: { winner: "Astro Bot", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2357570/header.jpg", steamId: 2357570, genre: "Platformer", playtime: "20-40h", developer: "Team Asobi", description: "Astro Bot ist ein charmantes 3D-Platformer-Abenteuer." },
+  2023: { winner: "Baldur's Gate 3", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1086940/header.jpg", steamId: 1086940, genre: "RPG", playtime: "100h+", developer: "Larian Studios", description: "Baldur's Gate 3 ist das ultimative D&D-Rollenspielerlebnis." },
+  2022: { winner: "Elden Ring", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg", steamId: 1245620, genre: "Open World", playtime: "100h+", developer: "FromSoftware", description: "Elden Ring ist ein Meisterwerk des Open-World-Action-RPGs." },
+  2021: { winner: "It Takes Two", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1426210/header.jpg", steamId: 1426210, genre: "Adventure", playtime: "20-40h", developer: "Hazelight Studios", description: "It Takes Two ist ein einzigartiges Koop-Abenteuer." },
+  2020: { winner: "The Last of Us Part II", img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1888930/header.jpg", steamId: 1888930, genre: "Action", playtime: "40-60h", developer: "Naughty Dog", description: "The Last of Us Part II ist ein emotionales Meisterwerk." }
 };
 
 const MANUAL_GAMES = [
-  { id: 8001, name: "The Witcher 3: Wild Hunt", rating: 9.5, genre: "RPG", playtime: "100h+", year: 2015, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/292030/header.jpg", developer: "CD Projekt Red", mood: "Epic", description: "The Witcher 3 ist ein Meisterwerk des Open-World-RPGs. Als Geralt von Riva jagst du Monster, löst Quests und triffst Entscheidungen, die die Welt verändern. Mit 100+ Stunden Spielzeit und zwei riesigen DLCs ist dies ein Muss für jeden RPG-Fan!", platforms: ["PC", "PS4", "Xbox One", "Switch"], steamId: 292030 },
-  { id: 8002, name: "Red Dead Redemption 2", rating: 9.6, genre: "Open World", playtime: "100h+", year: 2018, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1174180/header.jpg", developer: "Rockstar Games", mood: "Epic", description: "Red Dead Redemption 2 ist ein episches Western-Epos. Erlebe die Geschichte von Arthur Morgan, einem Outlaw auf der Flucht vor der Moderne. Entdecke eine lebendige Welt mit Jagen, Fischen und unzähligen Nebenaktivitäten. Ein absolutes Meisterwerk!", platforms: ["PC", "PS4", "Xbox One", "Stadia"], steamId: 1174180 },
-  { id: 8003, name: "God of War (2018)", rating: 9.4, genre: "Action", playtime: "40-60h", year: 2018, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1593500/header.jpg", developer: "Santa Monica Studio", mood: "Epic", description: "God of War ist eine emotionale Reise durch die nordische Mythologie. Kratos und sein Sohn Atreus haben eine der besten Vater-Sohn-Beziehungen in der Spielgeschichte. Die Leviathan-Axt ist eine der befriedigendsten Waffen aller Zeiten!", platforms: ["PC", "PS4", "PS5"], steamId: 1593500 },
-  { id: 8004, name: "Cyberpunk 2077", rating: 8.5, genre: "RPG", playtime: "60-100h", year: 2020, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1091500/header.jpg", developer: "CD Projekt Red", mood: "Action", description: "Cyberpunk 2077 ist ein Open-World-RPG in einer dystopischen Zukunft. Night City ist eine der beeindruckendsten Spielwelten aller Zeiten. Mit dem Phantom Liberty DLC wurde das Spiel zu einem echten Meisterwerk!", platforms: ["PC", "PS5", "Xbox Series X", "PS4", "Xbox One"], steamId: 1091500 },
-  { id: 8005, name: "Resident Evil 4 Remake", rating: 9.3, genre: "Horror", playtime: "20-40h", year: 2023, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2050650/header.jpg", developer: "Capcom", mood: "Horror", description: "Resident Evil 4 Remake ist die definitive Version des Klassikers. Die Grafik wurde komplett überarbeitet und sieht fantastisch aus. Das Gameplay wurde modernisiert, bleibt aber der Vorlage treu. Die Atmosphäre ist spannend und unheimlich!", platforms: ["PC", "PS5", "Xbox Series X", "PS4"], steamId: 2050650 }
+  { id: 8001, name: "The Witcher 3: Wild Hunt", rating: 9.5, genre: "RPG", playtime: "100h+", year: 2015, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/292030/header.jpg", developer: "CD Projekt Red", mood: "Epic", description: "Ein Meisterwerk des Open-World-RPGs.", platforms: ["PC", "PS4", "Xbox One", "Switch"], steamId: 292030 },
+  { id: 8002, name: "Red Dead Redemption 2", rating: 9.6, genre: "Open World", playtime: "100h+", year: 2018, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1174180/header.jpg", developer: "Rockstar Games", mood: "Epic", description: "Ein episches Western-Epos.", platforms: ["PC", "PS4", "Xbox One", "Stadia"], steamId: 1174180 },
+  { id: 8003, name: "God of War (2018)", rating: 9.4, genre: "Action", playtime: "40-60h", year: 2018, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1593500/header.jpg", developer: "Santa Monica Studio", mood: "Epic", description: "Eine emotionale Reise durch die nordische Mythologie.", platforms: ["PC", "PS4", "PS5"], steamId: 1593500 },
+  { id: 8004, name: "Cyberpunk 2077", rating: 8.5, genre: "RPG", playtime: "60-100h", year: 2020, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1091500/header.jpg", developer: "CD Projekt Red", mood: "Action", description: "Ein Open-World-RPG in einer dystopischen Zukunft.", platforms: ["PC", "PS5", "Xbox Series X", "PS4", "Xbox One"], steamId: 1091500 },
+  { id: 8005, name: "Elden Ring", rating: 9.5, genre: "Open World", playtime: "100h+", year: 2022, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg", developer: "FromSoftware", mood: "Challenging", description: "Ein Meisterwerk des Open-World-Action-RPGs.", platforms: ["PC", "PS5", "Xbox Series X", "PS4"], steamId: 1245620 },
+  { id: 8006, name: "Baldur's Gate 3", rating: 9.6, genre: "RPG", playtime: "100h+", year: 2023, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1086940/header.jpg", developer: "Larian Studios", mood: "Epic", description: "Das ultimative D&D-Rollenspielerlebnis.", platforms: ["PC", "PS5", "Xbox Series X"], steamId: 1086940 }
 ];
 
 const MANUAL_HIDDEN_GEMS = [
-  { id: 9001, name: "CrossCode", rating: 9.1, genre: "RPG", playtime: "40-60h", year: 2018, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/368340/header.jpg", developer: "Radical Fish Games", mood: "Action", description: "CrossCode ist ein Action-RPG im Retro-Stil mit modernen Elementen. Die Rätsel sind clever, die Kämpfe herausfordernd und die Geschichte emotional. Ein absoluter Geheimtipp!", platforms: ["PC", "Switch", "PS4", "Xbox One"], steamId: 368340 },
-  { id: 9002, name: "Outer Wilds", rating: 9.3, genre: "Adventure", playtime: "20-40h", year: 2019, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/753640/header.jpg", developer: "Mobius Digital", mood: "Mystery", description: "Outer Wilds ist ein Open-World-Mystery-Spiel über ein Sonnensystem in einer Zeitschleife. Erkunde fremde Planeten, löse Rätsel und entdecke die Geheimnisse des Universums. Ein einzigartiges Erlebnis!", platforms: ["PC", "PS4", "Xbox One", "Switch"], steamId: 753640 },
-  { id: 9003, name: "Return of the Obra Dinn", rating: 9.2, genre: "Puzzle", playtime: "10-20h", year: 2018, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/653530/header.jpg", developer: "Lucas Pope", mood: "Mystery", description: "Return of the Obra Dinn ist ein Detektivspiel in einzigartiger 1-Bit-Grafik. Finde heraus, was mit der Besatzung eines Geisterschiffs passiert ist. Ein Meisterwerk des Puzzle-Genres!", platforms: ["PC", "Switch", "PS4", "Xbox One"], steamId: 653530 },
-  { id: 9004, name: "Hades", rating: 9.3, genre: "Action", playtime: "40-60h", year: 2020, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1145360/header.jpg", developer: "Supergiant Games", mood: "Action", description: "Hades ist ein Roguelite-Actionspiel mit griechischer Mythologie. Jeder Lauf fühlt sich frisch an dank der vielen Upgrades und Waffen. Die Charaktere sind fantastisch geschrieben und gesprochen!", platforms: ["PC", "Switch", "PS4", "Xbox"], steamId: 1145360 }
+  { id: 9001, name: "CrossCode", rating: 9.1, genre: "RPG", playtime: "40-60h", year: 2018, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/368340/header.jpg", developer: "Radical Fish Games", mood: "Action", description: "Ein Action-RPG im Retro-Stil mit modernen Elementen.", platforms: ["PC", "Switch", "PS4", "Xbox One"], steamId: 368340 },
+  { id: 9002, name: "Outer Wilds", rating: 9.3, genre: "Adventure", playtime: "20-40h", year: 2019, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/753640/header.jpg", developer: "Mobius Digital", mood: "Mystery", description: "Ein Open-World-Mystery-Spiel über ein Sonnensystem in einer Zeitschleife.", platforms: ["PC", "PS4", "Xbox One", "Switch"], steamId: 753640 },
+  { id: 9003, name: "Return of the Obra Dinn", rating: 9.2, genre: "Puzzle", playtime: "10-20h", year: 2018, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/653530/header.jpg", developer: "Lucas Pope", mood: "Mystery", description: "Ein Detektivspiel in einzigartiger 1-Bit-Grafik.", platforms: ["PC", "Switch", "PS4", "Xbox One"], steamId: 653530 },
+  { id: 9004, name: "Hades", rating: 9.3, genre: "Action", playtime: "40-60h", year: 2020, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1145360/header.jpg", developer: "Supergiant Games", mood: "Action", description: "Ein Roguelite-Actionspiel mit griechischer Mythologie.", platforms: ["PC", "Switch", "PS4", "Xbox"], steamId: 1145360 }
 ];
 
 const translations = {
@@ -80,7 +81,7 @@ const calculateWeightedRating = (game, steamData) => {
 
 const generateLongDescription = (gameName, rawDescription) => {
   if (rawDescription && rawDescription.length > 200) return rawDescription;
-  return `${gameName} ist ein herausragendes Spiel, das die Herzen von Gamern erobert hat. Die Entwickler haben viel Liebe zum Detail gesteckt. Die Spielmechanik ist intuitiv und tiefgründig. Die Geschichte fesselt von der ersten Minute an. Die Grafik ist atemberaubend und die Charaktere sind liebevoll gestaltet. Ein absolutes Muss für jeden Fan des Genres!`;
+  return `${gameName} ist ein herausragendes Spiel, das die Herzen von Gamern erobert hat. Die Entwickler haben viel Liebe zum Detail gesteckt. Die Spielmechanik ist intuitiv und tiefgründig. Ein absolutes Muss!`;
 };
 
 const getGameImage = (rawgImg, gameName, steamData) => {
@@ -131,9 +132,7 @@ export default function NexPlay() {
   const [aiQuery, setAiQuery] = useState("");
   const [aiResponse, setAiResponse] = useState("");
   const [isAiLoading, setIsAiLoading] = useState(false);
-  const [aiMessages, setAiMessages] = useState([
-    { role: "assistant", content: "🎮 Hallo! Ich bin dein KI-Gaming-Assistent! Frag mich nach Spielen, Tipps oder lass dir was empfehlen!" }
-  ]);
+  const [aiMessages, setAiMessages] = useState([{ role: "assistant", content: "🎮 Hallo! Ich bin dein KI-Gaming-Assistent! Frag mich nach Spielen, Tipps oder lass dir was empfehlen!" }]);
   const [aiInput, setAiInput] = useState("");
   const aiChatEndRef = useRef(null);
   const [categoryFilter, setCategoryFilter] = useState({ genre: "", minRating: 0, year: 0 });
@@ -178,8 +177,6 @@ export default function NexPlay() {
   const [profilePicUrl, setProfilePicUrl] = useState(null);
   const [profilePicUploading, setProfilePicUploading] = useState(false);
   const fileInputRef = useRef(null);
-  
-  // Level System State
   const [userLevel, setUserLevel] = useState(1);
   const [userXP, setUserXP] = useState(0);
   const [userBadges, setUserBadges] = useState([]);
@@ -189,7 +186,6 @@ export default function NexPlay() {
   const scrollToBottom = () => { aiChatEndRef.current?.scrollIntoView({ behavior: "smooth" }); };
   useEffect(() => { scrollToBottom(); }, [aiMessages]);
 
-  // Level System Functions
   const calculateXP = () => {
     let xp = 0;
     xp += library.length * 10;
@@ -207,12 +203,11 @@ export default function NexPlay() {
     setUserXP(newXP);
     const newLevel = calculateLevel(newXP);
     setUserLevel(newLevel);
-    
     const badges = [];
-    if (library.length >= 10) badges.push({ id: "collector", name: text.collector, icon: "📚" });
+    if (library.length >= 10) badges.push({ id: "collector", name: "Sammler", icon: "📚" });
     if (library.length >= 25) badges.push({ id: "master", name: "Game Master", icon: "👑" });
     if (gameDetailReviews.length >= 5) badges.push({ id: "critic", name: "The Critic", icon: "✍️" });
-    if (library.filter(g => g.status === "completed").length >= 5) badges.push({ id: "completionist", name: text.completionist, icon: "✅" });
+    if (library.filter(g => g.status === "completed").length >= 5) badges.push({ id: "completionist", name: "Vollender", icon: "✅" });
     if (newLevel >= 5) badges.push({ id: "veteran", name: "Veteran", icon: "🎖️" });
     if (newLevel >= 10) badges.push({ id: "legend", name: "Legend", icon: "🏆" });
     setUserBadges(badges);
@@ -355,26 +350,27 @@ export default function NexPlay() {
     setGamesLoading(true);
     try {
       let allFetchedGames = [];
-      for (let page = 1; page <= 3; page++) {
-        const response = await fetch(`https://api.rawg.io/api/games?key=${RAWG_API_KEY}&metacritic=70,100&exclude_tags=nsfw,adult,erotic,hentai,porn,sex&page_size=50&page=${page}&ordering=-metacritic`);
+      for (let page = 1; page <= 2; page++) {
+        const response = await fetch(`https://api.rawg.io/api/games?key=${RAWG_API_KEY}&metacritic=70,100&exclude_tags=nsfw,adult&page_size=50&page=${page}&ordering=-metacritic`);
         const data = await response.json();
-        const translatedGames = data.results.map(game => ({
-          id: game.id,
-          name: game.name,
-          rawgRating: (game.metacritic || 75) / 10,
-          genre: translateGenre(game.genres?.[0]?.name || "Action"),
-          playtime: game.playtime ? `${game.playtime}h` : "20-40h",
-          year: game.released ? new Date(game.released).getFullYear() : 2024,
-          img: game.background_image,
-          developer: game.developers?.[0]?.name || "Unknown",
-          mood: game.tags?.slice(0,1).map(t => translateGenre(t.name))[0] || "Action",
-          description: game.description_raw || "",
-          trailer: game.clip?.clip || (game.slug ? `https://www.youtube.com/embed/${game.slug}` : ""),
-          platforms: game.platforms?.map(p => p.platform.name) || [],
-          steamId: null,
-          popularity: game.metacritic || 70
-        }));
-        allFetchedGames = [...allFetchedGames, ...translatedGames];
+        if (data.results) {
+          const translatedGames = data.results.map(game => ({
+            id: game.id,
+            name: game.name,
+            rawgRating: (game.metacritic || 75) / 10,
+            genre: translateGenre(game.genres?.[0]?.name || "Action"),
+            playtime: game.playtime ? `${game.playtime}h` : "20-40h",
+            year: game.released ? new Date(game.released).getFullYear() : 2024,
+            img: game.background_image,
+            developer: game.developers?.[0]?.name || "Unknown",
+            mood: game.tags?.slice(0,1).map(t => translateGenre(t.name))[0] || "Action",
+            description: game.description_raw || "",
+            platforms: game.platforms?.map(p => p.platform.name) || [],
+            steamId: null,
+            popularity: game.metacritic || 70
+          }));
+          allFetchedGames = [...allFetchedGames, ...translatedGames];
+        }
       }
       const uniqueGames = [...allFetchedGames, ...MANUAL_GAMES, ...MANUAL_HIDDEN_GEMS].filter((game, index, self) => index === self.findIndex(g => g.name.toLowerCase() === game.name.toLowerCase()));
       setAllGames(uniqueGames);
@@ -464,7 +460,6 @@ export default function NexPlay() {
   const playSound = (type) => { if (!soundEnabled || !audioInitialized) return; const audio = new Audio(); audio.volume = 0.2; audio.play().catch(() => {}); };
   const initAudio = () => { if (!audioInitialized && soundEnabled) setAudioInitialized(true); };
 
-  // DeepSeek AI Chat Function
   const sendAiMessage = async () => {
     if (!aiInput.trim()) return;
     const userMessage = aiInput.trim();
@@ -625,7 +620,7 @@ export default function NexPlay() {
       const reviews = await getGameReviews(fullGame.id);
       setGameDetailReviews(reviews);
       setCurrentTab("gameDetail");
-    } catch (error) { console.error("Error loading game detail:", error); alert("Fehler beim Laden des Spiels. Bitte versuche es später erneut."); }
+    } catch (error) { console.error("Error loading game detail:", error); alert("Fehler beim Laden des Spiels."); }
     finally { setLoadingAction(false); }
   };
 
@@ -772,7 +767,7 @@ export default function NexPlay() {
     logoIconText: { fontSize: 20 },
     logoText: { background: `linear-gradient(135deg, ${currentColors.primary} 0%, ${currentColors.primaryDark} 100%)`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", fontSize: 22 },
     rightSection: { display: "flex", alignItems: "center", gap: 20 },
-    badge10k: { background: currentColors.primary, color: currentColors.bg, borderRadius: "20px", padding: "6px 14px", fontSize: 13, fontWeight: 700, marginLeft: 0 },
+    badge10k: { background: currentColors.primary, color: currentColors.bg, borderRadius: "20px", padding: "6px 14px", fontSize: 13, fontWeight: 700 },
     mainTabs: { display: "flex", gap: 12, flexWrap: "wrap", alignItems: "center", justifyContent: "flex-start" },
     mainTab: (active) => ({ background: active ? currentColors.primary : "rgba(255,255,255,0.08)", border: "none", borderRadius: 14, padding: "12px 28px", color: active ? currentColors.bg : currentColors.text, cursor: "pointer", fontWeight: 600, fontSize: 14, display: "flex", alignItems: "center", gap: 10, transition: "all 0.2s ease", whiteSpace: "nowrap" }),
     iconBtn: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 14, padding: "12px 18px", color: currentColors.text, cursor: "pointer", display: "flex", alignItems: "center", gap: 10, fontSize: 14, transition: "all 0.2s ease" },
@@ -831,7 +826,6 @@ export default function NexPlay() {
     aiMessages: { flex: 1, overflowY: "auto", padding: 20, display: "flex", flexDirection: "column", gap: 12 },
     aiMessage: (isUser) => ({ background: isUser ? currentColors.primary : "rgba(255,255,255,0.08)", color: isUser ? currentColors.bg : currentColors.text, padding: "12px 16px", borderRadius: 18, borderBottomRightRadius: isUser ? 4 : 18, borderBottomLeftRadius: isUser ? 18 : 4, maxWidth: "80%", alignSelf: isUser ? "flex-end" : "flex-start", whiteSpace: "pre-wrap" }),
     aiInputRow: { display: "flex", gap: 12, padding: 16, background: "rgba(0,0,0,0.3)", borderTop: "1px solid rgba(255,255,255,0.08)" },
-    aiResultBox: { background: "rgba(0,0,0,0.3)", borderRadius: 16, padding: 20, marginTop: 20, fontSize: 14, color: currentColors.textSecondary, lineHeight: 1.6 },
     platformSection: { background: currentColors.bgCard, borderRadius: 20, padding: 20, marginBottom: 24 },
     platformRow: { display: "flex", gap: 16, flexWrap: "wrap", alignItems: "center", marginBottom: 16 },
     platformBtn: (bgColor) => ({ background: bgColor, border: "none", borderRadius: 12, padding: "10px 20px", color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", gap: 10, fontSize: 14, fontWeight: 500, transition: "all 0.2s ease" }),
@@ -969,7 +963,6 @@ export default function NexPlay() {
               <span style={styles.logoText}>NexPlay</span>
             </div>
             <div style={styles.rightSection}>
-              <span style={styles.badge10k}>10K</span>
               <div style={styles.mainTabs}>
                 <button className="btn-click" style={styles.iconBtn} onClick={() => setShowSettings(true)}><FaCog size={15} /></button>
                 {!user ? <button className="btn-click" style={styles.loginBtn} onClick={() => setShowLoginModal(true)}><FaEnvelope size={15} /> {text.login}</button> :
@@ -977,6 +970,7 @@ export default function NexPlay() {
                     {profilePicUrl ? <img src={profilePicUrl} style={styles.userAvatar} alt="avatar" /> : <div style={styles.userAvatar}>{userData?.username?.charAt(0).toUpperCase()}</div>}
                     <button className="btn-click" style={styles.logoutBtn} onClick={logout}><FaSignOutAlt size={15} /></button>
                   </div>}
+                <span style={styles.badge10k}>10K</span>
               </div>
             </div>
           </div>
@@ -1036,7 +1030,7 @@ export default function NexPlay() {
           <button className="btn-click" style={styles.mobileMenuItem} onClick={() => { setCurrentTab("library"); closeMobileMenu(); }}><BsFillCollectionFill size={18} /> {text.library}</button>
           <button className="btn-click" style={styles.mobileMenuItem} onClick={() => { setCurrentTab("profile"); closeMobileMenu(); }}><FaUser size={18} /> {text.profile}</button>
           <button className="btn-click" style={styles.mobileMenuItem} onClick={() => { setCurrentTab("friends"); closeMobileMenu(); }}><FaUsers size={18} /> {text.friends}</button>
-          <button className="btn-click" style={styles.mobileMenuItem} onClick={() => { setCurrentTab("ai"); closeMobileMenu(); }}><FaRobotIcon size={18} /> {text.ai}</button>
+          <button className="btn-click" style={styles.mobileMenuItem} onClick={() => { setCurrentTab("ai"); closeMobileMenu(); }}><FaRobot size={18} /> {text.ai}</button>
           <button className="btn-click" style={styles.mobileMenuItem} onClick={() => { setCurrentTab("aoty"); closeMobileMenu(); }}><FaTrophy size={18} /> {text.aoty}</button>
           <button className="btn-click" style={styles.mobileMenuItem} onClick={() => { setCurrentTab("random"); closeMobileMenu(); }}><FaRandom size={18} /> {text.random}</button>
           <button className="btn-click" style={styles.mobileMenuItem} onClick={() => { setCurrentTab("playlists"); closeMobileMenu(); }}><FaList size={18} /> {text.playlists}</button>
@@ -1053,14 +1047,13 @@ export default function NexPlay() {
             <div style={styles.logoIcon}><GiConsoleController size={20} /><span style={styles.logoIconText}>NX</span></div>
             <span style={styles.logoText}>NexPlay</span>
           </div>
-          
           <div style={styles.rightSection}>
             <div className="main-tabs-desktop" style={styles.mainTabs}>
               <button className="btn-click" style={styles.mainTab(currentTab === "home")} onClick={() => setCurrentTab("home")}><FaHome size={15} /> {text.home}</button>
               <button className="btn-click" style={styles.mainTab(currentTab === "library")} onClick={() => setCurrentTab("library")}><BsFillCollectionFill size={15} /> {text.library}</button>
               <button className="btn-click" style={styles.mainTab(currentTab === "profile")} onClick={() => setCurrentTab("profile")}><FaUser size={15} /> {text.profile}</button>
               <button className="btn-click" style={styles.mainTab(currentTab === "friends")} onClick={() => setCurrentTab("friends")}><FaUsers size={15} /> {text.friends}</button>
-              <button className="btn-click" style={styles.mainTab(currentTab === "ai")} onClick={() => setCurrentTab("ai")}><FaRobotIcon size={15} /> {text.ai}</button>
+              <button className="btn-click" style={styles.mainTab(currentTab === "ai")} onClick={() => setCurrentTab("ai")}><FaRobot size={15} /> {text.ai}</button>
               <button className="btn-click" style={styles.mainTab(currentTab === "aoty")} onClick={() => setCurrentTab("aoty")}><FaTrophy size={15} /> {text.aoty}</button>
               <button className="btn-click" style={styles.mainTab(currentTab === "random")} onClick={() => setCurrentTab("random")}><FaRandom size={15} /> {text.random}</button>
               <button className="btn-click" style={styles.mainTab(currentTab === "playlists")} onClick={() => setCurrentTab("playlists")}><FaList size={15} /> {text.playlists}</button>
@@ -1218,7 +1211,7 @@ export default function NexPlay() {
         {currentTab === "ai" && (
           <div className="fade-in">
             <div style={styles.aiSection}>
-              <div style={styles.randomFilterTitle}><FaRobotIcon size={18} /> {text.ai}</div>
+              <div style={styles.randomFilterTitle}><FaRobot size={18} /> {text.ai}</div>
               <div style={styles.aiChatContainer}>
                 <div style={styles.aiMessages}>
                   {aiMessages.map((msg, idx) => (<div key={idx} style={styles.aiMessage(msg.role === "user")}><div style={{ fontWeight: 600, marginBottom: 4, fontSize: 12, opacity: 0.7 }}>{msg.role === "user" ? "Du" : "🎮 NexPlay KI"}</div><div style={{ fontSize: 14, lineHeight: 1.5, whiteSpace: "pre-wrap" }}>{msg.content}</div></div>))}
