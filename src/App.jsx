@@ -216,7 +216,6 @@ export default function NexPlay() {
   useEffect(() => { if (user) updateUserLevel(); }, [library, favorites, gameDetailReviews, gameJournal]);
 
   const toggleDescription = (gameId) => { setExpandedDescriptions(prev => ({ ...prev, [gameId]: !prev[gameId] })); };
-  const closeReviews = () => { setShowReviews(false); setReviewsGame(null); };
   const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
   const closeMobileMenu = () => setMobileMenuOpen(false);
 
@@ -255,10 +254,6 @@ export default function NexPlay() {
 
   const addToPlaylist = (playlistId, game) => {
     setPlaylists(playlists.map(p => p.id === playlistId && !p.games.find(g => g.id === game.id) ? { ...p, games: [...p.games, game] } : p));
-  };
-
-  const removeFromPlaylist = (playlistId, gameId) => {
-    setPlaylists(playlists.map(p => p.id === playlistId ? { ...p, games: p.games.filter(g => g.id !== gameId) } : p));
   };
 
   const deletePlaylist = (playlistId) => { setPlaylists(playlists.filter(p => p.id !== playlistId)); };
@@ -457,9 +452,6 @@ export default function NexPlay() {
     }, 500);
   };
 
-  const playSound = (type) => { if (!soundEnabled || !audioInitialized) return; const audio = new Audio(); audio.volume = 0.2; audio.play().catch(() => {}); };
-  const initAudio = () => { if (!audioInitialized && soundEnabled) setAudioInitialized(true); };
-
   const sendAiMessage = async () => {
     if (!aiInput.trim()) return;
     const userMessage = aiInput.trim();
@@ -549,7 +541,7 @@ export default function NexPlay() {
     if (!email || !password) { setErrorMsg("Email and password required"); return; }
     setLoadingAction(true);
     const result = await loginWithEmail(email, password);
-    if (result && !result.error) { setShowLoginModal(false); setEmail(""); setPassword(""); playSound("login"); }
+    if (result && !result.error) { setShowLoginModal(false); setEmail(""); setPassword(""); }
     else { setErrorMsg(result?.error || "Login failed"); }
     setLoadingAction(false);
   };
@@ -560,7 +552,7 @@ export default function NexPlay() {
     setLoadingAction(true);
     const username = email.split("@")[0].replace(/[^a-zA-Z0-9]/g, "");
     const result = await registerWithEmail(email, password, username);
-    if (result.user) { setShowLoginModal(false); setEmail(""); setPassword(""); playSound("login"); }
+    if (result.user) { setShowLoginModal(false); setEmail(""); setPassword(""); }
     else { setErrorMsg(result.error || "Registration failed"); }
     setLoadingAction(false);
   };
@@ -611,7 +603,6 @@ export default function NexPlay() {
   const openEditModal = () => { setEditUsername(userData?.username || ""); setEditBio(userData?.bio || ""); setEditPrivate(userData?.isPrivate || false); setEditError(""); setEditSuccess(""); setShowEditModal(true); };
 
   const openGameDetail = async (game) => {
-    initAudio();
     setLoadingAction(true);
     try {
       const fullGame = [...gamesWithData, ...MANUAL_GAMES, ...MANUAL_HIDDEN_GEMS].find(g => g.id === game.id) || game;
@@ -632,7 +623,6 @@ export default function NexPlay() {
     await addGameReview(user.uid, selectedGameDetail.id, selectedGameDetail.name, reviewRating, reviewComment);
     setGameDetailReviews(await getGameReviews(selectedGameDetail.id));
     setReviewRating(0); setReviewComment("");
-    playSound("add");
     setLoadingAction(false);
   };
 
@@ -656,7 +646,6 @@ export default function NexPlay() {
     setLoadingAction(true);
     await updateLastPlayed(user.uid, game.id, game.name, game.img);
     setUserData(await loadProfileFromFirestore(user.uid));
-    playSound("add");
     addActivity("played", game.name);
     setLoadingAction(false);
   };
@@ -665,7 +654,6 @@ export default function NexPlay() {
     if (library.find(g => g.id === game.id)) return;
     setLoadingAction(true);
     setLibrary([...library, { ...game, status: "wishlist", dateAdded: new Date().toISOString() }]);
-    playSound("add");
     addActivity("add", game.name);
     updateUserLevel();
     setLoadingAction(false);
@@ -682,7 +670,6 @@ export default function NexPlay() {
       addActivity("completed", game.name);
       updateUserLevel();
     }
-    playSound("click");
     setLoadingAction(false);
   };
   
@@ -693,14 +680,6 @@ export default function NexPlay() {
     { name: "Amazon", url: `https://www.amazon.de/s?k=${encodeURIComponent(game.name)}`, icon: <FaShoppingCart />, color: colors.amazon },
     { name: "Loaded", url: `https://www.loaded.com/de_de/search?q=${encodeURIComponent(game.name)}`, icon: <FaExternalLinkAlt />, color: colors.loaded }
   ];
-
-  const filteredCategoryGames = (games) => {
-    let filtered = [...games];
-    if (categoryFilter.genre) filtered = filtered.filter(g => g.genre === categoryFilter.genre);
-    if (categoryFilter.minRating > 0) filtered = filtered.filter(g => (g.finalRating || g.rating) >= categoryFilter.minRating);
-    if (categoryFilter.year > 0) filtered = filtered.filter(g => g.year >= categoryFilter.year);
-    return filtered;
-  };
 
   const results = useMemo(() => {
     let list = gamesWithData.map(g => ({ ...g, score: (selectedMoods.includes(g.mood) ? 40 : 20) + (selectedGenres.includes(g.genre) ? 40 : 20) + (selectedPlaytime === g.playtime ? 20 : 0) + ((g.finalRating || g.rating) * 2) }));
@@ -714,18 +693,6 @@ export default function NexPlay() {
   const topPicks = results.slice(0, 8);
   const restResults = results.slice(3);
   const toggle = (arr, setArr, val) => setArr(prev => prev.includes(val) ? prev.filter(x => x !== val) : [...prev, val]);
-
-  const profileStats = useMemo(() => {
-    if (!library.length) return { topRated: null, topGenre: null, totalPlaytime: 0, avgRating: 0 };
-    const allGamesList = [...gamesWithData, ...MANUAL_GAMES, ...MANUAL_HIDDEN_GEMS];
-    const gamesWithRatings = library.map(libGame => ({ ...libGame, finalRating: allGamesList.find(g => g.id === libGame.id)?.finalRating || allGamesList.find(g => g.id === libGame.id)?.rating || 7.0 }));
-    const topRated = [...gamesWithRatings].sort((a,b) => b.finalRating - a.finalRating)[0];
-    const genreCount = {}; library.forEach(g => genreCount[g.genre] = (genreCount[g.genre] || 0) + 1);
-    const topGenre = Object.entries(genreCount).sort((a,b) => b[1] - a[1])[0]?.[0] || "None";
-    const totalPlaytime = library.reduce((sum, g) => sum + (parseInt(g.playtime?.match(/\d+/)?.[0]) || 0), 0);
-    const avgRating = gamesWithRatings.reduce((sum, g) => sum + g.finalRating, 0) / gamesWithRatings.length;
-    return { topRated, topGenre, totalPlaytime, avgRating: avgRating.toFixed(1) };
-  }, [library, gamesWithData]);
 
   const achievements = [
     { id: "first", name: text.firstGame, desc: "First game added", icon: "🏅", unlocked: library.length >= 1 },
@@ -784,37 +751,33 @@ export default function NexPlay() {
     gameCard: { background: currentColors.bgCard, borderRadius: 20, overflow: "hidden", cursor: "pointer", border: "1px solid rgba(255,255,255,0.08)", transition: "all 0.3s ease", position: "relative" },
     gameImg: { width: "100%", aspectRatio: "3/4", objectFit: "cover" },
     gameInfo: { padding: "16px" },
-    gameName: { fontSize: 15, fontWeight: 700, marginBottom: 6, color: currentColors.text, wordWrap: "break-word", whiteSpace: "normal", lineHeight: 1.3 },
+    gameName: { fontSize: 15, fontWeight: 700, marginBottom: 6, color: currentColors.text, wordWrap: "break-word" },
     rating: { display: "flex", alignItems: "center", gap: 6, color: currentColors.primary, fontSize: 13, fontWeight: 600, marginBottom: 8 },
     addBtn: { background: currentColors.primary, border: "none", borderRadius: 12, padding: "10px 14px", fontSize: 14, fontWeight: 600, cursor: "pointer", width: "100%", marginTop: 10, color: currentColors.bg, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, transition: "all 0.2s ease" },
-    searchBar: { background: currentColors.bgCard, border: `1px solid rgba(255,255,255,0.08)`, borderRadius: 16, padding: "14px 20px", color: currentColors.text, fontSize: 15, width: "100%", marginBottom: 28, outline: "none", transition: "all 0.2s ease" },
+    searchBar: { background: currentColors.bgCard, border: `1px solid rgba(255,255,255,0.08)`, borderRadius: 16, padding: "14px 20px", color: currentColors.text, fontSize: 15, width: "100%", marginBottom: 28, outline: "none" },
     pillGrid: { display: "flex", flexWrap: "wrap", gap: 12, marginBottom: 28 },
-    pill: (selected) => ({ background: selected ? currentColors.primary : "rgba(255,255,255,0.06)", border: "none", borderRadius: 40, padding: "12px 24px", color: selected ? currentColors.bg : currentColors.text, cursor: "pointer", fontSize: 14, fontWeight: selected ? 600 : 400, transition: "all 0.2s ease" }),
+    pill: (selected) => ({ background: selected ? currentColors.primary : "rgba(255,255,255,0.06)", border: "none", borderRadius: 40, padding: "12px 24px", color: selected ? currentColors.bg : currentColors.text, cursor: "pointer", fontSize: 14, fontWeight: selected ? 600 : 400 }),
     nextBtn: { background: currentColors.primary, border: "none", borderRadius: 16, padding: "14px 32px", fontSize: 16, fontWeight: 600, cursor: "pointer", color: currentColors.bg, marginTop: 32, width: "100%" },
     filterRow: { display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 24, alignItems: "center" },
-    filterBtn: (active) => ({ background: active ? currentColors.primary : "rgba(255,255,255,0.05)", border: "none", borderRadius: 10, padding: "8px 16px", color: active ? currentColors.bg : currentColors.text, cursor: "pointer", fontSize: 13, transition: "all 0.2s ease" }),
+    filterBtn: (active) => ({ background: active ? currentColors.primary : "rgba(255,255,255,0.05)", border: "none", borderRadius: 10, padding: "8px 16px", color: active ? currentColors.bg : currentColors.text, cursor: "pointer", fontSize: 13 }),
     sectionTitle: { fontSize: 24, fontWeight: 700, marginBottom: 20, display: "flex", alignItems: "center", gap: 12, color: currentColors.text },
     topPicksRow: { display: "flex", gap: 20, overflowX: "auto", marginBottom: 32, paddingBottom: 12 },
     topPickCard: { minWidth: 200, background: currentColors.bgCard, borderRadius: 16, padding: 14, cursor: "pointer", position: "relative" },
-    libraryCard: { background: currentColors.bgCard, borderRadius: 16, display: "flex", gap: 16, padding: 16, marginBottom: 16, alignItems: "center", flexWrap: "wrap", transition: "all 0.2s ease" },
+    libraryCard: { background: currentColors.bgCard, borderRadius: 16, display: "flex", gap: 16, padding: 16, marginBottom: 16, alignItems: "center", flexWrap: "wrap" },
     libraryImg: { width: 70, height: 93, objectFit: "cover", borderRadius: 14 },
     libraryInfo: { flex: 1, minWidth: 200 },
-    libraryTitle: { fontWeight: 700, fontSize: 16, color: currentColors.text, marginBottom: 6, wordWrap: "break-word" },
+    libraryTitle: { fontWeight: 700, fontSize: 16, color: currentColors.text, marginBottom: 6 },
     libraryMeta: { fontSize: 13, color: currentColors.textSecondary, marginBottom: 8 },
     libraryActions: { display: "flex", gap: 10, flexWrap: "wrap" },
-    select: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 10, padding: "8px 14px", color: currentColors.text, fontSize: 13, cursor: "pointer", transition: "all 0.2s ease" },
-    statCard: { background: currentColors.bgCard, borderRadius: 16, padding: "20px", textAlign: "center", minWidth: 100, flex: 1, transition: "transform 0.2s ease", cursor: "pointer" },
+    select: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 10, padding: "8px 14px", color: currentColors.text, fontSize: 13, cursor: "pointer" },
+    statCard: { background: currentColors.bgCard, borderRadius: 16, padding: "20px", textAlign: "center", minWidth: 100, flex: 1 },
     statNumber: { fontSize: 32, fontWeight: 800, color: currentColors.primary },
     statLabel: { fontSize: 13, color: currentColors.textSecondary, marginTop: 6 },
     statsRow: { display: "flex", gap: 16, marginBottom: 28, flexWrap: "wrap" },
     profileHeader: { display: "flex", gap: 32, alignItems: "center", background: `linear-gradient(135deg, ${currentColors.bgCard} 0%, ${currentColors.bgCard}80 100%)`, borderRadius: 32, padding: 32, marginBottom: 32, flexWrap: "wrap", justifyContent: "center", textAlign: "center", border: `1px solid ${currentColors.primary}20` },
     profileAvatarLarge: { width: 100, height: 100, borderRadius: "50%", background: `linear-gradient(135deg, ${currentColors.primary} 0%, ${currentColors.primaryDark} 100%)`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 44, fontWeight: 700, color: currentColors.bg, position: "relative", objectFit: "cover" },
     cameraIcon: { position: "absolute", bottom: 0, right: 0, background: currentColors.bg, borderRadius: "50%", padding: "8px", cursor: "pointer", boxShadow: "0 2px 8px rgba(0,0,0,0.3)" },
-    editBtn: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 12, padding: "10px 20px", color: currentColors.text, cursor: "pointer", fontSize: 13, marginTop: 16, display: "inline-flex", alignItems: "center", gap: 8, transition: "all 0.2s ease" },
-    lastPlayedRow: { display: "flex", gap: 20, overflowX: "auto", marginBottom: 28, paddingBottom: 12 },
-    lastPlayedCard: { minWidth: 90, background: currentColors.bgCard, borderRadius: 14, padding: 12, textAlign: "center", cursor: "pointer", transition: "all 0.2s ease" },
-    lastPlayedImg: { width: 66, height: 66, objectFit: "cover", borderRadius: 12, marginBottom: 8 },
-    lastPlayedName: { fontSize: 12, color: currentColors.text, fontWeight: 500, wordWrap: "break-word" },
+    editBtn: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 12, padding: "10px 20px", color: currentColors.text, cursor: "pointer", fontSize: 13, marginTop: 16, display: "inline-flex", alignItems: "center", gap: 8 },
     randomFilterSection: { background: currentColors.bgCard, borderRadius: 24, padding: 24, marginBottom: 28 },
     randomFilterTitle: { fontSize: 18, fontWeight: 600, color: currentColors.text, marginBottom: 16, display: "flex", alignItems: "center", gap: 10 },
     randomFilterRow: { display: "flex", gap: 16, flexWrap: "wrap", alignItems: "center" },
@@ -826,36 +789,15 @@ export default function NexPlay() {
     aiMessages: { flex: 1, overflowY: "auto", padding: 20, display: "flex", flexDirection: "column", gap: 12 },
     aiMessage: (isUser) => ({ background: isUser ? currentColors.primary : "rgba(255,255,255,0.08)", color: isUser ? currentColors.bg : currentColors.text, padding: "12px 16px", borderRadius: 18, borderBottomRightRadius: isUser ? 4 : 18, borderBottomLeftRadius: isUser ? 18 : 4, maxWidth: "80%", alignSelf: isUser ? "flex-end" : "flex-start", whiteSpace: "pre-wrap" }),
     aiInputRow: { display: "flex", gap: 12, padding: 16, background: "rgba(0,0,0,0.3)", borderTop: "1px solid rgba(255,255,255,0.08)" },
-    platformSection: { background: currentColors.bgCard, borderRadius: 20, padding: 20, marginBottom: 24 },
-    platformRow: { display: "flex", gap: 16, flexWrap: "wrap", alignItems: "center", marginBottom: 16 },
-    platformBtn: (bgColor) => ({ background: bgColor, border: "none", borderRadius: 12, padding: "10px 20px", color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", gap: 10, fontSize: 14, fontWeight: 500, transition: "all 0.2s ease" }),
     modalOverlay: { position: "fixed", inset: 0, background: "rgba(0,0,0,0.96)", zIndex: 2000, display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" },
     modalContent: { background: currentColors.bgCard, borderRadius: 32, padding: 32, width: "95%", maxWidth: 520, border: `1px solid ${currentColors.primary}30`, maxHeight: "90vh", overflowY: "auto" },
     modalTitle: { fontSize: 26, fontWeight: 700, marginBottom: 24, textAlign: "center", color: currentColors.text },
-    input: { width: "100%", background: "rgba(255,255,255,0.08)", border: `1px solid rgba(255,255,255,0.1)`, borderRadius: 14, padding: "14px 18px", color: currentColors.text, fontSize: 15, marginBottom: 16, outline: "none", transition: "all 0.2s ease" },
-    textarea: { width: "100%", background: "rgba(255,255,255,0.08)", border: `1px solid rgba(255,255,255,0.1)`, borderRadius: 14, padding: "14px 18px", color: currentColors.text, fontSize: 15, marginBottom: 16, outline: "none", resize: "vertical", fontFamily: "inherit" },
-    passwordWrapper: { position: "relative", width: "100%" },
-    passwordEye: { position: "absolute", right: 16, top: "50%", transform: "translateY(-50%)", cursor: "pointer", color: currentColors.textSecondary },
-    modalBtn: { background: currentColors.primary, border: "none", borderRadius: 16, padding: "14px", fontSize: 16, fontWeight: 600, cursor: "pointer", width: "100%", marginTop: 14, color: currentColors.bg, transition: "all 0.2s ease" },
-    modalBtnSecondary: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 16, padding: "14px", fontSize: 16, fontWeight: 600, cursor: "pointer", width: "auto", color: currentColors.text, transition: "all 0.2s ease" },
-    switchText: { textAlign: "center", marginTop: 16, color: currentColors.textSecondary, fontSize: 14, cursor: "pointer" },
-    errorText: { color: colors.error, fontSize: 14, textAlign: "center", marginBottom: 14 },
-    successText: { color: colors.success, fontSize: 14, textAlign: "center", marginBottom: 14 },
+    input: { width: "100%", background: "rgba(255,255,255,0.08)", border: `1px solid rgba(255,255,255,0.1)`, borderRadius: 14, padding: "14px 18px", color: currentColors.text, fontSize: 15, marginBottom: 16, outline: "none" },
+    modalBtn: { background: currentColors.primary, border: "none", borderRadius: 16, padding: "14px", fontSize: 16, fontWeight: 600, cursor: "pointer", width: "100%", marginTop: 14, color: currentColors.bg },
+    modalBtnSecondary: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 16, padding: "14px", fontSize: 16, fontWeight: 600, cursor: "pointer", width: "auto", color: currentColors.text },
     loadingSpinner: { width: 48, height: 48, border: `3px solid ${currentColors.primary}20`, borderTop: `3px solid ${currentColors.primary}`, borderRadius: "50%", animation: "spin 1s linear infinite" },
     loadingOverlay: { position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.8)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" },
     emptyState: { textAlign: "center", padding: 60, background: currentColors.bgCard, borderRadius: 28, color: currentColors.textSecondary, fontSize: 16 },
-    reviewStars: { display: "flex", gap: 12, justifyContent: "center", marginBottom: 24 },
-    reviewStar: { fontSize: 36, cursor: "pointer", color: currentColors.textSecondary, transition: "all 0.2s ease" },
-    reviewCard: { background: currentColors.bgCard, borderRadius: 16, padding: 18, marginBottom: 16, transition: "all 0.2s ease" },
-    reviewHeader: { display: "flex", justifyContent: "space-between", marginBottom: 10, flexWrap: "wrap", gap: 8 },
-    reviewUsername: { fontWeight: 700, fontSize: 14, color: currentColors.text },
-    reviewRating: { color: currentColors.primary, fontSize: 13 },
-    reviewComment: { fontSize: 14, color: currentColors.textSecondary, lineHeight: 1.5, wordWrap: "break-word" },
-    reviewActions: { display: "flex", gap: 18, marginTop: 14 },
-    likeBtn: { display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: currentColors.textSecondary, cursor: "pointer", background: "none", border: "none", transition: "all 0.2s ease" },
-    userCard: { background: currentColors.bgCard, borderRadius: 16, padding: 16, marginBottom: 16, display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap", transition: "all 0.2s ease" },
-    userAvatarSmall: { width: 52, height: 52, borderRadius: "50%", background: currentColors.primary, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, fontWeight: 700, color: currentColors.bg },
-    searchRow: { display: "flex", gap: 16, marginBottom: 28 },
     gameDetailHeader: { display: "flex", gap: 32, flexWrap: "wrap", marginBottom: 32, flexDirection: window.innerWidth <= 768 ? "column" : "row", alignItems: window.innerWidth <= 768 ? "center" : "flex-start" },
     gameDetailImg: { width: window.innerWidth <= 768 ? "100%" : 240, maxWidth: 240, borderRadius: 20, objectFit: "cover" },
     gameDetailInfo: { flex: 1 },
@@ -863,46 +805,21 @@ export default function NexPlay() {
     gameDetailDeveloper: { fontSize: 14, color: currentColors.textSecondary, marginBottom: 8 },
     gameDetailRating: { fontSize: 18, color: currentColors.primary, marginBottom: 14 },
     gameDetailDescription: { fontSize: 15, color: currentColors.textSecondary, lineHeight: 1.6, marginBottom: 20, wordWrap: "break-word" },
-    showMoreBtn: { background: "none", border: "none", color: currentColors.primary, cursor: "pointer", fontSize: 13, marginTop: 10, display: "flex", alignItems: "center", gap: 6, transition: "all 0.2s ease" },
-    gameDetailPlatforms: { display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 20 },
-    platformBadge: { background: "rgba(255,255,255,0.1)", borderRadius: 24, padding: "6px 14px", fontSize: 13, color: currentColors.text },
+    showMoreBtn: { background: "none", border: "none", color: currentColors.primary, cursor: "pointer", fontSize: 13, marginTop: 10, display: "flex", alignItems: "center", gap: 6 },
     buyButtonsRow: { display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 20 },
-    buyBtn: (bgColor) => ({ background: bgColor, border: "none", borderRadius: 12, padding: "10px 20px", color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", gap: 10, fontSize: 14, fontWeight: 500, transition: "all 0.2s ease" }),
-    backBtn: { display: "flex", alignItems: "center", gap: 10, background: "rgba(255,255,255,0.05)", border: "none", borderRadius: 14, padding: "12px 24px", color: currentColors.text, cursor: "pointer", marginBottom: 28, fontSize: 14, transition: "all 0.2s ease" },
+    buyBtn: (bgColor) => ({ background: bgColor, border: "none", borderRadius: 12, padding: "10px 20px", color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", gap: 10, fontSize: 14, fontWeight: 500 }),
+    backBtn: { display: "flex", alignItems: "center", gap: 10, background: "rgba(255,255,255,0.05)", border: "none", borderRadius: 14, padding: "12px 24px", color: currentColors.text, cursor: "pointer", marginBottom: 28, fontSize: 14 },
     trailerFrame: { width: "100%", height: 360, borderRadius: 24, marginBottom: 28, border: "none", background: "#000" },
-    settingsSection: { background: currentColors.bgCard, borderRadius: 24, padding: 24, marginBottom: 28 },
-    settingsRow: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18, flexWrap: "wrap", gap: 12 },
-    settingsLabel: { fontSize: 15, color: currentColors.text },
-    checkbox: { display: "flex", alignItems: "center", gap: 12, marginBottom: 18, cursor: "pointer", fontSize: 14, color: currentColors.textSecondary },
     achievementGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 14, marginTop: 20 },
-    achievementCard: { background: "rgba(0,0,0,0.3)", borderRadius: 14, padding: 14, display: "flex", alignItems: "center", gap: 14, transition: "all 0.2s ease" },
+    achievementCard: { background: "rgba(0,0,0,0.3)", borderRadius: 14, padding: 14, display: "flex", alignItems: "center", gap: 14 },
     achievementIcon: { fontSize: 28 },
     achievementInfo: { flex: 1 },
     achievementName: { fontSize: 14, fontWeight: 600, color: currentColors.text },
     achievementDesc: { fontSize: 11, color: currentColors.textSecondary },
-    donationBtn: { background: `linear-gradient(135deg, ${currentColors.primary} 0%, ${currentColors.primaryDark} 100%)`, border: "none", borderRadius: 14, padding: "12px 24px", color: currentColors.bg, cursor: "pointer", fontWeight: 700, display: "flex", alignItems: "center", gap: 8, fontSize: 14, transition: "all 0.2s ease" },
-    aotyResultCard: { background: currentColors.bgCard, borderRadius: 32, padding: 32, marginBottom: 32, border: `1px solid ${currentColors.primary}30` },
-    aotyWinnerCard: { background: `linear-gradient(135deg, ${currentColors.primary}10, ${currentColors.bgCard})`, borderRadius: 20, padding: 18, marginBottom: 16, cursor: "pointer", display: "flex", gap: 16, alignItems: "center", flexWrap: "wrap", transition: "all 0.2s ease" },
-    gotyBackBtn: { background: "rgba(255,255,255,0.05)", border: "none", borderRadius: 14, padding: "10px 20px", color: currentColors.text, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 24, fontSize: 14, transition: "all 0.2s ease" },
-    topGenreSelect: { background: currentColors.bgCard, border: `1px solid ${currentColors.primary}30`, borderRadius: 16, padding: "14px 24px", color: currentColors.text, fontSize: 15, marginBottom: 28, cursor: "pointer", width: "100%", transition: "all 0.2s ease" },
-    aotyYearCard: { background: currentColors.bgCard, borderRadius: 22, padding: 24, textAlign: "center", cursor: "pointer", border: "1px solid rgba(255,255,255,0.05)", transition: "all 0.2s ease" },
-    playlistCard: { background: currentColors.bgCard, borderRadius: 24, padding: 24, marginBottom: 24, border: `1px solid ${currentColors.primary}20`, transition: "all 0.2s ease" },
     gameNightCard: { background: currentColors.bgCard, borderRadius: 28, padding: 32, marginBottom: 32, textAlign: "center" },
     wheelContainer: { margin: "28px 0", display: "flex", justifyContent: "center" },
     wheel: { width: 220, height: 220, borderRadius: "50%", background: `conic-gradient(${currentColors.primary} 0deg 72deg, ${currentColors.primaryDark} 72deg 144deg, ${colors.success} 144deg 216deg, ${colors.error} 216deg 288deg, ${colors.steam} 288deg 360deg)`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "transform 0.1s", boxShadow: "0 15px 40px rgba(0,0,0,0.4)" },
     wheelInner: { width: 70, height: 70, borderRadius: "50%", background: currentColors.bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28 },
-    activityCard: { background: currentColors.bgCard, borderRadius: 14, padding: 14, marginBottom: 14, display: "flex", alignItems: "center", gap: 14, transition: "all 0.2s ease" },
-    compareCard: { background: currentColors.bgCard, borderRadius: 32, padding: 32, marginBottom: 32 },
-    compareGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 32, marginBottom: 28 },
-    compareColumn: { background: "rgba(0,0,0,0.2)", borderRadius: 24, padding: 24, transition: "all 0.2s ease" },
-    compareHeader: { fontSize: 20, fontWeight: 700, marginBottom: 20, textAlign: "center", paddingBottom: 16, borderBottom: `2px solid ${currentColors.primary}40` },
-    compareRow: { display: "flex", justifyContent: "space-between", padding: "12px 0", borderBottom: "1px solid rgba(255,255,255,0.05)" },
-    compareLabel: { fontWeight: 600, color: currentColors.textSecondary, fontSize: 14 },
-    compareValue: { fontWeight: 500, color: currentColors.text, fontSize: 14 },
-    journalCard: { background: currentColors.bgCard, borderRadius: 20, padding: 20, marginBottom: 24 },
-    tag: { background: "rgba(255,212,0,0.15)", borderRadius: 20, padding: "4px 12px", fontSize: 11, color: currentColors.primary, display: "inline-flex", alignItems: "center", gap: 6 },
-    profileSection: { marginBottom: 32 },
-    profileSectionTitle: { fontSize: 20, fontWeight: 600, marginBottom: 20, display: "flex", alignItems: "center", gap: 12, color: currentColors.text },
     progressBar: { background: `${currentColors.primary}20`, borderRadius: 10, height: 10, overflow: "hidden", marginTop: 8 },
     progressFill: { width: `${(library.filter(g => g.status === "completed").length / (library.length || 1)) * 100}%`, background: currentColors.primary, height: 10, transition: "width 0.3s ease" }
   };
@@ -912,7 +829,6 @@ export default function NexPlay() {
     const inLibrary = library.some(g => g.id === game.id);
     const rating = game.finalRating || game.rating;
     const img = game.finalImg || game.img;
-    const tags = customTags[game.id] || [];
     return (
       <div className="game-card" style={styles.gameCard} onClick={() => openGameDetail(game)}>
         <img src={img} style={styles.gameImg} alt={game.name} onError={(e) => { e.target.src = `https://placehold.co/300x400/14141f/ffd400?text=${encodeURIComponent(game.name?.slice(0, 8) || "Game")}`; }} />
@@ -924,7 +840,6 @@ export default function NexPlay() {
           <div style={styles.gameName}>{game.name}</div>
           <div style={styles.rating}><FaStar size={11} /> {rating?.toFixed(1)}</div>
           <div style={{ fontSize: 12, color: currentColors.textSecondary, marginBottom: 8 }}>{game.playtime}</div>
-          {tags.length > 0 && (<div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginBottom: 8 }}>{tags.slice(0, 2).map((tag, i) => <span key={i} style={styles.tag}>{tag}</span>)}</div>)}
           {showBtn && <button className="btn-click" style={styles.addBtn} onClick={(e) => { e.stopPropagation(); addToLibrary(game); }}>{inLibrary ? <FaCheck size={12} /> : <FaPlus size={12} />} {inLibrary ? text.inLibrary : text.add}</button>}
         </div>
       </div>
@@ -1022,7 +937,7 @@ export default function NexPlay() {
   }
 
   return (
-    <div style={styles.app} onClick={initAudio}>
+    <div style={styles.app}>
       <div className="mobile-menu-overlay" style={styles.mobileMenu}>
         <button className="btn-click" style={styles.mobileMenuClose} onClick={closeMobileMenu}><FaTimes size={24} /></button>
         <div style={{ marginTop: 60 }}>
@@ -1112,7 +1027,7 @@ export default function NexPlay() {
                 {step === 1 && (<div className="slide-in"><div style={{ fontSize: 24, fontWeight: 700, marginBottom: 28, textAlign: "center" }}>{text.mood} 🎭</div><div style={styles.pillGrid}>{MOODS.map(m => <button key={m} className="btn-click" style={styles.pill(selectedMoods.includes(m))} onClick={() => toggle(selectedMoods, setSelectedMoods, m)}>{m}</button>)}</div><button className="btn-click" style={styles.nextBtn} onClick={() => setStep(2)}>{text.next} →</button></div>)}
                 {step === 2 && (<div className="slide-in"><div style={{ fontSize: 24, fontWeight: 700, marginBottom: 28, textAlign: "center" }}>{text.genre} 🎮</div><div style={styles.pillGrid}>{GENRES.map(g => <button key={g} className="btn-click" style={styles.pill(selectedGenres.includes(g))} onClick={() => toggle(selectedGenres, setSelectedGenres, g)}>{g}</button>)}</div><button className="btn-click" style={styles.nextBtn} onClick={() => setStep(3)}>{text.next} →</button></div>)}
                 {step === 3 && (<div className="slide-in"><div style={{ fontSize: 24, fontWeight: 700, marginBottom: 28, textAlign: "center" }}>{text.playtime} ⏱️</div><div style={styles.pillGrid}>{PLAYTIMES.map(p => <button key={p} className="btn-click" style={styles.pill(selectedPlaytime === p)} onClick={() => setSelectedPlaytime(p === selectedPlaytime ? null : p)}>{p}</button>)}</div><button className="btn-click" style={styles.nextBtn} onClick={() => setStep(4)}>{text.results} 🚀</button></div>)}
-                {step === 4 && (<div className="fade-in"><input style={styles.searchBar} placeholder={text.search} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} /><div style={styles.filterRow}><span style={{ fontSize: 14 }}>{text.sort}:</span><button className="btn-click" style={styles.filterBtn(sortBy === "score")} onClick={() => setSortBy("score")}>{text.bestMatch}</button><button className="btn-click" style={styles.filterBtn(sortBy === "rating")} onClick={() => setSortBy("rating")}>{text.rating}</button><button className="btn-click" style={styles.filterBtn(sortBy === "year")} onClick={() => setSortBy("year")}>{text.year}</button></div>{topPicks.length > 0 && (<div><div style={styles.sectionTitle}>🎯 {text.topPicks}</div><div style={styles.topPicksRow}>{topPicks.slice(0, 6).map((g,i) => <div key={g.id} className="game-card" style={styles.topPickCard} onClick={() => openGameDetail(g)}><div style={{ fontSize: 22, marginBottom: 8 }}>{["🥇","🥈","🥉","4","5","6"][i]}</div><img src={g.finalImg || g.img} style={{ width: "100%", height: 100, objectFit: "cover", borderRadius: 12 }} alt={g.name} /><div style={{ fontWeight: 700, marginTop: 12, fontSize: 13, wordWrap: "break-word" }}>{g.name}</div><div style={{ fontSize: 12, color: currentColors.primary, marginTop: 4 }}>★ {(g.finalRating || g.rating)?.toFixed(1)}</div><button className="btn-click" style={{ ...styles.addBtn, padding: "8px 12px", fontSize: 12 }} onClick={(e) => { e.stopPropagation(); addToLibrary(g); }}>+ {text.add}</button></div>)}</div>)}<div style={styles.sectionTitle}>📋 {text.allResults}</div><div style={styles.grid}>{restResults.slice(0, 24).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div></div>)}
+                {step === 4 && (<div className="fade-in"><input style={styles.searchBar} placeholder={text.search} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} /><div style={styles.filterRow}><span style={{ fontSize: 14 }}>{text.sort}:</span><button className="btn-click" style={styles.filterBtn(sortBy === "score")} onClick={() => setSortBy("score")}>{text.bestMatch}</button><button className="btn-click" style={styles.filterBtn(sortBy === "rating")} onClick={() => setSortBy("rating")}>{text.rating}</button><button className="btn-click" style={styles.filterBtn(sortBy === "year")} onClick={() => setSortBy("year")}>{text.year}</button></div><div><div style={styles.sectionTitle}>🎯 {text.topPicks}</div><div style={styles.topPicksRow}>{topPicks.slice(0, 6).map((g,i) => <div key={g.id} className="game-card" style={styles.topPickCard} onClick={() => openGameDetail(g)}><div style={{ fontSize: 22, marginBottom: 8 }}>{["🥇","🥈","🥉","4","5","6"][i]}</div><img src={g.finalImg || g.img} style={{ width: "100%", height: 100, objectFit: "cover", borderRadius: 12 }} alt={g.name} /><div style={{ fontWeight: 700, marginTop: 12, fontSize: 13 }}>{g.name}</div><div style={{ fontSize: 12, color: currentColors.primary, marginTop: 4 }}>★ {(g.finalRating || g.rating)?.toFixed(1)}</div><button className="btn-click" style={{ ...styles.addBtn, padding: "8px 12px", fontSize: 12 }} onClick={(e) => { e.stopPropagation(); addToLibrary(g); }}>+ {text.add}</button></div>)}</div></div><div style={styles.sectionTitle}>📋 {text.allResults}</div><div style={styles.grid}>{restResults.slice(0, 24).map(g => <GameCard key={g.id} game={g} showBtn={true} />)}</div></div>)}
               </>
             )}
 
