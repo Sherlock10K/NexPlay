@@ -34,7 +34,7 @@ const YEARS = [...Array(25)].map((_, i) => new Date().getFullYear() - i);
 
 const DEEPSEEK_API_KEY = "sk-b5699f49547a4e4ab7eaa74cb6bb7016";
 
-// ========== AOTY DATA with WINNERS & NOMINEES ==========
+// ========== AOTY DATA ==========
 const AOTY_DATA = {
   2025: { winner: "Clair Obscur: Expedition 33", nominees: ["Clair Obscur: Expedition 33", "Fable", "Avowed", "Star Wars Outlaws", "Assassin's Creed Shadows"], img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2358720/header.jpg", steamId: 2358720, genre: "RPG", playtime: "60-100h", developer: "Kepler Interactive", description: "Clair Obscur: Expedition 33 ist ein episches RPG in einer düsteren Fantasy-Welt." },
   2024: { winner: "Astro Bot", nominees: ["Astro Bot", "Final Fantasy VII Rebirth", "Metaphor: ReFantazio", "Tekken 8", "Dragon's Dogma 2"], img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2357570/header.jpg", steamId: 2357570, genre: "Platformer", playtime: "20-40h", developer: "Team Asobi", description: "Astro Bot ist ein charmantes 3D-Platformer-Abenteuer." },
@@ -60,7 +60,6 @@ const MANUAL_HIDDEN_GEMS = [
   { id: 9004, name: "Hades", rating: 9.3, genre: "Action", playtime: "40-60h", year: 2020, img: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1145360/header.jpg", developer: "Supergiant Games", mood: "Action", description: "Ein Roguelite-Actionspiel mit griechischer Mythologie.", platforms: ["PC", "Switch", "PS4", "Xbox"], steamId: 1145360 }
 ];
 
-// ========== FUNNY ACHIEVEMENTS ==========
 const FUNNY_ACHIEVEMENTS = [
   { id: "click_master", name: "🖱️ Klick-Meister", description: "Klicke 100 Mal auf das NexPlay Logo", requirement: "100 logo clicks", unlocked: false, progress: 0, icon: "🖱️", secret: false, reward: 100 },
   { id: "night_owl", name: "🦉 Nacht-Eule", description: "Besuche die Seite zwischen 2-4 Uhr morgens", requirement: "Visit between 2-4 AM", unlocked: false, progress: 0, icon: "🌙", secret: true, reward: 150 },
@@ -203,7 +202,7 @@ export default function NexPlay() {
   const [randomSelectedMood, setRandomSelectedMood] = useState("all");
   const [rouletteResult, setRouletteResult] = useState([]);
   const [showRoulette, setShowRoulette] = useState(false);
-  const [aiMessages, setAiMessages] = useState([{ role: "assistant", content: "🎮 Hallo! Ich bin dein KI-Gaming-Assistent! Frag mich nach Spielen, Tipps oder lass dir was empfehlen!\n\n💡 Quick-Actions:\n• Empfehle mir ein RPG\n• Tipps für Elden Ring\n• Was ist neu in der Gaming-Welt?" }]);
+  const [aiMessages, setAiMessages] = useState([{ role: "assistant", content: "🎮 Hallo! Ich bin dein KI-Gaming-Assistent! Frag mich nach Spielen, Tipps oder lass dir was empfehlen!\n\n💡 Quick-Actions:\n• Empfehle mir ein RPG\n• Tipps für Elden Ring\n• What's new in gaming?" }]);
   const [aiInput, setAiInput] = useState("");
   const [freeAiQueries, setFreeAiQueries] = useState(() => {
     const saved = localStorage.getItem("nexplay_freeAi");
@@ -725,15 +724,33 @@ export default function NexPlay() {
     setFreeAiQueries(prev => prev - 1);
     updateAchievements();
     
-    const getLocalResponse = (msg) => {
+    const getLocalResponse = (msg, currentLang) => {
       const lowerMsg = msg.toLowerCase();
-      if (lowerMsg.includes("empfehl") || lowerMsg.includes("vorschlag")) {
-        const random = TOP_PICKS_GAMES[Math.floor(Math.random() * TOP_PICKS_GAMES.length)];
-        return `🎮 **Spielempfehlung:** ${random.name}\n⭐ Bewertung: ${random.finalRating}/10\n🎭 Genre: ${random.genre}\n⏱️ Spielzeit: ${random.playtime}\n\n${random.finalDescription?.substring(0, 150)}...`;
+      if (lowerMsg.includes("rpg") || (currentLang === "de" && lowerMsg.includes("rpg")) || (currentLang === "de" && lowerMsg.includes("rollenspiel"))) {
+        const random = TOP_PICKS_GAMES.find(g => g.genre === "RPG") || TOP_PICKS_GAMES[0];
+        const responseText = currentLang === "de" 
+          ? `🎮 **RPG-Empfehlung:** ${random.name}\n⭐ Bewertung: ${random.finalRating}/10\n🎭 Genre: ${random.genre}\n⏱️ Spielzeit: ${random.playtime}\n\n${random.finalDescription?.substring(0, 150)}...`
+          : `🎮 **RPG Recommendation:** ${random.name}\n⭐ Rating: ${random.finalRating}/10\n🎭 Genre: ${random.genre}\n⏱️ Playtime: ${random.playtime}\n\n${random.finalDescription?.substring(0, 150)}...`;
+        return responseText;
       }
-      if (lowerMsg.includes("witcher")) return "🐺 **The Witcher 3 Tipps:** Mach alle Nebenquests, lerne Gwent, die DLCs sind ein Muss!";
-      if (lowerMsg.includes("elden ring")) return "🗡️ **Elden Ring Tipps:** Level Lebenspunkte zuerst, erkunde Limgrave gründlich, nutze Geisterbeschwörungen!";
-      return `Danke für deine Frage! Ich kann dir helfen mit:\n• Spielempfehlungen\n• Spiel-Tipps\n• Genre-Fragen\n• Gaming-News\n\n💡 Tipp: Du hast noch ${freeAiQueries - 1} kostenlose Anfragen.`;
+      if (lowerMsg.includes("elden ring") || lowerMsg.includes("elden")) {
+        return currentLang === "de"
+          ? "🗡️ **Elden Ring Tipps:**\n• Level Lebenspunkte zuerst\n• Erkunde Limgrave gründlich\n• Nutze Geisterbeschwörungen\n• Waffe auf +3 vor Margit"
+          : "🗡️ **Elden Ring Tips:**\n• Level VIGOR first\n• Explore Limgrave thoroughly\n• Use Spirit Ashes\n• Upgrade weapon to +3 before Margit";
+      }
+      if (lowerMsg.includes("witcher")) {
+        return currentLang === "de"
+          ? "🐺 **The Witcher 3 Tipps:** Mach alle Nebenquests, lerne Gwent, die DLCs sind ein Muss!"
+          : "🐺 **The Witcher 3 Tips:** Do all side quests, learn Gwent, the DLCs are a must!";
+      }
+      if (lowerMsg.includes("news") || lowerMsg.includes("neu")) {
+        return currentLang === "de"
+          ? "🎉 **Aktuelle Gaming-News:**\n• Baldur's Gate 3 Update mit neuen Endings\n• Elden Ring: Shadow of the Erdtree kommt bald\n• Cyberpunk 2077 Phantom Liberty DLC"
+          : "🎉 **Latest Gaming News:**\n• Baldur's Gate 3 update with new endings\n• Elden Ring: Shadow of the Erdtree coming soon\n• Cyberpunk 2077 Phantom Liberty DLC";
+      }
+      return currentLang === "de"
+        ? `Danke für deine Frage! Ich kann dir helfen mit:\n• Spielempfehlungen\n• Spiel-Tipps\n• Genre-Fragen\n• Gaming-News\n\n💡 Tipp: Du hast noch ${freeAiQueries - 1} kostenlose Anfragen.`
+        : `Thanks for your question! I can help you with:\n• Game recommendations\n• Game tips\n• Genre questions\n• Gaming news\n\n💡 Tip: You have ${freeAiQueries - 1} free queries left.`;
     };
     
     try {
@@ -743,7 +760,7 @@ export default function NexPlay() {
         body: JSON.stringify({
           model: "deepseek-chat",
           messages: [
-            { role: "system", content: "Du bist ein Gaming-Assistent. Antworte auf Deutsch, freundlich und mit Emojis. Gib konkrete Spieltipps." },
+            { role: "system", content: lang === "de" ? "Du bist ein Gaming-Assistent. Antworte auf Deutsch, freundlich und mit Emojis. Gib konkrete Spieltipps." : "You are a gaming assistant. Answer in English, friendly and with emojis. Give concrete game tips." },
             ...aiMessages.slice(-5).map(m => ({ role: m.role, content: m.content })),
             { role: "user", content: userMessage }
           ],
@@ -753,9 +770,9 @@ export default function NexPlay() {
       });
       if (response.ok) {
         const data = await response.json();
-        setAiMessages(prev => [...prev, { role: "assistant", content: data.choices?.[0]?.message?.content || getLocalResponse(userMessage) }]);
-      } else { setAiMessages(prev => [...prev, { role: "assistant", content: getLocalResponse(userMessage) }]); }
-    } catch (error) { setAiMessages(prev => [...prev, { role: "assistant", content: getLocalResponse(userMessage) }]); }
+        setAiMessages(prev => [...prev, { role: "assistant", content: data.choices?.[0]?.message?.content || getLocalResponse(userMessage, lang) }]);
+      } else { setAiMessages(prev => [...prev, { role: "assistant", content: getLocalResponse(userMessage, lang) }]); }
+    } catch (error) { setAiMessages(prev => [...prev, { role: "assistant", content: getLocalResponse(userMessage, lang) }]); }
     finally { setIsAiLoading(false); }
   };
 
@@ -997,12 +1014,10 @@ export default function NexPlay() {
       .game-card { margin-bottom: 16px; }
       .sectionTitle { font-size: 22px !important; }
       .game-name { font-size: 14px !important; }
-      .mobile-menu-item { padding: 14px 0 !important; font-size: 15px !important; }
     }
     @media (min-width: 769px) { 
       .hamburger-btn { display: none !important; } 
       .main-tabs-desktop { display: flex !important; } 
-      .mobile-only { display: none !important; }
     }
   `;
 
@@ -1016,15 +1031,15 @@ export default function NexPlay() {
     logoIcon: { background: `linear-gradient(135deg, ${currentColors.primary} 0%, ${currentColors.primaryDark} 100%)`, borderRadius: "12px", padding: "8px 10px", color: currentColors.bg, display: "flex", alignItems: "center", gap: 6 },
     logoIconText: { fontSize: 18, fontWeight: 700 },
     logoText: { background: `linear-gradient(135deg, ${currentColors.primary} 0%, ${currentColors.primaryDark} 100%)`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", fontSize: 20, fontWeight: 800 },
-    rightSection: { display: "flex", alignItems: "center", gap: 16 },
+    rightSection: { display: "flex", alignItems: "center", gap: 20 },
     badge10k: { background: currentColors.primary, color: currentColors.bg, borderRadius: "20px", padding: "4px 12px", fontSize: 12, fontWeight: 700 },
     mainTabs: { display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center", justifyContent: "flex-end" },
-    mainTab: (active) => ({ background: active ? currentColors.primary : "rgba(255,255,255,0.08)", border: "none", borderRadius: 12, padding: compactView ? "6px 16px" : "8px 20px", color: active ? currentColors.bg : currentColors.text, cursor: "pointer", fontWeight: 600, fontSize: 13, display: "flex", alignItems: "center", gap: 8, transition: "all 0.2s ease", whiteSpace: "nowrap" }),
-    iconBtn: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 12, padding: compactView ? "6px 12px" : "8px 14px", color: currentColors.text, cursor: "pointer", display: "flex", alignItems: "center", gap: 8, fontSize: 13, transition: "all 0.2s ease" },
-    loginBtn: { background: "linear-gradient(135deg, #4285f4, #3367d6)", border: "none", borderRadius: 12, padding: compactView ? "6px 16px" : "8px 20px", color: "#fff", cursor: "pointer", fontWeight: 600, display: "flex", alignItems: "center", gap: 8, fontSize: 13, transition: "all 0.2s ease" },
-    logoutBtn: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 12, padding: compactView ? "6px 16px" : "8px 20px", color: currentColors.text, cursor: "pointer", display: "flex", alignItems: "center", gap: 8, fontSize: 13, transition: "all 0.2s ease" },
+    mainTab: (active) => ({ background: active ? currentColors.primary : "rgba(255,255,255,0.08)", border: "none", borderRadius: 10, padding: compactView ? "6px 14px" : "8px 18px", color: active ? currentColors.bg : currentColors.text, cursor: "pointer", fontWeight: 600, fontSize: 13, display: "flex", alignItems: "center", gap: 8, transition: "all 0.2s ease", whiteSpace: "nowrap" }),
+    iconBtn: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 10, padding: compactView ? "6px 12px" : "8px 14px", color: currentColors.text, cursor: "pointer", display: "flex", alignItems: "center", gap: 8, fontSize: 13, transition: "all 0.2s ease" },
+    loginBtn: { background: "linear-gradient(135deg, #4285f4, #3367d6)", border: "none", borderRadius: 10, padding: compactView ? "6px 14px" : "8px 18px", color: "#fff", cursor: "pointer", fontWeight: 600, display: "flex", alignItems: "center", gap: 8, fontSize: 13, transition: "all 0.2s ease" },
+    logoutBtn: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 10, padding: compactView ? "6px 14px" : "8px 18px", color: currentColors.text, cursor: "pointer", display: "flex", alignItems: "center", gap: 8, fontSize: 13, transition: "all 0.2s ease" },
     userAvatar: { width: 36, height: 36, borderRadius: "50%", background: currentColors.primary, display: "flex", alignItems: "center", justifyContent: "center", color: currentColors.bg, fontWeight: 700, fontSize: 16, objectFit: "cover" },
-    hamburgerBtn: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 12, padding: "8px 12px", color: currentColors.text, cursor: "pointer", display: "flex", alignItems: "center", gap: 8, fontSize: 18, display: "none" },
+    hamburgerBtn: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 10, padding: "8px 12px", color: currentColors.text, cursor: "pointer", display: "flex", alignItems: "center", gap: 8, fontSize: 18, display: "none" },
     mobileMenu: { position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: currentColors.bg, zIndex: 1000, padding: "20px", overflowY: "auto", transform: mobileMenuOpen ? "translateX(0)" : "translateX(-100%)", transition: "transform 0.3s ease" },
     mobileMenuClose: { position: "absolute", top: 16, right: 16, background: "rgba(255,255,255,0.1)", border: "none", borderRadius: "50%", padding: "10px", cursor: "pointer", color: currentColors.text, fontSize: 18 },
     mobileMenuItem: { display: "flex", alignItems: "center", gap: 12, padding: "12px 0", borderBottom: "1px solid rgba(255,255,255,0.05)", width: "100%", background: "none", border: "none", color: currentColors.text, fontSize: 14, cursor: "pointer" },
@@ -1035,13 +1050,13 @@ export default function NexPlay() {
     gameName: { fontSize: compactView ? 12 : 14, fontWeight: 700, marginBottom: 4, color: currentColors.text, wordWrap: "break-word" },
     rating: { display: "flex", alignItems: "center", gap: 4, color: currentColors.primary, fontSize: 11, fontWeight: 600, marginBottom: 4 },
     addBtn: { background: currentColors.primary, border: "none", borderRadius: 8, padding: compactView ? "6px 8px" : "8px 10px", fontSize: compactView ? 11 : 12, fontWeight: 600, cursor: "pointer", width: "100%", marginTop: 8, color: currentColors.bg, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, transition: "all 0.2s ease" },
-    searchBar: { background: currentColors.bgCard, border: `1px solid rgba(255,255,255,0.08)`, borderRadius: 14, padding: "10px 16px", color: currentColors.text, fontSize: 13, width: "100%", marginBottom: 20, outline: "none" },
+    searchBar: { background: currentColors.bgCard, border: `1px solid ${currentColors.primary}30`, borderRadius: 12, padding: "10px 16px", color: currentColors.text, fontSize: 13, width: "100%", marginBottom: 20, outline: "none" },
     select: { background: currentColors.bgCard, border: `1px solid ${currentColors.primary}30`, borderRadius: 8, padding: "6px 10px", color: currentColors.text, fontSize: 12, cursor: "pointer", transition: "all 0.2s ease" },
     modalOverlay: { position: "fixed", inset: 0, background: "rgba(0,0,0,0.96)", zIndex: 2000, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" },
-    modalContent: { background: currentColors.bgCard, borderRadius: 24, padding: 24, width: "90%", maxWidth: 480, border: `1px solid ${currentColors.primary}30`, maxHeight: "85vh", overflowY: "auto" },
-    modalTitle: { fontSize: 22, fontWeight: 700, marginBottom: 16, textAlign: "center", color: currentColors.text },
-    input: { width: "100%", background: "rgba(255,255,255,0.08)", border: `1px solid rgba(255,255,255,0.1)`, borderRadius: 10, padding: "10px 14px", color: currentColors.text, fontSize: 13, marginBottom: 12, outline: "none" },
-    modalBtn: { background: currentColors.primary, border: "none", borderRadius: 12, padding: "10px", fontSize: 14, fontWeight: 600, cursor: "pointer", width: "100%", marginTop: 12, color: currentColors.bg },
+    modalContent: { background: currentColors.bgCard, borderRadius: 20, padding: 20, width: "90%", maxWidth: 460, border: `1px solid ${currentColors.primary}30`, maxHeight: "85vh", overflowY: "auto" },
+    modalTitle: { fontSize: 20, fontWeight: 700, marginBottom: 16, textAlign: "center", color: currentColors.text },
+    input: { width: "100%", background: "rgba(255,255,255,0.08)", border: `1px solid ${currentColors.primary}30`, borderRadius: 10, padding: "10px 14px", color: currentColors.text, fontSize: 13, marginBottom: 12, outline: "none" },
+    modalBtn: { background: currentColors.primary, border: "none", borderRadius: 10, padding: "10px", fontSize: 14, fontWeight: 600, cursor: "pointer", width: "100%", marginTop: 12, color: currentColors.bg },
     loadingSpinner: { width: 40, height: 40, border: `3px solid ${currentColors.primary}20`, borderTop: `3px solid ${currentColors.primary}`, borderRadius: "50%", animation: "spin 1s linear infinite" },
     emptyState: { textAlign: "center", padding: 40, background: currentColors.bgCard, borderRadius: 20, color: currentColors.textSecondary, fontSize: 14 },
     sectionTitle: { fontSize: compactView ? 20 : 22, fontWeight: 700, marginBottom: 16, display: "flex", alignItems: "center", gap: 10, color: currentColors.text },
@@ -1054,18 +1069,18 @@ export default function NexPlay() {
     achievementDesc: { fontSize: 10, color: currentColors.textSecondary, marginTop: 2 },
     progressBar: { background: `${currentColors.primary}20`, borderRadius: 6, height: 5, overflow: "hidden", marginTop: 6 },
     progressFill: { background: currentColors.primary, height: 5, transition: "width 0.3s ease" },
-    gameNightCard: { background: currentColors.bgCard, borderRadius: 20, padding: 20, marginBottom: 20, textAlign: "center" },
+    gameNightCard: { background: currentColors.bgCard, borderRadius: 18, padding: 18, marginBottom: 20, textAlign: "center" },
     wheelContainer: { margin: "16px 0", display: "flex", justifyContent: "center" },
     wheel: { width: 180, height: 180, borderRadius: "50%", background: `conic-gradient(${currentColors.primary} 0deg 72deg, ${currentColors.primaryDark} 72deg 144deg, ${colors.success} 144deg 216deg, ${colors.error} 216deg 288deg, ${colors.steam} 288deg 360deg)`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "transform 0.1s", boxShadow: "0 10px 30px rgba(0,0,0,0.3)" },
     wheelInner: { width: 50, height: 50, borderRadius: "50%", background: currentColors.bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22 },
-    aotyYearCard: { background: currentColors.bgCard, borderRadius: 16, padding: 16, textAlign: "center", cursor: "pointer", border: "1px solid rgba(255,255,255,0.05)", transition: "all 0.2s ease" },
+    aotyYearCard: { background: currentColors.bgCard, borderRadius: 16, padding: 16, textAlign: "center", cursor: "pointer", border: `1px solid ${currentColors.primary}20`, transition: "all 0.2s ease" },
     gameDetailHeader: { display: "flex", gap: 20, flexWrap: "wrap", marginBottom: 20, alignItems: "flex-start" },
     gameDetailImg: { width: window.innerWidth <= 768 ? "100%" : 200, maxWidth: 200, borderRadius: 14, objectFit: "cover" },
     gameDetailInfo: { flex: 1 },
     gameDetailName: { fontSize: 24, fontWeight: 700, marginBottom: 6, color: currentColors.text, wordWrap: "break-word" },
-    backBtn: { display: "flex", alignItems: "center", gap: 6, background: "rgba(255,255,255,0.05)", border: "none", borderRadius: 10, padding: "8px 16px", color: currentColors.text, cursor: "pointer", marginBottom: 16, fontSize: 12 },
+    backBtn: { display: "flex", alignItems: "center", gap: 6, background: "rgba(255,255,255,0.05)", border: "none", borderRadius: 8, padding: "6px 12px", color: currentColors.text, cursor: "pointer", marginBottom: 16, fontSize: 12 },
     trailerFrame: { width: "100%", height: window.innerWidth <= 768 ? 200 : 320, borderRadius: 16, marginBottom: 20, border: "none", background: "#000" },
-    settingsSection: { background: currentColors.bgCard, borderRadius: 18, padding: 16, marginBottom: 20 },
+    settingsSection: { background: currentColors.bgCard, borderRadius: 16, padding: 16, marginBottom: 20 },
     settingsRow: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, flexWrap: "wrap", gap: 10 },
     statsRow: { display: "flex", gap: 10, marginBottom: 20, flexWrap: "wrap" },
     statCard: { background: currentColors.bgCard, borderRadius: 12, padding: "12px", textAlign: "center", flex: 1, minWidth: 70 },
@@ -1075,12 +1090,12 @@ export default function NexPlay() {
     profileAvatarLarge: { width: 80, height: 80, borderRadius: "50%", background: `linear-gradient(135deg, ${currentColors.primary} 0%, ${currentColors.primaryDark} 100%)`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 32, fontWeight: 700, color: currentColors.bg, position: "relative", objectFit: "cover" },
     cameraIcon: { position: "absolute", bottom: 0, right: 0, background: currentColors.bg, borderRadius: "50%", padding: "5px", cursor: "pointer", boxShadow: "0 2px 8px rgba(0,0,0,0.3)" },
     editBtn: { background: "rgba(255,255,255,0.08)", border: "none", borderRadius: 8, padding: "6px 12px", color: currentColors.text, cursor: "pointer", fontSize: 11, marginTop: 10, display: "inline-flex", alignItems: "center", gap: 6 },
-    randomFilterSection: { background: currentColors.bgCard, borderRadius: 18, padding: 16, marginBottom: 20 },
+    randomFilterSection: { background: currentColors.bgCard, borderRadius: 16, padding: 16, marginBottom: 20 },
     randomFilterTitle: { fontSize: 15, fontWeight: 600, color: currentColors.text, marginBottom: 12, display: "flex", alignItems: "center", gap: 6 },
     randomFilterRow: { display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center", marginBottom: 8 },
     randomCheckbox: { display: "flex", alignItems: "center", gap: 5, cursor: "pointer", fontSize: 12, color: currentColors.textSecondary },
     randomSlider: { width: 160, accentColor: currentColors.primary },
-    aiSection: { background: currentColors.bgCard, borderRadius: 18, padding: 16, marginBottom: 20 },
+    aiSection: { background: currentColors.bgCard, borderRadius: 16, padding: 16, marginBottom: 20 },
     aiChatContainer: { height: 350, display: "flex", flexDirection: "column", background: currentColors.bgCard, borderRadius: 14, overflow: "hidden", marginTop: 10, border: `1px solid ${currentColors.primary}20` },
     aiMessages: { flex: 1, overflowY: "auto", padding: 14, display: "flex", flexDirection: "column", gap: 8 },
     aiMessage: (isUser) => ({ background: isUser ? currentColors.primary : `${currentColors.primary}20`, color: isUser ? currentColors.bg : currentColors.text, padding: "8px 12px", borderRadius: 14, borderBottomRightRadius: isUser ? 4 : 14, borderBottomLeftRadius: isUser ? 14 : 4, maxWidth: "80%", alignSelf: isUser ? "flex-end" : "flex-start", whiteSpace: "pre-wrap", fontSize: 12 }),
@@ -1090,9 +1105,9 @@ export default function NexPlay() {
     supportCard: { background: currentColors.bgCard, borderRadius: 20, padding: 24, textAlign: "center", border: `1px solid ${currentColors.primary}30` },
     newsCard: { background: currentColors.bgCard, borderRadius: 14, padding: 14, marginBottom: 14, border: `1px solid ${currentColors.primary}20` },
     playlistCard: { background: currentColors.bgCard, borderRadius: 16, padding: 16, marginBottom: 16, border: `1px solid ${currentColors.primary}20` },
-    compareCard: { background: currentColors.bgCard, borderRadius: 20, padding: 20, marginBottom: 20 },
+    compareCard: { background: currentColors.bgCard, borderRadius: 18, padding: 18, marginBottom: 20 },
     compareGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 },
-    compareColumn: { background: "rgba(0,0,0,0.2)", borderRadius: 16, padding: 16 },
+    compareColumn: { background: "rgba(0,0,0,0.2)", borderRadius: 14, padding: 14 },
     compareHeader: { fontSize: 16, fontWeight: 700, marginBottom: 12, textAlign: "center", paddingBottom: 10, borderBottom: `2px solid ${currentColors.primary}40` },
     compareRow: { display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: "1px solid rgba(255,255,255,0.05)" },
     compareLabel: { fontWeight: 600, color: currentColors.textSecondary, fontSize: 12 },
@@ -1105,16 +1120,16 @@ export default function NexPlay() {
     libraryTitle: { fontWeight: 700, fontSize: 14, color: currentColors.text, marginBottom: 3 },
     libraryMeta: { fontSize: 10, color: currentColors.textSecondary, marginBottom: 5 },
     libraryActions: { display: "flex", gap: 6, flexWrap: "wrap" },
-    aotyResultCard: { background: currentColors.bgCard, borderRadius: 20, padding: 20, marginBottom: 20, border: `1px solid ${currentColors.primary}30` },
-    aotyWinnerCard: { background: `linear-gradient(135deg, ${currentColors.primary}10, ${currentColors.bgCard})`, borderRadius: 16, padding: 14, marginBottom: 12, cursor: "pointer", display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap", transition: "all 0.2s ease" },
-    gotyBackBtn: { background: "rgba(255,255,255,0.05)", border: "none", borderRadius: 10, padding: "6px 12px", color: currentColors.text, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6, marginBottom: 16, fontSize: 11, transition: "all 0.2s ease" },
-    topGenreSelect: { background: currentColors.bgCard, border: `1px solid ${currentColors.primary}30`, borderRadius: 12, padding: "10px 16px", color: currentColors.text, fontSize: 13, marginBottom: 20, cursor: "pointer", width: "100%", transition: "all 0.2s ease" },
+    aotyResultCard: { background: currentColors.bgCard, borderRadius: 18, padding: 18, marginBottom: 20, border: `1px solid ${currentColors.primary}30` },
+    aotyWinnerCard: { background: `linear-gradient(135deg, ${currentColors.primary}10, ${currentColors.bgCard})`, borderRadius: 14, padding: 12, marginBottom: 10, cursor: "pointer", display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap", transition: "all 0.2s ease" },
+    gotyBackBtn: { background: "rgba(255,255,255,0.05)", border: "none", borderRadius: 8, padding: "5px 10px", color: currentColors.text, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6, marginBottom: 16, fontSize: 11, transition: "all 0.2s ease" },
+    topGenreSelect: { background: currentColors.bgCard, border: `1px solid ${currentColors.primary}30`, borderRadius: 10, padding: "8px 14px", color: currentColors.text, fontSize: 13, marginBottom: 20, cursor: "pointer", width: "100%", transition: "all 0.2s ease" },
     topPicksRow: { display: "flex", gap: 16, overflowX: "auto", marginBottom: 24, paddingBottom: 10 },
     topPickCard: { minWidth: 160, background: currentColors.bgCard, borderRadius: 14, padding: 12, cursor: "pointer", position: "relative" },
     pillGrid: { display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 24 },
     pill: (selected) => ({ background: selected ? currentColors.primary : "rgba(255,255,255,0.06)", border: "none", borderRadius: 30, padding: "8px 18px", color: selected ? currentColors.bg : currentColors.text, cursor: "pointer", fontSize: 13, fontWeight: selected ? 600 : 400, transition: "all 0.2s ease" }),
-    nextBtn: { background: currentColors.primary, border: "none", borderRadius: 12, padding: "10px 24px", fontSize: 14, fontWeight: 600, cursor: "pointer", color: currentColors.bg, marginTop: 24, width: "100%" },
-    textarea: { width: "100%", background: "rgba(255,255,255,0.08)", border: `1px solid rgba(255,255,255,0.1)`, borderRadius: 10, padding: "10px 14px", color: currentColors.text, fontSize: 13, marginBottom: 12, outline: "none", resize: "vertical", fontFamily: "inherit" }
+    nextBtn: { background: currentColors.primary, border: "none", borderRadius: 10, padding: "10px 20px", fontSize: 14, fontWeight: 600, cursor: "pointer", color: currentColors.bg, marginTop: 24, width: "100%" },
+    textarea: { width: "100%", background: "rgba(255,255,255,0.08)", border: `1px solid ${currentColors.primary}30`, borderRadius: 10, padding: "10px 14px", color: currentColors.text, fontSize: 13, marginBottom: 12, outline: "none", resize: "vertical", fontFamily: "inherit" }
   };
 
   const GameCard = ({ game, showBtn = false }) => {
@@ -1148,7 +1163,6 @@ export default function NexPlay() {
     );
   }
 
-  // Confetti Effect
   const renderConfetti = () => {
     if (!showConfetti) return null;
     const colorsList = ["#ffd400", "#ff6b6b", "#4caf50", "#2196f3", "#e91e63", "#9c27b0"];
@@ -1165,7 +1179,6 @@ export default function NexPlay() {
     ));
   };
 
-  // Level Up Message
   const renderLevelUp = () => {
     if (!levelUpMessage) return null;
     return (
@@ -1263,7 +1276,7 @@ export default function NexPlay() {
       {renderConfetti()}
       {renderLevelUp()}
       
-      {/* Mobile Menu - ALLE TABS SICHTBAR */}
+      {/* Mobile Menu */}
       <div className="mobile-menu-overlay" style={styles.mobileMenu}>
         <button className="btn-click" style={styles.mobileMenuClose} onClick={closeMobileMenu}><FaTimes size={18} /></button>
         <div style={{ marginTop: 50 }}>
@@ -1504,9 +1517,9 @@ export default function NexPlay() {
               <div style={styles.randomFilterTitle}><FaRobot size={12} /> {text.ai}</div>
               <div style={{ marginBottom: 8, padding: "0 10px" }}><span style={{ fontSize: 10, color: currentColors.primary }}>💬 {text.freeAiQueries}: {freeAiQueries}</span></div>
               <div style={styles.aiQuickActions}>
-                <button className="btn-click" style={styles.aiQuickBtn} onClick={() => { setAiInput("Empfehle mir ein RPG"); sendAiMessage(); }}>🎮 RPG empfehlen</button>
-                <button className="btn-click" style={styles.aiQuickBtn} onClick={() => { setAiInput("Tipps für Elden Ring"); sendAiMessage(); }}>🗡️ Elden Ring</button>
-                <button className="btn-click" style={styles.aiQuickBtn} onClick={() => { setAiInput("Was ist neu?"); sendAiMessage(); }}>📰 News</button>
+                <button className="btn-click" style={styles.aiQuickBtn} onClick={() => { setAiInput(lang === "de" ? "Empfehle mir ein RPG" : "Recommend an RPG"); sendAiMessage(); }}>🎮 {lang === "de" ? "RPG empfehlen" : "Recommend RPG"}</button>
+                <button className="btn-click" style={styles.aiQuickBtn} onClick={() => { setAiInput(lang === "de" ? "Tipps für Elden Ring" : "Elden Ring tips"); sendAiMessage(); }}>🗡️ {lang === "de" ? "Elden Ring" : "Elden Ring"}</button>
+                <button className="btn-click" style={styles.aiQuickBtn} onClick={() => { setAiInput(lang === "de" ? "Was ist neu?" : "What's new?"); sendAiMessage(); }}>📰 {lang === "de" ? "News" : "News"}</button>
               </div>
               <div style={styles.aiChatContainer}>
                 <div style={styles.aiMessages}>
@@ -1515,8 +1528,8 @@ export default function NexPlay() {
                   <div ref={aiChatEndRef} />
                 </div>
                 <div style={styles.aiInputRow}>
-                  <input style={{ flex: 1, background: "rgba(255,255,255,0.05)", border: "none", borderRadius: 18, padding: "8px 12px", color: currentColors.text, fontSize: 11, outline: "none" }} placeholder="Frag mich nach Spielen..." value={aiInput} onChange={e => setAiInput(e.target.value)} onKeyPress={e => e.key === "Enter" && sendAiMessage()} />
-                  <button className="btn-click" style={styles.addBtn} onClick={sendAiMessage}>{isAiLoading ? <FaSpinner className="spinning-wheel" size={10} /> : "Senden"}</button>
+                  <input style={{ flex: 1, background: "rgba(255,255,255,0.05)", border: "none", borderRadius: 18, padding: "8px 12px", color: currentColors.text, fontSize: 11, outline: "none" }} placeholder={lang === "de" ? "Frag mich nach Spielen..." : "Ask me about games..."} value={aiInput} onChange={e => setAiInput(e.target.value)} onKeyPress={e => e.key === "Enter" && sendAiMessage()} />
+                  <button className="btn-click" style={styles.addBtn} onClick={sendAiMessage}>{isAiLoading ? <FaSpinner className="spinning-wheel" size={10} /> : "Send"}</button>
                 </div>
               </div>
             </div>
